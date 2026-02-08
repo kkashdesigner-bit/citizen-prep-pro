@@ -16,12 +16,16 @@ export default function HeroSection() {
   }, []);
   return <section className="relative overflow-hidden bg-primary">
       {/* Parallax background */}
-      <div className="absolute inset-0 opacity-15 transition-transform duration-1000" style={{
-      backgroundImage: `url(${heroBg})`,
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      backgroundAttachment: 'fixed'
-    }} />
+      <div className="absolute inset-0 opacity-15">
+        <img
+          src={heroBg}
+          alt=""
+          fetchPriority="high"
+          loading="eager"
+          decoding="async"
+          className="h-full w-full object-cover"
+        />
+      </div>
 
       {/* Decorative gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-b from-primary/80 via-primary to-primary" />
