@@ -10,6 +10,7 @@ interface QuizQuestionProps {
   selectedAnswer: string | undefined;
   onAnswer: (answer: string) => void;
   showFeedback: boolean;
+  hideTranslation?: boolean;
 }
 
 export default function QuizQuestion({
@@ -19,6 +20,7 @@ export default function QuizQuestion({
   selectedAnswer,
   onAnswer,
   showFeedback,
+  hideTranslation = false,
 }: QuizQuestionProps) {
   const options: string[] = Array.isArray(question.options) 
     ? question.options 
@@ -40,7 +42,9 @@ export default function QuizQuestion({
         <h2 className="text-xl font-bold text-foreground md:text-2xl">
           {question.question_fr}
         </h2>
-        <TranslateButton translatedText={question.question_translated} />
+        {!hideTranslation && (
+          <TranslateButton translatedText={question.question_translated} />
+        )}
       </div>
 
       <div className="space-y-3">

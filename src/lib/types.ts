@@ -7,6 +7,8 @@ export type Subcategory =
   | 'Periods' | 'Geo' | 'Heritage'
   | 'Residence' | 'Health' | 'Work' | 'Education';
 
+export type ExamLevel = 'CSP' | 'CR' | 'Naturalisation';
+
 export interface Question {
   id: string;
   category: Category;
@@ -16,6 +18,7 @@ export interface Question {
   options: string[];
   correct_answer: string;
   explanation: string | null;
+  difficulty_level?: ExamLevel;
 }
 
 export interface QuizState {
@@ -56,4 +59,19 @@ export const CATEGORY_LABELS: Record<Language, Record<Category, string>> = {
   es: { Principles: 'Principios', Institutions: 'Instituciones', Rights: 'Derechos', History: 'Historia', Living: 'Vida cotidiana' },
   pt: { Principles: 'Princípios', Institutions: 'Instituições', Rights: 'Direitos', History: 'História', Living: 'Vida quotidiana' },
   zh: { Principles: '原则', Institutions: '机构', Rights: '权利', History: '历史', Living: '日常生活' },
+};
+
+export const EXAM_LEVEL_LABELS: Record<ExamLevel, { name: string; description: string }> = {
+  CSP: {
+    name: 'CSP',
+    description: 'Carte de Séjour Pluriannuelle — valeurs républicaines fondamentales',
+  },
+  CR: {
+    name: 'CR',
+    description: 'Carte de Résident — institutions et contexte de résidence',
+  },
+  Naturalisation: {
+    name: 'Naturalisation',
+    description: 'Expert — patrimoine, Constitution et histoire approfondie',
+  },
 };

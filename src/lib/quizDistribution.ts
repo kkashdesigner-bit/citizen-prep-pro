@@ -1,4 +1,4 @@
-import { Question } from './types';
+import { Question, ExamLevel, Category } from './types';
 
 /**
  * Official exam distribution quotas by category + subcategory.
@@ -39,37 +39,55 @@ function shuffle<T>(arr: T[]): T[] {
 
 /**
  * Select questions following the official distribution quotas.
+ * Optionally filter by difficulty level and/or category.
  * Falls back gracefully when there aren't enough questions per subcategory.
  */
 export function selectQuestionsByDistribution(
   allQuestions: Question[],
   excludeIds: string[] = [],
+  options?: { level?: ExamLevel; category?: Category },
 ): Question[] {
-  const available = allQuestions.filter((q) => !excludeIds.includes(q.id));
+  let pool = allQuestions.filter((q) => !excludeIds.includes(q.id));
+
+  // Filter by difficulty level if specified
+  if (options?.level) {
+    const levelFiltered = pool.filter((q) => q.difficulty_level === options.level);
+    // Only use level-filtered pool if it has enough questions, otherwise fallback
+    if (levelFiltered.length >= 10) {
+      pool = levelFiltered;
+    }
+  }
+
+  // If category training mode, return all questions from that category (no quotas)
+  if (options?.category) {
+    const categoryPool = shuffle(pool.filter((q) => q.category === options.category));
+    return categoryPool;
+  }
+
   const selected: Question[] = [];
   const usedIds = new Set<string>();
 
   // First pass: fill by quota
   for (const slot of EXAM_DISTRIBUTION) {
-    const pool = shuffle(
-      available.filter(
+    const slotPool = shuffle(
+      pool.filter(
         (q) =>
           q.category === slot.category &&
           q.subcategory === slot.subcategory &&
           !usedIds.has(q.id),
       ),
     );
-    const picked = pool.slice(0, slot.count);
+    const picked = slotPool.slice(0, slot.count);
     picked.forEach((q) => {
       selected.push(q);
       usedIds.add(q.id);
     });
   }
 
-  // Second pass: if we couldn't fill quotas, fill remaining from same categories
+  // Second pass: if we couldn't fill quotas, fill remaining from the pool
   const targetTotal = 40;
   if (selected.length < targetTotal) {
-    const remaining = shuffle(available.filter((q) => !usedIds.has(q.id)));
+    const remaining = shuffle(pool.filter((q) => !usedIds.has(q.id)));
     for (const q of remaining) {
       if (selected.length >= targetTotal) break;
       selected.push(q);
