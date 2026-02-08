@@ -1,22 +1,31 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { CATEGORY_LABELS, ExamResult } from '@/lib/types';
 import Header from '@/components/Header';
+import SubscriptionGate from '@/components/SubscriptionGate';
 import { Trophy, XCircle, Clock, BarChart3, RotateCcw, Home } from 'lucide-react';
 
 export default function Results() {
   const navigate = useNavigate();
   const { t, language } = useLanguage();
   const [result, setResult] = useState<ExamResult | null>(null);
+  const [showGate, setShowGate] = useState(false);
 
   useEffect(() => {
     const stored = sessionStorage.getItem('quizResults');
     if (stored) {
       setResult(JSON.parse(stored));
+      // Show subscription gate if demo was already taken
+      const demoTaken = sessionStorage.getItem('demoTaken');
+      if (demoTaken) {
+        setTimeout(() => setShowGate(true), 2000);
+      } else {
+        sessionStorage.setItem('demoTaken', 'true');
+      }
     } else {
       navigate('/');
     }
@@ -29,10 +38,9 @@ export default function Results() {
   const seconds = result.timeSpent % 60;
 
   return (
-    <div className="min-h-screen bg-secondary">
+    <div className="min-h-screen bg-background">
       <Header />
       <div className="container py-12">
-        {/* Score card */}
         <Card className="mx-auto max-w-2xl overflow-hidden">
           <div
             className={`p-8 text-center ${
@@ -55,7 +63,6 @@ export default function Results() {
           </div>
 
           <CardContent className="p-6">
-            {/* Stats */}
             <div className="mb-8 grid grid-cols-2 gap-4">
               <div className="rounded-lg border border-border bg-card p-4 text-center">
                 <BarChart3 className="mx-auto mb-2 h-6 w-6 text-primary" />
@@ -73,14 +80,14 @@ export default function Results() {
               </div>
             </div>
 
-            {/* Category breakdown */}
             <h3 className="mb-4 font-serif text-lg font-bold text-foreground">
               {t('results.categories')}
             </h3>
             <div className="space-y-4">
               {Object.entries(result.categoryBreakdown).map(([cat, data]) => {
                 const catPercent = Math.round((data.correct / data.total) * 100);
-                const categoryName = CATEGORY_LABELS[language]?.[cat as keyof typeof CATEGORY_LABELS.fr] || cat;
+                const categoryName =
+                  CATEGORY_LABELS[language]?.[cat as keyof typeof CATEGORY_LABELS.fr] || cat;
                 return (
                   <div key={cat}>
                     <div className="mb-1 flex justify-between text-sm">
@@ -89,23 +96,19 @@ export default function Results() {
                         {data.correct}/{data.total} ({catPercent}%)
                       </span>
                     </div>
-                    <Progress
-                      value={catPercent}
-                      className={`h-3 ${catPercent >= 80 ? '' : ''}`}
-                    />
+                    <Progress value={catPercent} className="h-3" />
                   </div>
                 );
               })}
             </div>
 
-            {/* Actions */}
             <div className="mt-8 flex gap-3">
               <Button
                 variant="default"
                 className="flex-1 gap-2"
                 onClick={() => {
                   sessionStorage.removeItem('quizResults');
-                  navigate('/quiz?mode=study');
+                  navigate('/quiz?mode=exam');
                 }}
               >
                 <RotateCcw className="h-4 w-4" />
@@ -126,6 +129,8 @@ export default function Results() {
           </CardContent>
         </Card>
       </div>
+
+      <SubscriptionGate open={showGate} onOpenChange={setShowGate} />
     </div>
   );
 }
