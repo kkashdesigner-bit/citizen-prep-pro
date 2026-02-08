@@ -1,8 +1,16 @@
 export type Category = 'Principles' | 'Institutions' | 'Rights' | 'History' | 'Living';
 
+export type Subcategory =
+  | 'Symbole' | 'Laïcité' | 'Situational'
+  | 'Democracy' | 'Organization' | 'Europe'
+  | 'Fundamental' | 'Duties'
+  | 'Periods' | 'Geo' | 'Heritage'
+  | 'Residence' | 'Health' | 'Work' | 'Education';
+
 export interface Question {
   id: string;
   category: Category;
+  subcategory: Subcategory | null;
   question_fr: string;
   question_translated: string | null;
   options: string[];
