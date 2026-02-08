@@ -4,9 +4,17 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { useAuth } from '@/hooks/useAuth';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
 import Header from '@/components/Header';
+import Footer from '@/components/Footer';
+import WeaknessAlert from '@/components/WeaknessAlert';
+import ProgressionBar from '@/components/ProgressionBar';
+import CategorySelector from '@/components/CategorySelector';
+import LevelSelector from '@/components/LevelSelector';
+import SubscriptionGate from '@/components/SubscriptionGate';
 import { BarChart3, BookOpen, Clock, Target, TrendingUp } from 'lucide-react';
+import { Category, ExamLevel } from '@/lib/types';
 
 interface ExamHistoryEntry {
   date: string;
@@ -14,14 +22,20 @@ interface ExamHistoryEntry {
   totalQuestions: number;
   passed: boolean;
   timeSpent: number;
+  categoryBreakdown?: Record<string, { correct: number; total: number }>;
 }
 
 export default function Dashboard() {
   const { user, loading: authLoading } = useAuth();
+  const { language } = useLanguage();
   const navigate = useNavigate();
   const [examHistory, setExamHistory] = useState<ExamHistoryEntry[]>([]);
   const [isSubscribed, setIsSubscribed] = useState(false);
+  const [usedQuestions, setUsedQuestions] = useState<string[]>([]);
+  const [totalQuestionCount, setTotalQuestionCount] = useState(0);
+  const [selectedLevel, setSelectedLevel] = useState<ExamLevel>('CSP');
   const [loading, setLoading] = useState(true);
+  const [showGate, setShowGate] = useState(false);
 
   useEffect(() => {
     if (authLoading) return;
@@ -30,22 +44,41 @@ export default function Dashboard() {
       return;
     }
 
-    const fetchProfile = async () => {
-      const { data } = await supabase
-        .from('profiles')
-        .select('exam_history, is_subscribed')
-        .eq('id', user.id)
-        .maybeSingle();
+    const fetchData = async () => {
+      const [profileResult, countResult] = await Promise.all([
+        supabase
+          .from('profiles')
+          .select('exam_history, is_subscribed, used_questions')
+          .eq('id', user.id)
+          .maybeSingle(),
+        supabase
+          .from('questions')
+          .select('id', { count: 'exact', head: true }),
+      ]);
 
-      if (data) {
-        setExamHistory((data.exam_history as unknown as ExamHistoryEntry[]) || []);
-        setIsSubscribed(data.is_subscribed);
+      if (profileResult.data) {
+        setExamHistory((profileResult.data.exam_history as unknown as ExamHistoryEntry[]) || []);
+        setIsSubscribed(profileResult.data.is_subscribed);
+        setUsedQuestions((profileResult.data.used_questions as string[]) || []);
       }
+      setTotalQuestionCount(countResult.count || 0);
       setLoading(false);
     };
 
-    fetchProfile();
+    fetchData();
   }, [user, authLoading, navigate]);
+
+  const handleCategorySelect = (category: Category) => {
+    if (!isSubscribed) {
+      setShowGate(true);
+      return;
+    }
+    navigate(`/quiz?mode=training&category=${category}`);
+  };
+
+  const handleStartExam = () => {
+    navigate(`/quiz?mode=exam&level=${selectedLevel}`);
+  };
 
   if (authLoading || loading) {
     return (
@@ -62,7 +95,7 @@ export default function Dashboard() {
   const passProb =
     last5.length > 0
       ? Math.round(
-          (last5.reduce((sum, e) => sum + (e.score / e.totalQuestions) * 100, 0) / last5.length),
+          last5.reduce((sum, e) => sum + (e.score / e.totalQuestions) * 100, 0) / last5.length,
         )
       : 0;
 
@@ -71,8 +104,7 @@ export default function Dashboard() {
   const avgScore =
     totalExams > 0
       ? Math.round(
-          examHistory.reduce((sum, e) => sum + (e.score / e.totalQuestions) * 100, 0) /
-            totalExams,
+          examHistory.reduce((sum, e) => sum + (e.score / e.totalQuestions) * 100, 0) / totalExams,
         )
       : 0;
 
@@ -84,6 +116,9 @@ export default function Dashboard() {
           <h1 className="font-serif text-3xl font-bold text-foreground">Tableau de bord</h1>
           <p className="text-muted-foreground">Suivez votre progression et vos résultats</p>
         </div>
+
+        {/* Weakness Alert */}
+        <WeaknessAlert examHistory={examHistory} language={language} />
 
         {/* Stats grid */}
         <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -138,6 +173,11 @@ export default function Dashboard() {
           </Card>
         </div>
 
+        {/* Progression Bar */}
+        <div className="mb-8">
+          <ProgressionBar usedCount={usedQuestions.length} totalCount={totalQuestionCount} />
+        </div>
+
         {/* Pass probability bar */}
         <Card className="mb-8">
           <CardHeader>
@@ -150,6 +190,37 @@ export default function Dashboard() {
             </div>
             <Progress value={passProb} className="h-4" />
             <p className="mt-2 text-xs text-muted-foreground">Seuil de réussite : 80%</p>
+          </CardContent>
+        </Card>
+
+        {/* Level Selector */}
+        <Card className="mb-8">
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle className="font-serif text-lg">Niveau d'examen</CardTitle>
+            <Button onClick={handleStartExam} size="sm">
+              Lancer l'examen
+            </Button>
+          </CardHeader>
+          <CardContent>
+            <LevelSelector
+              selectedLevel={selectedLevel}
+              onSelect={setSelectedLevel}
+              isSubscribed={isSubscribed}
+            />
+          </CardContent>
+        </Card>
+
+        {/* Category Training */}
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle className="font-serif text-lg">Entraînement par catégorie</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="mb-4 text-sm text-muted-foreground">
+              Choisissez une catégorie pour un entraînement ciblé
+              {!isSubscribed && ' (réservé aux abonnés)'}
+            </p>
+            <CategorySelector onSelect={handleCategorySelect} />
           </CardContent>
         </Card>
 
@@ -212,6 +283,8 @@ export default function Dashboard() {
           </CardContent>
         </Card>
       </div>
+      <Footer />
+      <SubscriptionGate open={showGate} onOpenChange={setShowGate} />
     </div>
   );
 }
