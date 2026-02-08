@@ -23,8 +23,10 @@ export type Database = {
           is_subscribed: boolean
           preferred_language: string | null
           subscription_tier: string | null
+          total_questions_seen: number
           updated_at: string
           used_questions: string[] | null
+          weak_category: string | null
         }
         Insert: {
           created_at?: string
@@ -34,8 +36,10 @@ export type Database = {
           is_subscribed?: boolean
           preferred_language?: string | null
           subscription_tier?: string | null
+          total_questions_seen?: number
           updated_at?: string
           used_questions?: string[] | null
+          weak_category?: string | null
         }
         Update: {
           created_at?: string
@@ -45,8 +49,10 @@ export type Database = {
           is_subscribed?: boolean
           preferred_language?: string | null
           subscription_tier?: string | null
+          total_questions_seen?: number
           updated_at?: string
           used_questions?: string[] | null
+          weak_category?: string | null
         }
         Relationships: []
       }
@@ -55,6 +61,7 @@ export type Database = {
           category: string
           correct_answer: string
           created_at: string
+          difficulty_level: string
           explanation: string | null
           id: string
           options: Json
@@ -67,6 +74,7 @@ export type Database = {
           category: string
           correct_answer: string
           created_at?: string
+          difficulty_level?: string
           explanation?: string | null
           id?: string
           options: Json
@@ -79,6 +87,7 @@ export type Database = {
           category?: string
           correct_answer?: string
           created_at?: string
+          difficulty_level?: string
           explanation?: string | null
           id?: string
           options?: Json

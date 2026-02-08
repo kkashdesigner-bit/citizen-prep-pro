@@ -7,7 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Award, BookOpen, CheckCircle, Sparkles } from 'lucide-react';
+import { Award, BookOpen, CheckCircle, Sparkles, Target, Shield } from 'lucide-react';
 
 interface SubscriptionGateProps {
   open: boolean;
@@ -39,6 +39,8 @@ export default function SubscriptionGate({ open, onOpenChange }: SubscriptionGat
             { icon: BookOpen, text: 'Mode étude avec explications détaillées' },
             { icon: Award, text: 'Examens illimités sans répétition' },
             { icon: CheckCircle, text: 'Suivi de progression personnalisé' },
+            { icon: Target, text: 'Entraînement par catégorie ciblé' },
+            { icon: Shield, text: 'Niveaux CR et Naturalisation' },
           ].map(({ icon: Icon, text }) => (
             <div key={text} className="flex items-center gap-3">
               <Icon className="h-5 w-5 shrink-0 text-primary" />
