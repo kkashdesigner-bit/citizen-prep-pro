@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
-import { Question } from '@/lib/types';
+import { Question, Category, ExamLevel } from '@/lib/types';
 import { selectQuestionsByDistribution } from '@/lib/quizDistribution';
 import Header from '@/components/Header';
 import QuizQuestion from '@/components/QuizQuestion';
@@ -14,9 +14,13 @@ import { ChevronLeft, ChevronRight, Flag } from 'lucide-react';
 
 const QUIZ_TIME = 45 * 60;
 
+type QuizMode = 'exam' | 'study' | 'training';
+
 export default function Quiz() {
   const [searchParams] = useSearchParams();
-  const mode = (searchParams.get('mode') as 'exam' | 'study') || 'exam';
+  const mode = (searchParams.get('mode') as QuizMode) || 'exam';
+  const categoryParam = searchParams.get('category') as Category | null;
+  const levelParam = (searchParams.get('level') as ExamLevel) || undefined;
   const navigate = useNavigate();
   const { t } = useLanguage();
 
@@ -44,13 +48,16 @@ export default function Quiz() {
         options: typeof q.options === 'string' ? JSON.parse(q.options) : q.options,
       })) as Question[];
 
-      const selected = selectQuestionsByDistribution(parsed);
+      const selected = selectQuestionsByDistribution(parsed, [], {
+        level: levelParam,
+        category: categoryParam || undefined,
+      });
       setQuestions(selected);
       setLoading(false);
     };
 
     fetchQuestions();
-  }, []);
+  }, [levelParam, categoryParam]);
 
   useEffect(() => {
     if (mode !== 'exam') return;
@@ -103,7 +110,6 @@ export default function Quiz() {
 
     sessionStorage.setItem('quizResults', JSON.stringify(resultData));
 
-    // Check if demo user — show subscription gate after first exam
     const demoTaken = sessionStorage.getItem('demoTaken');
     if (demoTaken) {
       setShowGate(true);
@@ -141,7 +147,9 @@ export default function Quiz() {
 
   const currentQuestion = questions[currentIndex];
   const answeredCount = Object.keys(answers).length;
-  const showFeedback = mode === 'study';
+  // In exam mode: no feedback, no translations. In study/training: feedback + translations
+  const showFeedback = mode === 'study' || mode === 'training';
+  const hideTranslation = mode === 'exam';
 
   return (
     <div className="min-h-screen bg-background">
@@ -155,7 +163,7 @@ export default function Quiz() {
             answeredCount={answeredCount}
           />
           {mode === 'exam' && <QuizTimer timeRemaining={timeRemaining} />}
-          <ModeBadge mode={mode} />
+          <ModeBadge mode={mode} category={categoryParam} />
         </div>
       </div>
 
@@ -167,6 +175,7 @@ export default function Quiz() {
           selectedAnswer={answers[currentQuestion.id]}
           onAnswer={handleAnswer}
           showFeedback={showFeedback}
+          hideTranslation={hideTranslation}
         />
 
         <div className="mx-auto mt-8 flex max-w-2xl items-center justify-between">
@@ -218,16 +227,25 @@ export default function Quiz() {
   );
 }
 
-function ModeBadge({ mode }: { mode: 'exam' | 'study' }) {
+function ModeBadge({ mode, category }: { mode: QuizMode; category?: string | null }) {
+  const label =
+    mode === 'training' && category
+      ? `Entraînement — ${category}`
+      : mode === 'exam'
+      ? 'Examen'
+      : 'Étude';
+
   return (
     <span
       className={`shrink-0 rounded-full px-3 py-1 text-xs font-bold uppercase ${
         mode === 'exam'
           ? 'bg-accent text-accent-foreground'
+          : mode === 'training'
+          ? 'bg-secondary text-secondary-foreground'
           : 'bg-primary/10 text-primary'
       }`}
     >
-      {mode === 'exam' ? 'Examen' : 'Étude'}
+      {label}
     </span>
   );
 }
