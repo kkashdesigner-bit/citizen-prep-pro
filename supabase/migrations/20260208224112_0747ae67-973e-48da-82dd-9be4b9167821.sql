@@ -1,0 +1,14 @@
+UPDATE public.questions SET question_translated = 'Who elects the President of the Republic?' WHERE id = '81f396e2-9009-4100-8bc2-46e5fb9d123c';
+UPDATE public.questions SET question_translated = 'Where is the Senate located?' WHERE id = '91514831-2dbc-43e5-8183-fec076727fc0';
+UPDATE public.questions SET question_translated = 'What is the role of the Prime Minister?' WHERE id = '1f3bdd35-fe33-4e70-9481-bb89e1517371';
+UPDATE public.questions SET question_translated = 'How many departments are there in France?' WHERE id = 'a5d883ab-f44a-4962-80c9-2fa656fa5138';
+UPDATE public.questions SET question_translated = 'At what age can you vote in France?' WHERE id = '37088272-c0b2-4a58-9190-47d5ac5e519e';
+UPDATE public.questions SET question_translated = 'Women have had the right to vote in France since:' WHERE id = '0dc5543b-6666-43b2-a18e-229ab0d91a53';
+UPDATE public.questions SET question_translated = 'Is France a member of the European Union?' WHERE id = 'e5bf40a6-77fe-4663-8f83-59dd66b48ec5';
+UPDATE public.questions SET question_translated = 'In what year did France adopt the Declaration of the Rights of Man?' WHERE id = '3a51c102-cbc8-4568-a869-55efb64d3809';
+UPDATE public.questions SET question_translated = 'Who was the leader of Free France during World War II?' WHERE id = '3e8890e9-5973-4375-a0f8-10a55997025c';
+UPDATE public.questions SET question_translated = 'What is the date of the National Holiday?' WHERE id = '380d928f-d5f4-4402-b111-a7a806f27496';
+UPDATE public.questions SET question_translated = 'Who built the Palace of Versailles?' WHERE id = '26ea26cf-bfad-4a9b-a461-74e7bd94e32d';
+UPDATE public.questions SET question_translated = 'Social Security is used to:' WHERE id = '054dfe23-d7e1-44f3-a54f-1d439dd4d974';
+UPDATE public.questions SET question_translated = 'Schooling is mandatory until what age?' WHERE id = '6e235340-d1f4-47c9-8ee3-2a9aad5c981a';
+UPDATE public.questions SET question_translated = 'What is the emergency number for firefighters?' WHERE id = '8917142f-f6cc-475e-bd3f-a9ddb605fd8b';
