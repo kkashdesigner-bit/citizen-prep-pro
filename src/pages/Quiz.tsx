@@ -149,7 +149,7 @@ export default function Quiz() {
   const answeredCount = Object.keys(answers).length;
   // In exam mode: no feedback, no translations. In study/training: feedback + translations
   const showFeedback = mode === 'study' || mode === 'training';
-  const hideTranslation = mode === 'exam';
+  const hideTranslation = false;
 
   return (
     <div className="min-h-screen bg-background">
