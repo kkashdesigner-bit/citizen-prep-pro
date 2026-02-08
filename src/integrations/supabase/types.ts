@@ -60,6 +60,7 @@ export type Database = {
           options: Json
           question_fr: string
           question_translated: string | null
+          subcategory: string | null
           updated_at: string
         }
         Insert: {
@@ -71,6 +72,7 @@ export type Database = {
           options: Json
           question_fr: string
           question_translated?: string | null
+          subcategory?: string | null
           updated_at?: string
         }
         Update: {
@@ -82,6 +84,7 @@ export type Database = {
           options?: Json
           question_fr?: string
           question_translated?: string | null
+          subcategory?: string | null
           updated_at?: string
         }
         Relationships: []

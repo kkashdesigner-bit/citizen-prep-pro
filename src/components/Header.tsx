@@ -3,13 +3,14 @@ import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/hooks/useAuth';
 import { LANGUAGES, Language } from '@/lib/types';
-import { Globe, LogOut, User } from 'lucide-react';
+import { Globe, LogOut, User, LayoutDashboard } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import ThemeToggle from '@/components/ThemeToggle';
 
 export default function Header() {
   const { language, setLanguage, t } = useLanguage();
@@ -33,7 +34,9 @@ export default function Header() {
           </span>
         </Link>
 
-        <nav className="flex items-center gap-2">
+        <nav className="flex items-center gap-1">
+          <ThemeToggle />
+
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="sm" className="gap-2">
@@ -56,7 +59,7 @@ export default function Header() {
 
           {user ? (
             <>
-              <Button variant="ghost" size="sm" onClick={() => navigate('/quiz?mode=study')}>
+              <Button variant="ghost" size="sm" onClick={() => navigate('/quiz?mode=exam')}>
                 {t('nav.demo')}
               </Button>
               <DropdownMenu>
@@ -66,6 +69,10 @@ export default function Header() {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={() => navigate('/dashboard')}>
+                    <LayoutDashboard className="mr-2 h-4 w-4" />
+                    {t('nav.dashboard')}
+                  </DropdownMenuItem>
                   <DropdownMenuItem onClick={handleSignOut}>
                     <LogOut className="mr-2 h-4 w-4" />
                     {t('nav.logout')}
@@ -75,7 +82,7 @@ export default function Header() {
             </>
           ) : (
             <>
-              <Button variant="ghost" size="sm" onClick={() => navigate('/quiz?mode=study')}>
+              <Button variant="ghost" size="sm" onClick={() => navigate('/quiz?mode=exam')}>
                 {t('nav.demo')}
               </Button>
               <Button variant="default" size="sm" onClick={() => navigate('/auth')}>
