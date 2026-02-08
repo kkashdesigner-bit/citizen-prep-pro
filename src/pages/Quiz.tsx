@@ -4,17 +4,19 @@ import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Question } from '@/lib/types';
+import { selectQuestionsByDistribution } from '@/lib/quizDistribution';
 import Header from '@/components/Header';
 import QuizQuestion from '@/components/QuizQuestion';
 import QuizTimer from '@/components/QuizTimer';
 import QuizProgress from '@/components/QuizProgress';
+import SubscriptionGate from '@/components/SubscriptionGate';
 import { ChevronLeft, ChevronRight, Flag } from 'lucide-react';
 
-const QUIZ_TIME = 45 * 60; // 45 minutes in seconds
+const QUIZ_TIME = 45 * 60;
 
 export default function Quiz() {
   const [searchParams] = useSearchParams();
-  const mode = (searchParams.get('mode') as 'exam' | 'study') || 'study';
+  const mode = (searchParams.get('mode') as 'exam' | 'study') || 'exam';
   const navigate = useNavigate();
   const { t } = useLanguage();
 
@@ -24,8 +26,8 @@ export default function Quiz() {
   const [timeRemaining, setTimeRemaining] = useState(QUIZ_TIME);
   const [loading, setLoading] = useState(true);
   const [startTime] = useState(Date.now());
+  const [showGate, setShowGate] = useState(false);
 
-  // Fetch questions
   useEffect(() => {
     const fetchQuestions = async () => {
       const { data, error } = await supabase
@@ -37,20 +39,19 @@ export default function Quiz() {
         return;
       }
 
-      // Shuffle and take up to 40 questions (or all if less)
-      const shuffled = (data || [])
-        .map((q) => ({ ...q, options: typeof q.options === 'string' ? JSON.parse(q.options) : q.options }))
-        .sort(() => Math.random() - 0.5)
-        .slice(0, 40);
+      const parsed = (data || []).map((q) => ({
+        ...q,
+        options: typeof q.options === 'string' ? JSON.parse(q.options) : q.options,
+      })) as Question[];
 
-      setQuestions(shuffled as Question[]);
+      const selected = selectQuestionsByDistribution(parsed);
+      setQuestions(selected);
       setLoading(false);
     };
 
     fetchQuestions();
   }, []);
 
-  // Timer
   useEffect(() => {
     if (mode !== 'exam') return;
     const interval = setInterval(() => {
@@ -100,8 +101,16 @@ export default function Quiz() {
       categoryBreakdown,
     };
 
-    // Store in sessionStorage for results page
     sessionStorage.setItem('quizResults', JSON.stringify(resultData));
+
+    // Check if demo user — show subscription gate after first exam
+    const demoTaken = sessionStorage.getItem('demoTaken');
+    if (demoTaken) {
+      setShowGate(true);
+    } else {
+      sessionStorage.setItem('demoTaken', 'true');
+    }
+
     navigate('/results');
   }, [answers, questions, startTime, navigate]);
 
@@ -138,7 +147,6 @@ export default function Quiz() {
     <div className="min-h-screen bg-background">
       <Header />
 
-      {/* Quiz header bar */}
       <div className="sticky top-16 z-40 border-b border-border bg-card py-3">
         <div className="container flex items-center justify-between gap-4">
           <QuizProgress
@@ -147,11 +155,10 @@ export default function Quiz() {
             answeredCount={answeredCount}
           />
           {mode === 'exam' && <QuizTimer timeRemaining={timeRemaining} />}
-          <Badge mode={mode} />
+          <ModeBadge mode={mode} />
         </div>
       </div>
 
-      {/* Question */}
       <main className="container py-8">
         <QuizQuestion
           question={currentQuestion}
@@ -162,7 +169,6 @@ export default function Quiz() {
           showFeedback={showFeedback}
         />
 
-        {/* Navigation */}
         <div className="mx-auto mt-8 flex max-w-2xl items-center justify-between">
           <Button
             variant="outline"
@@ -174,30 +180,24 @@ export default function Quiz() {
             {t('quiz.prev')}
           </Button>
 
-          <div className="flex gap-2">
-            {/* Question navigator dots */}
-            <div className="hidden items-center gap-1 sm:flex">
-              {questions.map((q, i) => (
-                <button
-                  key={q.id}
-                  onClick={() => setCurrentIndex(i)}
-                  className={`h-3 w-3 rounded-full transition-all ${
-                    i === currentIndex
-                      ? 'bg-primary scale-125'
-                      : answers[q.id]
-                      ? 'bg-primary/40'
-                      : 'bg-border'
-                  }`}
-                />
-              ))}
-            </div>
+          <div className="hidden items-center gap-1 sm:flex">
+            {questions.map((q, i) => (
+              <button
+                key={q.id}
+                onClick={() => setCurrentIndex(i)}
+                className={`h-3 w-3 rounded-full transition-all ${
+                  i === currentIndex
+                    ? 'bg-primary scale-125'
+                    : answers[q.id]
+                    ? 'bg-primary/40'
+                    : 'bg-border'
+                }`}
+              />
+            ))}
           </div>
 
           {currentIndex === questions.length - 1 ? (
-            <Button
-              onClick={handleFinish}
-              className="gap-2"
-            >
+            <Button onClick={handleFinish} className="gap-2">
               <Flag className="h-4 w-4" />
               {t('quiz.finish')}
             </Button>
@@ -212,12 +212,13 @@ export default function Quiz() {
           )}
         </div>
       </main>
+
+      <SubscriptionGate open={showGate} onOpenChange={setShowGate} />
     </div>
   );
 }
 
-function Badge({ mode }: { mode: 'exam' | 'study' }) {
-  const { t } = useLanguage();
+function ModeBadge({ mode }: { mode: 'exam' | 'study' }) {
   return (
     <span
       className={`shrink-0 rounded-full px-3 py-1 text-xs font-bold uppercase ${
@@ -226,7 +227,7 @@ function Badge({ mode }: { mode: 'exam' | 'study' }) {
           : 'bg-primary/10 text-primary'
       }`}
     >
-      {mode === 'exam' ? t('quiz.exam') : t('quiz.study')}
+      {mode === 'exam' ? 'Examen' : 'Étude'}
     </span>
   );
 }
