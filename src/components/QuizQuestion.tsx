@@ -2,6 +2,8 @@ import { Question } from '@/lib/types';
 import { Badge } from '@/components/ui/badge';
 import { CheckCircle, XCircle, Info } from 'lucide-react';
 import TranslateButton from '@/components/TranslateButton';
+import { playCorrectSound, playIncorrectSound } from '@/lib/sounds';
+import { useEffect, useRef } from 'react';
 
 interface QuizQuestionProps {
   question: Question;
@@ -28,11 +30,25 @@ export default function QuizQuestion({
 
   const isCorrect = selectedAnswer === question.correct_answer;
   const hasAnswered = selectedAnswer !== undefined;
+  const soundPlayed = useRef(false);
+
+  useEffect(() => {
+    if (showFeedback && hasAnswered && !soundPlayed.current) {
+      soundPlayed.current = true;
+      if (isCorrect) playCorrectSound();
+      else playIncorrectSound();
+    }
+  }, [showFeedback, hasAnswered, isCorrect]);
+
+  // Reset sound ref when question changes
+  useEffect(() => {
+    soundPlayed.current = false;
+  }, [question.id]);
 
   return (
     <div className="mx-auto max-w-2xl">
       <div className="mb-6 flex items-center justify-between">
-        <Badge variant="outline" className="text-sm">
+        <Badge variant="outline" className="text-sm border-border/50">
           Question {questionNumber} sur {totalQuestions}
         </Badge>
         <Badge variant="secondary">{question.category}</Badge>
@@ -59,15 +75,22 @@ export default function QuizQuestion({
               key={index}
               onClick={() => onAnswer(option)}
               disabled={showFeedback && hasAnswered}
-              className={`flex w-full items-center gap-4 rounded-lg border-2 p-4 text-left transition-all ${
+              className={`glass-card flex w-full items-center gap-4 rounded-lg border p-4 text-left transition-all ${
                 showCorrectHighlight
-                  ? 'border-primary bg-primary/10'
+                  ? 'heartbeat border-primary/50'
                   : showIncorrectHighlight
-                  ? 'border-destructive bg-destructive/10'
+                  ? 'glitch border-destructive/50'
                   : isSelected
-                  ? 'border-primary bg-primary/5'
-                  : 'border-border hover:border-primary/50 hover:bg-secondary'
+                  ? 'border-primary/50 bg-primary/5'
+                  : 'border-border/30 hover:border-primary/30 hover:bg-primary/5'
               }`}
+              style={
+                showCorrectHighlight
+                  ? { boxShadow: '0 0 25px -5px hsl(var(--success) / 0.4)' }
+                  : showIncorrectHighlight
+                  ? { boxShadow: '0 0 25px -5px hsl(var(--destructive) / 0.4)' }
+                  : undefined
+              }
             >
               <span
                 className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 text-sm font-bold ${
@@ -77,7 +100,7 @@ export default function QuizQuestion({
                     ? 'border-destructive bg-destructive text-destructive-foreground'
                     : isSelected
                     ? 'border-primary bg-primary text-primary-foreground'
-                    : 'border-border text-muted-foreground'
+                    : 'border-border/50 text-muted-foreground'
                 }`}
               >
                 {String.fromCharCode(65 + index)}
@@ -94,8 +117,10 @@ export default function QuizQuestion({
 
       {showFeedback && hasAnswered && question.explanation && (
         <div
-          className={`mt-6 rounded-lg border-2 p-4 ${
-            isCorrect ? 'border-primary/30 bg-primary/5' : 'border-destructive/30 bg-destructive/5'
+          className={`mt-6 glass-card p-4 ${
+            isCorrect
+              ? 'shadow-[0_0_20px_hsl(var(--success)/0.15)]'
+              : 'shadow-[0_0_20px_hsl(var(--destructive)/0.15)]'
           }`}
         >
           <div className="flex items-center gap-2 mb-2">

@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { Card, CardContent, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
@@ -82,7 +81,7 @@ export default function LandingPassProbability() {
   const isDemo = !user;
 
   return (
-    <section className="bg-secondary py-16 md:py-24">
+    <section className="bg-secondary/30 py-16 md:py-24">
       <div className="container">
         <AnimatedSection>
           <h2 className="mb-2 text-center font-serif text-3xl font-bold text-foreground md:text-4xl">
@@ -97,10 +96,10 @@ export default function LandingPassProbability() {
 
         <div className="mx-auto grid max-w-4xl grid-cols-1 gap-6 md:grid-cols-3">
           <AnimatedSection delay={100} className="md:col-span-1">
-            <Card className="hover-lift flex h-full flex-col items-center justify-center p-6">
-              <CardTitle className="mb-4 text-center font-serif text-lg text-foreground">
+            <div className="glass-card glow-hover flex h-full flex-col items-center justify-center p-6">
+              <h3 className="mb-4 text-center font-serif text-lg font-semibold text-foreground">
                 Pass Probability
-              </CardTitle>
+              </h3>
               <div ref={ringRef}>
                 <PassProbabilityRing
                   probability={loading ? 0 : passProb}
@@ -112,7 +111,7 @@ export default function LandingPassProbability() {
               <p className="mt-3 text-sm text-muted-foreground">
                 Basée sur les 5 derniers examens
               </p>
-            </Card>
+            </div>
           </AnimatedSection>
 
           <AnimatedSection delay={200} className="md:col-span-2">
@@ -123,36 +122,32 @@ export default function LandingPassProbability() {
                 { icon: BarChart3, label: 'Seuil officiel', value: '80%', delay: 300 },
               ].map(({ icon: Icon, label, value, delay }) => (
                 <AnimatedSection key={label} delay={delay}>
-                  <Card className="hover-lift">
-                    <CardContent className="flex items-center gap-3 p-5">
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10">
-                        <Icon className="h-5 w-5 text-primary" />
-                      </div>
-                      <div>
-                        <p className="text-xs text-muted-foreground">{label}</p>
-                        <p className="text-xl font-bold text-foreground">{value}</p>
-                      </div>
-                    </CardContent>
-                  </Card>
+                  <div className="glass-card glow-hover flex items-center gap-3 p-5">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 shadow-[0_0_10px_hsl(var(--primary)/0.15)]">
+                      <Icon className="h-5 w-5 text-primary" />
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground">{label}</p>
+                      <p className="text-xl font-bold text-foreground">{value}</p>
+                    </div>
+                  </div>
                 </AnimatedSection>
               ))}
 
               <div className="sm:col-span-3" ref={progressRef}>
                 <AnimatedSection delay={400}>
-                  <Card className="hover-lift">
-                    <CardContent className="p-5">
-                      <div className="mb-2 flex justify-between text-sm">
-                        <span className="text-muted-foreground">Progression dans la banque</span>
-                        <span className="font-medium text-foreground">
-                          {loading ? '—' : `${progressPercent}%`}
-                        </span>
-                      </div>
-                      <Progress
-                        value={progressVisible ? (loading ? 0 : progressPercent) : 0}
-                        className="h-3 transition-all duration-1000"
-                      />
-                    </CardContent>
-                  </Card>
+                  <div className="glass-card glow-hover p-5">
+                    <div className="mb-2 flex justify-between text-sm">
+                      <span className="text-muted-foreground">Progression dans la banque</span>
+                      <span className="font-medium text-foreground">
+                        {loading ? '—' : `${progressPercent}%`}
+                      </span>
+                    </div>
+                    <Progress
+                      value={progressVisible ? (loading ? 0 : progressPercent) : 0}
+                      className="h-3 transition-all duration-1000"
+                    />
+                  </div>
                 </AnimatedSection>
               </div>
             </div>
