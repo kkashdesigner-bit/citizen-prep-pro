@@ -78,7 +78,7 @@ export default function SubscriptionGate({ open, onOpenChange, requiredTier = 't
             <CardContent className="p-4 text-center">
               <p className="text-sm font-medium text-primary">Populaire</p>
               <p className="font-serif text-2xl font-bold text-foreground">
-                {isTier2 ? '49,99 €' : '30,99 €'}
+                {isTier2 ? '12,99 €' : '30,99 €'}
               </p>
               <p className="text-xs text-muted-foreground">/6 mois</p>
             </CardContent>
