@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -31,6 +31,8 @@ export default function Quiz() {
   const [loading, setLoading] = useState(true);
   const [startTime] = useState(Date.now());
   const [showGate, setShowGate] = useState(false);
+  const [warpState, setWarpState] = useState<'idle' | 'exit' | 'enter'>('idle');
+  const pendingIndex = useRef<number | null>(null);
 
   useEffect(() => {
     const fetchQuestions = async () => {
@@ -78,6 +80,17 @@ export default function Quiz() {
     const questionId = questions[currentIndex]?.id;
     if (!questionId) return;
     setAnswers((prev) => ({ ...prev, [questionId]: answer }));
+  };
+
+  const warpTo = (newIndex: number) => {
+    if (newIndex === currentIndex || warpState !== 'idle') return;
+    pendingIndex.current = newIndex;
+    setWarpState('exit');
+    setTimeout(() => {
+      setCurrentIndex(newIndex);
+      setWarpState('enter');
+      setTimeout(() => setWarpState('idle'), 250);
+    }, 200);
   };
 
   const handleFinish = useCallback(() => {
@@ -147,7 +160,6 @@ export default function Quiz() {
 
   const currentQuestion = questions[currentIndex];
   const answeredCount = Object.keys(answers).length;
-  // In exam mode: no feedback, no translations. In study/training: feedback + translations
   const showFeedback = mode === 'study' || mode === 'training';
   const hideTranslation = false;
 
@@ -155,7 +167,7 @@ export default function Quiz() {
     <div className="min-h-screen bg-background">
       <Header />
 
-      <div className="sticky top-16 z-40 border-b border-border bg-card py-3">
+      <div className="sticky top-16 z-40 border-b border-border/50 bg-background/60 backdrop-blur-xl py-3">
         <div className="container flex items-center justify-between gap-4">
           <QuizProgress
             current={currentIndex + 1}
@@ -168,22 +180,32 @@ export default function Quiz() {
       </div>
 
       <main className="container py-8">
-        <QuizQuestion
-          question={currentQuestion}
-          questionNumber={currentIndex + 1}
-          totalQuestions={questions.length}
-          selectedAnswer={answers[currentQuestion.id]}
-          onAnswer={handleAnswer}
-          showFeedback={showFeedback}
-          hideTranslation={hideTranslation}
-        />
+        <div
+          className={
+            warpState === 'exit'
+              ? 'warp-exit'
+              : warpState === 'enter'
+              ? 'warp-enter'
+              : ''
+          }
+        >
+          <QuizQuestion
+            question={currentQuestion}
+            questionNumber={currentIndex + 1}
+            totalQuestions={questions.length}
+            selectedAnswer={answers[currentQuestion.id]}
+            onAnswer={handleAnswer}
+            showFeedback={showFeedback}
+            hideTranslation={hideTranslation}
+          />
+        </div>
 
         <div className="mx-auto mt-8 flex max-w-2xl items-center justify-between">
           <Button
             variant="outline"
-            onClick={() => setCurrentIndex((prev) => Math.max(0, prev - 1))}
+            onClick={() => warpTo(Math.max(0, currentIndex - 1))}
             disabled={currentIndex === 0}
-            className="gap-2"
+            className="gap-2 glow-hover"
           >
             <ChevronLeft className="h-4 w-4" />
             {t('quiz.prev')}
@@ -193,10 +215,10 @@ export default function Quiz() {
             {questions.map((q, i) => (
               <button
                 key={q.id}
-                onClick={() => setCurrentIndex(i)}
+                onClick={() => warpTo(i)}
                 className={`h-3 w-3 rounded-full transition-all ${
                   i === currentIndex
-                    ? 'bg-primary scale-125'
+                    ? 'bg-primary scale-125 shadow-[0_0_8px_hsl(var(--primary)/0.5)]'
                     : answers[q.id]
                     ? 'bg-primary/40'
                     : 'bg-border'
@@ -206,14 +228,14 @@ export default function Quiz() {
           </div>
 
           {currentIndex === questions.length - 1 ? (
-            <Button onClick={handleFinish} className="gap-2">
+            <Button onClick={handleFinish} className="gap-2 btn-glow">
               <Flag className="h-4 w-4" />
               {t('quiz.finish')}
             </Button>
           ) : (
             <Button
-              onClick={() => setCurrentIndex((prev) => Math.min(questions.length - 1, prev + 1))}
-              className="gap-2"
+              onClick={() => warpTo(Math.min(questions.length - 1, currentIndex + 1))}
+              className="gap-2 btn-glow"
             >
               {t('quiz.next')}
               <ChevronRight className="h-4 w-4" />
@@ -239,7 +261,7 @@ function ModeBadge({ mode, category }: { mode: QuizMode; category?: string | nul
     <span
       className={`shrink-0 rounded-full px-3 py-1 text-xs font-bold uppercase ${
         mode === 'exam'
-          ? 'bg-accent text-accent-foreground'
+          ? 'bg-destructive/20 text-destructive'
           : mode === 'training'
           ? 'bg-secondary text-secondary-foreground'
           : 'bg-primary/10 text-primary'

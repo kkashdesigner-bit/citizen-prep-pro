@@ -14,10 +14,10 @@ export default function Footer() {
   };
 
   return (
-    <footer className="border-t border-border bg-card">
+    <footer className="border-t border-border/50 bg-background/60 backdrop-blur-xl">
       {/* Legal disclaimer */}
       <div className="container py-6">
-        <div className="mx-auto max-w-3xl rounded-lg border-2 border-destructive/30 bg-destructive/5 p-4">
+        <div className="mx-auto max-w-3xl glass-card p-4 border-destructive/30">
           <div className="flex items-start gap-3">
             <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-destructive" />
             <p className="text-sm text-foreground">
@@ -28,23 +28,23 @@ export default function Footer() {
       </div>
 
       {/* Footer links */}
-      <div className="container border-t border-border py-6">
+      <div className="container border-t border-border/50 py-6">
         <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
           <div className="flex items-center gap-1">
-            <div className="flex h-7 w-7 items-center justify-center rounded-md bg-primary">
+            <div className="flex h-7 w-7 items-center justify-center rounded-md bg-primary shadow-[0_0_8px_hsl(var(--primary)/0.3)]">
               <span className="text-xs font-bold text-primary-foreground">EC</span>
             </div>
             <span className="font-serif text-sm font-bold text-foreground">Examen Civique</span>
           </div>
 
           <nav className="flex flex-wrap items-center justify-center gap-4 text-sm">
-            <Link to="/about" className="text-muted-foreground transition-colors hover:text-foreground">
+            <Link to="/about" className="text-muted-foreground transition-colors hover:text-primary">
               {t('nav.about')}
             </Link>
             <Link
               to="/#pricing"
               onClick={handlePricingClick}
-              className="text-muted-foreground transition-colors hover:text-foreground"
+              className="text-muted-foreground transition-colors hover:text-primary"
             >
               {t('nav.pricing')}
             </Link>

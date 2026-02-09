@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
 import { PlayCircle, Lock } from 'lucide-react';
 import SubscriptionGate from '@/components/SubscriptionGate';
 
@@ -26,25 +25,25 @@ export default function PremiumVideoGuides({ isTier2 }: PremiumVideoGuidesProps)
     <>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         {VIDEO_GUIDES.map((video) => (
-          <Card
+          <div
             key={video.title}
-            className={`cursor-pointer transition-all hover:border-primary/50 ${!isTier2 ? 'opacity-80' : ''}`}
+            className={`glass-card glow-hover cursor-pointer p-5 transition-all ${!isTier2 ? 'opacity-70' : ''}`}
             onClick={handleClick}
           >
-            <CardContent className="flex items-center gap-4 p-5">
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+            <div className="flex items-center gap-4">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-primary/10 shadow-[0_0_10px_hsl(var(--primary)/0.15)]">
                 {isTier2 ? (
                   <PlayCircle className="h-6 w-6 text-primary" />
                 ) : (
-                  <Lock className="h-5 w-5 text-muted-foreground" />
+                  <Lock className="h-5 w-5 text-muted-foreground animate-pulse" />
                 )}
               </div>
               <div>
                 <p className="font-medium text-foreground">{video.title}</p>
                 <p className="text-xs text-muted-foreground">{video.duration}</p>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         ))}
       </div>
       <SubscriptionGate open={showGate} onOpenChange={setShowGate} requiredTier="tier_2" />

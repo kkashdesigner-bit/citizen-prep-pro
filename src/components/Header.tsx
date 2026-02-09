@@ -47,13 +47,13 @@ export default function Header({ animate = false }: HeaderProps) {
 
   return (
     <header
-      className={`sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 transition-all duration-500 ${
+      className={`sticky top-0 z-50 border-b border-border/50 bg-background/60 backdrop-blur-xl transition-all duration-500 ${
         loaded ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-3'
       }`}
     >
       <div className="container flex h-16 items-center justify-between">
-        <Link to="/" className="flex items-center gap-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-md bg-primary">
+        <Link to="/" className="flex items-center gap-2 glow-hover rounded-lg p-1">
+          <div className="flex h-9 w-9 items-center justify-center rounded-md bg-primary shadow-[0_0_12px_hsl(var(--primary)/0.4)]">
             <span className="text-sm font-bold text-primary-foreground">EC</span>
           </div>
           <span className="hidden font-serif text-lg font-bold text-foreground sm:inline-block">
@@ -65,7 +65,7 @@ export default function Header({ animate = false }: HeaderProps) {
           <Button
             variant="ghost"
             size="sm"
-            className="hidden sm:inline-flex"
+            className="hidden glow-hover sm:inline-flex"
             onClick={handlePricingClick}
           >
             {t('nav.pricing')}
@@ -74,7 +74,7 @@ export default function Header({ animate = false }: HeaderProps) {
           <Button
             variant="ghost"
             size="sm"
-            className="hidden sm:inline-flex"
+            className="hidden glow-hover sm:inline-flex"
             onClick={() => navigate('/about')}
           >
             {t('nav.about')}
@@ -84,17 +84,17 @@ export default function Header({ animate = false }: HeaderProps) {
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" className="gap-2">
+              <Button variant="ghost" size="sm" className="gap-2 glow-hover">
                 <Globe className="h-4 w-4" />
                 <span className="hidden sm:inline">{LANGUAGES[language]}</span>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent align="end" className="glass-card">
               {(Object.entries(LANGUAGES) as [Language, string][]).map(([code, name]) => (
                 <DropdownMenuItem
                   key={code}
                   onClick={() => setLanguage(code)}
-                  className={language === code ? 'bg-secondary' : ''}
+                  className={language === code ? 'bg-primary/10' : ''}
                 >
                   {name}
                 </DropdownMenuItem>
@@ -104,16 +104,16 @@ export default function Header({ animate = false }: HeaderProps) {
 
           {user ? (
             <>
-              <Button variant="ghost" size="sm" onClick={() => navigate('/quiz?mode=exam')}>
+              <Button variant="ghost" size="sm" className="glow-hover" onClick={() => navigate('/quiz?mode=exam')}>
                 {t('nav.demo')}
               </Button>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm">
+                  <Button variant="ghost" size="sm" className="glow-hover">
                     <User className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
+                <DropdownMenuContent align="end" className="glass-card">
                   <DropdownMenuItem onClick={() => navigate('/dashboard')}>
                     <LayoutDashboard className="mr-2 h-4 w-4" />
                     {t('nav.dashboard')}
@@ -127,7 +127,7 @@ export default function Header({ animate = false }: HeaderProps) {
             </>
           ) : (
             <>
-              <Button variant="ghost" size="sm" onClick={() => navigate('/quiz?mode=exam')}>
+              <Button variant="ghost" size="sm" className="glow-hover" onClick={() => navigate('/quiz?mode=exam')}>
                 {t('nav.demo')}
               </Button>
               <Button variant="default" size="sm" className="btn-glow" onClick={() => navigate('/auth')}>
