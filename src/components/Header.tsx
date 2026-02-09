@@ -11,13 +11,25 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import ThemeToggle from '@/components/ThemeToggle';
+import { useEffect, useState } from 'react';
 
+interface HeaderProps {
+  animate?: boolean;
+}
 
-export default function Header() {
+export default function Header({ animate = false }: HeaderProps) {
   const { language, setLanguage, t } = useLanguage();
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const [loaded, setLoaded] = useState(!animate);
+
+  useEffect(() => {
+    if (animate) {
+      const timer = setTimeout(() => setLoaded(true), 50);
+      return () => clearTimeout(timer);
+    }
+  }, [animate]);
 
   const handleSignOut = async () => {
     await signOut();
@@ -34,7 +46,11 @@ export default function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+    <header
+      className={`sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 transition-all duration-500 ${
+        loaded ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-3'
+      }`}
+    >
       <div className="container flex h-16 items-center justify-between">
         <Link to="/" className="flex items-center gap-2">
           <div className="flex h-9 w-9 items-center justify-center rounded-md bg-primary">
@@ -114,7 +130,7 @@ export default function Header() {
               <Button variant="ghost" size="sm" onClick={() => navigate('/quiz?mode=exam')}>
                 {t('nav.demo')}
               </Button>
-              <Button variant="default" size="sm" onClick={() => navigate('/auth')}>
+              <Button variant="default" size="sm" className="btn-glow" onClick={() => navigate('/auth')}>
                 {t('nav.login')}
               </Button>
             </>

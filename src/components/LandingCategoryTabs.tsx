@@ -1,69 +1,68 @@
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Category, CATEGORY_LABELS } from '@/lib/types';
-import { BookOpen, Landmark, Scale, Clock, Home } from 'lucide-react';
+import { Scale, Landmark, Home, BookOpen, ArrowRight } from 'lucide-react';
 import AnimatedSection from '@/components/AnimatedSection';
 
-const CATEGORIES: { key: Category; icon: typeof BookOpen }[] = [
-  { key: 'Principles', icon: Scale },
-  { key: 'Institutions', icon: Landmark },
-  { key: 'Rights', icon: BookOpen },
-  { key: 'History', icon: Clock },
-  { key: 'Living', icon: Home },
+const FEATURES: { key: Category; icon: typeof Scale; descFr: string }[] = [
+  {
+    key: 'Principles',
+    icon: Scale,
+    descFr: 'Liberté, Égalité, Fraternité — Laïcité, symboles et valeurs fondamentales.',
+  },
+  {
+    key: 'Institutions',
+    icon: Landmark,
+    descFr: 'Président, Parlement, Justice — l\'organisation de l\'État français.',
+  },
+  {
+    key: 'Living',
+    icon: Home,
+    descFr: 'Santé, éducation, travail — la vie quotidienne en France.',
+  },
 ];
 
 export default function LandingCategoryTabs() {
-  const [active, setActive] = useState<Category>('Principles');
-  const { language, t } = useLanguage();
+  const { language } = useLanguage();
   const navigate = useNavigate();
-
-  const descriptions: Record<Category, string> = {
-    Principles: 'Liberté, Égalité, Fraternité — Laïcité, symboles et valeurs fondamentales de la République.',
-    Institutions: 'Président, Parlement, Justice — Comprenez l\'organisation de l\'État français.',
-    Rights: 'Droits fondamentaux et devoirs du citoyen français.',
-    History: 'De la Révolution à la Ve République — les grandes dates de l\'Histoire de France.',
-    Living: 'Santé, éducation, travail — la vie quotidienne en France.',
-  };
 
   return (
     <section className="bg-background py-16 md:py-24">
       <div className="container">
         <AnimatedSection>
-          <h2 className="mb-8 text-center font-serif text-3xl font-bold text-foreground md:text-4xl">
-            {t('pricing.feature1').includes('questions') ? 'Explorez les catégories' : 'Explore Categories'}
+          <h2 className="mb-4 text-center font-serif text-3xl font-bold text-foreground md:text-4xl">
+            Explorez les catégories
           </h2>
+          <p className="mx-auto mb-12 max-w-2xl text-center text-muted-foreground">
+            Préparez chaque domaine de l'examen de citoyenneté avec des quiz ciblés.
+          </p>
         </AnimatedSection>
 
-        <AnimatedSection delay={100}>
-          <div className="mx-auto mb-10 flex max-w-3xl flex-wrap justify-center gap-2">
-            {CATEGORIES.map(({ key, icon: Icon }) => (
-              <Button
-                key={key}
-                variant={active === key ? 'default' : 'outline'}
-                className="gap-2 rounded-full px-5"
-                onClick={() => setActive(key)}
+        <div className="mx-auto grid max-w-4xl grid-cols-1 gap-6 md:grid-cols-3">
+          {FEATURES.map(({ key, icon: Icon, descFr }, i) => (
+            <AnimatedSection key={key} delay={i * 150}>
+              <Card className="hover-lift group h-full cursor-pointer border border-border bg-card transition-all duration-300"
+                onClick={() => navigate(`/quiz?mode=study&category=${key}`)}
               >
-                <Icon className="h-4 w-4" />
-                {CATEGORY_LABELS[language][key]}
-              </Button>
-            ))}
-          </div>
-        </AnimatedSection>
-
-        <AnimatedSection delay={200}>
-          <div className="mx-auto max-w-2xl rounded-xl border border-border bg-card p-8 text-center shadow-sm">
-            <p className="mb-6 text-lg text-muted-foreground">{descriptions[active]}</p>
-            <Button
-              onClick={() => navigate(`/quiz?mode=study&category=${active}`)}
-              className="gap-2"
-            >
-              <BookOpen className="h-4 w-4" />
-              S'entraîner
-            </Button>
-          </div>
-        </AnimatedSection>
+                <CardContent className="flex flex-col items-center p-6 text-center">
+                  <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-primary/10 transition-colors duration-300 group-hover:bg-primary/20">
+                    <Icon className="h-7 w-7 text-primary" />
+                  </div>
+                  <h3 className="mb-2 font-serif text-lg font-semibold text-foreground">
+                    {CATEGORY_LABELS[language][key]}
+                  </h3>
+                  <p className="mb-4 text-sm text-muted-foreground">{descFr}</p>
+                  <Button variant="ghost" size="sm" className="btn-glow mt-auto gap-1 text-primary">
+                    S'entraîner
+                    <ArrowRight className="h-3.5 w-3.5" />
+                  </Button>
+                </CardContent>
+              </Card>
+            </AnimatedSection>
+          ))}
+        </div>
       </div>
     </section>
   );
