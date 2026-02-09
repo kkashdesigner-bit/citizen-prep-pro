@@ -22,6 +22,7 @@ export type Database = {
           id: string
           is_subscribed: boolean
           preferred_language: string | null
+          session_token: string | null
           subscription_tier: string | null
           total_questions_seen: number
           updated_at: string
@@ -35,6 +36,7 @@ export type Database = {
           id: string
           is_subscribed?: boolean
           preferred_language?: string | null
+          session_token?: string | null
           subscription_tier?: string | null
           total_questions_seen?: number
           updated_at?: string
@@ -48,6 +50,7 @@ export type Database = {
           id?: string
           is_subscribed?: boolean
           preferred_language?: string | null
+          session_token?: string | null
           subscription_tier?: string | null
           total_questions_seen?: number
           updated_at?: string
