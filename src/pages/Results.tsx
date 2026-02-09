@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { CATEGORY_LABELS, ExamResult } from '@/lib/types';
@@ -19,7 +18,6 @@ export default function Results() {
     const stored = sessionStorage.getItem('quizResults');
     if (stored) {
       setResult(JSON.parse(stored));
-      // Show subscription gate if demo was already taken
       const demoTaken = sessionStorage.getItem('demoTaken');
       if (demoTaken) {
         setTimeout(() => setShowGate(true), 2000);
@@ -41,37 +39,41 @@ export default function Results() {
     <div className="min-h-screen bg-background">
       <Header />
       <div className="container py-12">
-        <Card className="mx-auto max-w-2xl overflow-hidden">
+        <div className="mx-auto max-w-2xl glass-card overflow-hidden">
           <div
             className={`p-8 text-center ${
-              result.passed ? 'bg-primary' : 'bg-destructive'
+              result.passed
+                ? 'bg-primary/20 shadow-[inset_0_0_60px_hsl(var(--primary)/0.15)]'
+                : 'bg-destructive/20 shadow-[inset_0_0_60px_hsl(var(--destructive)/0.15)]'
             }`}
           >
-            <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-background/20">
+            <div className={`mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full ${
+              result.passed ? 'bg-primary/20' : 'bg-destructive/20'
+            }`}>
               {result.passed ? (
-                <Trophy className="h-10 w-10 text-primary-foreground" />
+                <Trophy className="h-10 w-10 text-primary" />
               ) : (
-                <XCircle className="h-10 w-10 text-destructive-foreground" />
+                <XCircle className="h-10 w-10 text-destructive" />
               )}
             </div>
-            <h1 className="mb-2 font-serif text-3xl font-bold text-primary-foreground">
+            <h1 className="mb-2 font-serif text-3xl font-bold text-foreground">
               {result.passed ? t('results.passed') : t('results.failed')}
             </h1>
-            <p className="text-lg text-primary-foreground/80">
+            <p className="text-lg text-muted-foreground">
               {t('results.passThreshold')}
             </p>
           </div>
 
-          <CardContent className="p-6">
+          <div className="p-6">
             <div className="mb-8 grid grid-cols-2 gap-4">
-              <div className="rounded-lg border border-border bg-card p-4 text-center">
+              <div className="glass-card p-4 text-center">
                 <BarChart3 className="mx-auto mb-2 h-6 w-6 text-primary" />
                 <p className="text-3xl font-bold text-foreground">{scorePercent}%</p>
                 <p className="text-sm text-muted-foreground">
                   {result.score}/{result.totalQuestions} {t('results.score')}
                 </p>
               </div>
-              <div className="rounded-lg border border-border bg-card p-4 text-center">
+              <div className="glass-card p-4 text-center">
                 <Clock className="mx-auto mb-2 h-6 w-6 text-primary" />
                 <p className="text-3xl font-bold text-foreground">
                   {minutes}:{String(seconds).padStart(2, '0')}
@@ -105,7 +107,7 @@ export default function Results() {
             <div className="mt-8 flex gap-3">
               <Button
                 variant="default"
-                className="flex-1 gap-2"
+                className="flex-1 gap-2 btn-glow"
                 onClick={() => {
                   sessionStorage.removeItem('quizResults');
                   navigate('/quiz?mode=exam');
@@ -116,7 +118,7 @@ export default function Results() {
               </Button>
               <Button
                 variant="outline"
-                className="flex-1 gap-2"
+                className="flex-1 gap-2 glow-hover"
                 onClick={() => {
                   sessionStorage.removeItem('quizResults');
                   navigate('/');
@@ -126,8 +128,8 @@ export default function Results() {
                 {t('results.home')}
               </Button>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
 
       <SubscriptionGate open={showGate} onOpenChange={setShowGate} />
