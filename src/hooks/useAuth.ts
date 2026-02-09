@@ -19,12 +19,21 @@ export function useAuth() {
     }
   }, []);
 
+  const hashToken = useCallback(async (token: string): Promise<string> => {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(token);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  }, []);
+
   const updateSessionToken = useCallback(async (userId: string, accessToken: string) => {
+    const tokenHash = await hashToken(accessToken);
     await supabase
       .from('profiles')
-      .update({ session_token: accessToken } as any)
+      .update({ session_token: tokenHash } as any)
       .eq('id', userId);
-  }, []);
+  }, [hashToken]);
 
   const startPolling = useCallback((userId: string) => {
     clearPolling();
@@ -38,7 +47,8 @@ export function useAuth() {
         .eq('id', userId)
         .single();
 
-      if (data && (data as any).session_token && (data as any).session_token !== currentSession.access_token) {
+      const currentHash = await hashToken(currentSession.access_token);
+      if (data && (data as any).session_token && (data as any).session_token !== currentHash) {
         clearPolling();
         toast({
           title: 'Session terminée',

@@ -24,9 +24,19 @@ export default function QuizQuestion({
   showFeedback,
   hideTranslation = false,
 }: QuizQuestionProps) {
-  const options: string[] = Array.isArray(question.options) 
-    ? question.options 
-    : JSON.parse(question.options as unknown as string);
+  let options: string[] = [];
+  try {
+    const raw = Array.isArray(question.options)
+      ? question.options
+      : JSON.parse(question.options as unknown as string);
+    if (Array.isArray(raw) && raw.every((o) => typeof o === 'string')) {
+      options = raw;
+    } else {
+      options = ['Error loading options'];
+    }
+  } catch {
+    options = ['Error loading options'];
+  }
 
   const isCorrect = selectedAnswer === question.correct_answer;
   const hasAnswered = selectedAnswer !== undefined;
