@@ -62,15 +62,21 @@ export function useAuth() {
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, newSession) => {
+      (event, newSession) => {
+        // Synchronous state updates only — no awaits before these
         setSession(newSession);
         setUser(newSession?.user ?? null);
         sessionRef.current = newSession;
         setLoading(false);
 
+        // Defer async work to avoid corrupting React's internal queue
         if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && newSession?.user) {
-          await updateSessionToken(newSession.user.id, newSession.access_token);
-          startPolling(newSession.user.id);
+          const uid = newSession.user.id;
+          const token = newSession.access_token;
+          setTimeout(() => {
+            updateSessionToken(uid, token);
+            startPolling(uid);
+          }, 0);
         }
 
         if (event === 'SIGNED_OUT') {
