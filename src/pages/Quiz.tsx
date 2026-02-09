@@ -45,10 +45,16 @@ export default function Quiz() {
         return;
       }
 
-      const parsed = (data || []).map((q) => ({
-        ...q,
-        options: typeof q.options === 'string' ? JSON.parse(q.options) : q.options,
-      })) as Question[];
+      const parsed = (data || []).map((q) => {
+        let opts: string[];
+        try {
+          const raw = typeof q.options === 'string' ? JSON.parse(q.options) : q.options;
+          opts = Array.isArray(raw) && raw.every((o: unknown) => typeof o === 'string') ? raw : ['Error loading options'];
+        } catch {
+          opts = ['Error loading options'];
+        }
+        return { ...q, options: opts } as Question;
+      });
 
       const selected = selectQuestionsByDistribution(parsed, [], {
         level: levelParam,
