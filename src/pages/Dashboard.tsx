@@ -136,55 +136,22 @@ export default function Dashboard() {
 
         {/* Stats grid */}
         <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <Card>
-            <CardContent className="flex items-center gap-4 p-6">
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
-                <TrendingUp className="h-6 w-6 text-primary" />
+          {[
+            { icon: TrendingUp, label: 'Probabilité de réussite', value: `${passProb}%` },
+            { icon: BookOpen, label: 'Examens passés', value: String(totalExams) },
+            { icon: Target, label: 'Score moyen', value: `${avgScore}%` },
+            { icon: BarChart3, label: 'Réussis', value: `${totalPassed}/${totalExams}` },
+          ].map(({ icon: Icon, label, value }) => (
+            <div key={label} className="glass-card glow-hover flex items-center gap-4 p-6">
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 shadow-[0_0_10px_hsl(var(--primary)/0.15)]">
+                <Icon className="h-6 w-6 text-primary" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Probabilité de réussite</p>
-                <p className="text-2xl font-bold text-foreground">{passProb}%</p>
+                <p className="text-sm text-muted-foreground">{label}</p>
+                <p className="text-2xl font-bold text-foreground">{value}</p>
               </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="flex items-center gap-4 p-6">
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
-                <BookOpen className="h-6 w-6 text-primary" />
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Examens passés</p>
-                <p className="text-2xl font-bold text-foreground">{totalExams}</p>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="flex items-center gap-4 p-6">
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
-                <Target className="h-6 w-6 text-primary" />
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Score moyen</p>
-                <p className="text-2xl font-bold text-foreground">{avgScore}%</p>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="flex items-center gap-4 p-6">
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
-                <BarChart3 className="h-6 w-6 text-primary" />
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Réussis</p>
-                <p className="text-2xl font-bold text-foreground">
-                  {totalPassed}/{totalExams}
-                </p>
-              </div>
-            </CardContent>
-          </Card>
+            </div>
+          ))}
         </div>
 
         {/* Progression Bar */}
@@ -193,134 +160,118 @@ export default function Dashboard() {
         </div>
 
         {/* Pass probability bar */}
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle className="font-serif text-lg">Probabilité de réussite</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="mb-2 flex justify-between text-sm">
-              <span className="text-muted-foreground">Basée sur vos 5 derniers examens</span>
-              <span className="font-medium text-foreground">{passProb}%</span>
-            </div>
-            <Progress value={passProb} className="h-4" />
-            <p className="mt-2 text-xs text-muted-foreground">Seuil de réussite : 80%</p>
-          </CardContent>
-        </Card>
+        <div className="glass-card mb-8 p-6">
+          <h3 className="font-serif text-lg font-semibold text-foreground mb-4">Probabilité de réussite</h3>
+          <div className="mb-2 flex justify-between text-sm">
+            <span className="text-muted-foreground">Basée sur vos 5 derniers examens</span>
+            <span className="font-medium text-foreground">{passProb}%</span>
+          </div>
+          <Progress value={passProb} className="h-4" />
+          <p className="mt-2 text-xs text-muted-foreground">Seuil de réussite : 80%</p>
+        </div>
 
         {/* Level Selector */}
-        <Card className="mb-8">
-          <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="font-serif text-lg">Niveau d'examen</CardTitle>
-            <Button onClick={handleStartExam} size="sm">
+        <div className="glass-card mb-8 p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-serif text-lg font-semibold text-foreground">Niveau d'examen</h3>
+            <Button onClick={handleStartExam} size="sm" className="btn-glow">
               Lancer l'examen
             </Button>
-          </CardHeader>
-          <CardContent>
-            <LevelSelector
-              selectedLevel={selectedLevel}
-              onSelect={setSelectedLevel}
-              isSubscribed={isTier1OrAbove}
-            />
-          </CardContent>
-        </Card>
+          </div>
+          <LevelSelector
+            selectedLevel={selectedLevel}
+            onSelect={setSelectedLevel}
+            isSubscribed={isTier1OrAbove}
+          />
+        </div>
 
         {/* Category Training */}
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle className="font-serif text-lg">Entraînement par catégorie</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="relative">
-              <p className="mb-4 text-sm text-muted-foreground">
-                Choisissez une catégorie pour un entraînement ciblé
-                {!isTier1OrAbove && ' (réservé aux abonnés Tier 1+)'}
-              </p>
-              <CategorySelector onSelect={handleCategorySelect} />
-              {!isTier1OrAbove && (
-                <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-background/80 backdrop-blur-sm">
-                  <div className="text-center">
-                    <Lock className="mx-auto mb-2 h-8 w-8 text-muted-foreground" />
-                    <p className="mb-3 text-sm font-medium text-foreground">
-                      Réservé aux abonnés Tier 1
-                    </p>
-                    <Button size="sm" onClick={() => openGate('tier_1')}>
-                      Passer au Tier 1
-                    </Button>
-                  </div>
+        <div className="glass-card mb-8 p-6">
+          <h3 className="font-serif text-lg font-semibold text-foreground mb-4">Entraînement par catégorie</h3>
+          <div className="relative">
+            <p className="mb-4 text-sm text-muted-foreground">
+              Choisissez une catégorie pour un entraînement ciblé
+              {!isTier1OrAbove && ' (réservé aux abonnés Tier 1+)'}
+            </p>
+            <CategorySelector onSelect={handleCategorySelect} />
+            {!isTier1OrAbove && (
+              <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-background/80 backdrop-blur-md">
+                <div className="text-center">
+                  <Lock className="mx-auto mb-2 h-8 w-8 text-muted-foreground" />
+                  <p className="mb-3 text-sm font-medium text-foreground">
+                    Réservé aux abonnés Tier 1
+                  </p>
+                  <Button size="sm" className="btn-glow" onClick={() => openGate('tier_1')}>
+                    Passer au Tier 1
+                  </Button>
                 </div>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Premium Video Guides */}
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle className="font-serif text-lg">Guides vidéo premium</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <PremiumVideoGuides isTier2={isTier2} />
-          </CardContent>
-        </Card>
-
-        {/* Exam history */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="font-serif text-lg">Historique des examens</CardTitle>
-            <Button onClick={() => navigate('/quiz?mode=exam')} size="sm">
-              Nouvel examen
-            </Button>
-          </CardHeader>
-          <CardContent>
-            {examHistory.length === 0 ? (
-              <div className="py-8 text-center">
-                <Clock className="mx-auto mb-3 h-10 w-10 text-muted-foreground" />
-                <p className="text-muted-foreground">Aucun examen passé pour le moment</p>
-                <Button
-                  className="mt-4"
-                  variant="outline"
-                  onClick={() => navigate('/quiz?mode=exam')}
-                >
-                  Passer votre premier examen
-                </Button>
-              </div>
-            ) : (
-              <div className="space-y-3">
-                {[...examHistory].reverse().map((entry, i) => {
-                  const percent = Math.round((entry.score / entry.totalQuestions) * 100);
-                  const mins = Math.floor(entry.timeSpent / 60);
-                  return (
-                    <div
-                      key={i}
-                      className="flex items-center justify-between rounded-lg border border-border p-4"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div
-                          className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold ${
-                            entry.passed
-                              ? 'bg-primary/10 text-primary'
-                              : 'bg-destructive/10 text-destructive'
-                          }`}
-                        >
-                          {percent}%
-                        </div>
-                        <div>
-                          <p className="font-medium text-foreground">
-                            {entry.score}/{entry.totalQuestions} —{' '}
-                            {entry.passed ? 'Réussi' : 'Échoué'}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            {new Date(entry.date).toLocaleDateString('fr-FR')} · {mins} min
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
               </div>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
+
+        {/* Premium Video Guides */}
+        <div className="glass-card mb-8 p-6">
+          <h3 className="font-serif text-lg font-semibold text-foreground mb-4">Guides vidéo premium</h3>
+          <PremiumVideoGuides isTier2={isTier2} />
+        </div>
+
+        {/* Exam history */}
+        <div className="glass-card p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-serif text-lg font-semibold text-foreground">Historique des examens</h3>
+            <Button onClick={() => navigate('/quiz?mode=exam')} size="sm" className="btn-glow">
+              Nouvel examen
+            </Button>
+          </div>
+          {examHistory.length === 0 ? (
+            <div className="py-8 text-center">
+              <Clock className="mx-auto mb-3 h-10 w-10 text-muted-foreground" />
+              <p className="text-muted-foreground">Aucun examen passé pour le moment</p>
+              <Button
+                className="mt-4 btn-glow"
+                variant="outline"
+                onClick={() => navigate('/quiz?mode=exam')}
+              >
+                Passer votre premier examen
+              </Button>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {[...examHistory].reverse().map((entry, i) => {
+                const percent = Math.round((entry.score / entry.totalQuestions) * 100);
+                const mins = Math.floor(entry.timeSpent / 60);
+                return (
+                  <div
+                    key={i}
+                    className="flex items-center justify-between rounded-lg border border-border/30 bg-secondary/30 p-4 glow-hover"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div
+                        className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold ${
+                          entry.passed
+                            ? 'bg-primary/20 text-primary'
+                            : 'bg-destructive/20 text-destructive'
+                        }`}
+                      >
+                        {percent}%
+                      </div>
+                      <div>
+                        <p className="font-medium text-foreground">
+                          {entry.score}/{entry.totalQuestions} —{' '}
+                          {entry.passed ? 'Réussi' : 'Échoué'}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {new Date(entry.date).toLocaleDateString('fr-FR')} · {mins} min
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
       </div>
       <Footer />
       <SubscriptionGate open={showGate} onOpenChange={setShowGate} requiredTier={gateTier} />

@@ -1,6 +1,5 @@
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import {
   Dialog,
   DialogContent,
@@ -37,12 +36,19 @@ export default function SubscriptionGate({ open, onOpenChange, requiredTier = 't
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent className="sm:max-w-lg glass-card border-border/50 bg-card/95 backdrop-blur-2xl">
+        {/* Classified stamp */}
+        <div className="absolute top-4 right-12 rotate-12 border-2 border-destructive/40 px-3 py-1 rounded">
+          <span className="text-xs font-bold uppercase tracking-widest text-destructive/60">
+            Classifié
+          </span>
+        </div>
+
         <DialogHeader>
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 shadow-[0_0_30px_hsl(var(--primary)/0.3)]">
             <Sparkles className="h-8 w-8 text-primary" />
           </div>
-          <DialogTitle className="text-center font-serif text-2xl">
+          <DialogTitle className="text-center font-serif text-2xl text-foreground">
             {isTier2
               ? 'Débloquez les outils premium !'
               : 'Vous avez le potentiel pour réussir !'}
@@ -65,31 +71,31 @@ export default function SubscriptionGate({ open, onOpenChange, requiredTier = 't
         </div>
 
         <div className="grid grid-cols-2 gap-3">
-          <Card className="cursor-pointer border-2 transition-colors hover:border-primary">
-            <CardContent className="p-4 text-center">
-              <p className="text-sm text-muted-foreground">Mensuel</p>
-              <p className="font-serif text-2xl font-bold text-foreground">
-                {isTier2 ? '9,99 €' : '6,99 €'}
-              </p>
-              <p className="text-xs text-muted-foreground">/mois</p>
-            </CardContent>
-          </Card>
-          <Card className="cursor-pointer border-2 border-primary">
-            <CardContent className="p-4 text-center">
-              <p className="text-sm font-medium text-primary">Populaire</p>
-              <p className="font-serif text-2xl font-bold text-foreground">
-                {isTier2 ? '12,99 €' : '30,99 €'}
-              </p>
-              <p className="text-xs text-muted-foreground">/6 mois</p>
-            </CardContent>
-          </Card>
+          <div className="glass-card cursor-pointer p-4 text-center transition-all hover:border-primary/50 glow-hover">
+            <p className="text-sm text-muted-foreground">Mensuel</p>
+            <p className="font-serif text-2xl font-bold text-foreground">
+              {isTier2 ? '9,99 €' : '6,99 €'}
+            </p>
+            <p className="text-xs text-muted-foreground">/mois</p>
+          </div>
+          <div className="glass-card cursor-pointer p-4 text-center border-primary/50 shadow-[0_0_20px_hsl(var(--primary)/0.15)]">
+            <p className="text-sm font-medium text-primary">Populaire</p>
+            <p className="font-serif text-2xl font-bold text-foreground">
+              {isTier2 ? '12,99 €' : '30,99 €'}
+            </p>
+            <p className="text-xs text-muted-foreground">/6 mois</p>
+          </div>
         </div>
 
         <div className="mt-2 flex flex-col gap-2">
-          <Button size="lg" className="w-full" onClick={() => { onOpenChange(false); navigate('/#pricing'); }}>
+          <Button
+            size="lg"
+            className="w-full pulse-unlock shine-border btn-glow"
+            onClick={() => { onOpenChange(false); navigate('/#pricing'); }}
+          >
             {isTier2 ? 'Passer au Tier 2' : 'Débloquer l\'accès — 6,99 €/mois'}
           </Button>
-          <Button variant="ghost" size="sm" onClick={() => onOpenChange(false)}>
+          <Button variant="ghost" size="sm" className="text-muted-foreground" onClick={() => onOpenChange(false)}>
             Peut-être plus tard
           </Button>
         </div>
