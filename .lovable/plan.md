@@ -1,152 +1,135 @@
 
-# Examen Civique 2026 -- Premium Ecosystem & Information Center
 
-This plan covers four major areas: premium subscriber features, three exam difficulty levels, legal compliance, and header/footer expansion. Given the scope, this will be broken into manageable implementation steps.
+# Landing Page Animation Overhaul
 
----
-
-## 1. Database Changes
-
-A new migration will add a `difficulty_level` column to the `questions` table and an `exam_level` preference to `profiles`:
-
-- **`questions` table**: Add `difficulty_level TEXT DEFAULT 'CSP'` with values `CSP`, `CR`, or `Naturalisation`. All existing 20 questions will default to `CSP`.
-- **`profiles` table**: Add `weak_category TEXT` (computed on save) and `total_questions_seen INTEGER DEFAULT 0` to support the progression and weakness analytics.
+This plan upgrades every section of the landing page with a cinematic, sequenced animation system -- from the navbar fade-in on page load, through staggered hero reveals, to scroll-triggered section animations with counting effects and hover micro-interactions.
 
 ---
 
-## 2. Premium Subscriber Features
+## What Will Change
 
-### 2a. Category Training Mode
-- Create a new page **`/quiz?mode=training&category=History`** allowing subscribers to practice questions from a single category.
-- Add a **Category Selector** component on the Dashboard with clickable cards for each of the 5 categories (Principles, Institutions, Rights, History, Living).
-- When a category is selected, the quiz engine filters questions to only that category (no distribution quotas).
-- Protected by a subscription check -- non-subscribers see the `SubscriptionGate` modal.
+### 1. Navbar Fade-In on Page Load
+The header will subtly fade in and slide down from the top when the page first loads. This only applies on the landing page (Index route) so it does not affect navigation on other pages.
 
-### 2b. Progression Bar
-- Add a **Progression Bar** widget to the Dashboard showing `used_questions.length / total_questions_in_bank * 100%`.
-- Query the total count from the `questions` table and compare against the user's `used_questions` array in their profile.
-- Visual: a horizontal progress bar with percentage label (e.g., "42/80 questions completed -- 52%").
+- Add a `loaded` state with a short delay (similar to the hero pattern)
+- Apply `opacity-0 -translate-y-2` initially, transitioning to `opacity-100 translate-y-0`
 
-### 2c. Weakness Analytics ("Smart Pop-up")
-- After each exam result is saved, compute the user's weakest category from their `exam_history` JSON.
-- On the Dashboard, show an **alert banner** at the top when a weakness is detected (e.g., category score below 60%).
-- The alert includes a direct "Practice this category" button that links to `/quiz?mode=training&category=X`.
+### 2. Enhanced Hero Animation Sequence
+The hero section already has staged animations. This will refine the timing and add:
 
-### 2d. Training vs. Exam Mode Enforcement
-Current behavior already partially implements this. The changes will enforce stricter rules:
+- **Icon**: Appears first with a scale + fade (already exists, will refine timing)
+- **Headline**: Fades in and slides up after the icon (delay ~200ms)
+- **Subtitle**: Fades in after the headline (delay ~400ms)
+- **CTA Buttons**: Slide up from the bottom with a slight bounce effect (delay ~600ms), plus a brief glow on the button borders
+- **Hero Illustration**: Add a decorative SVG illustration (book with rising bars and upward arrow) that slides in from the right, with bars that "grow" upward and a gentle floating animation after entry
 
-- **Training Mode** (currently "Study Mode"):
-  - Real-time feedback after each answer.
-  - Explanations visible.
-  - Translation button enabled.
-  
-- **Exam Mode**:
-  - 45-minute timer.
-  - No explanations shown during the test.
-  - Translation button **hidden** (French-only).
-  - No results shown until the "Submit" button is pressed at the end.
-  - Modify `QuizQuestion.tsx` to conditionally hide `TranslateButton` when `mode === 'exam'`.
+### 3. Feature Cards (LandingCategoryTabs) -- Staggered Slide-In
+The category section currently uses `AnimatedSection` but all tabs appear together. This will:
 
----
+- Convert the 5 category buttons into 3 featured cards ("Principes Republicains", "Histoire & Institutions", "Vie Quotidienne en France") that slide in from the bottom with staggered delays (0ms, 150ms, 300ms)
+- Each card gets a subtle fade-in combined with the slide-up
+- Keep the existing category description panel and training button below
 
-## 3. Three Exam Levels
+### 4. Dashboard Preview (LandingPassProbability) -- Animated Entry
+- The `PassProbabilityRing` already animates its fill from 0% to the target value. Will ensure it only starts animating when scrolled into view (using intersection observer state)
+- The stat cards (Examens passes, Score moyen, Seuil officiel) will slide up with staggered delays
+- The progress bar will animate its fill from left to right when entering the viewport
 
-### 3a. Type Definitions
-Add a new type `ExamLevel = 'CSP' | 'CR' | 'Naturalisation'` to `src/lib/types.ts`.
+### 5. Pricing/Paywall Section -- Animated Entry
+- Cards slide up and fade in with staggered delays (already partially implemented)
+- Add a subtle "lock" shimmer icon effect on the pricing section heading
 
-### 3b. Level Selector UI
-- Add a **level toggle** component (3 tabs/cards) shown before starting an exam on the Dashboard or a pre-quiz screen.
-- Each level shows its name and a short description:
-  - **CSP** (Carte de Sejour Pluriannuelle): "Standard -- valeurs republicaines fondamentales"
-  - **CR** (Carte de Resident): "Avance -- institutions et contexte de residence"
-  - **Naturalisation**: "Expert -- patrimoine, Constitution et histoire approfondie"
-- Only subscribers can access CR and Naturalisation levels.
+### 6. Bottom Progress Bar
+- The global progress bar at the bottom of the page will animate its fill from 0% to 50% when it scrolls into view
 
-### 3c. Quiz Engine Integration
-- The `selectQuestionsByDistribution` function will accept an optional `level` parameter.
-- It filters the question pool by `difficulty_level` before applying the distribution quotas.
-- Fallback: if not enough questions exist for a level, fill from the general pool (same as current behavior).
+### 7. Hover Effects (Global)
+Add consistent hover micro-interactions throughout:
+
+- **Buttons**: Gentle scale-up (`scale(1.03)`) and a subtle glowing border shadow on hover
+- **Cards**: Slight lift (`translateY(-3px)`) with a more pronounced shadow on hover
+- Apply these via Tailwind utility classes added to the relevant components
 
 ---
 
-## 4. Legal Compliance & Footer
+## Technical Details
 
-### 4a. Footer Enhancement
-- Expand the footer in `Index.tsx` (and create a reusable `Footer.tsx` component used across all pages) with:
-  - The legal disclaimer in a prominent, bordered box: *"Ce site n'est pas affilie au gouvernement francais. Il s'agit d'une plateforme d'entrainement privee pour l'Examen Civique."*
-  - Links to: About, Pricing, Legal Notice.
-  - Copyright notice.
+### Files to Modify
 
-### 4b. Landing Page Disclaimer
-- Add the same disclaimer text on the landing page, positioned between the hero and pricing sections or just above the footer.
+1. **`src/components/Header.tsx`**
+   - Accept an optional `animate` prop (boolean)
+   - When `animate=true`, use a `loaded` state + `useEffect` timer to trigger fade-in from top
+   - Wrap the header content in transition classes
 
----
+2. **`src/pages/Index.tsx`**
+   - Pass `animate` prop to `<Header />`
 
-## 5. Header Expansion
+3. **`src/components/HeroSection.tsx`**
+   - Add an SVG illustration component (book with rising bars + arrow) that slides in from the right
+   - Add CSS keyframes for bar growth animation and gentle floating bob
+   - Refine button animation with a brief glow/border shimmer using a CSS animation
+   - Adjust delay timings for the cinematic sequence: icon (0ms), headline (200ms), subtitle (400ms), buttons (600ms), illustration (800ms)
 
-### 5a. Pricing Link
-- Add a "Tarifs" / "Pricing" link in the Header navigation that smooth-scrolls to `#pricing` on the landing page, or navigates to `/#pricing` from other pages.
+4. **`src/components/LandingCategoryTabs.tsx`**
+   - Restructure into 3 feature cards (Principes, Histoire, Vie Quotidienne) instead of 5 tab buttons
+   - Each card uses `AnimatedSection` with staggered `delay` (0, 150, 300)
+   - Cards include icons + descriptions and link to study mode
 
-### 5b. "About The Exam" Page
-- Create a new **`/about`** page with official information about the French civic exam.
-- Content sourced from the Ministry of Interior:
-  - What is the Examen Civique?
-  - Who must take it? (CSP, CR, Naturalisation candidates)
-  - What it covers (values, institutions, rights, history, daily life)
-  - Official pass threshold (80%)
-  - Format (40 questions, 45 minutes, 4 options each)
-  - Link to official government resources.
-- Add an "A propos" link in the Header navigation.
+5. **`src/components/LandingPassProbability.tsx`**
+   - Connect `PassProbabilityRing` animation trigger to the `AnimatedSection` visibility state
+   - Add a `useScrollAnimation` hook to detect when the ring enters the viewport, then start the ring fill animation
+   - Stagger stat cards entry (100ms, 200ms, 300ms)
+   - Animate the bottom progress bar fill from 0% when scrolled into view
 
----
+6. **`src/components/PassProbabilityRing.tsx`**
+   - Add an optional `startAnimation` prop that controls when the fill animation begins (defaults to `true` for backward compatibility)
 
-## 6. New Files and Modified Files
+7. **`src/components/PricingSection.tsx`**
+   - Add a lock icon with shimmer/glow animation near the section heading
+   - Enhance card hover effects with `hover:-translate-y-1 hover:shadow-lg` (partially exists)
 
-### New Files
-| File | Purpose |
-|------|---------|
-| `src/components/Footer.tsx` | Reusable footer with legal disclaimer |
-| `src/components/CategorySelector.tsx` | Category training picker for dashboard |
-| `src/components/WeaknessAlert.tsx` | Smart pop-up for weakest category |
-| `src/components/LevelSelector.tsx` | CSP/CR/Naturalisation toggle |
-| `src/pages/About.tsx` | Official exam information page |
-| `supabase/migrations/[timestamp].sql` | Add `difficulty_level` column to questions |
+8. **`tailwind.config.ts`**
+   - Add new keyframes: `float` (gentle bobbing), `glow` (border shimmer), `grow-bar` (bar chart growth), `shimmer` (lock icon effect)
+   - Add corresponding animation utilities
 
-### Modified Files
-| File | Changes |
-|------|---------|
-| `src/lib/types.ts` | Add `ExamLevel` type, update `Question` interface |
-| `src/lib/quizDistribution.ts` | Add `level` and `category` filter params |
-| `src/pages/Quiz.tsx` | Enforce exam mode rules (hide translate, hide feedback), support `category` and `level` query params |
-| `src/components/QuizQuestion.tsx` | Conditionally hide `TranslateButton` in exam mode |
-| `src/pages/Dashboard.tsx` | Add progression bar, weakness alert, category training cards, level selector |
-| `src/pages/Index.tsx` | Use new `Footer` component, add disclaimer section |
-| `src/components/Header.tsx` | Add "Tarifs" and "A propos" navigation links |
-| `src/App.tsx` | Add `/about` route |
-| `src/contexts/LanguageContext.tsx` | Add new translation keys for all new UI text |
-| `src/components/SubscriptionGate.tsx` | Update to mention category training and exam levels as premium features |
+9. **`src/index.css`**
+   - Add `.hover-lift` utility class for card hover (translate + shadow)
+   - Add `.btn-glow` utility class for button hover glow effect
 
----
+### Animation Timing Summary
 
-## 7. Implementation Order
+```text
+Page Load (t=0)
+  |
+  +-- Navbar fades in (0-300ms)
+  |
+  +-- Hero icon scales in (100-800ms)
+  +-- Hero headline slides up (300-1000ms)
+  +-- Hero subtitle slides up (500-1200ms)
+  +-- Hero buttons slide up + glow (700-1400ms)
+  +-- Hero illustration slides in from right (900-1600ms)
+  |     +-- Bars grow upward (1100-1800ms)
+  |     +-- Arrow draws/lights up (1400-2000ms)
+  |     +-- Gentle float loop begins
+  |
+  [User scrolls down]
+  |
+  +-- Feature Card 1 slides up (on enter)
+  +-- Feature Card 2 slides up (+150ms)
+  +-- Feature Card 3 slides up (+300ms)
+  |
+  +-- Dashboard Preview slides up (on enter)
+  |     +-- Ring fills 0% -> 75% (on enter, 1200ms)
+  |     +-- Stat cards stagger in (+100/200/300ms)
+  |     +-- Progress bar fills left-to-right (on enter)
+  |
+  +-- Pricing cards slide up (on enter, staggered)
+  |     +-- Lock icon shimmer effect
+  |
+  +-- Bottom progress bar fills 0% -> 50% (on enter)
+```
 
-Given the scope, implementation will proceed in this sequence:
+### Hover Effects (applied globally)
 
-1. **Database migration** -- Add `difficulty_level` column to questions.
-2. **Types and quiz engine** -- Update types, add level/category filtering to distribution logic.
-3. **Exam mode enforcement** -- Hide translations and feedback in exam mode.
-4. **Footer and legal disclaimer** -- Create reusable Footer component.
-5. **About page** -- Create the informational page with official exam details.
-6. **Header updates** -- Add Pricing and About links.
-7. **Dashboard enhancements** -- Progression bar, weakness alert, category selector, level selector.
-8. **Translation keys** -- Add all new UI strings to the 6-language dictionary.
+- Buttons: `transition-transform duration-200 hover:scale-[1.03]` + glow box-shadow
+- Cards: `transition-all duration-300 hover:-translate-y-[3px] hover:shadow-lg`
 
----
-
-## Technical Notes
-
-- The `difficulty_level` column will use a `TEXT` type with a `CHECK` constraint rather than an enum, to allow easy future expansion.
-- Weakness calculation: iterate over `exam_history` entries, compute average score per category, identify the one with the lowest average. Only show the alert when the user has completed at least 2 exams and the weakest category is below 60%.
-- The progression bar reads from `used_questions` (UUID array already in profiles) and compares against `SELECT COUNT(*) FROM questions`.
-- Category training mode reuses the existing `Quiz.tsx` page with a `category` search param -- no separate page needed.
-- All premium features (category training, CR/Naturalisation levels) check `is_subscribed` from the user's profile before proceeding.
