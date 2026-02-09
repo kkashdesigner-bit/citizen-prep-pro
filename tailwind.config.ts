@@ -89,20 +89,36 @@ export default {
 				'50%': { opacity: '1', transform: 'scale(1.05)' },
 				'100%': { opacity: '0.5', transform: 'scale(0.95)' }
 			},
-			'draw-up': {
-				'0%': { transform: 'translateY(8px)', opacity: '0' },
-				'100%': { transform: 'translateY(0)', opacity: '1' }
+		'draw-up': {
+			'0%': { transform: 'translateY(8px)', opacity: '0' },
+			'100%': { transform: 'translateY(0)', opacity: '1' }
+		},
+		'confetti-fall': {
+			'0%': {
+				transform: 'translateY(0) translateX(0) rotate(0deg)',
+				opacity: '1'
+			},
+			'100%': {
+				transform: 'translateY(400px) translateX(var(--confetti-drift, 20px)) rotate(var(--confetti-rotation, 360deg))',
+				opacity: '0'
 			}
 		},
-		animation: {
-			'accordion-down': 'accordion-down 0.2s ease-out',
-			'accordion-up': 'accordion-up 0.2s ease-out',
-			'float': 'float 3s ease-in-out infinite',
-			'glow': 'glow 2s ease-in-out',
-			'grow-bar': 'grow-bar 0.8s ease-out forwards',
-			'shimmer': 'shimmer 2.5s ease-in-out infinite',
-			'draw-up': 'draw-up 0.6s ease-out forwards'
-		},
+		'hero-sway': {
+			'0%, 100%': { transform: 'translateY(0)' },
+			'50%': { transform: 'translateY(-5px)' }
+		}
+	},
+	animation: {
+		'accordion-down': 'accordion-down 0.2s ease-out',
+		'accordion-up': 'accordion-up 0.2s ease-out',
+		'float': 'float 3s ease-in-out infinite',
+		'glow': 'glow 2s ease-in-out',
+		'grow-bar': 'grow-bar 0.8s ease-out forwards',
+		'shimmer': 'shimmer 2.5s ease-in-out infinite',
+		'draw-up': 'draw-up 0.6s ease-out forwards',
+		'confetti-fall': 'confetti-fall 4s ease-in-out infinite',
+		'hero-sway': 'hero-sway 3.5s ease-in-out infinite'
+	},
 		fontFamily: {
 			sans: ['Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'sans-serif'],
 			serif: ['Playfair Display', 'ui-serif', 'Georgia', 'serif'],
