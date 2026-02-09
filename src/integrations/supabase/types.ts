@@ -16,8 +16,11 @@ export type Database = {
     Tables: {
       profiles: {
         Row: {
+          avatar_url: string | null
           created_at: string
+          credits: number
           display_name: string | null
+          email: string | null
           exam_history: Json | null
           id: string
           is_subscribed: boolean
@@ -30,8 +33,11 @@ export type Database = {
           weak_category: string | null
         }
         Insert: {
+          avatar_url?: string | null
           created_at?: string
+          credits?: number
           display_name?: string | null
+          email?: string | null
           exam_history?: Json | null
           id: string
           is_subscribed?: boolean
@@ -44,8 +50,11 @@ export type Database = {
           weak_category?: string | null
         }
         Update: {
+          avatar_url?: string | null
           created_at?: string
+          credits?: number
           display_name?: string | null
+          email?: string | null
           exam_history?: Json | null
           id?: string
           is_subscribed?: boolean
