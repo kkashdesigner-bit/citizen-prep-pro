@@ -3,7 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
+import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/hooks/useAuth';
+import { useSubscription } from '@/hooks/useSubscription';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
 import Header from '@/components/Header';
@@ -13,8 +15,10 @@ import ProgressionBar from '@/components/ProgressionBar';
 import CategorySelector from '@/components/CategorySelector';
 import LevelSelector from '@/components/LevelSelector';
 import SubscriptionGate from '@/components/SubscriptionGate';
-import { BarChart3, BookOpen, Clock, Target, TrendingUp } from 'lucide-react';
+import PremiumVideoGuides from '@/components/PremiumVideoGuides';
+import { BarChart3, BookOpen, Clock, Lock, Target, TrendingUp } from 'lucide-react';
 import { Category, ExamLevel } from '@/lib/types';
+import { TIER_LABELS, TIER_BADGE_VARIANT } from '@/lib/subscriptionTiers';
 
 interface ExamHistoryEntry {
   date: string;
@@ -27,15 +31,16 @@ interface ExamHistoryEntry {
 
 export default function Dashboard() {
   const { user, loading: authLoading } = useAuth();
+  const { tier, isTier1OrAbove, isTier2, loading: tierLoading } = useSubscription();
   const { language } = useLanguage();
   const navigate = useNavigate();
   const [examHistory, setExamHistory] = useState<ExamHistoryEntry[]>([]);
-  const [isSubscribed, setIsSubscribed] = useState(false);
   const [usedQuestions, setUsedQuestions] = useState<string[]>([]);
   const [totalQuestionCount, setTotalQuestionCount] = useState(0);
   const [selectedLevel, setSelectedLevel] = useState<ExamLevel>('CSP');
   const [loading, setLoading] = useState(true);
   const [showGate, setShowGate] = useState(false);
+  const [gateTier, setGateTier] = useState<'tier_1' | 'tier_2'>('tier_1');
 
   useEffect(() => {
     if (authLoading) return;
@@ -48,7 +53,7 @@ export default function Dashboard() {
       const [profileResult, countResult] = await Promise.all([
         supabase
           .from('profiles')
-          .select('exam_history, is_subscribed, used_questions')
+          .select('exam_history, used_questions')
           .eq('id', user.id)
           .maybeSingle(),
         supabase
@@ -58,7 +63,6 @@ export default function Dashboard() {
 
       if (profileResult.data) {
         setExamHistory((profileResult.data.exam_history as unknown as ExamHistoryEntry[]) || []);
-        setIsSubscribed(profileResult.data.is_subscribed);
         setUsedQuestions((profileResult.data.used_questions as string[]) || []);
       }
       setTotalQuestionCount(countResult.count || 0);
@@ -68,9 +72,14 @@ export default function Dashboard() {
     fetchData();
   }, [user, authLoading, navigate]);
 
+  const openGate = (requiredTier: 'tier_1' | 'tier_2') => {
+    setGateTier(requiredTier);
+    setShowGate(true);
+  };
+
   const handleCategorySelect = (category: Category) => {
-    if (!isSubscribed) {
-      setShowGate(true);
+    if (!isTier1OrAbove) {
+      openGate('tier_1');
       return;
     }
     navigate(`/quiz?mode=training&category=${category}`);
@@ -80,7 +89,7 @@ export default function Dashboard() {
     navigate(`/quiz?mode=exam&level=${selectedLevel}`);
   };
 
-  if (authLoading || loading) {
+  if (authLoading || loading || tierLoading) {
     return (
       <div className="min-h-screen bg-background">
         <Header />
@@ -112,9 +121,14 @@ export default function Dashboard() {
     <div className="min-h-screen bg-background">
       <Header />
       <div className="container py-8">
-        <div className="mb-8">
-          <h1 className="font-serif text-3xl font-bold text-foreground">Tableau de bord</h1>
-          <p className="text-muted-foreground">Suivez votre progression et vos résultats</p>
+        <div className="mb-8 flex items-center gap-3">
+          <div>
+            <h1 className="font-serif text-3xl font-bold text-foreground">Tableau de bord</h1>
+            <p className="text-muted-foreground">Suivez votre progression et vos résultats</p>
+          </div>
+          <Badge variant={TIER_BADGE_VARIANT[tier]} className="ml-auto text-sm">
+            {TIER_LABELS[tier]}
+          </Badge>
         </div>
 
         {/* Weakness Alert */}
@@ -205,7 +219,7 @@ export default function Dashboard() {
             <LevelSelector
               selectedLevel={selectedLevel}
               onSelect={setSelectedLevel}
-              isSubscribed={isSubscribed}
+              isSubscribed={isTier1OrAbove}
             />
           </CardContent>
         </Card>
@@ -216,11 +230,36 @@ export default function Dashboard() {
             <CardTitle className="font-serif text-lg">Entraînement par catégorie</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="mb-4 text-sm text-muted-foreground">
-              Choisissez une catégorie pour un entraînement ciblé
-              {!isSubscribed && ' (réservé aux abonnés)'}
-            </p>
-            <CategorySelector onSelect={handleCategorySelect} />
+            <div className="relative">
+              <p className="mb-4 text-sm text-muted-foreground">
+                Choisissez une catégorie pour un entraînement ciblé
+                {!isTier1OrAbove && ' (réservé aux abonnés Tier 1+)'}
+              </p>
+              <CategorySelector onSelect={handleCategorySelect} />
+              {!isTier1OrAbove && (
+                <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-background/80 backdrop-blur-sm">
+                  <div className="text-center">
+                    <Lock className="mx-auto mb-2 h-8 w-8 text-muted-foreground" />
+                    <p className="mb-3 text-sm font-medium text-foreground">
+                      Réservé aux abonnés Tier 1
+                    </p>
+                    <Button size="sm" onClick={() => openGate('tier_1')}>
+                      Passer au Tier 1
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Premium Video Guides */}
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle className="font-serif text-lg">Guides vidéo premium</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <PremiumVideoGuides isTier2={isTier2} />
           </CardContent>
         </Card>
 
@@ -284,7 +323,7 @@ export default function Dashboard() {
         </Card>
       </div>
       <Footer />
-      <SubscriptionGate open={showGate} onOpenChange={setShowGate} />
+      <SubscriptionGate open={showGate} onOpenChange={setShowGate} requiredTier={gateTier} />
     </div>
   );
 }

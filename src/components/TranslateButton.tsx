@@ -2,13 +2,15 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { LANGUAGES, Language } from '@/lib/types';
-import { Languages } from 'lucide-react';
+import { Languages, Lock } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useSubscription } from '@/hooks/useSubscription';
+import SubscriptionGate from '@/components/SubscriptionGate';
 
 interface TranslateButtonProps {
   translatedText: string | null;
@@ -16,7 +18,9 @@ interface TranslateButtonProps {
 
 export default function TranslateButton({ translatedText }: TranslateButtonProps) {
   const { language, setLanguage } = useLanguage();
+  const { isTier2 } = useSubscription();
   const [showTranslation, setShowTranslation] = useState(false);
+  const [showGate, setShowGate] = useState(false);
   const [selectedLang, setSelectedLang] = useState<Language | null>(
     language !== 'fr' ? language : null,
   );
@@ -31,7 +35,7 @@ export default function TranslateButton({ translatedText }: TranslateButtonProps
     return null;
   }
 
-  if (showTranslation && selectedLang) {
+  if (showTranslation && selectedLang && isTier2) {
     return (
       <div className="mt-2 rounded-md border border-border bg-muted/50 p-3">
         <div className="mb-1 flex items-center justify-between">
@@ -47,6 +51,25 @@ export default function TranslateButton({ translatedText }: TranslateButtonProps
         </div>
         <p className="text-sm italic text-muted-foreground">{translatedText}</p>
       </div>
+    );
+  }
+
+  // Non-Tier 2: show locked button
+  if (!isTier2) {
+    return (
+      <>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="mt-1 gap-1.5 text-xs text-muted-foreground"
+          onClick={() => setShowGate(true)}
+        >
+          <Lock className="h-3.5 w-3.5" />
+          <Languages className="h-3.5 w-3.5" />
+          Traduire
+        </Button>
+        <SubscriptionGate open={showGate} onOpenChange={setShowGate} requiredTier="tier_2" />
+      </>
     );
   }
 
