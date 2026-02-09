@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { Check } from 'lucide-react';
+import { Check, Lock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import AnimatedSection from '@/components/AnimatedSection';
 
@@ -43,9 +43,12 @@ export default function PricingSection() {
       <div className="container">
         <AnimatedSection>
           <div className="mx-auto max-w-2xl text-center">
-            <h2 className="mb-4 font-serif text-3xl font-bold text-foreground md:text-4xl">
-              {t('pricing.title')}
-            </h2>
+            <div className="mb-4 flex items-center justify-center gap-2">
+              <Lock className="h-5 w-5 animate-shimmer text-primary" />
+              <h2 className="font-serif text-3xl font-bold text-foreground md:text-4xl">
+                {t('pricing.title')}
+              </h2>
+            </div>
           </div>
         </AnimatedSection>
 
@@ -53,7 +56,7 @@ export default function PricingSection() {
           {plans.map((plan, i) => (
             <AnimatedSection key={plan.name} delay={i * 150}>
               <Card
-                className={`relative overflow-hidden transition-all duration-300 hover:shadow-md hover:-translate-y-1 ${
+                className={`hover-lift relative overflow-hidden transition-all duration-300 ${
                   plan.popular ? 'border-2 border-primary' : ''
                 }`}
               >
@@ -79,7 +82,7 @@ export default function PricingSection() {
                     ))}
                   </ul>
                   <Button
-                    className="w-full"
+                    className="btn-glow w-full"
                     variant={plan.popular ? 'default' : 'outline'}
                     onClick={() => navigate('/auth')}
                   >
