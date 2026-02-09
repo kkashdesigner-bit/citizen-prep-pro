@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import PassProbabilityRing from '@/components/PassProbabilityRing';
 import AnimatedSection from '@/components/AnimatedSection';
+import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import { TrendingUp, Target, BarChart3 } from 'lucide-react';
 
 interface ExamHistoryEntry {
@@ -21,9 +22,11 @@ export default function LandingPassProbability() {
   const [progressPercent, setProgressPercent] = useState(0);
   const [loading, setLoading] = useState(true);
 
+  const { ref: ringRef, isVisible: ringVisible } = useScrollAnimation({ threshold: 0.3 });
+  const { ref: progressRef, isVisible: progressVisible } = useScrollAnimation({ threshold: 0.3 });
+
   useEffect(() => {
     if (!user) {
-      // Show demo data for non-logged-in users
       setPassProb(75);
       setTotalExams(12);
       setAvgScore(78);
@@ -88,17 +91,24 @@ export default function LandingPassProbability() {
           <p className="mb-10 text-center text-muted-foreground">
             {isDemo
               ? 'Connectez-vous pour voir vos vraies statistiques'
-              : 'Basée sur vos résultats d\'examens'}
+              : "Basée sur vos résultats d'examens"}
           </p>
         </AnimatedSection>
 
         <div className="mx-auto grid max-w-4xl grid-cols-1 gap-6 md:grid-cols-3">
           <AnimatedSection delay={100} className="md:col-span-1">
-            <Card className="flex h-full flex-col items-center justify-center p-6">
+            <Card className="hover-lift flex h-full flex-col items-center justify-center p-6">
               <CardTitle className="mb-4 text-center font-serif text-lg text-foreground">
                 Pass Probability
               </CardTitle>
-              <PassProbabilityRing probability={loading ? 0 : passProb} size={140} strokeWidth={12} />
+              <div ref={ringRef}>
+                <PassProbabilityRing
+                  probability={loading ? 0 : passProb}
+                  size={140}
+                  strokeWidth={12}
+                  startAnimation={ringVisible}
+                />
+              </div>
               <p className="mt-3 text-sm text-muted-foreground">
                 Basée sur les 5 derniers examens
               </p>
@@ -107,52 +117,43 @@ export default function LandingPassProbability() {
 
           <AnimatedSection delay={200} className="md:col-span-2">
             <div className="grid h-full grid-cols-1 gap-4 sm:grid-cols-3">
-              <Card>
-                <CardContent className="flex items-center gap-3 p-5">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10">
-                    <TrendingUp className="h-5 w-5 text-primary" />
-                  </div>
-                  <div>
-                    <p className="text-xs text-muted-foreground">Examens passés</p>
-                    <p className="text-xl font-bold text-foreground">{loading ? '—' : totalExams}</p>
-                  </div>
-                </CardContent>
-              </Card>
+              {[
+                { icon: TrendingUp, label: 'Examens passés', value: loading ? '—' : String(totalExams), delay: 100 },
+                { icon: Target, label: 'Score moyen', value: loading ? '—' : `${avgScore}%`, delay: 200 },
+                { icon: BarChart3, label: 'Seuil officiel', value: '80%', delay: 300 },
+              ].map(({ icon: Icon, label, value, delay }) => (
+                <AnimatedSection key={label} delay={delay}>
+                  <Card className="hover-lift">
+                    <CardContent className="flex items-center gap-3 p-5">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+                        <Icon className="h-5 w-5 text-primary" />
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">{label}</p>
+                        <p className="text-xl font-bold text-foreground">{value}</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </AnimatedSection>
+              ))}
 
-              <Card>
-                <CardContent className="flex items-center gap-3 p-5">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10">
-                    <Target className="h-5 w-5 text-primary" />
-                  </div>
-                  <div>
-                    <p className="text-xs text-muted-foreground">Score moyen</p>
-                    <p className="text-xl font-bold text-foreground">{loading ? '—' : `${avgScore}%`}</p>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardContent className="flex items-center gap-3 p-5">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10">
-                    <BarChart3 className="h-5 w-5 text-primary" />
-                  </div>
-                  <div>
-                    <p className="text-xs text-muted-foreground">Seuil officiel</p>
-                    <p className="text-xl font-bold text-foreground">80%</p>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <div className="sm:col-span-3">
-                <Card>
-                  <CardContent className="p-5">
-                    <div className="mb-2 flex justify-between text-sm">
-                      <span className="text-muted-foreground">Progression dans la banque</span>
-                      <span className="font-medium text-foreground">{loading ? '—' : `${progressPercent}%`}</span>
-                    </div>
-                    <Progress value={loading ? 0 : progressPercent} className="h-3" />
-                  </CardContent>
-                </Card>
+              <div className="sm:col-span-3" ref={progressRef}>
+                <AnimatedSection delay={400}>
+                  <Card className="hover-lift">
+                    <CardContent className="p-5">
+                      <div className="mb-2 flex justify-between text-sm">
+                        <span className="text-muted-foreground">Progression dans la banque</span>
+                        <span className="font-medium text-foreground">
+                          {loading ? '—' : `${progressPercent}%`}
+                        </span>
+                      </div>
+                      <Progress
+                        value={progressVisible ? (loading ? 0 : progressPercent) : 0}
+                        className="h-3 transition-all duration-1000"
+                      />
+                    </CardContent>
+                  </Card>
+                </AnimatedSection>
               </div>
             </div>
           </AnimatedSection>

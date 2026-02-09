@@ -63,28 +63,46 @@ export default {
   			md: 'calc(var(--radius) - 2px)',
   			sm: 'calc(var(--radius) - 4px)'
   		},
-  		keyframes: {
-  			'accordion-down': {
-  				from: {
-  					height: '0'
-  				},
-  				to: {
-  					height: 'var(--radix-accordion-content-height)'
-  				}
-  			},
-  			'accordion-up': {
-  				from: {
-  					height: 'var(--radix-accordion-content-height)'
-  				},
-  				to: {
-  					height: '0'
-  				}
-  			}
-  		},
-  		animation: {
-  			'accordion-down': 'accordion-down 0.2s ease-out',
-  			'accordion-up': 'accordion-up 0.2s ease-out'
-  		},
+		keyframes: {
+			'accordion-down': {
+				from: { height: '0' },
+				to: { height: 'var(--radix-accordion-content-height)' }
+			},
+			'accordion-up': {
+				from: { height: 'var(--radix-accordion-content-height)' },
+				to: { height: '0' }
+			},
+			'float': {
+				'0%, 100%': { transform: 'translateY(0)' },
+				'50%': { transform: 'translateY(-8px)' }
+			},
+			'glow': {
+				'0%, 100%': { boxShadow: '0 0 0 0 hsl(var(--primary) / 0)' },
+				'50%': { boxShadow: '0 0 16px 2px hsl(var(--primary) / 0.3)' }
+			},
+			'grow-bar': {
+				'0%': { transform: 'scaleY(0)' },
+				'100%': { transform: 'scaleY(1)' }
+			},
+			'shimmer': {
+				'0%': { opacity: '0.5', transform: 'scale(0.95)' },
+				'50%': { opacity: '1', transform: 'scale(1.05)' },
+				'100%': { opacity: '0.5', transform: 'scale(0.95)' }
+			},
+			'draw-up': {
+				'0%': { transform: 'translateY(8px)', opacity: '0' },
+				'100%': { transform: 'translateY(0)', opacity: '1' }
+			}
+		},
+		animation: {
+			'accordion-down': 'accordion-down 0.2s ease-out',
+			'accordion-up': 'accordion-up 0.2s ease-out',
+			'float': 'float 3s ease-in-out infinite',
+			'glow': 'glow 2s ease-in-out',
+			'grow-bar': 'grow-bar 0.8s ease-out forwards',
+			'shimmer': 'shimmer 2.5s ease-in-out infinite',
+			'draw-up': 'draw-up 0.6s ease-out forwards'
+		},
 		fontFamily: {
 			sans: ['Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'sans-serif'],
 			serif: ['Playfair Display', 'ui-serif', 'Georgia', 'serif'],

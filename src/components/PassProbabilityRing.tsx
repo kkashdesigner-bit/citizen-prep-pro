@@ -5,6 +5,7 @@ interface PassProbabilityRingProps {
   size?: number;
   strokeWidth?: number;
   animated?: boolean;
+  startAnimation?: boolean;
 }
 
 export default function PassProbabilityRing({
@@ -12,6 +13,7 @@ export default function PassProbabilityRing({
   size = 120,
   strokeWidth = 10,
   animated = true,
+  startAnimation = true,
 }: PassProbabilityRingProps) {
   const [animatedValue, setAnimatedValue] = useState(0);
   const radius = (size - strokeWidth) / 2;
@@ -19,6 +21,11 @@ export default function PassProbabilityRing({
   const offset = circumference - (animatedValue / 100) * circumference;
 
   useEffect(() => {
+    if (!startAnimation) {
+      setAnimatedValue(0);
+      return;
+    }
+
     if (!animated) {
       setAnimatedValue(probability);
       return;
@@ -31,7 +38,6 @@ export default function PassProbabilityRing({
     const animate = (now: number) => {
       const elapsed = now - start;
       const progress = Math.min(elapsed / duration, 1);
-      // easeOutCubic
       const eased = 1 - Math.pow(1 - progress, 3);
       setAnimatedValue(Math.round(eased * probability));
       if (progress < 1) frame = requestAnimationFrame(animate);
@@ -39,7 +45,7 @@ export default function PassProbabilityRing({
 
     frame = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(frame);
-  }, [probability, animated]);
+  }, [probability, animated, startAnimation]);
 
   const getColor = () => {
     if (probability >= 80) return 'hsl(var(--success))';
