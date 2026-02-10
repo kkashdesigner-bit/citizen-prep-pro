@@ -2,29 +2,19 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Category, CATEGORY_LABELS } from '@/lib/types';
-import { Scale, Landmark, Home, ArrowRight } from 'lucide-react';
+import { Scale, Landmark, Home, ArrowRight, Shield, ScrollText } from 'lucide-react';
 import AnimatedSection from '@/components/AnimatedSection';
 
-const FEATURES: { key: Category; icon: typeof Scale; descFr: string }[] = [
-  {
-    key: 'Principles',
-    icon: Scale,
-    descFr: 'Liberté, Égalité, Fraternité — Laïcité, symboles et valeurs fondamentales.',
-  },
-  {
-    key: 'Institutions',
-    icon: Landmark,
-    descFr: 'Président, Parlement, Justice — l\'organisation de l\'État français.',
-  },
-  {
-    key: 'Living',
-    icon: Home,
-    descFr: 'Santé, éducation, travail — la vie quotidienne en France.',
-  },
+const FEATURES: { key: Category; icon: typeof Scale }[] = [
+  { key: 'Principles', icon: Scale },
+  { key: 'Institutions', icon: Landmark },
+  { key: 'Rights', icon: Shield },
+  { key: 'History', icon: ScrollText },
+  { key: 'Living', icon: Home },
 ];
 
 export default function LandingCategoryTabs() {
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
   const navigate = useNavigate();
 
   return (
@@ -32,16 +22,16 @@ export default function LandingCategoryTabs() {
       <div className="container">
         <AnimatedSection>
           <h2 className="mb-4 text-center font-serif text-3xl font-bold text-foreground md:text-4xl">
-            Explorez les catégories
+            {t('cat.explore')}
           </h2>
           <p className="mx-auto mb-12 max-w-2xl text-center text-muted-foreground">
-            Préparez chaque domaine de l'examen de citoyenneté avec des quiz ciblés.
+            {t('cat.exploreSubtitle')}
           </p>
         </AnimatedSection>
 
-        <div className="mx-auto grid max-w-4xl grid-cols-1 gap-6 md:grid-cols-3">
-          {FEATURES.map(({ key, icon: Icon, descFr }, i) => (
-            <AnimatedSection key={key} delay={i * 150}>
+        <div className="mx-auto grid max-w-5xl grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
+          {FEATURES.map(({ key, icon: Icon }, i) => (
+            <AnimatedSection key={key} delay={i * 100}>
               <div
                 className="glass-card glow-hover group h-full cursor-pointer p-6 text-center transition-all duration-300"
                 onClick={() => navigate(`/quiz?mode=study&category=${key}`)}
@@ -52,9 +42,9 @@ export default function LandingCategoryTabs() {
                 <h3 className="mb-2 font-serif text-lg font-semibold text-foreground">
                   {CATEGORY_LABELS[language][key]}
                 </h3>
-                <p className="mb-4 text-sm text-muted-foreground">{descFr}</p>
+                <p className="mb-4 text-sm text-muted-foreground">{t(`cat.${key}.desc`)}</p>
                 <Button variant="ghost" size="sm" className="btn-glow mt-auto gap-1 text-primary">
-                  S'entraîner
+                  {t('cat.study')}
                   <ArrowRight className="h-3.5 w-3.5" />
                 </Button>
               </div>

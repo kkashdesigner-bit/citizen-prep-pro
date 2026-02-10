@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { useLanguage } from '@/contexts/LanguageContext';
 import {
   Dialog,
   DialogContent,
@@ -14,33 +15,34 @@ interface SubscriptionGateProps {
   requiredTier?: 'tier_1' | 'tier_2';
 }
 
-const TIER_1_FEATURES = [
-  { icon: BookOpen, text: 'Mode étude avec explications détaillées' },
-  { icon: Award, text: 'Examens illimités sans répétition' },
-  { icon: CheckCircle, text: 'Suivi de progression personnalisé' },
-  { icon: Target, text: 'Entraînement par catégorie ciblé' },
-  { icon: Shield, text: 'Niveaux CR et Naturalisation' },
-];
-
-const TIER_2_FEATURES = [
-  { icon: Languages, text: 'Traduction des questions en temps réel' },
-  { icon: PlayCircle, text: 'Guides vidéo premium' },
-  { icon: BookOpen, text: 'Outils d\'étude avancés' },
-  { icon: CheckCircle, text: 'Tous les avantages Tier 1 inclus' },
-];
-
 export default function SubscriptionGate({ open, onOpenChange, requiredTier = 'tier_1' }: SubscriptionGateProps) {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const isTier2 = requiredTier === 'tier_2';
+
+  const TIER_1_FEATURES = [
+    { icon: BookOpen, key: 'gate.feat1' },
+    { icon: Award, key: 'gate.feat2' },
+    { icon: CheckCircle, key: 'gate.feat3' },
+    { icon: Target, key: 'gate.feat4' },
+    { icon: Shield, key: 'gate.feat5' },
+  ];
+
+  const TIER_2_FEATURES = [
+    { icon: Languages, key: 'gate.feat6' },
+    { icon: PlayCircle, key: 'gate.feat7' },
+    { icon: BookOpen, key: 'gate.feat8' },
+    { icon: CheckCircle, key: 'gate.feat9' },
+  ];
+
   const features = isTier2 ? TIER_2_FEATURES : TIER_1_FEATURES;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg glass-card border-border/50 bg-card/95 backdrop-blur-2xl">
-        {/* Classified stamp */}
         <div className="absolute top-4 right-12 rotate-12 border-2 border-destructive/40 px-3 py-1 rounded">
           <span className="text-xs font-bold uppercase tracking-widest text-destructive/60">
-            Classifié
+            {t('gate.classified')}
           </span>
         </div>
 
@@ -49,41 +51,37 @@ export default function SubscriptionGate({ open, onOpenChange, requiredTier = 't
             <Sparkles className="h-8 w-8 text-primary" />
           </div>
           <DialogTitle className="text-center font-serif text-2xl text-foreground">
-            {isTier2
-              ? 'Débloquez les outils premium !'
-              : 'Vous avez le potentiel pour réussir !'}
+            {isTier2 ? t('gate.tier2Title') : t('gate.tier1Title')}
           </DialogTitle>
         </DialogHeader>
 
         <p className="text-center text-muted-foreground">
-          {isTier2
-            ? 'Passez au Tier 2 pour accéder aux traductions, guides vidéo et outils avancés.'
-            : 'Débloquez l\'accès illimité et le mode étude pour maximiser vos chances de réussite à l\'examen civique.'}
+          {isTier2 ? t('gate.tier2Desc') : t('gate.tier1Desc')}
         </p>
 
         <div className="my-4 space-y-3">
-          {features.map(({ icon: Icon, text }) => (
-            <div key={text} className="flex items-center gap-3">
+          {features.map(({ icon: Icon, key }) => (
+            <div key={key} className="flex items-center gap-3">
               <Icon className="h-5 w-5 shrink-0 text-primary" />
-              <span className="text-sm text-foreground">{text}</span>
+              <span className="text-sm text-foreground">{t(key)}</span>
             </div>
           ))}
         </div>
 
         <div className="grid grid-cols-2 gap-3">
           <div className="glass-card cursor-pointer p-4 text-center transition-all hover:border-primary/50 glow-hover">
-            <p className="text-sm text-muted-foreground">Mensuel</p>
+            <p className="text-sm text-muted-foreground">{t('gate.monthly')}</p>
             <p className="font-serif text-2xl font-bold text-foreground">
               {isTier2 ? '9,99 €' : '6,99 €'}
             </p>
-            <p className="text-xs text-muted-foreground">/mois</p>
+            <p className="text-xs text-muted-foreground">{t('gate.perMonth')}</p>
           </div>
           <div className="glass-card cursor-pointer p-4 text-center border-primary/50 shadow-[0_0_20px_hsl(var(--primary)/0.15)]">
-            <p className="text-sm font-medium text-primary">Populaire</p>
+            <p className="text-sm font-medium text-primary">{t('gate.popular')}</p>
             <p className="font-serif text-2xl font-bold text-foreground">
               {isTier2 ? '12,99 €' : '30,99 €'}
             </p>
-            <p className="text-xs text-muted-foreground">/6 mois</p>
+            <p className="text-xs text-muted-foreground">{t('gate.per6Months')}</p>
           </div>
         </div>
 
@@ -93,10 +91,10 @@ export default function SubscriptionGate({ open, onOpenChange, requiredTier = 't
             className="w-full pulse-unlock shine-border btn-glow"
             onClick={() => { onOpenChange(false); navigate('/#pricing'); }}
           >
-            {isTier2 ? 'Passer au Tier 2' : 'Débloquer l\'accès — 6,99 €/mois'}
+            {isTier2 ? t('gate.tier2Cta') : t('gate.tier1Cta')}
           </Button>
           <Button variant="ghost" size="sm" className="text-muted-foreground" onClick={() => onOpenChange(false)}>
-            Peut-être plus tard
+            {t('gate.later')}
           </Button>
         </div>
       </DialogContent>
