@@ -100,8 +100,8 @@ export default function Header({ animate = false }: HeaderProps) {
 
           {user ? (
             <>
-              <Button variant="ghost" size="sm" className="hidden glow-hover sm:inline-flex" onClick={() => navigate('/dashboard')}>
-                {t('nav.dashboard') || 'Dashboard'}
+              <Button variant="ghost" size="sm" className="hidden glow-hover sm:inline-flex" onClick={() => navigate('/learn')}>
+                {t('nav.learn') || 'Learn'}
               </Button>
               <Button variant="ghost" size="sm" className="glow-hover" onClick={() => navigate('/quiz?mode=exam')}>
                 {t('nav.demo')}
@@ -113,9 +113,13 @@ export default function Header({ animate = false }: HeaderProps) {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="glass-card">
-                  <DropdownMenuItem onClick={() => navigate('/dashboard')}>
+                  <DropdownMenuItem onClick={() => navigate('/learn')}>
                     <LayoutDashboard className="mr-2 h-4 w-4" />
-                    {t('nav.dashboard')}
+                    {t('nav.learn')}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate('/dashboard')}>
+                    <User className="mr-2 h-4 w-4" />
+                    {t('nav.account') || 'Account'}
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={handleSignOut}>
                     <LogOut className="mr-2 h-4 w-4" />
