@@ -14,6 +14,74 @@ export type Database = {
   }
   public: {
     Tables: {
+      lesson_progress: {
+        Row: {
+          id: string
+          lesson_id: string
+          score_last: number | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          lesson_id: string
+          score_last?: number | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          lesson_id?: string
+          score_last?: number | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lesson_progress_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "lessons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lessons: {
+        Row: {
+          category: string
+          content: string
+          created_at: string
+          estimated_minutes: number
+          id: string
+          level: string
+          order_index: number
+          title: string
+        }
+        Insert: {
+          category: string
+          content: string
+          created_at?: string
+          estimated_minutes?: number
+          id?: string
+          level?: string
+          order_index?: number
+          title: string
+        }
+        Update: {
+          category?: string
+          content?: string
+          created_at?: string
+          estimated_minutes?: number
+          id?: string
+          level?: string
+          order_index?: number
+          title?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
