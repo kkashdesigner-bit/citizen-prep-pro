@@ -53,11 +53,8 @@ export default function Header({ animate = false }: HeaderProps) {
       }`}
     >
       <div className="container flex h-16 items-center justify-between">
-        <Link to="/" className="flex items-center gap-2 glow-hover rounded-lg p-1">
-          <img src={logoImg} alt="GoCivique logo" className="h-9 w-9 rounded-md object-contain" />
-          <span className="hidden font-serif text-lg font-bold text-foreground sm:inline-block">
-            GoCivique
-          </span>
+        <Link to="/" className="flex items-center glow-hover rounded-lg p-1">
+          <img src={logoImg} alt="GoCivique logo" className="h-12 w-12 rounded-md object-contain" />
         </Link>
 
         <nav className="flex items-center gap-1">
