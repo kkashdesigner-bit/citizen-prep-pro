@@ -20,13 +20,17 @@ export default function ParticleMesh() {
 
     let animId: number;
     const particles: Particle[] = [];
+    let cachedW = 0;
+    let cachedH = 0;
     const COUNT = 70;
     const CONNECT_DIST = 120;
     const MOUSE_RADIUS = 180;
 
     const resize = () => {
-      canvas.width = canvas.offsetWidth * devicePixelRatio;
-      canvas.height = canvas.offsetHeight * devicePixelRatio;
+      cachedW = canvas.offsetWidth;
+      cachedH = canvas.offsetHeight;
+      canvas.width = cachedW * devicePixelRatio;
+      canvas.height = cachedH * devicePixelRatio;
       ctx.scale(devicePixelRatio, devicePixelRatio);
     };
     resize();
@@ -34,8 +38,8 @@ export default function ParticleMesh() {
 
     for (let i = 0; i < COUNT; i++) {
       particles.push({
-        x: Math.random() * canvas.offsetWidth,
-        y: Math.random() * canvas.offsetHeight,
+        x: Math.random() * cachedW,
+        y: Math.random() * cachedH,
         vx: (Math.random() - 0.5) * 0.4,
         vy: (Math.random() - 0.5) * 0.4,
         size: Math.random() * 1.5 + 0.5,
@@ -49,8 +53,8 @@ export default function ParticleMesh() {
     canvas.addEventListener('mousemove', handleMouse);
 
     const draw = () => {
-      const w = canvas.offsetWidth;
-      const h = canvas.offsetHeight;
+      const w = cachedW;
+      const h = cachedH;
       ctx.clearRect(0, 0, w, h);
 
       for (const p of particles) {
