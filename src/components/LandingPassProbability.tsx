@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Progress } from '@/components/ui/progress';
+import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
 import PassProbabilityRing from '@/components/PassProbabilityRing';
 import AnimatedSection from '@/components/AnimatedSection';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
-import { TrendingUp, Target, BarChart3 } from 'lucide-react';
+import { TrendingUp, Target, BarChart3, UserPlus } from 'lucide-react';
 
 interface ExamHistoryEntry {
   score: number;
@@ -15,6 +18,8 @@ interface ExamHistoryEntry {
 
 export default function LandingPassProbability() {
   const { user } = useAuth();
+  const { t } = useLanguage();
+  const navigate = useNavigate();
   const [passProb, setPassProb] = useState(0);
   const [totalExams, setTotalExams] = useState(0);
   const [avgScore, setAvgScore] = useState(0);
@@ -26,10 +31,6 @@ export default function LandingPassProbability() {
 
   useEffect(() => {
     if (!user) {
-      setPassProb(75);
-      setTotalExams(12);
-      setAvgScore(78);
-      setProgressPercent(50);
       setLoading(false);
       return;
     }
@@ -78,19 +79,41 @@ export default function LandingPassProbability() {
     fetchData();
   }, [user]);
 
-  const isDemo = !user;
+  // Guest view: sign-up invitation
+  if (!user) {
+    return (
+      <section className="bg-secondary/30 py-16 md:py-24">
+        <div className="container">
+          <AnimatedSection>
+            <div className="mx-auto max-w-lg glass-card glow-hover p-8 text-center">
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 shadow-[0_0_20px_hsl(var(--primary)/0.2)]">
+                <UserPlus className="h-8 w-8 text-primary" />
+              </div>
+              <h2 className="mb-2 font-serif text-2xl font-bold text-foreground">
+                {t('progress.title')}
+              </h2>
+              <p className="mb-6 text-muted-foreground">
+                {t('progress.subtitleGuest')}
+              </p>
+              <Button className="btn-glow" onClick={() => navigate('/auth')}>
+                {t('progress.createAccount')}
+              </Button>
+            </div>
+          </AnimatedSection>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="bg-secondary/30 py-16 md:py-24">
       <div className="container">
         <AnimatedSection>
           <h2 className="mb-2 text-center font-serif text-3xl font-bold text-foreground md:text-4xl">
-            {isDemo ? 'Suivez votre progression' : 'Votre progression'}
+            {t('progress.titleAuth')}
           </h2>
           <p className="mb-10 text-center text-muted-foreground">
-            {isDemo
-              ? 'Connectez-vous pour voir vos vraies statistiques'
-              : "Basée sur vos résultats d'examens"}
+            {t('progress.subtitleAuth')}
           </p>
         </AnimatedSection>
 
@@ -98,7 +121,7 @@ export default function LandingPassProbability() {
           <AnimatedSection delay={100} className="md:col-span-1">
             <div className="glass-card glow-hover flex h-full flex-col items-center justify-center p-6">
               <h3 className="mb-4 text-center font-serif text-lg font-semibold text-foreground">
-                Pass Probability
+                {t('progress.passProbability')}
               </h3>
               <div ref={ringRef}>
                 <PassProbabilityRing
@@ -109,7 +132,7 @@ export default function LandingPassProbability() {
                 />
               </div>
               <p className="mt-3 text-sm text-muted-foreground">
-                Basée sur les 5 derniers examens
+                {t('progress.basedOnLast5')}
               </p>
             </div>
           </AnimatedSection>
@@ -117,9 +140,9 @@ export default function LandingPassProbability() {
           <AnimatedSection delay={200} className="md:col-span-2">
             <div className="grid h-full grid-cols-1 gap-4 sm:grid-cols-3">
               {[
-                { icon: TrendingUp, label: 'Examens passés', value: loading ? '—' : String(totalExams), delay: 100 },
-                { icon: Target, label: 'Score moyen', value: loading ? '—' : `${avgScore}%`, delay: 200 },
-                { icon: BarChart3, label: 'Seuil officiel', value: '80%', delay: 300 },
+                { icon: TrendingUp, label: t('progress.examsTaken'), value: loading ? '—' : String(totalExams), delay: 100 },
+                { icon: Target, label: t('progress.avgScore'), value: loading ? '—' : `${avgScore}%`, delay: 200 },
+                { icon: BarChart3, label: t('progress.officialThreshold'), value: '80%', delay: 300 },
               ].map(({ icon: Icon, label, value, delay }) => (
                 <AnimatedSection key={label} delay={delay}>
                   <div className="glass-card glow-hover flex items-center gap-3 p-5">
@@ -138,7 +161,7 @@ export default function LandingPassProbability() {
                 <AnimatedSection delay={400}>
                   <div className="glass-card glow-hover p-5">
                     <div className="mb-2 flex justify-between text-sm">
-                      <span className="text-muted-foreground">Progression dans la banque</span>
+                      <span className="text-muted-foreground">{t('progress.bankProgress')}</span>
                       <span className="font-medium text-foreground">
                         {loading ? '—' : `${progressPercent}%`}
                       </span>
