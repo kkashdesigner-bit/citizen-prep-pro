@@ -1,68 +1,49 @@
 
 
-## Fix User Authentication and Database Sync
+## Redesign the Dashboard Page
 
-### What already exists
-- A `profiles` table with `id`, `display_name`, `subscription_tier`, `session_token`, and other fields
-- A `handle_new_user()` trigger function on `auth.users` that creates a profile row on signup
-- The trigger is attached and working
+The current `/dashboard` page already exists and has extensive functionality. This plan redesigns it to match the requested layout with three distinct sections: a Header Card, a Progress Section with 3 cards, and feature gating for free users.
 
-### What needs to change
+### What Changes
 
-#### 1. Database Migration -- Add missing columns to `profiles`
-Add three new columns:
-- `email` (text, nullable) -- synced from auth signup data
-- `avatar_url` (text, nullable) -- synced from Google OAuth metadata
-- `credits` (integer, default 0)
+**1. Rewrite `src/pages/Dashboard.tsx`**
 
-#### 2. Database Migration -- Update the `handle_new_user()` trigger function
-Update the function to also populate `email` and `avatar_url` from the new user's auth metadata:
-- `email` from `NEW.email`
-- `avatar_url` from `NEW.raw_user_meta_data->>'avatar_url'`
-- `display_name` from `NEW.raw_user_meta_data->>'full_name'` (already done, kept)
+Replace the current flat layout with the new 3-section structure while preserving all existing data fetching, auth guarding, and subscription logic.
 
-#### 3. Code Change -- Redirect to `/dashboard` after login
+- **Header Card**: A prominent card at the top displaying the user's avatar (from `profiles.avatar_url`), display name (from `profiles.display_name`, falling back to email), and a tier badge:
+  - `free` -- Grey badge ("Free Plan")
+  - `tier_1` -- Blue badge ("Essential")
+  - `tier_2` -- Gold/amber badge ("Premium")
 
-**`src/pages/Auth.tsx`**: Change `navigate('/')` to `navigate('/dashboard')` on line 27 for email login.
+- **Progress Section (3 cards in a row)**:
+  - **Card 1 -- Overall Progress**: A circular progress ring (built with SVG) showing the percentage of questions answered (`usedQuestions.length / totalQuestionCount`).
+  - **Card 2 -- Current Status**: Shows "On Track" (with a green indicator) if `avgScore >= 70`, or "Needs Practice" (with a yellow/red indicator) otherwise.
+  - **Card 3 -- Recent Activity**: Lists the last 3 exam history entries with scores (e.g., "Quiz: 80%"). If the user is `free`, this card gets a blurred "Locked" overlay with a "Start Free Trial" button that opens the existing `SubscriptionGate`.
 
-**`src/hooks/useAuth.ts`**: Change the Google OAuth `redirectTo` from `window.location.origin` to `window.location.origin + '/dashboard'` so after the Google OAuth flow completes, the user lands on the dashboard.
+- **Remaining sections** (Weakness Alert, Level Selector, Category Training, Video Guides, Full Exam History) stay below, kept as-is.
 
-#### 4. Update TypeScript types
-The `src/integrations/supabase/types.ts` file auto-updates from Supabase after the migration runs, so the new `email`, `avatar_url`, and `credits` columns will be reflected automatically.
+**2. Update `src/lib/subscriptionTiers.ts`**
+
+Update `TIER_LABELS` to use the new display names:
+- `free` -> "Free Plan"
+- `tier_1` -> "Essential"
+- `tier_2` -> "Premium"
+
+Update `TIER_BADGE_VARIANT` to differentiate visually (tier_2 gets `"destructive"` variant which we'll style as gold, or use a custom className approach).
+
+**3. Fetch additional profile fields**
+
+Update the `fetchData` query in Dashboard to also select `display_name, avatar_url, email` from `profiles` so the Header Card can display them.
+
+**4. Create `src/components/CircularProgress.tsx`**
+
+A small SVG-based circular progress component that renders a ring with the percentage in the center. This replaces the linear progress bar for the "Overall Progress" card.
 
 ### Technical Details
 
-**SQL Migration:**
-```sql
--- Add missing columns
-ALTER TABLE public.profiles
-  ADD COLUMN IF NOT EXISTS email text,
-  ADD COLUMN IF NOT EXISTS avatar_url text,
-  ADD COLUMN IF NOT EXISTS credits integer NOT NULL DEFAULT 0;
+- **No database changes needed** -- all data (`display_name`, `avatar_url`, `email`, `exam_history`, `used_questions`, `subscription_tier`) already exists in the `profiles` table.
+- **No new dependencies** -- the circular progress ring will be a simple SVG component using Tailwind classes.
+- **Existing components reused**: `Header`, `Footer`, `SubscriptionGate`, `WeaknessAlert`, `ProgressionBar`, `CategorySelector`, `LevelSelector`, `PremiumVideoGuides`.
+- The locked overlay pattern already exists in the current Dashboard (used on Category Training); the same pattern with blur + Lock icon + CTA button will be applied to the Recent Activity card.
+- Badge color for "Premium" (tier_2) will use a custom `className` with amber/gold colors (`bg-amber-500/20 text-amber-400 border-amber-500/30`).
 
--- Update trigger function to populate new fields
-CREATE OR REPLACE FUNCTION public.handle_new_user()
-RETURNS trigger
-LANGUAGE plpgsql
-SECURITY DEFINER
-SET search_path TO 'public'
-AS $$
-BEGIN
-  INSERT INTO public.profiles (id, display_name, email, avatar_url)
-  VALUES (
-    NEW.id,
-    COALESCE(NEW.raw_user_meta_data->>'full_name', NEW.email),
-    NEW.email,
-    NEW.raw_user_meta_data->>'avatar_url'
-  );
-  RETURN NEW;
-END;
-$$;
-```
-
-**Code changes (2 files):**
-- `src/pages/Auth.tsx` line 27: `navigate('/')` becomes `navigate('/dashboard')`
-- `src/hooks/useAuth.ts` line 109: `redirectTo` changes to include `/dashboard`
-
-### Backfill existing users (optional)
-If you already have users in the system whose email/avatar are missing from profiles, you can run a one-time SQL query in the Supabase SQL Editor to backfill them.
