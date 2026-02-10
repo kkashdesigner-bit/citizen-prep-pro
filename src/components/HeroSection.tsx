@@ -19,7 +19,7 @@ export default function HeroSection() {
   }, []);
 
   return (
-    <section className="relative overflow-hidden bg-background min-h-[90vh] flex items-center justify-center">
+    <section className="relative overflow-hidden bg-background min-h-[80vh] sm:min-h-[90vh] flex items-center justify-center">
       {/* Particle mesh background */}
       <div className="absolute inset-0">
         <ParticleMesh />
@@ -46,9 +46,9 @@ export default function HeroSection() {
         />
       </div>
 
-      {/* Floating glassmorphism cards */}
-      <div className={`absolute top-[18%] left-[5%] md:left-[10%] transition-all duration-1000 ${loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`} style={{ transitionDelay: '600ms' }}>
-        <div className="glass-card w-32 h-16 md:w-40 md:h-20 p-3 flex items-center gap-2 animate-float" style={{ animationDelay: '0s' }}>
+      {/* Floating glassmorphism cards — hidden on mobile */}
+      <div className={`hidden md:block absolute top-[18%] left-[10%] transition-all duration-1000 ${loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`} style={{ transitionDelay: '600ms' }}>
+        <div className="glass-card w-40 h-20 p-3 flex items-center gap-2 animate-float" style={{ animationDelay: '0s' }}>
           <div className="h-8 w-8 rounded-lg bg-primary/20 flex items-center justify-center">
             <svg className="w-4 h-4 text-primary" fill="currentColor" viewBox="0 0 20 20"><rect x="3" y="3" width="14" height="14" rx="2" /></svg>
           </div>
@@ -59,8 +59,8 @@ export default function HeroSection() {
         </div>
       </div>
 
-      <div className={`absolute top-[35%] right-[3%] md:right-[8%] transition-all duration-1000 ${loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`} style={{ transitionDelay: '800ms' }}>
-        <div className="glass-card w-36 h-16 md:w-44 md:h-20 p-3 flex items-center gap-2 animate-float" style={{ animationDelay: '1s' }}>
+      <div className={`hidden md:block absolute top-[35%] right-[8%] transition-all duration-1000 ${loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`} style={{ transitionDelay: '800ms' }}>
+        <div className="glass-card w-44 h-20 p-3 flex items-center gap-2 animate-float" style={{ animationDelay: '1s' }}>
           <div className="h-8 w-8 rounded-lg bg-accent/20 flex items-center justify-center">
             <svg className="w-4 h-4 text-accent" fill="currentColor" viewBox="0 0 20 20"><rect x="3" y="3" width="14" height="14" rx="2" /></svg>
           </div>
@@ -71,8 +71,8 @@ export default function HeroSection() {
         </div>
       </div>
 
-      <div className={`absolute bottom-[30%] left-[3%] md:left-[12%] transition-all duration-1000 ${loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`} style={{ transitionDelay: '1000ms' }}>
-        <div className="glass-card w-28 h-14 md:w-36 md:h-18 p-3 flex items-center gap-2 animate-float" style={{ animationDelay: '2s' }}>
+      <div className={`hidden md:block absolute bottom-[30%] left-[12%] transition-all duration-1000 ${loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`} style={{ transitionDelay: '1000ms' }}>
+        <div className="glass-card w-36 h-18 p-3 flex items-center gap-2 animate-float" style={{ animationDelay: '2s' }}>
           <div className="h-7 w-7 rounded-lg bg-primary/20 flex items-center justify-center">
             <svg className="w-3.5 h-3.5 text-primary" fill="currentColor" viewBox="0 0 20 20"><rect x="3" y="3" width="14" height="14" rx="2" /></svg>
           </div>
@@ -83,15 +83,15 @@ export default function HeroSection() {
       </div>
 
       {/* Centered content */}
-      <div className="relative z-10 container flex flex-col items-center text-center py-20">
+      <div className="relative z-10 container flex flex-col items-center text-center px-4 py-16 md:py-20">
         {/* Logo + Brand */}
-        <div className={`mb-8 transition-all duration-700 ${loaded ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}>
+        <div className={`mb-6 md:mb-8 transition-all duration-700 ${loaded ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}>
           <Logo size="lg" />
         </div>
 
         {/* Main title */}
         <h1
-          className={`mb-3 font-serif text-5xl font-black tracking-tight text-foreground md:text-7xl lg:text-8xl transition-all duration-700 ${
+          className={`mb-3 font-serif text-3xl font-black tracking-tight text-foreground sm:text-5xl md:text-7xl lg:text-8xl transition-all duration-700 ${
             loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
           }`}
           style={{ transitionDelay: '200ms' }}
@@ -101,7 +101,7 @@ export default function HeroSection() {
 
         {/* Gradient underline */}
         <div
-          className={`mx-auto mb-8 h-[2px] w-48 md:w-72 transition-all duration-700 ${loaded ? 'opacity-100 scale-x-100' : 'opacity-0 scale-x-0'}`}
+          className={`mx-auto mb-6 md:mb-8 h-[2px] w-32 sm:w-48 md:w-72 transition-all duration-700 ${loaded ? 'opacity-100 scale-x-100' : 'opacity-0 scale-x-0'}`}
           style={{
             background: 'linear-gradient(90deg, transparent, hsl(263 84% 58%), hsl(272 91% 65%), hsl(190 70% 50%), transparent)',
             transitionDelay: '400ms',
@@ -110,7 +110,7 @@ export default function HeroSection() {
 
         {/* Social proof bar */}
         <div
-          className={`mb-8 flex items-center gap-3 rounded-full border border-primary/15 bg-card/60 backdrop-blur-xl px-5 py-2.5 transition-all duration-700 ${
+          className={`mb-6 md:mb-8 flex flex-wrap items-center justify-center gap-2 sm:gap-3 rounded-2xl sm:rounded-full border border-primary/15 bg-card/60 backdrop-blur-xl px-4 py-2.5 transition-all duration-700 ${
             loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
           }`}
           style={{ transitionDelay: '500ms' }}
@@ -121,20 +121,20 @@ export default function HeroSection() {
           </span>
           <div className="flex -space-x-2">
             {[0, 1, 2, 3].map(i => (
-              <div key={i} className="h-7 w-7 rounded-full border-2 border-card bg-muted" style={{
+              <div key={i} className="h-6 w-6 sm:h-7 sm:w-7 rounded-full border-2 border-card bg-muted" style={{
                 background: `hsl(${260 + i * 30} 50% ${55 + i * 5}%)`,
               }} />
             ))}
           </div>
-          <div className="text-sm">
-            <span className="font-bold text-foreground">35,000 +</span>
-            <span className="ml-1 text-muted-foreground text-xs">{t('hero.usersActive') || 'Users active in the last 24h'}</span>
+          <div className="text-xs sm:text-sm">
+            <span className="font-bold text-foreground">35,000+</span>
+            <span className="ml-1 text-muted-foreground">{t('hero.usersActive') || 'Users active'}</span>
           </div>
         </div>
 
         {/* Subtitle */}
         <p
-          className={`mb-10 max-w-xl text-base text-muted-foreground md:text-lg transition-all duration-700 ${
+          className={`mb-8 md:mb-10 max-w-xl text-sm sm:text-base text-muted-foreground md:text-lg transition-all duration-700 px-2 ${
             loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
           }`}
           style={{ transitionDelay: '600ms' }}
@@ -150,7 +150,7 @@ export default function HeroSection() {
           <Button
             size="lg"
             variant="gradient"
-            className={`btn-glow gap-2 px-8 text-base font-semibold ${loaded ? 'animate-glow' : ''}`}
+            className={`btn-glow gap-2 px-6 sm:px-8 text-sm sm:text-base font-semibold ${loaded ? 'animate-glow' : ''}`}
             style={{ animationDelay: '1.5s' }}
             onClick={() => navigate(user ? '/learn' : '/auth')}
           >
