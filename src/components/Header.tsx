@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import ThemeToggle from '@/components/ThemeToggle';
 import { useEffect, useState } from 'react';
+import logoImg from '@/assets/logo.png';
 
 interface HeaderProps {
   animate?: boolean;
@@ -53,11 +54,9 @@ export default function Header({ animate = false }: HeaderProps) {
     >
       <div className="container flex h-16 items-center justify-between">
         <Link to="/" className="flex items-center gap-2 glow-hover rounded-lg p-1">
-          <div className="flex h-9 w-9 items-center justify-center rounded-md bg-primary shadow-[0_0_12px_hsl(var(--primary)/0.4)]">
-            <span className="text-sm font-bold text-primary-foreground">EC</span>
-          </div>
+          <img src={logoImg} alt="GoCivique logo" className="h-9 w-9 rounded-md object-contain" />
           <span className="hidden font-serif text-lg font-bold text-foreground sm:inline-block">
-            Examen Civique
+            GoCivique
           </span>
         </Link>
 
