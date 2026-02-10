@@ -39,7 +39,7 @@ export default function SubscriptionGate({ open, onOpenChange, requiredTier = 's
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg glass-card border-border/50 bg-card/95 backdrop-blur-2xl">
+      <DialogContent className="sm:max-w-lg glass-card border-primary/20 bg-card/95 backdrop-blur-2xl">
         <div className="absolute top-4 right-12 rotate-12 border-2 border-destructive/40 px-3 py-1 rounded">
           <span className="text-xs font-bold uppercase tracking-widest text-destructive/60">
             {t('gate.classified')}
@@ -47,11 +47,13 @@ export default function SubscriptionGate({ open, onOpenChange, requiredTier = 's
         </div>
 
         <DialogHeader>
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 shadow-[0_0_30px_hsl(var(--primary)/0.3)]">
-            <Sparkles className="h-8 w-8 text-primary" />
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full shadow-[0_0_30px_hsl(var(--primary)/0.3)]"
+            style={{ background: 'linear-gradient(135deg, hsl(263 84% 58% / 0.2), hsl(239 84% 67% / 0.1))' }}
+          >
+            <Sparkles className="h-8 w-8 text-primary icon-glow" />
           </div>
-          <DialogTitle className="text-center font-serif text-2xl text-foreground">
-            {isPremium ? t('gate.tier2Title') : t('gate.tier1Title')}
+          <DialogTitle className="text-center font-serif text-2xl">
+            <span className="gradient-text">{isPremium ? t('gate.tier2Title') : t('gate.tier1Title')}</span>
           </DialogTitle>
         </DialogHeader>
 
@@ -62,23 +64,23 @@ export default function SubscriptionGate({ open, onOpenChange, requiredTier = 's
         <div className="my-4 space-y-3">
           {features.map(({ icon: Icon, key }) => (
             <div key={key} className="flex items-center gap-3">
-              <Icon className="h-5 w-5 shrink-0 text-primary" />
+              <Icon className="h-5 w-5 shrink-0 text-primary icon-glow" />
               <span className="text-sm text-foreground">{t(key)}</span>
             </div>
           ))}
         </div>
 
         <div className="grid grid-cols-2 gap-3">
-          <div className="glass-card cursor-pointer p-4 text-center transition-all hover:border-primary/50 glow-hover">
+          <div className="glass-card cursor-pointer p-4 text-center transition-all hover:border-primary/40 glow-hover">
             <p className="text-sm text-muted-foreground">{t('gate.monthly')}</p>
-            <p className="font-serif text-2xl font-bold text-foreground">
+            <p className="font-serif text-2xl font-bold gradient-text">
               {isPremium ? '9,99 €' : '6,99 €'}
             </p>
             <p className="text-xs text-muted-foreground">{t('gate.perMonth')}</p>
           </div>
-          <div className="glass-card cursor-pointer p-4 text-center border-primary/50 shadow-[0_0_20px_hsl(var(--primary)/0.15)]">
+          <div className="glass-card cursor-pointer p-4 text-center border-primary/30 shadow-[0_0_20px_hsl(var(--primary)/0.15)]">
             <p className="text-sm font-medium text-primary">{t('gate.popular')}</p>
-            <p className="font-serif text-2xl font-bold text-foreground">
+            <p className="font-serif text-2xl font-bold gradient-text">
               {isPremium ? '49,99 €' : '30,99 €'}
             </p>
             <p className="text-xs text-muted-foreground">{t('gate.per6Months')}</p>
@@ -88,6 +90,7 @@ export default function SubscriptionGate({ open, onOpenChange, requiredTier = 's
         <div className="mt-2 flex flex-col gap-2">
           <Button
             size="lg"
+            variant="gradient"
             className="w-full pulse-unlock shine-border btn-glow"
             onClick={() => { onOpenChange(false); navigate('/#pricing'); }}
           >

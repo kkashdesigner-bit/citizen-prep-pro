@@ -28,6 +28,16 @@ export default function HeroSection() {
         <ParticleMesh />
       </div>
 
+      {/* Purple nebula glow */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[80%] h-[60%] rounded-full opacity-30"
+          style={{ background: 'radial-gradient(ellipse, hsl(263 84% 58% / 0.2), hsl(272 91% 65% / 0.08), transparent 70%)' }}
+        />
+        <div className="absolute bottom-0 right-0 w-[40%] h-[40%] rounded-full opacity-20"
+          style={{ background: 'radial-gradient(circle, hsl(239 84% 67% / 0.15), transparent 70%)' }}
+        />
+      </div>
+
       {/* Gradient overlay for depth */}
       <div className="absolute inset-0 bg-gradient-to-b from-background/30 via-transparent to-background" />
 
@@ -41,15 +51,15 @@ export default function HeroSection() {
                 loaded ? 'opacity-100 scale-100' : 'opacity-0 scale-75'
               }`}
             >
-              <Scale className="text-primary w-10 h-10" />
+              <Scale className="text-primary w-10 h-10 icon-glow" />
             </div>
 
-            <h1 className="mb-6 font-serif text-5xl font-black uppercase tracking-tight text-foreground md:text-7xl">
+            <h1 className="mb-6 font-serif text-5xl font-black uppercase tracking-tight md:text-7xl">
               {loaded
                 ? letters.map((char, i) => (
                     <span
                       key={i}
-                      className="letter-reveal"
+                      className="letter-reveal gradient-text"
                       style={{ animationDelay: `${200 + i * 30}ms` }}
                     >
                       {char === ' ' ? '\u00A0' : char}
@@ -76,8 +86,11 @@ export default function HeroSection() {
             >
               <Button
                 size="lg"
-                className={`btn-glow gap-2 text-base font-semibold ${loaded ? 'animate-glow' : ''}`}
-                style={{ animationDelay: '1.2s' }}
+                className={`btn-glow gap-2 text-base font-semibold rounded-full ${loaded ? 'animate-glow' : ''}`}
+                style={{
+                  animationDelay: '1.2s',
+                  background: 'linear-gradient(135deg, hsl(263 84% 58%), hsl(239 84% 67%))',
+                }}
                 onClick={() => navigate(user ? '/learn' : '/auth')}
               >
                 {t('hero.startLearning')}
@@ -86,7 +99,7 @@ export default function HeroSection() {
               <Button
                 size="lg"
                 variant="outline"
-                className="btn-glow gap-2 border-border bg-secondary/50 text-base text-foreground hover:bg-secondary"
+                className="btn-glow gap-2 rounded-full border-primary/30 bg-secondary/50 text-base text-foreground hover:bg-primary/10 hover:border-primary/50"
                 onClick={() => {
                   document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' });
                 }}
