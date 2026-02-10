@@ -20,21 +20,30 @@ export default function ParticleMesh() {
 
     let animId: number;
     const particles: Particle[] = [];
-    let cachedW = 0;
-    let cachedH = 0;
+    let cachedW = canvas.offsetWidth;
+    let cachedH = canvas.offsetHeight;
     const COUNT = 70;
     const CONNECT_DIST = 120;
     const MOUSE_RADIUS = 180;
+    let needsResize = true;
 
-    const resize = () => {
-      cachedW = canvas.offsetWidth;
-      cachedH = canvas.offsetHeight;
+    const applySize = () => {
       canvas.width = cachedW * devicePixelRatio;
       canvas.height = cachedH * devicePixelRatio;
       ctx.scale(devicePixelRatio, devicePixelRatio);
+      needsResize = false;
     };
-    resize();
-    window.addEventListener('resize', resize);
+    applySize();
+
+    const ro = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        const cr = entry.contentRect;
+        cachedW = cr.width;
+        cachedH = cr.height;
+        needsResize = true;
+      }
+    });
+    ro.observe(canvas);
 
     for (let i = 0; i < COUNT; i++) {
       particles.push({
@@ -53,6 +62,7 @@ export default function ParticleMesh() {
     canvas.addEventListener('mousemove', handleMouse);
 
     const draw = () => {
+      if (needsResize) applySize();
       const w = cachedW;
       const h = cachedH;
       ctx.clearRect(0, 0, w, h);
@@ -115,7 +125,7 @@ export default function ParticleMesh() {
 
     return () => {
       cancelAnimationFrame(animId);
-      window.removeEventListener('resize', resize);
+      ro.disconnect();
       canvas.removeEventListener('mousemove', handleMouse);
     };
   }, []);
