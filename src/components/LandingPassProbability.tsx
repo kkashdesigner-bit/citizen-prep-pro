@@ -82,7 +82,7 @@ export default function LandingPassProbability() {
   // Guest view: sign-up invitation
   if (!user) {
     return (
-      <section className="bg-secondary/30 py-16 md:py-24">
+      <section className="relative bg-secondary/30 py-16 md:py-24 section-glow">
         <div className="container">
           <AnimatedSection>
             <div className="mx-auto max-w-lg glass-card glow-hover p-8 text-center">
@@ -106,11 +106,11 @@ export default function LandingPassProbability() {
   }
 
   return (
-    <section className="bg-secondary/30 py-16 md:py-24">
+    <section className="relative bg-secondary/30 py-16 md:py-24 section-glow">
       <div className="container">
         <AnimatedSection>
-          <h2 className="mb-2 text-center font-serif text-3xl font-bold text-foreground md:text-4xl">
-            {t('progress.titleAuth')}
+          <h2 className="mb-2 text-center font-serif text-3xl font-bold md:text-4xl">
+            <span className="gradient-text">{t('progress.titleAuth')}</span>
           </h2>
           <p className="mb-10 text-center text-muted-foreground">
             {t('progress.subtitleAuth')}
