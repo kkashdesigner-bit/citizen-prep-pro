@@ -52,17 +52,17 @@ export default function PricingSection() {
   ];
 
   return (
-    <section id="pricing" className="relative bg-background py-16 md:py-24 section-glow">
-      <div className="container relative z-10">
+    <section id="pricing" className="relative bg-background py-12 md:py-24 section-glow">
+      <div className="container relative z-10 px-4">
         <AnimatedSection>
           <div className="mx-auto max-w-2xl text-center">
-            <h2 className="font-serif text-3xl font-bold md:text-4xl">
+            <h2 className="font-serif text-2xl font-bold sm:text-3xl md:text-4xl">
               <span className="gradient-text">{t('pricing.title')}</span>
             </h2>
           </div>
         </AnimatedSection>
 
-        <div className="mx-auto mt-12 grid max-w-5xl grid-cols-1 gap-6 md:grid-cols-3">
+        <div className="mx-auto mt-8 md:mt-12 grid max-w-5xl grid-cols-1 gap-4 sm:gap-6 md:grid-cols-3">
           {tiers.map((tier, i) => (
             <AnimatedSection key={tier.name} delay={i * 150}>
               <div
