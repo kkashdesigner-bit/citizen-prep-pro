@@ -5,7 +5,7 @@ import { ArrowRight } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import ParticleMesh from '@/components/ParticleMesh';
-import logoImg from '@/assets/logo.png';
+import Logo from '@/components/Logo';
 
 export default function HeroSection() {
   const { t } = useLanguage();
@@ -86,10 +86,7 @@ export default function HeroSection() {
       <div className="relative z-10 container flex flex-col items-center text-center py-20">
         {/* Logo + Brand */}
         <div className={`mb-8 transition-all duration-700 ${loaded ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}>
-          <div className="flex flex-col items-center gap-3">
-            <img src={logoImg} alt="GoCivique logo" className="h-16 w-16 md:h-20 md:w-20 rounded-xl" />
-            <span className="text-2xl md:text-3xl font-bold gradient-text tracking-tight">GoCivique</span>
-          </div>
+          <Logo size="lg" />
         </div>
 
         {/* Main title */}

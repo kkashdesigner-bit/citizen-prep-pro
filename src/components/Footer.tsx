@@ -1,7 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { AlertTriangle } from 'lucide-react';
-import logoImg from '@/assets/logo.png';
+import Logo from '@/components/Logo';
 
 export default function Footer() {
   const { t } = useLanguage();
@@ -32,7 +32,7 @@ export default function Footer() {
       <div className="container border-t border-border/50 py-6">
         <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
           <Link to="/" className="flex items-center gap-1">
-            <img src={logoImg} alt="GoCivique logo" className="h-8 w-8 rounded-md object-contain" />
+            <Logo size="sm" />
           </Link>
 
           <nav className="flex flex-wrap items-center justify-center gap-4 text-sm">
