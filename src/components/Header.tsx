@@ -84,7 +84,7 @@ export default function Header({ animate = false }: HeaderProps) {
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" className="gap-2 glow-hover">
+              <Button variant="ghost" size="sm" className="gap-2 glow-hover" aria-label="Select language">
                 <Globe className="h-4 w-4" />
                 <span className="hidden sm:inline">{LANGUAGES[language]}</span>
               </Button>
@@ -109,7 +109,7 @@ export default function Header({ animate = false }: HeaderProps) {
               </Button>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="glow-hover">
+                  <Button variant="ghost" size="sm" className="glow-hover" aria-label="User menu">
                     <User className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
