@@ -104,6 +104,9 @@ export default function Header({ animate = false }: HeaderProps) {
 
           {user ? (
             <>
+              <Button variant="ghost" size="sm" className="hidden glow-hover sm:inline-flex" onClick={() => navigate('/dashboard')}>
+                {t('nav.dashboard') || 'Dashboard'}
+              </Button>
               <Button variant="ghost" size="sm" className="glow-hover" onClick={() => navigate('/quiz?mode=exam')}>
                 {t('nav.demo')}
               </Button>
