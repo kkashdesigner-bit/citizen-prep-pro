@@ -1,49 +1,98 @@
 
 
-## Redesign the Dashboard Page
+## Comprehensive Polish Pass for Citizen Prep Pro
 
-The current `/dashboard` page already exists and has extensive functionality. This plan redesigns it to match the requested layout with three distinct sections: a Header Card, a Progress Section with 3 cards, and feature gating for free users.
+This plan audits every page and component against the specification and fills the gaps. Most of the application is already built; this plan focuses on what is missing or incomplete.
 
-### What Changes
+### 1. Show All 5 Category Cards on Landing Page
 
-**1. Rewrite `src/pages/Dashboard.tsx`**
+**File:** `src/components/LandingCategoryTabs.tsx`
 
-Replace the current flat layout with the new 3-section structure while preserving all existing data fetching, auth guarding, and subscription logic.
+Currently only displays 3 categories (Principles, Institutions, Living). Add the missing two: **Rights** (with a Shield icon) and **History** (with a Clock/Scroll icon). Each card gets a translated description and a study-mode link.
 
-- **Header Card**: A prominent card at the top displaying the user's avatar (from `profiles.avatar_url`), display name (from `profiles.display_name`, falling back to email), and a tier badge:
-  - `free` -- Grey badge ("Free Plan")
-  - `tier_1` -- Blue badge ("Essential")
-  - `tier_2` -- Gold/amber badge ("Premium")
+### 2. Fix Progress Tracker for Guests
 
-- **Progress Section (3 cards in a row)**:
-  - **Card 1 -- Overall Progress**: A circular progress ring (built with SVG) showing the percentage of questions answered (`usedQuestions.length / totalQuestionCount`).
-  - **Card 2 -- Current Status**: Shows "On Track" (with a green indicator) if `avgScore >= 70`, or "Needs Practice" (with a yellow/red indicator) otherwise.
-  - **Card 3 -- Recent Activity**: Lists the last 3 exam history entries with scores (e.g., "Quiz: 80%"). If the user is `free`, this card gets a blurred "Locked" overlay with a "Start Free Trial" button that opens the existing `SubscriptionGate`.
+**File:** `src/components/LandingPassProbability.tsx`
 
-- **Remaining sections** (Weakness Alert, Level Selector, Category Training, Video Guides, Full Exam History) stay below, kept as-is.
+Currently shows dummy/fake data (75% pass, 12 exams, 78% avg) when no user is logged in. Replace this with a sign-up invitation card that says "Create an account to track your progress" (translated), with a CTA button to `/auth`. Only show real statistics when the user is logged in.
 
-**2. Update `src/lib/subscriptionTiers.ts`**
+### 3. Internationalize the About Page
 
-Update `TIER_LABELS` to use the new display names:
-- `free` -> "Free Plan"
-- `tier_1` -> "Essential"
-- `tier_2` -> "Premium"
+**File:** `src/pages/About.tsx`
 
-Update `TIER_BADGE_VARIANT` to differentiate visually (tier_2 gets `"destructive"` variant which we'll style as gold, or use a custom className approach).
+All text is currently hardcoded in French. Add ~20 translation keys for every string on this page and use `t()` calls throughout. Add translations for all 6 languages.
 
-**3. Fetch additional profile fields**
+### 4. Internationalize the Dashboard Page
 
-Update the `fetchData` query in Dashboard to also select `display_name, avatar_url, email` from `profiles` so the Header Card can display them.
+**File:** `src/pages/Dashboard.tsx`
 
-**4. Create `src/components/CircularProgress.tsx`**
+Several labels are hardcoded in French ("Progression globale", "Statut actuel", "Activité récente", etc.). Replace with `t()` calls and add the corresponding translation keys.
 
-A small SVG-based circular progress component that renders a ring with the percentage in the center. This replaces the linear progress bar for the "Overall Progress" card.
+### 5. Internationalize Remaining Hardcoded Strings
 
-### Technical Details
+**File:** `src/contexts/LanguageContext.tsx`
 
-- **No database changes needed** -- all data (`display_name`, `avatar_url`, `email`, `exam_history`, `used_questions`, `subscription_tier`) already exists in the `profiles` table.
-- **No new dependencies** -- the circular progress ring will be a simple SVG component using Tailwind classes.
-- **Existing components reused**: `Header`, `Footer`, `SubscriptionGate`, `WeaknessAlert`, `ProgressionBar`, `CategorySelector`, `LevelSelector`, `PremiumVideoGuides`.
-- The locked overlay pattern already exists in the current Dashboard (used on Category Training); the same pattern with blur + Lock icon + CTA button will be applied to the Recent Activity card.
-- Badge color for "Premium" (tier_2) will use a custom `className` with amber/gold colors (`bg-amber-500/20 text-amber-400 border-amber-500/30`).
+Add missing translation keys across all 6 languages for:
+- About page content (~20 keys)
+- Dashboard labels (~15 keys)
+- Category card descriptions (5 keys)
+- Landing progress section (~5 keys)
+- Footer branding update
+- Auth page: password reset link text
+- SubscriptionGate modal texts
+
+### 6. Add Password Reset Flow to Auth Page
+
+**File:** `src/pages/Auth.tsx`
+
+Add a "Forgot password?" link below the password field in login mode. When clicked, show a simple form that calls `supabase.auth.resetPasswordForEmail()` with a success toast. Add the corresponding translation keys.
+
+### 7. Update Branding in Footer
+
+**File:** `src/components/Footer.tsx`
+
+Replace the "EC" icon and "Examen Civique" text with the GoCivique logo image (same as Header), keeping the footer compact.
+
+### 8. Update Branding on Auth Page
+
+**File:** `src/pages/Auth.tsx`
+
+Replace the "EC" square icon and "Examen Civique 2026" text with the GoCivique logo.
+
+### 9. Internationalize Category Descriptions
+
+**File:** `src/components/LandingCategoryTabs.tsx`
+
+The category card descriptions are hardcoded in French. Add translation keys per category and use `t()`.
+
+### 10. Internationalize SubscriptionGate Modal
+
+**File:** `src/components/SubscriptionGate.tsx`
+
+All feature texts and CTAs are hardcoded in French. Add translation keys and use `t()`.
+
+---
+
+### Summary of Files Changed
+
+| File | Change |
+|------|--------|
+| `src/contexts/LanguageContext.tsx` | Add ~60 new translation keys across all 6 languages |
+| `src/components/LandingCategoryTabs.tsx` | Add Rights + History cards, use `t()` for descriptions |
+| `src/components/LandingPassProbability.tsx` | Replace dummy guest data with sign-up prompt |
+| `src/pages/About.tsx` | Full internationalization with `t()` calls |
+| `src/pages/Dashboard.tsx` | Replace hardcoded French with `t()` calls |
+| `src/pages/Auth.tsx` | Add password reset flow, update branding to logo |
+| `src/components/Footer.tsx` | Replace "EC" branding with GoCivique logo |
+| `src/components/SubscriptionGate.tsx` | Internationalize all text |
+
+### What Is NOT Changing
+
+- Database schema (no changes needed)
+- Quiz engine, timer, question distribution logic
+- Results page (already internationalized)
+- Header (already updated with logo)
+- Theme toggle (already working)
+- Supabase integration (already configured)
+- Core routing structure
 
