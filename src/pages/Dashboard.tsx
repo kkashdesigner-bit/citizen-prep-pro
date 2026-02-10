@@ -32,7 +32,7 @@ interface ExamHistoryEntry {
 
 export default function Dashboard() {
   const { user, loading: authLoading } = useAuth();
-  const { tier, isTier1OrAbove, isTier2, loading: tierLoading } = useSubscription();
+  const { tier, isStandardOrAbove, isPremium, isTier1OrAbove, isTier2, loading: tierLoading } = useSubscription();
   const { language, t } = useLanguage();
   const navigate = useNavigate();
   const [examHistory, setExamHistory] = useState<ExamHistoryEntry[]>([]);

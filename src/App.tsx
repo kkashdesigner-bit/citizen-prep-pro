@@ -11,6 +11,8 @@ import Quiz from "./pages/Quiz";
 import Results from "./pages/Results";
 import Dashboard from "./pages/Dashboard";
 import About from "./pages/About";
+import LearningDashboard from "./pages/LearningDashboard";
+import LessonPage from "./pages/LessonPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,6 +28,8 @@ const App = () => (
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/auth" element={<Auth />} />
+              <Route path="/learn" element={<LearningDashboard />} />
+              <Route path="/lesson/:id" element={<LessonPage />} />
               <Route path="/quiz" element={<Quiz />} />
               <Route path="/results" element={<Results />} />
               <Route path="/dashboard" element={<Dashboard />} />
