@@ -1,105 +1,29 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import type { User, Session } from '@supabase/supabase-js';
-import { toast } from '@/hooks/use-toast';
-
-const SESSION_CHECK_INTERVAL = 30_000; // 30 seconds
 
 export function useAuth() {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
-  const sessionRef = useRef<Session | null>(null);
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-
-  const clearPolling = useCallback(() => {
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
-    }
-  }, []);
-
-  const hashToken = useCallback(async (token: string): Promise<string> => {
-    const encoder = new TextEncoder();
-    const data = encoder.encode(token);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-  }, []);
-
-  const updateSessionToken = useCallback(async (userId: string, accessToken: string) => {
-    const tokenHash = await hashToken(accessToken);
-    await supabase
-      .from('profiles')
-      .update({ session_token: tokenHash } as any)
-      .eq('id', userId);
-  }, [hashToken]);
-
-  const startPolling = useCallback((userId: string) => {
-    clearPolling();
-    intervalRef.current = setInterval(async () => {
-      const currentSession = sessionRef.current;
-      if (!currentSession) return;
-
-      const { data } = await supabase
-        .from('profiles')
-        .select('session_token')
-        .eq('id', userId)
-        .single();
-
-      const currentHash = await hashToken(currentSession.access_token);
-      if (data && (data as any).session_token && (data as any).session_token !== currentHash) {
-        clearPolling();
-        toast({
-          title: 'Session terminée',
-          description: 'Vous avez été déconnecté car votre compte a été connecté sur un autre appareil.',
-          variant: 'destructive',
-        });
-        await supabase.auth.signOut();
-      }
-    }, SESSION_CHECK_INTERVAL);
-  }, [clearPolling]);
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, newSession) => {
-        // Synchronous state updates only — no awaits before these
+      (_event, newSession) => {
         setSession(newSession);
         setUser(newSession?.user ?? null);
-        sessionRef.current = newSession;
         setLoading(false);
-
-        // Defer async work to avoid corrupting React's internal queue
-        if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && newSession?.user) {
-          const uid = newSession.user.id;
-          const token = newSession.access_token;
-          setTimeout(() => {
-            updateSessionToken(uid, token);
-            startPolling(uid);
-          }, 0);
-        }
-
-        if (event === 'SIGNED_OUT') {
-          clearPolling();
-        }
       }
     );
 
     supabase.auth.getSession().then(({ data: { session: initialSession } }) => {
       setSession(initialSession);
       setUser(initialSession?.user ?? null);
-      sessionRef.current = initialSession;
       setLoading(false);
-
-      if (initialSession?.user) {
-        updateSessionToken(initialSession.user.id, initialSession.access_token);
-        startPolling(initialSession.user.id);
-      }
     });
 
     return () => {
       subscription.unsubscribe();
-      clearPolling();
     };
   }, []);
 
@@ -126,7 +50,6 @@ export function useAuth() {
   };
 
   const signOut = async () => {
-    clearPolling();
     const { error } = await supabase.auth.signOut();
     if (error) throw error;
   };
