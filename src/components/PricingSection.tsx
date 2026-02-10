@@ -52,12 +52,12 @@ export default function PricingSection() {
   ];
 
   return (
-    <section id="pricing" className="bg-background py-16 md:py-24">
-      <div className="container">
+    <section id="pricing" className="relative bg-background py-16 md:py-24 section-glow">
+      <div className="container relative z-10">
         <AnimatedSection>
           <div className="mx-auto max-w-2xl text-center">
-            <h2 className="font-serif text-3xl font-bold text-foreground md:text-4xl">
-              {t('pricing.title')}
+            <h2 className="font-serif text-3xl font-bold md:text-4xl">
+              <span className="gradient-text">{t('pricing.title')}</span>
             </h2>
           </div>
         </AnimatedSection>
@@ -66,19 +66,24 @@ export default function PricingSection() {
           {tiers.map((tier, i) => (
             <AnimatedSection key={tier.name} delay={i * 150}>
               <div
-                className={`glass-card glow-hover relative flex flex-col overflow-hidden p-6 transition-all duration-300 ${
-                  tier.popular ? 'border-primary/50 shadow-[0_0_30px_hsl(var(--primary)/0.15)]' : ''
+                className={`glass-card glow-hover relative flex flex-col overflow-hidden p-6 transition-all duration-300 hover:scale-[1.02] ${
+                  tier.popular
+                    ? 'border-primary/40 shadow-[0_0_35px_hsl(var(--primary)/0.2)]'
+                    : ''
                 }`}
               >
                 {tier.badge && (
-                  <Badge className="absolute right-4 top-4 bg-primary text-primary-foreground">
+                  <Badge
+                    className="absolute right-4 top-4 text-primary-foreground"
+                    style={{ background: 'linear-gradient(135deg, hsl(263 84% 58%), hsl(239 84% 67%))' }}
+                  >
                     {tier.badge}
                   </Badge>
                 )}
                 <div className="mb-4">
                   <p className="text-lg font-semibold text-foreground">{tier.name}</p>
                   <div className="flex items-baseline gap-1">
-                    <span className="font-serif text-4xl font-bold text-foreground">{tier.price}</span>
+                    <span className="font-serif text-4xl font-bold gradient-text">{tier.price}</span>
                     {tier.period && <span className="text-muted-foreground">{tier.period}</span>}
                   </div>
                   {tier.sub && (
@@ -103,8 +108,8 @@ export default function PricingSection() {
                   })}
                 </ul>
                 <Button
-                  className={`w-full ${tier.popular ? 'btn-glow' : ''}`}
-                  variant={tier.popular ? 'default' : 'outline'}
+                  className="w-full"
+                  variant={tier.popular ? 'gradient' : 'outline'}
                   onClick={tier.onClick}
                 >
                   {tier.cta}

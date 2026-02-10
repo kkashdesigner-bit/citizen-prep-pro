@@ -113,207 +113,221 @@ export default function LearningDashboard() {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <div className="container py-8">
-        {/* Welcome Section */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="font-serif text-3xl font-bold text-foreground md:text-4xl">
-                {t('learn.welcome').replace('{name}', firstName)}
-              </h1>
-              <p className="mt-2 text-muted-foreground">{t('learn.subtitle')}</p>
-            </div>
-            <Badge variant={TIER_BADGE_VARIANT[tier]} className={TIER_BADGE_CLASS[tier] || ''}>
-              {TIER_LABELS[tier]}
-            </Badge>
-          </div>
+
+      {/* Subtle purple glow behind dashboard */}
+      <div className="relative">
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[70%] h-[50%] rounded-full opacity-20"
+            style={{ background: 'radial-gradient(ellipse, hsl(263 84% 58% / 0.15), transparent 70%)' }}
+          />
         </div>
 
-        {/* Main Grid */}
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-          {/* CONTINUE LEARNING */}
-          <Card className="relative overflow-hidden">
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <BookOpen className="h-5 w-5 text-primary" />
-                {t('learn.continueLearning')}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {nextLesson ? (
-                <div className="space-y-4">
-                  <div className="rounded-lg border border-border/30 bg-secondary/30 p-4">
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
-                      <Clock className="h-3 w-3" />
-                      {nextLesson.estimated_minutes} min
-                      <span className="ml-2 rounded-full bg-primary/10 px-2 py-0.5 text-primary">
-                        {nextLesson.category}
-                      </span>
+        <div className="container relative z-10 py-8">
+          {/* Welcome Section */}
+          <div className="mb-8">
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="font-serif text-3xl font-bold md:text-4xl">
+                  <span className="gradient-text">{t('learn.welcome').replace('{name}', firstName)}</span>
+                </h1>
+                <p className="mt-2 text-muted-foreground">{t('learn.subtitle')}</p>
+              </div>
+              <Badge variant={TIER_BADGE_VARIANT[tier]} className={TIER_BADGE_CLASS[tier] || ''}>
+                {TIER_LABELS[tier]}
+              </Badge>
+            </div>
+          </div>
+
+          {/* Main Grid */}
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            {/* CONTINUE LEARNING — gradient card */}
+            <Card className="relative overflow-hidden border-primary/20">
+              <div className="absolute inset-0 opacity-[0.06] pointer-events-none"
+                style={{ background: 'linear-gradient(135deg, hsl(263 84% 58%), hsl(239 84% 67%))' }}
+              />
+              <CardHeader className="pb-3 relative">
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <BookOpen className="h-5 w-5 text-primary icon-glow" />
+                  {t('learn.continueLearning')}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="relative">
+                {nextLesson ? (
+                  <div className="space-y-4">
+                    <div className="rounded-lg border border-primary/15 bg-secondary/30 p-4">
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
+                        <Clock className="h-3 w-3" />
+                        {nextLesson.estimated_minutes} min
+                        <span className="ml-2 rounded-full bg-primary/10 px-2 py-0.5 text-primary">
+                          {nextLesson.category}
+                        </span>
+                      </div>
+                      <h3 className="font-semibold text-foreground">{nextLesson.title}</h3>
                     </div>
-                    <h3 className="font-semibold text-foreground">{nextLesson.title}</h3>
+                    <Button
+                      variant="gradient"
+                      className="w-full btn-glow gap-2"
+                      onClick={() => {
+                        if (!isStandardOrAbove) { openGate('standard'); return; }
+                        navigate(`/lesson/${nextLesson.id}`);
+                      }}
+                    >
+                      <Play className="h-4 w-4" />
+                      {t('learn.resume')}
+                      <ArrowRight className="h-4 w-4" />
+                    </Button>
                   </div>
-                  <Button
-                    className="w-full btn-glow gap-2"
-                    onClick={() => {
-                      if (!isStandardOrAbove) { openGate('standard'); return; }
-                      navigate(`/lesson/${nextLesson.id}`);
-                    }}
-                  >
-                    <Play className="h-4 w-4" />
-                    {t('learn.resume')}
-                    <ArrowRight className="h-4 w-4" />
-                  </Button>
-                </div>
-              ) : (
-                <div className="flex flex-col items-center py-6 text-center">
-                  <Trophy className="mb-3 h-10 w-10 text-primary" />
-                  <p className="font-medium text-foreground">{t('learn.allCompleted')}</p>
+                ) : (
+                  <div className="flex flex-col items-center py-6 text-center">
+                    <Trophy className="mb-3 h-10 w-10 text-primary icon-glow" />
+                    <p className="font-medium text-foreground">{t('learn.allCompleted')}</p>
+                  </div>
+                )}
+              </CardContent>
+              {tier === 'free' && (
+                <div className="absolute inset-0 flex items-center justify-center rounded-xl bg-background/80 backdrop-blur-md">
+                  <div className="text-center">
+                    <Lock className="mx-auto mb-2 h-8 w-8 text-muted-foreground" />
+                    <p className="mb-3 text-sm font-medium text-foreground">{t('learn.locked')}</p>
+                    <Button size="sm" variant="gradient" className="btn-glow" onClick={() => openGate('standard')}>
+                      {t('learn.upgrade')}
+                    </Button>
+                  </div>
                 </div>
               )}
-            </CardContent>
-            {tier === 'free' && (
-              <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-background/80 backdrop-blur-md">
-                <div className="text-center">
-                  <Lock className="mx-auto mb-2 h-8 w-8 text-muted-foreground" />
-                  <p className="mb-3 text-sm font-medium text-foreground">{t('learn.locked')}</p>
-                  <Button size="sm" className="btn-glow" onClick={() => openGate('standard')}>
-                    {t('learn.upgrade')}
-                  </Button>
-                </div>
-              </div>
-            )}
-          </Card>
+            </Card>
 
-          {/* MY LEARNING PATH */}
-          <Card className="relative overflow-hidden">
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <GraduationCap className="h-5 w-5 text-primary" />
-                {t('learn.learningPath')}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {categoryProgress.map(cp => (
-                  <div key={cp.category} className="space-y-1">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-foreground">{cp.category}</span>
-                      <span className="text-muted-foreground">
-                        {cp.completed}/{cp.total}
-                      </span>
+            {/* MY LEARNING PATH */}
+            <Card className="relative overflow-hidden">
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <GraduationCap className="h-5 w-5 text-primary icon-glow" />
+                  {t('learn.learningPath')}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {categoryProgress.map(cp => (
+                    <div key={cp.category} className="space-y-1">
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-foreground">{cp.category}</span>
+                        <span className="text-muted-foreground">
+                          {cp.completed}/{cp.total}
+                        </span>
+                      </div>
+                      <Progress value={cp.total > 0 ? (cp.completed / cp.total) * 100 : 0} className="h-2" />
                     </div>
-                    <Progress value={cp.total > 0 ? (cp.completed / cp.total) * 100 : 0} className="h-2" />
+                  ))}
+                </div>
+              </CardContent>
+              {tier === 'free' && (
+                <div className="absolute inset-0 flex items-center justify-center rounded-xl bg-background/80 backdrop-blur-md">
+                  <div className="text-center">
+                    <Lock className="mx-auto mb-2 h-8 w-8 text-muted-foreground" />
+                    <p className="mb-3 text-sm font-medium text-foreground">{t('learn.locked')}</p>
+                    <Button size="sm" variant="gradient" className="btn-glow" onClick={() => openGate('standard')}>
+                      {t('learn.upgrade')}
+                    </Button>
                   </div>
-                ))}
-              </div>
-            </CardContent>
-            {tier === 'free' && (
-              <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-background/80 backdrop-blur-md">
-                <div className="text-center">
-                  <Lock className="mx-auto mb-2 h-8 w-8 text-muted-foreground" />
-                  <p className="mb-3 text-sm font-medium text-foreground">{t('learn.locked')}</p>
-                  <Button size="sm" className="btn-glow" onClick={() => openGate('standard')}>
-                    {t('learn.upgrade')}
+                </div>
+              )}
+            </Card>
+
+            {/* PRACTICE & TEST */}
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <Target className="h-5 w-5 text-primary icon-glow" />
+                  {t('learn.practiceTest')}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start gap-3 glow-hover"
+                    onClick={() => navigate('/quiz?mode=exam')}
+                  >
+                    <Play className="h-4 w-4 text-primary" />
+                    {t('learn.demoExam')}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start gap-3 glow-hover"
+                    onClick={() => {
+                      if (!isStandardOrAbove) { openGate('standard'); return; }
+                      navigate('/quiz?mode=exam');
+                    }}
+                  >
+                    <CheckCircle className="h-4 w-4 text-primary" />
+                    {t('learn.fullExam')}
+                    {!isStandardOrAbove && <Lock className="ml-auto h-4 w-4 text-muted-foreground" />}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start gap-3 glow-hover"
+                    onClick={() => {
+                      if (!isStandardOrAbove) { openGate('standard'); return; }
+                      navigate('/quiz?mode=study');
+                    }}
+                  >
+                    <BookOpen className="h-4 w-4 text-primary" />
+                    {t('learn.training')}
+                    {!isStandardOrAbove && <Lock className="ml-auto h-4 w-4 text-muted-foreground" />}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start gap-3 glow-hover"
+                    onClick={() => {
+                      if (!isPremium) { openGate('premium'); return; }
+                      navigate('/quiz?mode=training');
+                    }}
+                  >
+                    <Sparkles className="h-4 w-4 text-primary" />
+                    {t('learn.categoryTraining')}
+                    {!isPremium && <Lock className="ml-auto h-4 w-4 text-muted-foreground" />}
                   </Button>
                 </div>
-              </div>
-            )}
-          </Card>
+              </CardContent>
+            </Card>
 
-          {/* PRACTICE & TEST */}
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <Target className="h-5 w-5 text-primary" />
-                {t('learn.practiceTest')}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <Button
-                  variant="outline"
-                  className="w-full justify-start gap-3 glow-hover"
-                  onClick={() => navigate('/quiz?mode=exam')}
-                >
-                  <Play className="h-4 w-4 text-primary" />
-                  {t('learn.demoExam')}
-                </Button>
-                <Button
-                  variant="outline"
-                  className="w-full justify-start gap-3 glow-hover"
-                  onClick={() => {
-                    if (!isStandardOrAbove) { openGate('standard'); return; }
-                    navigate('/quiz?mode=exam');
-                  }}
-                >
-                  <CheckCircle className="h-4 w-4 text-primary" />
-                  {t('learn.fullExam')}
-                  {!isStandardOrAbove && <Lock className="ml-auto h-4 w-4 text-muted-foreground" />}
-                </Button>
-                <Button
-                  variant="outline"
-                  className="w-full justify-start gap-3 glow-hover"
-                  onClick={() => {
-                    if (!isStandardOrAbove) { openGate('standard'); return; }
-                    navigate('/quiz?mode=study');
-                  }}
-                >
-                  <BookOpen className="h-4 w-4 text-primary" />
-                  {t('learn.training')}
-                  {!isStandardOrAbove && <Lock className="ml-auto h-4 w-4 text-muted-foreground" />}
-                </Button>
-                <Button
-                  variant="outline"
-                  className="w-full justify-start gap-3 glow-hover"
-                  onClick={() => {
-                    if (!isPremium) { openGate('premium'); return; }
-                    navigate('/quiz?mode=training');
-                  }}
-                >
-                  <Sparkles className="h-4 w-4 text-primary" />
-                  {t('learn.categoryTraining')}
-                  {!isPremium && <Lock className="ml-auto h-4 w-4 text-muted-foreground" />}
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* MY PROGRESS */}
-          <Card className="relative overflow-hidden">
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <BarChart3 className="h-5 w-5 text-primary" />
-                {t('learn.myProgress')}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between rounded-lg border border-border/30 bg-secondary/30 p-3">
-                  <span className="text-sm text-muted-foreground">{t('learn.lessonsCompleted')}</span>
-                  <span className="font-semibold text-foreground">{completedLessons}/{totalLessons}</span>
+            {/* MY PROGRESS */}
+            <Card className="relative overflow-hidden">
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <BarChart3 className="h-5 w-5 text-primary icon-glow" />
+                  {t('learn.myProgress')}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between rounded-lg border border-primary/10 bg-secondary/30 p-3">
+                    <span className="text-sm text-muted-foreground">{t('learn.lessonsCompleted')}</span>
+                    <span className="font-semibold text-foreground">{completedLessons}/{totalLessons}</span>
+                  </div>
+                  <div className="flex items-center justify-between rounded-lg border border-primary/10 bg-secondary/30 p-3">
+                    <span className="text-sm text-muted-foreground">{t('learn.accuracy')}</span>
+                    <span className="font-semibold text-foreground">{avgScore}%</span>
+                  </div>
+                  <div className="flex items-center justify-between rounded-lg border border-primary/10 bg-secondary/30 p-3">
+                    <span className="text-sm text-muted-foreground">{t('learn.examsTaken')}</span>
+                    <span className="font-semibold text-foreground">{examHistory.length}</span>
+                  </div>
                 </div>
-                <div className="flex items-center justify-between rounded-lg border border-border/30 bg-secondary/30 p-3">
-                  <span className="text-sm text-muted-foreground">{t('learn.accuracy')}</span>
-                  <span className="font-semibold text-foreground">{avgScore}%</span>
+              </CardContent>
+              {tier === 'free' && (
+                <div className="absolute inset-0 flex items-center justify-center rounded-xl bg-background/80 backdrop-blur-md">
+                  <div className="text-center">
+                    <Lock className="mx-auto mb-2 h-8 w-8 text-muted-foreground" />
+                    <p className="mb-3 text-sm font-medium text-foreground">{t('learn.locked')}</p>
+                    <Button size="sm" variant="gradient" className="btn-glow" onClick={() => openGate('standard')}>
+                      {t('learn.upgrade')}
+                    </Button>
+                  </div>
                 </div>
-                <div className="flex items-center justify-between rounded-lg border border-border/30 bg-secondary/30 p-3">
-                  <span className="text-sm text-muted-foreground">{t('learn.examsTaken')}</span>
-                  <span className="font-semibold text-foreground">{examHistory.length}</span>
-                </div>
-              </div>
-            </CardContent>
-            {tier === 'free' && (
-              <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-background/80 backdrop-blur-md">
-                <div className="text-center">
-                  <Lock className="mx-auto mb-2 h-8 w-8 text-muted-foreground" />
-                  <p className="mb-3 text-sm font-medium text-foreground">{t('learn.locked')}</p>
-                  <Button size="sm" className="btn-glow" onClick={() => openGate('standard')}>
-                    {t('learn.upgrade')}
-                  </Button>
-                </div>
-              </div>
-            )}
-          </Card>
+              )}
+            </Card>
+          </div>
         </div>
       </div>
       <Footer />
