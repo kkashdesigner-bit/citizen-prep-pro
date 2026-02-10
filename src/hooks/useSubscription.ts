@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 
-export type SubscriptionTier = 'free' | 'tier_1' | 'tier_2';
+export type SubscriptionTier = 'free' | 'standard' | 'premium';
 
 export function useSubscription() {
   const { user, loading: authLoading } = useAuth();
@@ -25,11 +25,15 @@ export function useSubscription() {
         .maybeSingle();
 
       if (data) {
-        if (data.subscription_tier === 'tier_1' || data.subscription_tier === 'tier_2') {
-          setTier(data.subscription_tier as SubscriptionTier);
+        const t = data.subscription_tier;
+        if (t === 'standard' || t === 'premium') {
+          setTier(t as SubscriptionTier);
+        } else if (t === 'tier_1') {
+          setTier('standard');
+        } else if (t === 'tier_2') {
+          setTier('premium');
         } else if (data.is_subscribed) {
-          // backward compat: old is_subscribed users default to tier_1
-          setTier('tier_1');
+          setTier('standard');
         } else {
           setTier('free');
         }
@@ -42,8 +46,11 @@ export function useSubscription() {
 
   return {
     tier,
-    isTier1OrAbove: tier === 'tier_1' || tier === 'tier_2',
-    isTier2: tier === 'tier_2',
+    isStandardOrAbove: tier === 'standard' || tier === 'premium',
+    isPremium: tier === 'premium',
+    // backward compat aliases
+    isTier1OrAbove: tier === 'standard' || tier === 'premium',
+    isTier2: tier === 'premium',
     loading,
   };
 }

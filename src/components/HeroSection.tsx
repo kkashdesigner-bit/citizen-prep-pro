@@ -3,12 +3,14 @@ import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { ArrowRight, Scale } from 'lucide-react';
 import { useEffect, useState, useMemo } from 'react';
+import { useAuth } from '@/hooks/useAuth';
 import ParticleMesh from '@/components/ParticleMesh';
 import HeroIllustration from '@/components/HeroIllustration';
 
 export default function HeroSection() {
   const { t } = useLanguage();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
@@ -76,9 +78,9 @@ export default function HeroSection() {
                 size="lg"
                 className={`btn-glow gap-2 text-base font-semibold ${loaded ? 'animate-glow' : ''}`}
                 style={{ animationDelay: '1.2s' }}
-                onClick={() => navigate('/quiz?mode=study')}
+                onClick={() => navigate(user ? '/learn' : '/auth')}
               >
-                {t('hero.cta')}
+                {t('hero.startLearning')}
                 <ArrowRight className="h-4 w-4" />
               </Button>
               <Button
