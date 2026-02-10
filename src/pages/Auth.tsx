@@ -8,7 +8,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import Header from '@/components/Header';
-import logoImg from '@/assets/logo.png';
+import Logo from '@/components/Logo';
 
 export default function Auth() {
   const [isLogin, setIsLogin] = useState(true);
@@ -73,7 +73,7 @@ export default function Auth() {
       <div className="container flex items-center justify-center py-20">
         <div className="w-full max-w-md glass-card p-8">
           <div className="text-center mb-6">
-            <img src={logoImg} alt="GoCivique" className="mx-auto mb-4 h-14 w-14 rounded-lg object-contain" />
+            <Logo size="md" className="mb-4" />
             <h1 className="font-serif text-2xl font-bold text-foreground">
               {isForgot ? t('auth.resetPassword') : isLogin ? t('auth.login') : t('auth.signup')}
             </h1>

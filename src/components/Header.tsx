@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import ThemeToggle from '@/components/ThemeToggle';
 import { useEffect, useState } from 'react';
-import logoImg from '@/assets/logo.png';
+import Logo from '@/components/Logo';
 
 interface HeaderProps {
   animate?: boolean;
@@ -54,7 +54,7 @@ export default function Header({ animate = false }: HeaderProps) {
     >
       <div className="container flex h-16 items-center justify-between">
         <Link to="/" className="flex items-center glow-hover rounded-lg p-1">
-          <img src={logoImg} alt="GoCivique logo" className="h-12 w-12 rounded-md object-contain" />
+          <Logo size="sm" />
         </Link>
 
         <nav className="flex items-center gap-1">
