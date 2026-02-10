@@ -78,7 +78,7 @@ export default {
 			},
 			'glow': {
 				'0%, 100%': { boxShadow: '0 0 0 0 hsl(var(--primary) / 0)' },
-				'50%': { boxShadow: '0 0 16px 2px hsl(var(--primary) / 0.3)' }
+				'50%': { boxShadow: '0 0 20px 4px hsl(var(--primary) / 0.35)' }
 			},
 			'grow-bar': {
 				'0%': { transform: 'scaleY(0)' },
@@ -133,7 +133,7 @@ export default {
 			},
 			'pulse-glow': {
 				'0%, 100%': { boxShadow: '0 0 10px 0 hsl(var(--primary) / 0.3)' },
-				'50%': { boxShadow: '0 0 25px 5px hsl(var(--primary) / 0.5)' }
+				'50%': { boxShadow: '0 0 30px 8px hsl(var(--primary) / 0.5)' }
 			},
 			'shine': {
 				'0%': { transform: 'translateX(-100%)' },
@@ -142,6 +142,11 @@ export default {
 			'letter-pop': {
 				'0%': { opacity: '0', transform: 'translateY(12px)' },
 				'100%': { opacity: '1', transform: 'translateY(0)' }
+			},
+			'gradient-shift': {
+				'0%': { backgroundPosition: '0% 50%' },
+				'50%': { backgroundPosition: '100% 50%' },
+				'100%': { backgroundPosition: '0% 50%' }
 			}
 		},
 		animation: {
@@ -160,7 +165,8 @@ export default {
 			'warp-out': 'warp-out 0.2s ease-in forwards',
 			'pulse-glow': 'pulse-glow 2s ease-in-out infinite',
 			'shine': 'shine 2.5s ease-in-out infinite',
-			'letter-pop': 'letter-pop 0.4s ease-out forwards'
+			'letter-pop': 'letter-pop 0.4s ease-out forwards',
+			'gradient-shift': 'gradient-shift 6s ease infinite'
 		},
   		fontFamily: {
   			sans: ['Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'sans-serif'],

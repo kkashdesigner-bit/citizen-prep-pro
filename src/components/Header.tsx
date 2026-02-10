@@ -48,7 +48,7 @@ export default function Header({ animate = false }: HeaderProps) {
 
   return (
     <header
-      className={`sticky top-0 z-50 border-b border-border/50 bg-background/60 backdrop-blur-xl transition-all duration-500 ${
+      className={`sticky top-0 z-50 border-b border-primary/10 bg-background/60 backdrop-blur-xl transition-all duration-500 ${
         loaded ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-3'
       }`}
     >
@@ -133,7 +133,7 @@ export default function Header({ animate = false }: HeaderProps) {
               <Button variant="ghost" size="sm" className="glow-hover" onClick={() => navigate('/quiz?mode=exam')}>
                 {t('nav.demo')}
               </Button>
-              <Button variant="default" size="sm" className="btn-glow" onClick={() => navigate('/auth')}>
+              <Button variant="gradient" size="sm" className="btn-glow" onClick={() => navigate('/auth')}>
                 {t('nav.login')}
               </Button>
             </>

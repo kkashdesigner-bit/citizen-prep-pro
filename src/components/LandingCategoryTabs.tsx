@@ -18,11 +18,11 @@ export default function LandingCategoryTabs() {
   const navigate = useNavigate();
 
   return (
-    <section className="bg-background py-16 md:py-24">
-      <div className="container">
+    <section className="relative bg-background py-16 md:py-24 section-glow">
+      <div className="container relative z-10">
         <AnimatedSection>
-          <h2 className="mb-4 text-center font-serif text-3xl font-bold text-foreground md:text-4xl">
-            {t('cat.explore')}
+          <h2 className="mb-4 text-center font-serif text-3xl font-bold md:text-4xl">
+            <span className="gradient-text">{t('cat.explore')}</span>
           </h2>
           <p className="mx-auto mb-12 max-w-2xl text-center text-muted-foreground">
             {t('cat.exploreSubtitle')}
@@ -33,11 +33,11 @@ export default function LandingCategoryTabs() {
           {FEATURES.map(({ key, icon: Icon }, i) => (
             <AnimatedSection key={key} delay={i * 100}>
               <div
-                className="glass-card glow-hover group h-full cursor-pointer p-6 text-center transition-all duration-300"
+                className="glass-card glow-hover group h-full cursor-pointer p-6 text-center transition-all duration-300 hover:scale-[1.02]"
                 onClick={() => navigate(`/quiz?mode=study&category=${key}`)}
               >
-                <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-primary/10 shadow-[0_0_15px_hsl(var(--primary)/0.15)] transition-all duration-300 group-hover:shadow-[0_0_20px_hsl(var(--primary)/0.3)]">
-                  <Icon className="h-7 w-7 text-primary" />
+                <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-primary/10 shadow-[0_0_15px_hsl(var(--primary)/0.2)] transition-all duration-300 group-hover:shadow-[0_0_25px_hsl(var(--primary)/0.4)]">
+                  <Icon className="h-7 w-7 text-primary icon-glow" />
                 </div>
                 <h3 className="mb-2 font-serif text-lg font-semibold text-foreground">
                   {CATEGORY_LABELS[language][key]}

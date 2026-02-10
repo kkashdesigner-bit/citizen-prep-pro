@@ -74,7 +74,7 @@ export default function ParticleMesh() {
         if (p.y < 0 || p.y > h) p.vy *= -1;
       }
 
-      // Lines
+      // Lines — purple/indigo
       for (let i = 0; i < particles.length; i++) {
         for (let j = i + 1; j < particles.length; j++) {
           const dx = particles[i].x - particles[j].x;
@@ -82,7 +82,7 @@ export default function ParticleMesh() {
           const dist = Math.sqrt(dx * dx + dy * dy);
           if (dist < CONNECT_DIST) {
             const alpha = (1 - dist / CONNECT_DIST) * 0.15;
-            ctx.strokeStyle = `hsla(217, 91%, 60%, ${alpha})`;
+            ctx.strokeStyle = `hsla(263, 84%, 58%, ${alpha})`;
             ctx.lineWidth = 0.5;
             ctx.beginPath();
             ctx.moveTo(particles[i].x, particles[i].y);
@@ -92,7 +92,7 @@ export default function ParticleMesh() {
         }
       }
 
-      // Dots + mouse glow
+      // Dots + mouse glow — purple
       const mx = mouseRef.current.x;
       const my = mouseRef.current.y;
       for (const p of particles) {
@@ -101,7 +101,7 @@ export default function ParticleMesh() {
         const mDist = Math.sqrt(mdx * mdx + mdy * mdy);
         const brightness = mDist < MOUSE_RADIUS ? 1 : 0.4;
 
-        ctx.fillStyle = `hsla(217, 91%, 60%, ${brightness * 0.7})`;
+        ctx.fillStyle = `hsla(272, 91%, 65%, ${brightness * 0.7})`;
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size * (mDist < MOUSE_RADIUS ? 1.8 : 1), 0, Math.PI * 2);
         ctx.fill();
@@ -109,7 +109,7 @@ export default function ParticleMesh() {
         // Extra glow lines to mouse
         if (mDist < MOUSE_RADIUS) {
           const alpha = (1 - mDist / MOUSE_RADIUS) * 0.2;
-          ctx.strokeStyle = `hsla(217, 91%, 60%, ${alpha})`;
+          ctx.strokeStyle = `hsla(263, 84%, 58%, ${alpha})`;
           ctx.lineWidth = 0.5;
           ctx.beginPath();
           ctx.moveTo(p.x, p.y);
