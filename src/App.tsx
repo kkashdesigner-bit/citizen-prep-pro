@@ -12,6 +12,7 @@ import Results from "./pages/Results";
 import Dashboard from "./pages/Dashboard";
 import About from "./pages/About";
 import LearningDashboard from "./pages/LearningDashboard";
+import ProgressPage from "./pages/ProgressPage";
 import LessonPage from "./pages/LessonPage";
 import NotFound from "./pages/NotFound";
 
@@ -29,6 +30,7 @@ const App = () => (
               <Route path="/" element={<Index />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/learn" element={<LearningDashboard />} />
+              <Route path="/progress" element={<ProgressPage />} />
               <Route path="/lesson/:id" element={<LessonPage />} />
               <Route path="/quiz" element={<Quiz />} />
               <Route path="/results" element={<Results />} />
