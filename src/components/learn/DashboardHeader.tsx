@@ -50,7 +50,7 @@ export default function DashboardHeader({ firstName, avatarUrl, mastery, streak,
 
 function StatCard({ label, value, icon }: { label: string; value: string; icon: string }) {
   return (
-    <div className="rounded-xl border border-border/50 bg-card/80 p-3 md:p-4 text-center transition-all hover:border-primary/20 hover:shadow-[0_0_20px_hsl(var(--primary)/0.08)]">
+    <div className="rounded-xl border border-border/40 bg-white p-3 md:p-4 text-center transition-all hover:border-secondary/30 hover:shadow-[0_6px_20px_hsl(225,48,25,0.06)]">
       <span className="text-lg md:text-xl">{icon}</span>
       <p className="mt-1 text-lg md:text-2xl font-bold text-foreground">{value}</p>
       <p className="text-[11px] md:text-xs text-muted-foreground font-medium uppercase tracking-wider">{label}</p>
