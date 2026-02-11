@@ -175,6 +175,45 @@ export type Database = {
         }
         Relationships: []
       }
+      questions_: {
+        Row: {
+          category: string | null
+          correct_answer: string | null
+          explanation: string | null
+          id: number
+          language: string | null
+          option_a: string | null
+          option_b: string | null
+          option_c: string | null
+          option_d: string | null
+          question_text: string | null
+        }
+        Insert: {
+          category?: string | null
+          correct_answer?: string | null
+          explanation?: string | null
+          id?: number
+          language?: string | null
+          option_a?: string | null
+          option_b?: string | null
+          option_c?: string | null
+          option_d?: string | null
+          question_text?: string | null
+        }
+        Update: {
+          category?: string | null
+          correct_answer?: string | null
+          explanation?: string | null
+          id?: number
+          language?: string | null
+          option_a?: string | null
+          option_b?: string | null
+          option_c?: string | null
+          option_d?: string | null
+          question_text?: string | null
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string

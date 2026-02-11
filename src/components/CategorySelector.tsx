@@ -1,7 +1,7 @@
 import { Category, CATEGORY_LABELS } from '@/lib/types';
 import { Card, CardContent } from '@/components/ui/card';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { BookOpen, Landmark, Scale, GraduationCap, Home } from 'lucide-react';
+import { BookOpen, Landmark, Scale, GraduationCap, Home, Vote, Users } from 'lucide-react';
 
 interface CategorySelectorProps {
   onSelect: (category: Category) => void;
@@ -13,9 +13,11 @@ const CATEGORY_ICONS: Record<Category, React.ElementType> = {
   Rights: Scale,
   History: GraduationCap,
   Living: Home,
+  Politics: Vote,
+  Society: Users,
 };
 
-const CATEGORIES: Category[] = ['Principles', 'Institutions', 'Rights', 'History', 'Living'];
+const CATEGORIES: Category[] = ['Principles', 'Institutions', 'Rights', 'History', 'Living', 'Politics', 'Society'];
 
 export default function CategorySelector({ onSelect }: CategorySelectorProps) {
   const { language } = useLanguage();
