@@ -1,21 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
 import { useAuth } from '@/hooks/useAuth';
 import { useSubscription } from '@/hooks/useSubscription';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
+import LearnSidebar from '@/components/learn/LearnSidebar';
+import DashboardHeader from '@/components/learn/DashboardHeader';
+import ActionCards from '@/components/learn/ActionCards';
+import DomainCards from '@/components/learn/DomainCards';
 import SubscriptionGate from '@/components/SubscriptionGate';
-import { TIER_LABELS, TIER_BADGE_VARIANT, TIER_BADGE_CLASS } from '@/lib/subscriptionTiers';
-import {
-  BookOpen, GraduationCap, Target, BarChart3, Lock, Play,
-  ArrowRight, Clock, CheckCircle, Trophy, Sparkles
-} from 'lucide-react';
 
 interface Lesson {
   id: string;
@@ -39,18 +32,18 @@ interface ExamHistoryEntry {
   passed: boolean;
 }
 
-const CATEGORIES = ['Principles', 'Institutions', 'Rights', 'History', 'Living'];
+const ALL_CATEGORIES = ['Principles', 'Institutions', 'Rights', 'History', 'Living', 'Politics', 'Society'];
 
 export default function LearningDashboard() {
   const { user, loading: authLoading } = useAuth();
-  const { tier, isStandardOrAbove, isPremium, loading: tierLoading } = useSubscription();
+  const { tier, isStandardOrAbove, loading: tierLoading } = useSubscription();
   const { t } = useLanguage();
   const navigate = useNavigate();
 
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [progress, setProgress] = useState<LessonProgress[]>([]);
   const [examHistory, setExamHistory] = useState<ExamHistoryEntry[]>([]);
-  const [displayName, setDisplayName] = useState<string>('');
+  const [displayName, setDisplayName] = useState('');
   const [loading, setLoading] = useState(true);
   const [showGate, setShowGate] = useState(false);
   const [gateTier, setGateTier] = useState<'standard' | 'premium'>('standard');
@@ -63,7 +56,7 @@ export default function LearningDashboard() {
       const [lessonsRes, progressRes, profileRes] = await Promise.all([
         supabase.from('lessons').select('id, category, level, title, estimated_minutes, order_index').order('order_index'),
         supabase.from('lesson_progress').select('lesson_id, status, score_last').eq('user_id', user.id),
-        supabase.from('profiles').select('display_name, email, exam_history').eq('id', user.id).maybeSingle(),
+        supabase.from('profiles').select('display_name, email, exam_history, total_questions_seen').eq('id', user.id).maybeSingle(),
       ]);
 
       setLessons((lessonsRes.data as Lesson[]) || []);
@@ -82,9 +75,9 @@ export default function LearningDashboard() {
 
   if (authLoading || loading || tierLoading) {
     return (
-      <div className="min-h-screen bg-background">
-        <Header />
-        <div className="container flex items-center justify-center py-20">
+      <div className="flex min-h-screen bg-background">
+        <LearnSidebar />
+        <div className="flex-1 md:ml-64 flex items-center justify-center">
           <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent" />
         </div>
       </div>
@@ -98,239 +91,43 @@ export default function LearningDashboard() {
     return !p || p.status !== 'completed';
   });
 
-  const avgScore = examHistory.length > 0
-    ? Math.round(examHistory.reduce((sum, e) => sum + (e.score / e.totalQuestions) * 100, 0) / examHistory.length)
-    : 0;
+  const mastery = totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
+  const xp = completedLessons * 50 + examHistory.length * 100;
+  // Streak placeholder (would need daily tracking table)
+  const streak = examHistory.length > 0 ? Math.min(examHistory.length, 7) : 0;
 
-  const categoryProgress = CATEGORIES.map(cat => {
+  const categoryProgress = ALL_CATEGORIES.map(cat => {
     const catLessons = lessons.filter(l => l.category === cat);
     const catCompleted = catLessons.filter(l => progress.find(p => p.lesson_id === l.id && p.status === 'completed')).length;
     return { category: cat, total: catLessons.length, completed: catCompleted };
   });
 
-  const firstName = displayName.split(' ')[0] || displayName;
+  const firstName = displayName.split(' ')[0] || displayName || 'Learner';
 
   return (
-    <div className="min-h-screen bg-background">
-      <Header />
+    <div className="flex min-h-screen bg-background">
+      <LearnSidebar />
 
-      {/* Subtle purple glow behind dashboard */}
-      <div className="relative">
-        <div className="pointer-events-none absolute inset-0">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[70%] h-[50%] rounded-full opacity-20"
-            style={{ background: 'radial-gradient(ellipse, hsl(263 84% 58% / 0.15), transparent 70%)' }}
+      {/* Main content area */}
+      <main className="flex-1 md:ml-64 pb-20 md:pb-8">
+        <div className="mx-auto max-w-5xl px-4 md:px-8 py-6 md:py-8">
+          <DashboardHeader
+            firstName={firstName}
+            mastery={mastery}
+            streak={streak}
+            xp={xp}
           />
+
+          <ActionCards
+            nextLesson={nextLesson || null}
+            isStandardOrAbove={isStandardOrAbove}
+            onGate={openGate}
+          />
+
+          <DomainCards categoryProgress={categoryProgress} />
         </div>
+      </main>
 
-        <div className="container relative z-10 py-8">
-          {/* Welcome Section */}
-          <div className="mb-8">
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="font-serif text-3xl font-bold md:text-4xl">
-                  <span className="gradient-text">{t('learn.welcome').replace('{name}', firstName)}</span>
-                </h1>
-                <p className="mt-2 text-muted-foreground">{t('learn.subtitle')}</p>
-              </div>
-              <Badge variant={TIER_BADGE_VARIANT[tier]} className={TIER_BADGE_CLASS[tier] || ''}>
-                {TIER_LABELS[tier]}
-              </Badge>
-            </div>
-          </div>
-
-          {/* Main Grid */}
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            {/* CONTINUE LEARNING — gradient card */}
-            <Card className="relative overflow-hidden border-primary/20">
-              <div className="absolute inset-0 opacity-[0.06] pointer-events-none"
-                style={{ background: 'linear-gradient(135deg, hsl(263 84% 58%), hsl(239 84% 67%))' }}
-              />
-              <CardHeader className="pb-3 relative">
-                <CardTitle className="flex items-center gap-2 text-lg">
-                  <BookOpen className="h-5 w-5 text-primary icon-glow" />
-                  {t('learn.continueLearning')}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="relative">
-                {nextLesson ? (
-                  <div className="space-y-4">
-                    <div className="rounded-lg border border-primary/15 bg-secondary/30 p-4">
-                      <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
-                        <Clock className="h-3 w-3" />
-                        {nextLesson.estimated_minutes} min
-                        <span className="ml-2 rounded-full bg-primary/10 px-2 py-0.5 text-primary">
-                          {nextLesson.category}
-                        </span>
-                      </div>
-                      <h3 className="font-semibold text-foreground">{nextLesson.title}</h3>
-                    </div>
-                    <Button
-                      variant="gradient"
-                      className="w-full btn-glow gap-2"
-                      onClick={() => {
-                        if (!isStandardOrAbove) { openGate('standard'); return; }
-                        navigate(`/lesson/${nextLesson.id}`);
-                      }}
-                    >
-                      <Play className="h-4 w-4" />
-                      {t('learn.resume')}
-                      <ArrowRight className="h-4 w-4" />
-                    </Button>
-                  </div>
-                ) : (
-                  <div className="flex flex-col items-center py-6 text-center">
-                    <Trophy className="mb-3 h-10 w-10 text-primary icon-glow" />
-                    <p className="font-medium text-foreground">{t('learn.allCompleted')}</p>
-                  </div>
-                )}
-              </CardContent>
-              {tier === 'free' && (
-                <div className="absolute inset-0 flex items-center justify-center rounded-xl bg-background/80 backdrop-blur-md">
-                  <div className="text-center">
-                    <Lock className="mx-auto mb-2 h-8 w-8 text-muted-foreground" />
-                    <p className="mb-3 text-sm font-medium text-foreground">{t('learn.locked')}</p>
-                    <Button size="sm" variant="gradient" className="btn-glow" onClick={() => openGate('standard')}>
-                      {t('learn.upgrade')}
-                    </Button>
-                  </div>
-                </div>
-              )}
-            </Card>
-
-            {/* MY LEARNING PATH */}
-            <Card className="relative overflow-hidden">
-              <CardHeader className="pb-3">
-                <CardTitle className="flex items-center gap-2 text-lg">
-                  <GraduationCap className="h-5 w-5 text-primary icon-glow" />
-                  {t('learn.learningPath')}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {categoryProgress.map(cp => (
-                    <div key={cp.category} className="space-y-1">
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-foreground">{cp.category}</span>
-                        <span className="text-muted-foreground">
-                          {cp.completed}/{cp.total}
-                        </span>
-                      </div>
-                      <Progress value={cp.total > 0 ? (cp.completed / cp.total) * 100 : 0} className="h-2" />
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-              {tier === 'free' && (
-                <div className="absolute inset-0 flex items-center justify-center rounded-xl bg-background/80 backdrop-blur-md">
-                  <div className="text-center">
-                    <Lock className="mx-auto mb-2 h-8 w-8 text-muted-foreground" />
-                    <p className="mb-3 text-sm font-medium text-foreground">{t('learn.locked')}</p>
-                    <Button size="sm" variant="gradient" className="btn-glow" onClick={() => openGate('standard')}>
-                      {t('learn.upgrade')}
-                    </Button>
-                  </div>
-                </div>
-              )}
-            </Card>
-
-            {/* PRACTICE & TEST */}
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle className="flex items-center gap-2 text-lg">
-                  <Target className="h-5 w-5 text-primary icon-glow" />
-                  {t('learn.practiceTest')}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  <Button
-                    variant="outline"
-                    className="w-full justify-start gap-3 glow-hover"
-                    onClick={() => navigate('/quiz?mode=exam')}
-                  >
-                    <Play className="h-4 w-4 text-primary" />
-                    {t('learn.demoExam')}
-                  </Button>
-                  <Button
-                    variant="outline"
-                    className="w-full justify-start gap-3 glow-hover"
-                    onClick={() => {
-                      if (!isStandardOrAbove) { openGate('standard'); return; }
-                      navigate('/quiz?mode=exam');
-                    }}
-                  >
-                    <CheckCircle className="h-4 w-4 text-primary" />
-                    {t('learn.fullExam')}
-                    {!isStandardOrAbove && <Lock className="ml-auto h-4 w-4 text-muted-foreground" />}
-                  </Button>
-                  <Button
-                    variant="outline"
-                    className="w-full justify-start gap-3 glow-hover"
-                    onClick={() => {
-                      if (!isStandardOrAbove) { openGate('standard'); return; }
-                      navigate('/quiz?mode=study');
-                    }}
-                  >
-                    <BookOpen className="h-4 w-4 text-primary" />
-                    {t('learn.training')}
-                    {!isStandardOrAbove && <Lock className="ml-auto h-4 w-4 text-muted-foreground" />}
-                  </Button>
-                  <Button
-                    variant="outline"
-                    className="w-full justify-start gap-3 glow-hover"
-                    onClick={() => {
-                      if (!isPremium) { openGate('premium'); return; }
-                      navigate('/quiz?mode=training');
-                    }}
-                  >
-                    <Sparkles className="h-4 w-4 text-primary" />
-                    {t('learn.categoryTraining')}
-                    {!isPremium && <Lock className="ml-auto h-4 w-4 text-muted-foreground" />}
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* MY PROGRESS */}
-            <Card className="relative overflow-hidden">
-              <CardHeader className="pb-3">
-                <CardTitle className="flex items-center gap-2 text-lg">
-                  <BarChart3 className="h-5 w-5 text-primary icon-glow" />
-                  {t('learn.myProgress')}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between rounded-lg border border-primary/10 bg-secondary/30 p-3">
-                    <span className="text-sm text-muted-foreground">{t('learn.lessonsCompleted')}</span>
-                    <span className="font-semibold text-foreground">{completedLessons}/{totalLessons}</span>
-                  </div>
-                  <div className="flex items-center justify-between rounded-lg border border-primary/10 bg-secondary/30 p-3">
-                    <span className="text-sm text-muted-foreground">{t('learn.accuracy')}</span>
-                    <span className="font-semibold text-foreground">{avgScore}%</span>
-                  </div>
-                  <div className="flex items-center justify-between rounded-lg border border-primary/10 bg-secondary/30 p-3">
-                    <span className="text-sm text-muted-foreground">{t('learn.examsTaken')}</span>
-                    <span className="font-semibold text-foreground">{examHistory.length}</span>
-                  </div>
-                </div>
-              </CardContent>
-              {tier === 'free' && (
-                <div className="absolute inset-0 flex items-center justify-center rounded-xl bg-background/80 backdrop-blur-md">
-                  <div className="text-center">
-                    <Lock className="mx-auto mb-2 h-8 w-8 text-muted-foreground" />
-                    <p className="mb-3 text-sm font-medium text-foreground">{t('learn.locked')}</p>
-                    <Button size="sm" variant="gradient" className="btn-glow" onClick={() => openGate('standard')}>
-                      {t('learn.upgrade')}
-                    </Button>
-                  </div>
-                </div>
-              )}
-            </Card>
-          </div>
-        </div>
-      </div>
-      <Footer />
       <SubscriptionGate open={showGate} onOpenChange={setShowGate} requiredTier={gateTier} />
     </div>
   );
