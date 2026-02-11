@@ -46,7 +46,7 @@ export default function PremiumVideoGuides({ isTier2 }: PremiumVideoGuidesProps)
           </div>
         ))}
       </div>
-      <SubscriptionGate open={showGate} onOpenChange={setShowGate} requiredTier="tier_2" />
+      <SubscriptionGate open={showGate} onOpenChange={setShowGate} requiredTier="premium" />
     </>
   );
 }

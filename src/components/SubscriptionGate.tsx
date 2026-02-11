@@ -12,13 +12,13 @@ import { Award, BookOpen, CheckCircle, Sparkles, Target, Shield, Languages, Play
 interface SubscriptionGateProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  requiredTier?: 'standard' | 'premium' | 'tier_1' | 'tier_2';
+  requiredTier?: 'standard' | 'premium';
 }
 
 export default function SubscriptionGate({ open, onOpenChange, requiredTier = 'standard' }: SubscriptionGateProps) {
   const navigate = useNavigate();
   const { t } = useLanguage();
-  const isPremium = requiredTier === 'premium' || requiredTier === 'tier_2';
+  const isPremium = requiredTier === 'premium';
 
   const STANDARD_FEATURES = [
     { icon: BookOpen, key: 'gate.feat1' },

@@ -1,7 +1,6 @@
-import { Question } from '@/lib/types';
+import { Question, getQuestionOptions } from '@/lib/types';
 import { Badge } from '@/components/ui/badge';
 import { CheckCircle, XCircle, Info } from 'lucide-react';
-import TranslateButton from '@/components/TranslateButton';
 import { playCorrectSound, playIncorrectSound } from '@/lib/sounds';
 import { useEffect, useRef } from 'react';
 
@@ -12,7 +11,6 @@ interface QuizQuestionProps {
   selectedAnswer: string | undefined;
   onAnswer: (answer: string) => void;
   showFeedback: boolean;
-  hideTranslation?: boolean;
 }
 
 export default function QuizQuestion({
@@ -22,22 +20,8 @@ export default function QuizQuestion({
   selectedAnswer,
   onAnswer,
   showFeedback,
-  hideTranslation = false,
 }: QuizQuestionProps) {
-  let options: string[] = [];
-  try {
-    const raw = Array.isArray(question.options)
-      ? question.options
-      : JSON.parse(question.options as unknown as string);
-    if (Array.isArray(raw) && raw.every((o) => typeof o === 'string')) {
-      options = raw;
-    } else {
-      options = ['Error loading options'];
-    }
-  } catch {
-    options = ['Error loading options'];
-  }
-
+  const options = getQuestionOptions(question);
   const isCorrect = selectedAnswer === question.correct_answer;
   const hasAnswered = selectedAnswer !== undefined;
   const soundPlayed = useRef(false);
@@ -50,7 +34,6 @@ export default function QuizQuestion({
     }
   }, [showFeedback, hasAnswered, isCorrect]);
 
-  // Reset sound ref when question changes
   useEffect(() => {
     soundPlayed.current = false;
   }, [question.id]);
@@ -66,11 +49,8 @@ export default function QuizQuestion({
 
       <div className="mb-8">
         <h2 className="text-xl font-bold text-foreground md:text-2xl">
-          {question.question_fr}
+          {question.question_text}
         </h2>
-        {!hideTranslation && (
-          <TranslateButton translatedText={question.question_translated} />
-        )}
       </div>
 
       <div className="space-y-3">
