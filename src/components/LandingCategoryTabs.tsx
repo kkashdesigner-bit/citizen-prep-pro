@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Category, CATEGORY_LABELS } from '@/lib/types';
-import { Scale, Landmark, Home, ArrowRight, Shield, ScrollText } from 'lucide-react';
+import { Scale, Landmark, Home, ArrowRight, Shield, ScrollText, Vote, Users } from 'lucide-react';
 import AnimatedSection from '@/components/AnimatedSection';
 
 const FEATURES: { key: Category; icon: typeof Scale }[] = [
@@ -11,6 +11,8 @@ const FEATURES: { key: Category; icon: typeof Scale }[] = [
   { key: 'Rights', icon: Shield },
   { key: 'History', icon: ScrollText },
   { key: 'Living', icon: Home },
+  { key: 'Politics', icon: Vote },
+  { key: 'Society', icon: Users },
 ];
 
 export default function LandingCategoryTabs() {
@@ -29,9 +31,9 @@ export default function LandingCategoryTabs() {
           </p>
         </AnimatedSection>
 
-        <div className="mx-auto grid max-w-5xl grid-cols-2 gap-3 sm:gap-6 md:grid-cols-3 lg:grid-cols-5">
+        <div className="mx-auto grid max-w-5xl grid-cols-2 gap-3 sm:gap-6 md:grid-cols-3 lg:grid-cols-4">
           {FEATURES.map(({ key, icon: Icon }, i) => (
-            <AnimatedSection key={key} delay={i * 100} className={i === FEATURES.length - 1 ? 'col-span-2 md:col-span-1 max-w-xs mx-auto w-full' : ''}>
+            <AnimatedSection key={key} delay={i * 100} className={i === FEATURES.length - 1 && FEATURES.length % 2 !== 0 ? 'col-span-2 md:col-span-1 max-w-xs mx-auto w-full' : ''}>
               <div
                 className="glass-card glow-hover group h-full cursor-pointer p-4 sm:p-6 text-center transition-all duration-300 hover:scale-[1.02]"
                 onClick={() => navigate(`/quiz?mode=study&category=${key}`)}
