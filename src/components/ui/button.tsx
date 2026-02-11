@@ -9,13 +9,13 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90 shadow-[0_0_15px_hsl(var(--primary)/0.25)]",
+        default: "bg-[hsl(44,63,75)] text-white hover:bg-[hsl(33,57,66)] shadow-md transition-shadow hover:shadow-lg",
         destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
-        outline: "border border-primary/30 bg-background hover:bg-primary/10 hover:text-foreground hover:border-primary/50",
+        outline: "border border-secondary/50 bg-white text-primary hover:bg-[hsl(192,31,58,0.08)] hover:border-secondary/70",
         secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-primary/10 hover:text-foreground",
         link: "text-primary underline-offset-4 hover:underline",
-        gradient: "text-primary-foreground shadow-[0_0_20px_hsl(var(--primary)/0.3)]",
+        gradient: "text-primary-foreground shadow-md",
       },
       size: {
         default: "h-10 px-5 py-2",
@@ -38,12 +38,9 @@ export interface ButtonProps
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, style, ...props }, ref) => {
+  ({ className, variant, size, asChild = false, ...props }, ref) => {
     const Comp = asChild ? Slot : "button";
-    const gradientStyle = variant === 'gradient'
-      ? { background: 'linear-gradient(135deg, hsl(263 84% 58%), hsl(239 84% 67%))', ...style }
-      : style;
-    return <Comp className={cn(buttonVariants({ variant, size, className }))} ref={ref} style={gradientStyle} {...props} />;
+    return <Comp className={cn(buttonVariants({ variant, size, className }))} ref={ref} {...props} />;
   },
 );
 Button.displayName = "Button";
