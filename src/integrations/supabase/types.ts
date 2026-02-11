@@ -135,48 +135,6 @@ export type Database = {
       }
       questions: {
         Row: {
-          category: string
-          correct_answer: string
-          created_at: string
-          difficulty_level: string
-          explanation: string | null
-          id: string
-          options: Json
-          question_fr: string
-          question_translated: string | null
-          subcategory: string | null
-          updated_at: string
-        }
-        Insert: {
-          category: string
-          correct_answer: string
-          created_at?: string
-          difficulty_level?: string
-          explanation?: string | null
-          id?: string
-          options: Json
-          question_fr: string
-          question_translated?: string | null
-          subcategory?: string | null
-          updated_at?: string
-        }
-        Update: {
-          category?: string
-          correct_answer?: string
-          created_at?: string
-          difficulty_level?: string
-          explanation?: string | null
-          id?: string
-          options?: Json
-          question_fr?: string
-          question_translated?: string | null
-          subcategory?: string | null
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      questions_: {
-        Row: {
           category: string | null
           correct_answer: string | null
           explanation: string | null
