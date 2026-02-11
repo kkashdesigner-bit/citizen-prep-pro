@@ -1,4 +1,4 @@
-export type Category = 'Principles' | 'Institutions' | 'Rights' | 'History' | 'Living';
+export type Category = 'Principles' | 'Institutions' | 'Rights' | 'History' | 'Living' | 'Politics' | 'Society';
 
 export type Subcategory =
   | 'Symbole' | 'Laïcité' | 'Situational'
@@ -53,12 +53,12 @@ export const LANGUAGES: Record<Language, string> = {
 };
 
 export const CATEGORY_LABELS: Record<Language, Record<Category, string>> = {
-  fr: { Principles: 'Principes', Institutions: 'Institutions', Rights: 'Droits', History: 'Histoire', Living: 'Vie quotidienne' },
-  en: { Principles: 'Principles', Institutions: 'Institutions', Rights: 'Rights', History: 'History', Living: 'Daily Living' },
-  ar: { Principles: 'المبادئ', Institutions: 'المؤسسات', Rights: 'الحقوق', History: 'التاريخ', Living: 'الحياة اليومية' },
-  es: { Principles: 'Principios', Institutions: 'Instituciones', Rights: 'Derechos', History: 'Historia', Living: 'Vida cotidiana' },
-  pt: { Principles: 'Princípios', Institutions: 'Instituições', Rights: 'Direitos', History: 'História', Living: 'Vida quotidiana' },
-  zh: { Principles: '原则', Institutions: '机构', Rights: '权利', History: '历史', Living: '日常生活' },
+  fr: { Principles: 'Principes', Institutions: 'Institutions', Rights: 'Droits', History: 'Histoire', Living: 'Vie quotidienne', Politics: 'Politique', Society: 'Société' },
+  en: { Principles: 'Principles', Institutions: 'Institutions', Rights: 'Rights', History: 'History', Living: 'Daily Living', Politics: 'Politics', Society: 'Society' },
+  ar: { Principles: 'المبادئ', Institutions: 'المؤسسات', Rights: 'الحقوق', History: 'التاريخ', Living: 'الحياة اليومية', Politics: 'السياسة', Society: 'المجتمع' },
+  es: { Principles: 'Principios', Institutions: 'Instituciones', Rights: 'Derechos', History: 'Historia', Living: 'Vida cotidiana', Politics: 'Política', Society: 'Sociedad' },
+  pt: { Principles: 'Princípios', Institutions: 'Instituições', Rights: 'Direitos', History: 'História', Living: 'Vida quotidiana', Politics: 'Política', Society: 'Sociedade' },
+  zh: { Principles: '原则', Institutions: '机构', Rights: '权利', History: '历史', Living: '日常生活', Politics: '政治', Society: '社会' },
 };
 
 export const EXAM_LEVEL_LABELS: Record<ExamLevel, { name: string; description: string }> = {
