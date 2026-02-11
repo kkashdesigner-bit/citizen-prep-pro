@@ -57,31 +57,31 @@ export default function FocusCard({ examHistory }: FocusCardProps) {
   const catLabel = CATEGORY_LABELS[language]?.[weakest.category as Category] || weakest.category;
   const accPct = Math.round(weakest.accuracy * 100);
 
-  return (
-    <div className="mb-6 rounded-2xl border border-[hsl(var(--warning)/0.3)] bg-[hsl(var(--warning)/0.05)] p-4 md:p-5">
-      <div className="flex items-start gap-3">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[hsl(var(--warning)/0.15)]">
-          <AlertTriangle className="h-5 w-5 text-[hsl(var(--warning))]" />
-        </div>
-        <div className="flex-1 min-w-0">
-          <h3 className="font-semibold text-foreground">
-            Focus: {catLabel}
-          </h3>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Your accuracy in this area is {accPct}%.
-            {recentDrop && ' Your recent scores show a downward trend.'}
-            {' '}Revisit this domain to improve your chances.
-          </p>
-          <Button
-            size="sm"
-            className="mt-3 gap-1.5"
-            onClick={() => navigate(`/quiz?mode=study&category=${weakest!.category}`)}
-          >
-            Revise Now
-            <ArrowRight className="h-3.5 w-3.5" />
-          </Button>
-        </div>
-      </div>
-    </div>
-  );
+   return (
+     <div className="mb-6 rounded-2xl border border-[hsl(0,85,75)] bg-[hsl(0,85,95)] p-4 md:p-5">
+       <div className="flex items-start gap-3">
+         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[hsl(0,85,85)]">
+           <AlertTriangle className="h-5 w-5 text-white" />
+         </div>
+         <div className="flex-1 min-w-0">
+           <h3 className="font-semibold text-[hsl(0,85,40)]">
+             Focus: {catLabel}
+           </h3>
+           <p className="mt-1 text-sm text-[hsl(0,85,50)]">
+             Your accuracy in this area is {accPct}%.
+             {recentDrop && ' Your recent scores show a downward trend.'}
+             {' '}Revisit this domain to improve your chances.
+           </p>
+           <Button
+             size="sm"
+             className="mt-3 gap-1.5 bg-[hsl(0,85,60)] text-white hover:bg-[hsl(0,85,50)]"
+             onClick={() => navigate(`/quiz?mode=study&category=${weakest!.category}`)}
+           >
+             Revise Now
+             <ArrowRight className="h-3.5 w-3.5" />
+           </Button>
+         </div>
+       </div>
+     </div>
+   );
 }
