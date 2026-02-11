@@ -18,7 +18,7 @@ interface TranslateButtonProps {
 
 export default function TranslateButton({ translatedText }: TranslateButtonProps) {
   const { language, setLanguage } = useLanguage();
-  const { isTier2 } = useSubscription();
+  const { isPremium } = useSubscription();
   const [showTranslation, setShowTranslation] = useState(false);
   const [showGate, setShowGate] = useState(false);
   const [selectedLang, setSelectedLang] = useState<Language | null>(
@@ -35,7 +35,7 @@ export default function TranslateButton({ translatedText }: TranslateButtonProps
     return null;
   }
 
-  if (showTranslation && selectedLang && isTier2) {
+  if (showTranslation && selectedLang && isPremium) {
     return (
       <div className="mt-2 rounded-md border border-border bg-muted/50 p-3">
         <div className="mb-1 flex items-center justify-between">
@@ -54,8 +54,8 @@ export default function TranslateButton({ translatedText }: TranslateButtonProps
     );
   }
 
-  // Non-Tier 2: show locked button
-  if (!isTier2) {
+  // Non-Premium: show locked button
+  if (!isPremium) {
     return (
       <>
         <Button
@@ -68,7 +68,7 @@ export default function TranslateButton({ translatedText }: TranslateButtonProps
           <Languages className="h-3.5 w-3.5" />
           Traduire
         </Button>
-        <SubscriptionGate open={showGate} onOpenChange={setShowGate} requiredTier="tier_2" />
+        <SubscriptionGate open={showGate} onOpenChange={setShowGate} requiredTier="premium" />
       </>
     );
   }

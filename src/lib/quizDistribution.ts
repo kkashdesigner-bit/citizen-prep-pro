@@ -1,33 +1,8 @@
-import { Question, ExamLevel, Category } from './types';
+import { Question } from './types';
 
 /**
- * Official exam distribution quotas by category + subcategory.
- * Total: 40 questions.
+ * Shuffle helper
  */
-export const EXAM_DISTRIBUTION: { category: string; subcategory: string; count: number }[] = [
-  // Principles (11)
-  { category: 'Principles', subcategory: 'Symbole', count: 3 },
-  { category: 'Principles', subcategory: 'Laïcité', count: 2 },
-  { category: 'Principles', subcategory: 'Situational', count: 6 },
-  // Institutions (6)
-  { category: 'Institutions', subcategory: 'Democracy', count: 3 },
-  { category: 'Institutions', subcategory: 'Organization', count: 2 },
-  { category: 'Institutions', subcategory: 'Europe', count: 1 },
-  // Rights (11)
-  { category: 'Rights', subcategory: 'Fundamental', count: 2 },
-  { category: 'Rights', subcategory: 'Duties', count: 3 },
-  { category: 'Rights', subcategory: 'Situational', count: 6 },
-  // History/Geo (8)
-  { category: 'History', subcategory: 'Periods', count: 3 },
-  { category: 'History', subcategory: 'Geo', count: 3 },
-  { category: 'History', subcategory: 'Heritage', count: 2 },
-  // Society/Living (4)
-  { category: 'Living', subcategory: 'Residence', count: 1 },
-  { category: 'Living', subcategory: 'Health', count: 1 },
-  { category: 'Living', subcategory: 'Work', count: 1 },
-  { category: 'Living', subcategory: 'Education', count: 1 },
-];
-
 function shuffle<T>(arr: T[]): T[] {
   const a = [...arr];
   for (let i = a.length - 1; i > 0; i--) {
@@ -38,62 +13,21 @@ function shuffle<T>(arr: T[]): T[] {
 }
 
 /**
- * Select questions following the official distribution quotas.
- * Optionally filter by difficulty level and/or category.
- * Falls back gracefully when there aren't enough questions per subcategory.
+ * Select questions for a quiz session.
+ * Optionally filter by category. Shuffles and limits to `count` (default 40).
  */
 export function selectQuestionsByDistribution(
   allQuestions: Question[],
-  excludeIds: string[] = [],
-  options?: { level?: ExamLevel; category?: Category },
+  excludeIds: number[] = [],
+  options?: { category?: string; count?: number },
 ): Question[] {
   let pool = allQuestions.filter((q) => !excludeIds.includes(q.id));
 
-  // Filter by difficulty level if specified
-  if (options?.level) {
-    const levelFiltered = pool.filter((q) => q.difficulty_level === options.level);
-    // Only use level-filtered pool if it has enough questions, otherwise fallback
-    if (levelFiltered.length >= 10) {
-      pool = levelFiltered;
-    }
-  }
-
-  // If category training mode, return all questions from that category (no quotas)
   if (options?.category) {
-    const categoryPool = shuffle(pool.filter((q) => q.category === options.category));
-    return categoryPool;
+    pool = pool.filter((q) => q.category === options.category);
   }
 
-  const selected: Question[] = [];
-  const usedIds = new Set<string>();
-
-  // First pass: fill by quota
-  for (const slot of EXAM_DISTRIBUTION) {
-    const slotPool = shuffle(
-      pool.filter(
-        (q) =>
-          q.category === slot.category &&
-          q.subcategory === slot.subcategory &&
-          !usedIds.has(q.id),
-      ),
-    );
-    const picked = slotPool.slice(0, slot.count);
-    picked.forEach((q) => {
-      selected.push(q);
-      usedIds.add(q.id);
-    });
-  }
-
-  // Second pass: if we couldn't fill quotas, fill remaining from the pool
-  const targetTotal = 40;
-  if (selected.length < targetTotal) {
-    const remaining = shuffle(pool.filter((q) => !usedIds.has(q.id)));
-    for (const q of remaining) {
-      if (selected.length >= targetTotal) break;
-      selected.push(q);
-      usedIds.add(q.id);
-    }
-  }
-
-  return shuffle(selected);
+  const shuffled = shuffle(pool);
+  const limit = options?.count ?? 40;
+  return shuffled.slice(0, limit);
 }
