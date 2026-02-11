@@ -10,7 +10,7 @@ const NAV_ITEMS = [
   { key: 'dashboard', icon: LayoutDashboard, path: '/learn', label: 'Dashboard' },
   { key: 'practice', icon: Dumbbell, path: '/learn?tab=practice', label: 'Practice' },
   { key: 'modules', icon: BookOpen, path: '/learn?tab=modules', label: 'Modules' },
-  { key: 'progress', icon: BarChart3, path: '/learn?tab=progress', label: 'Progress' },
+  { key: 'progress', icon: BarChart3, path: '/progress', label: 'Progress' },
   { key: 'community', icon: Users, path: '#', label: 'Community', disabled: true },
   { key: 'profile', icon: UserCircle, path: '/dashboard', label: 'Profile' },
   { key: 'settings', icon: Settings, path: '/dashboard', label: 'Settings' },
