@@ -54,7 +54,7 @@ export default function ActionCards({ nextLesson, isStandardOrAbove, onGate }: A
        </div>
 
        {/* Quick Practice */}
-       <div className="relative overflow-hidden rounded-2xl border border-border/40 bg-white p-5 md:p-6 transition-all hover:shadow-[0_8px_24px_hsl(225,48,25,0.08)]">
+       <div className="relative overflow-hidden rounded-2xl border border-border/60 bg-white p-5 md:p-6 shadow-[0_4px_12px_hsl(225,48%,25%/0.05)] transition-all hover:shadow-[0_12px_32px_hsl(225,48%,25%/0.12)] hover:-translate-y-0.5">
          <div className="flex items-center gap-2 mb-3">
            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[hsl(192,31,58,0.15)]">
              <Zap className="h-4 w-4 text-secondary" />
@@ -64,13 +64,14 @@ export default function ActionCards({ nextLesson, isStandardOrAbove, onGate }: A
          <p className="text-sm text-muted-foreground mb-4">
            Test yourself with 10 random questions from all domains.
          </p>
-         <Button
-           className="w-full gap-2"
-           onClick={() => navigate('/quiz?mode=study')}
-         >
-           <Zap className="h-4 w-4" />
-           Start Now
-         </Button>
+          <Button
+            variant="outline"
+            className="w-full gap-2 font-semibold"
+            onClick={() => navigate('/quiz?mode=study')}
+          >
+            <Zap className="h-4 w-4" />
+            Start Now
+          </Button>
        </div>
      </div>
   );
