@@ -36,10 +36,10 @@ export default function DomainCards({ categoryProgress }: DomainCardsProps) {
            const label = CATEGORY_LABELS[language]?.[key] || key;
 
            return (
-             <div
-               key={key}
-               className="group rounded-2xl border border-border/40 bg-white p-4 md:p-5 transition-all hover:border-secondary/30 hover:shadow-[0_8px_24px_hsl(225,48,25,0.08)] hover:-translate-y-0.5"
-             >
+              <div
+                key={key}
+                className="group rounded-2xl border border-border/60 bg-white p-4 md:p-5 shadow-[0_4px_12px_hsl(225,48%,25%/0.05)] transition-all hover:border-secondary/50 hover:shadow-[0_12px_32px_hsl(225,48%,25%/0.12)] hover:-translate-y-1"
+              >
                <div className="flex items-center gap-3 mb-3">
                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[hsl(192,31,58,0.15)] transition-all group-hover:bg-[hsl(192,31,58,0.25)]">
                    <Icon className="h-5 w-5 text-secondary" />
@@ -61,15 +61,15 @@ export default function DomainCards({ categoryProgress }: DomainCardsProps) {
                  <Progress value={pct} className="h-2" />
                </div>
 
-               <Button
-                 variant="ghost"
-                 size="sm"
-                 className="w-full gap-1 text-secondary hover:text-secondary hover:bg-[hsl(192,31,58,0.1)]"
-                 onClick={() => navigate(`/quiz?mode=study&category=${key}`)}
-               >
-                 Explore
-                 <ArrowRight className="h-3.5 w-3.5" />
-               </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full gap-1.5 font-semibold"
+                  onClick={() => navigate(`/quiz?mode=study&category=${key}`)}
+                >
+                  S'entraîner
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </Button>
              </div>
            );
          })}

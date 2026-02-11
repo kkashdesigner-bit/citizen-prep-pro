@@ -28,21 +28,20 @@ export default function HeroSection() {
       {/* Large glowing ring/halo */}
       <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
         <div
-          className="w-[700px] h-[700px] md:w-[900px] md:h-[900px] rounded-full opacity-40"
+          className="w-[700px] h-[700px] md:w-[900px] md:h-[900px] rounded-full opacity-25"
           style={{
-            background: 'radial-gradient(circle, transparent 40%, hsl(263 84% 58% / 0.12) 50%, hsl(200 80% 50% / 0.08) 65%, transparent 75%)',
-            filter: 'blur(2px)',
+            background: 'radial-gradient(circle, transparent 40%, hsl(192 31% 58% / 0.1) 50%, hsl(168 35% 72% / 0.08) 65%, transparent 75%)',
           }}
         />
       </div>
 
       {/* Additional purple/teal nebula */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60%] h-[50%] rounded-full opacity-25"
-          style={{ background: 'radial-gradient(ellipse, hsl(190 70% 50% / 0.15), hsl(263 84% 58% / 0.1), transparent 70%)' }}
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60%] h-[50%] rounded-full opacity-15"
+          style={{ background: 'radial-gradient(ellipse, hsl(192 31% 58% / 0.12), hsl(225 48% 25% / 0.06), transparent 70%)' }}
         />
-        <div className="absolute bottom-1/4 left-1/2 -translate-x-1/2 w-[50%] h-[40%] rounded-full opacity-20"
-          style={{ background: 'radial-gradient(ellipse, hsl(280 70% 50% / 0.12), transparent 70%)' }}
+        <div className="absolute bottom-1/4 left-1/2 -translate-x-1/2 w-[50%] h-[40%] rounded-full opacity-10"
+          style={{ background: 'radial-gradient(ellipse, hsl(168 35% 72% / 0.1), transparent 70%)' }}
         />
       </div>
 
@@ -103,7 +102,7 @@ export default function HeroSection() {
         <div
           className={`mx-auto mb-6 md:mb-8 h-[2px] w-32 sm:w-48 md:w-72 transition-all duration-700 ${loaded ? 'opacity-100 scale-x-100' : 'opacity-0 scale-x-0'}`}
           style={{
-            background: 'linear-gradient(90deg, transparent, hsl(263 84% 58%), hsl(272 91% 65%), hsl(190 70% 50%), transparent)',
+            background: 'linear-gradient(90deg, transparent, hsl(225 48% 25%), hsl(192 31% 58%), hsl(168 35% 72%), transparent)',
             transitionDelay: '400ms',
           }}
         />
@@ -150,8 +149,7 @@ export default function HeroSection() {
           <Button
             size="lg"
             variant="gradient"
-            className={`btn-glow gap-2 px-6 sm:px-8 text-sm sm:text-base font-semibold ${loaded ? 'animate-glow' : ''}`}
-            style={{ animationDelay: '1.5s' }}
+            className={`gap-2 px-6 sm:px-8 text-sm sm:text-base font-semibold ${loaded ? '' : ''}`}
             onClick={() => navigate(user ? '/learn' : '/auth')}
           >
             {t('hero.startLearning')}
