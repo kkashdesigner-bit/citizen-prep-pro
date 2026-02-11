@@ -172,6 +172,44 @@ export type Database = {
         }
         Relationships: []
       }
+      user_answers: {
+        Row: {
+          answered_at: string
+          category: string | null
+          id: string
+          is_correct: boolean
+          question_id: number
+          selected_answer: string
+          user_id: string
+        }
+        Insert: {
+          answered_at?: string
+          category?: string | null
+          id?: string
+          is_correct: boolean
+          question_id: number
+          selected_answer: string
+          user_id: string
+        }
+        Update: {
+          answered_at?: string
+          category?: string | null
+          id?: string
+          is_correct?: boolean
+          question_id?: number
+          selected_answer?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_answers_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           id: string
