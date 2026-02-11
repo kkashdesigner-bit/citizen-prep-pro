@@ -1,16 +1,16 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { supabase } from '@/integrations/supabase/client';
-import { Question, Category, ExamLevel } from '@/lib/types';
-import { selectQuestionsByDistribution } from '@/lib/quizDistribution';
+import { useQuiz } from '@/hooks/useQuiz';
+import { Question } from '@/lib/types';
 import Header from '@/components/Header';
 import QuizQuestion from '@/components/QuizQuestion';
 import QuizTimer from '@/components/QuizTimer';
 import QuizProgress from '@/components/QuizProgress';
 import SubscriptionGate from '@/components/SubscriptionGate';
 import { ChevronLeft, ChevronRight, Flag } from 'lucide-react';
+import { useEffect } from 'react';
 
 const QUIZ_TIME = 45 * 60;
 
@@ -19,53 +19,22 @@ type QuizMode = 'exam' | 'study' | 'training';
 export default function Quiz() {
   const [searchParams] = useSearchParams();
   const mode = (searchParams.get('mode') as QuizMode) || 'exam';
-  const categoryParam = searchParams.get('category') as Category | null;
-  const levelParam = (searchParams.get('level') as ExamLevel) || undefined;
+  const categoryParam = searchParams.get('category');
   const navigate = useNavigate();
   const { t } = useLanguage();
 
-  const [questions, setQuestions] = useState<Question[]>([]);
+  const { questions, loading, saveAnswer } = useQuiz({
+    category: categoryParam || undefined,
+    limit: mode === 'exam' ? 40 : undefined,
+  });
+
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [answers, setAnswers] = useState<Record<number, string>>({});
   const [timeRemaining, setTimeRemaining] = useState(QUIZ_TIME);
-  const [loading, setLoading] = useState(true);
   const [startTime] = useState(Date.now());
   const [showGate, setShowGate] = useState(false);
   const [warpState, setWarpState] = useState<'idle' | 'exit' | 'enter'>('idle');
   const pendingIndex = useRef<number | null>(null);
-
-  useEffect(() => {
-    const fetchQuestions = async () => {
-      const { data, error } = await supabase
-        .from('questions')
-        .select('*');
-
-      if (error) {
-        console.error('Error fetching questions:', error);
-        return;
-      }
-
-      const parsed = (data || []).map((q) => {
-        let opts: string[];
-        try {
-          const raw = typeof q.options === 'string' ? JSON.parse(q.options) : q.options;
-          opts = Array.isArray(raw) && raw.every((o: unknown) => typeof o === 'string') ? raw : ['Error loading options'];
-        } catch {
-          opts = ['Error loading options'];
-        }
-        return { ...q, options: opts } as Question;
-      });
-
-      const selected = selectQuestionsByDistribution(parsed, [], {
-        level: levelParam,
-        category: categoryParam || undefined,
-      });
-      setQuestions(selected);
-      setLoading(false);
-    };
-
-    fetchQuestions();
-  }, [levelParam, categoryParam]);
 
   useEffect(() => {
     if (mode !== 'exam') return;
@@ -83,9 +52,12 @@ export default function Quiz() {
   }, [mode]);
 
   const handleAnswer = (answer: string) => {
-    const questionId = questions[currentIndex]?.id;
-    if (!questionId) return;
-    setAnswers((prev) => ({ ...prev, [questionId]: answer }));
+    const question = questions[currentIndex];
+    if (!question) return;
+    if (answers[question.id] !== undefined) return; // already answered
+    setAnswers((prev) => ({ ...prev, [question.id]: answer }));
+    // Save to DB
+    saveAnswer(question, answer);
   };
 
   const warpTo = (newIndex: number) => {
@@ -167,7 +139,6 @@ export default function Quiz() {
   const currentQuestion = questions[currentIndex];
   const answeredCount = Object.keys(answers).length;
   const showFeedback = mode === 'study' || mode === 'training';
-  const hideTranslation = false;
 
   return (
     <div className="min-h-screen bg-background">
@@ -202,7 +173,6 @@ export default function Quiz() {
             selectedAnswer={answers[currentQuestion.id]}
             onAnswer={handleAnswer}
             showFeedback={showFeedback}
-            hideTranslation={hideTranslation}
           />
         </div>
 
@@ -225,7 +195,7 @@ export default function Quiz() {
                 className={`h-3 w-3 rounded-full transition-all ${
                   i === currentIndex
                     ? 'bg-primary scale-125 shadow-[0_0_8px_hsl(var(--primary)/0.5)]'
-                    : answers[q.id]
+                    : answers[q.id] !== undefined
                     ? 'bg-primary/40'
                     : 'bg-border'
                 }`}

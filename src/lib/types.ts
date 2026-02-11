@@ -9,22 +9,29 @@ export type Subcategory =
 
 export type ExamLevel = 'CSP' | 'CR' | 'Naturalisation';
 
+/** Matches the actual Supabase `questions` table schema */
 export interface Question {
-  id: string;
-  category: Category;
-  subcategory: Subcategory | null;
-  question_fr: string;
-  question_translated: string | null;
-  options: string[];
+  id: number;
+  category: string;
+  question_text: string;
+  option_a: string;
+  option_b: string;
+  option_c: string;
+  option_d: string;
   correct_answer: string;
   explanation: string | null;
-  difficulty_level?: ExamLevel;
+  language: string;
+}
+
+/** Convenience: get options as array */
+export function getQuestionOptions(q: Question): string[] {
+  return [q.option_a, q.option_b, q.option_c, q.option_d].filter(Boolean);
 }
 
 export interface QuizState {
   questions: Question[];
   currentIndex: number;
-  answers: Record<string, string>;
+  answers: Record<number, string>;
   mode: 'exam' | 'study';
   startTime: number;
   timeRemaining: number;
@@ -52,6 +59,16 @@ export const LANGUAGES: Record<Language, string> = {
   zh: '中文',
 };
 
+/** Map app languages to DB language codes */
+export const LANGUAGE_TO_DB: Record<Language, string> = {
+  fr: 'fr',
+  en: 'en',
+  ar: 'ar',
+  es: 'es',
+  pt: 'pt',
+  zh: 'zh',
+};
+
 export const CATEGORY_LABELS: Record<Language, Record<Category, string>> = {
   fr: { Principles: 'Principes', Institutions: 'Institutions', Rights: 'Droits', History: 'Histoire', Living: 'Vie quotidienne', Politics: 'Politique', Society: 'Société' },
   en: { Principles: 'Principles', Institutions: 'Institutions', Rights: 'Rights', History: 'History', Living: 'Daily Living', Politics: 'Politics', Society: 'Society' },
@@ -60,6 +77,9 @@ export const CATEGORY_LABELS: Record<Language, Record<Category, string>> = {
   pt: { Principles: 'Princípios', Institutions: 'Instituições', Rights: 'Direitos', History: 'História', Living: 'Vida quotidiana', Politics: 'Política', Society: 'Sociedade' },
   zh: { Principles: '原则', Institutions: '机构', Rights: '权利', History: '历史', Living: '日常生活', Politics: '政治', Society: '社会' },
 };
+
+/** Categories that actually exist in the questions DB */
+export const DB_CATEGORIES = ['History', 'Politics', 'Principles', 'Rights', 'Society'] as const;
 
 export const EXAM_LEVEL_LABELS: Record<ExamLevel, { name: string; description: string }> = {
   CSP: {
