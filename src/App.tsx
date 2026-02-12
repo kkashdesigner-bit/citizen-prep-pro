@@ -1,3 +1,4 @@
+import { lazy, Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -5,16 +6,17 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 import { LanguageProvider } from "@/contexts/LanguageContext";
-import Index from "./pages/Index";
-import Auth from "./pages/Auth";
-import Quiz from "./pages/Quiz";
-import Results from "./pages/Results";
-import Dashboard from "./pages/Dashboard";
-import About from "./pages/About";
-import LearningDashboard from "./pages/LearningDashboard";
-import ProgressPage from "./pages/ProgressPage";
-import LessonPage from "./pages/LessonPage";
-import NotFound from "./pages/NotFound";
+
+const Index = lazy(() => import("./pages/Index"));
+const Auth = lazy(() => import("./pages/Auth"));
+const Quiz = lazy(() => import("./pages/Quiz"));
+const Results = lazy(() => import("./pages/Results"));
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const About = lazy(() => import("./pages/About"));
+const LearningDashboard = lazy(() => import("./pages/LearningDashboard"));
+const ProgressPage = lazy(() => import("./pages/ProgressPage"));
+const LessonPage = lazy(() => import("./pages/LessonPage"));
+const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
 
@@ -26,18 +28,20 @@ const App = () => (
           <Toaster />
           <Sonner />
           <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/auth" element={<Auth />} />
-              <Route path="/learn" element={<LearningDashboard />} />
-              <Route path="/progress" element={<ProgressPage />} />
-              <Route path="/lesson/:id" element={<LessonPage />} />
-              <Route path="/quiz" element={<Quiz />} />
-              <Route path="/results" element={<Results />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/about" element={<About />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
+            <Suspense fallback={null}>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/auth" element={<Auth />} />
+                <Route path="/learn" element={<LearningDashboard />} />
+                <Route path="/progress" element={<ProgressPage />} />
+                <Route path="/lesson/:id" element={<LessonPage />} />
+                <Route path="/quiz" element={<Quiz />} />
+                <Route path="/results" element={<Results />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/about" element={<About />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Suspense>
           </BrowserRouter>
         </TooltipProvider>
       </LanguageProvider>
