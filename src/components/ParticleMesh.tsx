@@ -20,17 +20,19 @@ export default function ParticleMesh() {
 
     let animId: number;
     const particles: Particle[] = [];
-    let cachedW = canvas.offsetWidth;
-    let cachedH = canvas.offsetHeight;
+    const rect = canvas.getBoundingClientRect();
+    let cachedW = rect.width;
+    let cachedH = rect.height;
     const COUNT = 70;
     const CONNECT_DIST = 120;
     const MOUSE_RADIUS = 180;
     let needsResize = true;
 
     const applySize = () => {
-      canvas.width = cachedW * devicePixelRatio;
-      canvas.height = cachedH * devicePixelRatio;
-      ctx.scale(devicePixelRatio, devicePixelRatio);
+      const dpr = devicePixelRatio || 1;
+      canvas.width = cachedW * dpr;
+      canvas.height = cachedH * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       needsResize = false;
     };
     applySize();
