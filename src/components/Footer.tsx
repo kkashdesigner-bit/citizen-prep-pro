@@ -36,19 +36,19 @@ export default function Footer() {
           </Link>
 
           <nav className="flex flex-wrap items-center justify-center gap-4 text-sm">
-            <Link to="/about" className="text-muted-foreground transition-colors hover:text-primary">
+            <Link to="/about" className="text-foreground/70 transition-colors hover:text-primary">
               {t('nav.about')}
             </Link>
             <Link
               to="/#pricing"
               onClick={handlePricingClick}
-              className="text-muted-foreground transition-colors hover:text-primary"
+              className="text-foreground/70 transition-colors hover:text-primary"
             >
               {t('nav.pricing')}
             </Link>
           </nav>
 
-          <p className="text-xs text-muted-foreground">
+          <p className="text-xs text-foreground/70">
             {t('footer.rights')}
           </p>
         </div>
