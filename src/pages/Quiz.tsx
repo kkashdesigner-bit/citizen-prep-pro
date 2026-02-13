@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useQuiz } from '@/hooks/useQuiz';
-import { Question } from '@/lib/types';
+import { Question, ExamLevel } from '@/lib/types';
 import Header from '@/components/Header';
 import QuizQuestion from '@/components/QuizQuestion';
 import QuizTimer from '@/components/QuizTimer';
@@ -20,12 +20,17 @@ export default function Quiz() {
   const [searchParams] = useSearchParams();
   const mode = (searchParams.get('mode') as QuizMode) || 'exam';
   const categoryParam = searchParams.get('category');
+  const levelParam = (searchParams.get('level') as ExamLevel) || 'CSP';
+  const isMiniQuiz = searchParams.get('mini') === '1';
   const navigate = useNavigate();
   const { t } = useLanguage();
 
   const { questions, loading, saveAnswer } = useQuiz({
     category: categoryParam || undefined,
-    limit: mode === 'exam' ? 40 : undefined,
+    level: levelParam,
+    limit: mode === 'exam' ? 40 : mode === 'training' ? 20 : undefined,
+    isMiniQuiz,
+    mode,
   });
 
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -36,8 +41,9 @@ export default function Quiz() {
   const [warpState, setWarpState] = useState<'idle' | 'exit' | 'enter'>('idle');
   const pendingIndex = useRef<number | null>(null);
 
+  // Timer — disabled for mini-quiz and study modes
   useEffect(() => {
-    if (mode !== 'exam') return;
+    if (mode !== 'exam' || isMiniQuiz) return;
     const interval = setInterval(() => {
       setTimeRemaining((prev) => {
         if (prev <= 1) {
@@ -49,7 +55,7 @@ export default function Quiz() {
       });
     }, 1000);
     return () => clearInterval(interval);
-  }, [mode]);
+  }, [mode, isMiniQuiz]);
 
   const handleAnswer = (answer: string) => {
     const question = questions[currentIndex];
@@ -151,7 +157,7 @@ export default function Quiz() {
             total={questions.length}
             answeredCount={answeredCount}
           />
-          {mode === 'exam' && <QuizTimer timeRemaining={timeRemaining} />}
+          {mode === 'exam' && !isMiniQuiz && <QuizTimer timeRemaining={timeRemaining} />}
           <ModeBadge mode={mode} category={categoryParam} />
         </div>
       </div>
