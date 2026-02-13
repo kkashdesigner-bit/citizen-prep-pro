@@ -49,6 +49,39 @@ export type Database = {
           },
         ]
       }
+      lesson_questions: {
+        Row: {
+          id: string
+          lesson_id: string
+          question_id: number
+        }
+        Insert: {
+          id?: string
+          lesson_id: string
+          question_id: number
+        }
+        Update: {
+          id?: string
+          lesson_id?: string
+          question_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lesson_questions_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "lessons"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lesson_questions_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       lessons: {
         Row: {
           category: string
@@ -140,11 +173,18 @@ export type Database = {
           explanation: string | null
           id: number
           language: string | null
+          level: string | null
           option_a: string | null
+          option_a_translated: string | null
           option_b: string | null
+          option_b_translated: string | null
           option_c: string | null
+          option_c_translated: string | null
           option_d: string | null
+          option_d_translated: string | null
           question_text: string | null
+          question_translated: string | null
+          subcategory: string | null
         }
         Insert: {
           category?: string | null
@@ -152,11 +192,18 @@ export type Database = {
           explanation?: string | null
           id?: number
           language?: string | null
+          level?: string | null
           option_a?: string | null
+          option_a_translated?: string | null
           option_b?: string | null
+          option_b_translated?: string | null
           option_c?: string | null
+          option_c_translated?: string | null
           option_d?: string | null
+          option_d_translated?: string | null
           question_text?: string | null
+          question_translated?: string | null
+          subcategory?: string | null
         }
         Update: {
           category?: string | null
@@ -164,11 +211,18 @@ export type Database = {
           explanation?: string | null
           id?: number
           language?: string | null
+          level?: string | null
           option_a?: string | null
+          option_a_translated?: string | null
           option_b?: string | null
+          option_b_translated?: string | null
           option_c?: string | null
+          option_c_translated?: string | null
           option_d?: string | null
+          option_d_translated?: string | null
           question_text?: string | null
+          question_translated?: string | null
+          subcategory?: string | null
         }
         Relationships: []
       }
