@@ -13,6 +13,8 @@ export type ExamLevel = 'CSP' | 'CR' | 'Naturalisation';
 export interface Question {
   id: number;
   category: string;
+  subcategory: string | null;
+  level: ExamLevel | null;
   question_text: string;
   option_a: string;
   option_b: string;
@@ -21,6 +23,12 @@ export interface Question {
   correct_answer: string;
   explanation: string | null;
   language: string;
+  /** Translated fields for bilingual support */
+  question_translated: string | null;
+  option_a_translated: string | null;
+  option_b_translated: string | null;
+  option_c_translated: string | null;
+  option_d_translated: string | null;
 }
 
 /** Convenience: get options as array */
@@ -78,8 +86,8 @@ export const CATEGORY_LABELS: Record<Language, Record<Category, string>> = {
   zh: { Principles: '原则', Institutions: '机构', Rights: '权利', History: '历史', Living: '日常生活', Politics: '政治', Society: '社会' },
 };
 
-/** Categories that actually exist in the questions DB */
-export const DB_CATEGORIES = ['History', 'Politics', 'Principles', 'Rights', 'Society'] as const;
+/** All seven exam categories */
+export const DB_CATEGORIES = ['Principles', 'Institutions', 'Rights', 'History', 'Living', 'Politics', 'Society'] as const;
 
 export const EXAM_LEVEL_LABELS: Record<ExamLevel, { name: string; description: string }> = {
   CSP: {
