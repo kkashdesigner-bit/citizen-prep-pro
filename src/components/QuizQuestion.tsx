@@ -1,8 +1,10 @@
+import { useState } from 'react';
 import { Question, getQuestionOptions } from '@/lib/types';
 import { Badge } from '@/components/ui/badge';
 import { CheckCircle, XCircle, Info } from 'lucide-react';
 import { playCorrectSound, playIncorrectSound } from '@/lib/sounds';
 import { useEffect, useRef } from 'react';
+import TranslateButton from '@/components/TranslateButton';
 
 interface QuizQuestionProps {
   question: Question;
@@ -11,6 +13,7 @@ interface QuizQuestionProps {
   selectedAnswer: string | undefined;
   onAnswer: (answer: string) => void;
   showFeedback: boolean;
+  showTranslateButton?: boolean;
 }
 
 export default function QuizQuestion({
@@ -20,6 +23,7 @@ export default function QuizQuestion({
   selectedAnswer,
   onAnswer,
   showFeedback,
+  showTranslateButton = false,
 }: QuizQuestionProps) {
   const options = getQuestionOptions(question);
   const isCorrect = selectedAnswer === question.correct_answer;
@@ -51,6 +55,9 @@ export default function QuizQuestion({
         <h2 className="text-xl font-bold text-foreground md:text-2xl">
           {question.question_text}
         </h2>
+        {showTranslateButton && (
+          <TranslateButton translatedText={question.question_translated || null} />
+        )}
       </div>
 
       <div className="space-y-3">

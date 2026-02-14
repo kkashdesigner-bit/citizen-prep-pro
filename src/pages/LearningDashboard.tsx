@@ -150,7 +150,7 @@ export default function LearningDashboard() {
             progress={progress}
           />
 
-          <DomainCards categoryProgress={categoryProgress} />
+          <DomainCards categoryProgress={categoryProgress} isPremium={isPremium} onGate={openGate} />
 
           {/* Premium upsell for standard users */}
           {tier === 'standard' && (

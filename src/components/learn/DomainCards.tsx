@@ -20,9 +20,12 @@ const DOMAIN_META: { key: Category; icon: typeof Scale; desc_key: string }[] = [
 
 interface DomainCardsProps {
   categoryProgress: { category: string; total: number; completed: number }[];
+  isPremium?: boolean;
+  onGate?: (tier: 'standard' | 'premium') => void;
+  level?: string;
 }
 
-export default function DomainCards({ categoryProgress }: DomainCardsProps) {
+export default function DomainCards({ categoryProgress, isPremium, onGate, level = 'CSP' }: DomainCardsProps) {
   const navigate = useNavigate();
   const { language, t } = useLanguage();
 
@@ -65,11 +68,19 @@ export default function DomainCards({ categoryProgress }: DomainCardsProps) {
                   variant="outline"
                   size="sm"
                   className="w-full gap-1.5 font-semibold"
-                  onClick={() => navigate(`/quiz?mode=study&category=${key}`)}
+                  onClick={() => {
+                    if (isPremium) {
+                      navigate(`/quiz?mode=training&category=${key}&level=${level}`);
+                    } else if (onGate) {
+                      onGate('premium');
+                    } else {
+                      navigate(`/quiz?mode=study&category=${key}`);
+                    }
+                  }}
                 >
-                  S'entraîner
-                  <ArrowRight className="h-3.5 w-3.5" />
-                </Button>
+                   {isPremium ? 'Entraînement ciblé' : 'S\'entraîner'}
+                   <ArrowRight className="h-3.5 w-3.5" />
+                 </Button>
              </div>
            );
          })}
