@@ -1,8 +1,9 @@
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useSubscription } from '@/hooks/useSubscription';
 import { CATEGORY_LABELS, Category } from '@/lib/types';
-import { AlertTriangle, ArrowRight } from 'lucide-react';
+import { AlertTriangle, ArrowRight, Target } from 'lucide-react';
 
 interface ExamHistoryEntry {
   date: string;
@@ -20,6 +21,7 @@ interface FocusCardProps {
 export default function FocusCard({ examHistory }: FocusCardProps) {
   const navigate = useNavigate();
   const { language } = useLanguage();
+  const { isPremium } = useSubscription();
 
   // Calculate accuracy per category across all exams
   const categoryStats: Record<string, { correct: number; total: number }> = {};
@@ -35,14 +37,14 @@ export default function FocusCard({ examHistory }: FocusCardProps) {
   // Find weakest category
   let weakest: { category: string; accuracy: number } | null = null;
   Object.entries(categoryStats).forEach(([cat, data]) => {
-    if (data.total < 2) return; // need at least 2 questions
+    if (data.total < 2) return;
     const acc = data.correct / data.total;
     if (!weakest || acc < weakest.accuracy) {
       weakest = { category: cat, accuracy: acc };
     }
   });
 
-  // Check for recent performance drop (last 3 vs previous exams)
+  // Detect recent performance drop
   let recentDrop = false;
   if (examHistory.length >= 4) {
     const recent = examHistory.slice(-3);
@@ -57,31 +59,46 @@ export default function FocusCard({ examHistory }: FocusCardProps) {
   const catLabel = CATEGORY_LABELS[language]?.[weakest.category as Category] || weakest.category;
   const accPct = Math.round(weakest.accuracy * 100);
 
-   return (
-     <div className="mb-6 rounded-2xl border border-[hsl(0,85,75)] bg-[hsl(0,85,95)] p-4 md:p-5">
-       <div className="flex items-start gap-3">
-         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[hsl(0,85,85)]">
-           <AlertTriangle className="h-5 w-5 text-white" />
-         </div>
-         <div className="flex-1 min-w-0">
-           <h3 className="font-semibold text-[hsl(0,85,40)]">
-             Focus: {catLabel}
-           </h3>
-           <p className="mt-1 text-sm text-[hsl(0,85,50)]">
-             Your accuracy in this area is {accPct}%.
-             {recentDrop && ' Your recent scores show a downward trend.'}
-             {' '}Revisit this domain to improve your chances.
-           </p>
-           <Button
-             size="sm"
-             className="mt-3 gap-1.5 bg-[hsl(0,85,60)] text-white hover:bg-[hsl(0,85,50)]"
-             onClick={() => navigate(`/quiz?mode=study&category=${weakest!.category}`)}
-           >
-             Revise Now
-             <ArrowRight className="h-3.5 w-3.5" />
-           </Button>
-         </div>
-       </div>
-     </div>
-   );
+  return (
+    <div className="mb-6 rounded-2xl border border-destructive/20 bg-destructive/5 p-4 md:p-5">
+      <div className="flex items-start gap-3">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-destructive/15">
+          <AlertTriangle className="h-5 w-5 text-destructive" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <h3 className="font-semibold text-foreground">
+            Focus: {catLabel}
+          </h3>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Your accuracy in this area is {accPct}%.
+            {recentDrop && ' Your recent scores show a downward trend.'}
+            {' '}Revisit this domain to improve your chances.
+          </p>
+          <div className="flex gap-2 mt-3 flex-wrap">
+            <Button
+              size="sm"
+              variant="destructive"
+              className="gap-1.5"
+              onClick={() => navigate(`/quiz?mode=study&category=${weakest!.category}`)}
+            >
+              <Target className="h-3.5 w-3.5" />
+              Revise Lessons
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Button>
+            {isPremium && (
+              <Button
+                size="sm"
+                variant="outline"
+                className="gap-1.5"
+                onClick={() => navigate(`/quiz?mode=training&category=${weakest!.category}`)}
+              >
+                Category Training
+                <ArrowRight className="h-3.5 w-3.5" />
+              </Button>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
