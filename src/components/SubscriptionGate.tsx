@@ -74,14 +74,14 @@ export default function SubscriptionGate({ open, onOpenChange, requiredTier = 's
           <div className="glass-card cursor-pointer p-4 text-center transition-all hover:border-primary/40 glow-hover">
             <p className="text-sm text-muted-foreground">{t('gate.monthly')}</p>
             <p className="font-serif text-2xl font-bold gradient-text">
-              {isPremium ? '9,99 €' : '6,99 €'}
+              {isPremium ? '10,99 €' : '6,99 €'}
             </p>
             <p className="text-xs text-muted-foreground">{t('gate.perMonth')}</p>
           </div>
           <div className="glass-card cursor-pointer p-4 text-center border-primary/30 shadow-[0_0_20px_hsl(var(--primary)/0.15)]">
             <p className="text-sm font-medium text-primary">{t('gate.popular')}</p>
             <p className="font-serif text-2xl font-bold gradient-text">
-              {isPremium ? '49,99 €' : '30,99 €'}
+              {isPremium ? '54,99 €' : '34,99 €'}
             </p>
             <p className="text-xs text-muted-foreground">{t('gate.per6Months')}</p>
           </div>
