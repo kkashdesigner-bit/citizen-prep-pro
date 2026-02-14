@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useQuiz } from '@/hooks/useQuiz';
+import { useSubscription } from '@/hooks/useSubscription';
 import { Question, ExamLevel } from '@/lib/types';
 import Header from '@/components/Header';
 import QuizQuestion from '@/components/QuizQuestion';
@@ -24,11 +25,16 @@ export default function Quiz() {
   const isMiniQuiz = searchParams.get('mini') === '1';
   const navigate = useNavigate();
   const { t } = useLanguage();
+  const { tier, isStandardOrAbove, isPremium, loading: tierLoading } = useSubscription();
+
+  // Free users: only 1 demo exam (20 questions), after that gate
+  const isFreeUser = tier === 'free';
+  const effectiveLimit = isFreeUser && mode === 'exam' ? 20 : (mode === 'exam' ? 40 : mode === 'training' ? 20 : undefined);
 
   const { questions, loading, saveAnswer } = useQuiz({
     category: categoryParam || undefined,
     level: levelParam,
-    limit: mode === 'exam' ? 40 : mode === 'training' ? 20 : undefined,
+    limit: effectiveLimit,
     isMiniQuiz,
     mode,
   });
@@ -107,10 +113,13 @@ export default function Quiz() {
 
     sessionStorage.setItem('quizResults', JSON.stringify(resultData));
 
-    const demoTaken = sessionStorage.getItem('demoTaken');
-    if (demoTaken) {
-      setShowGate(true);
-    } else {
+    // Free users: show gate after first demo exam
+    if (isFreeUser) {
+      const demoTaken = sessionStorage.getItem('demoTaken');
+      if (demoTaken) {
+        setShowGate(true);
+        return;
+      }
       sessionStorage.setItem('demoTaken', 'true');
     }
 
@@ -179,6 +188,7 @@ export default function Quiz() {
             selectedAnswer={answers[currentQuestion.id]}
             onAnswer={handleAnswer}
             showFeedback={showFeedback}
+            showTranslateButton={true}
           />
         </div>
 
