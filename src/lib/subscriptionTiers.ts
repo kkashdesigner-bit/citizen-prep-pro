@@ -1,9 +1,9 @@
 import type { SubscriptionTier } from '@/hooks/useSubscription';
 
 export const TIER_LABELS: Record<SubscriptionTier, string> = {
-  free: 'Tier 1 — Free',
-  standard: 'Tier 2 — Standard',
-  premium: 'Tier 3 — Premium',
+  free: 'Gratuit — 0 €',
+  standard: 'Standard — 6,99 €/mois',
+  premium: 'Premium — 10,99 €/mois',
 };
 
 export const TIER_BADGE_VARIANT: Record<SubscriptionTier, 'secondary' | 'default' | 'destructive' | 'outline'> = {
