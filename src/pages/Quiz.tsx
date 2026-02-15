@@ -12,6 +12,7 @@ import QuizProgress from '@/components/QuizProgress';
 import SubscriptionGate from '@/components/SubscriptionGate';
 import { ChevronLeft, ChevronRight, Flag } from 'lucide-react';
 import { useEffect } from 'react';
+import { Progress } from '@/components/ui/progress';
 
 const QUIZ_TIME = 45 * 60;
 
@@ -27,7 +28,6 @@ export default function Quiz() {
   const { t } = useLanguage();
   const { tier, isStandardOrAbove, isPremium, loading: tierLoading } = useSubscription();
 
-  // Free users: only 1 demo exam (20 questions), after that gate
   const isFreeUser = tier === 'free';
   const effectiveLimit = isFreeUser && mode === 'exam' ? 20 : (mode === 'exam' ? 40 : mode === 'training' ? 20 : undefined);
 
@@ -47,7 +47,6 @@ export default function Quiz() {
   const [warpState, setWarpState] = useState<'idle' | 'exit' | 'enter'>('idle');
   const pendingIndex = useRef<number | null>(null);
 
-  // Timer — disabled for mini-quiz and study modes
   useEffect(() => {
     if (mode !== 'exam' || isMiniQuiz) return;
     const interval = setInterval(() => {
@@ -66,9 +65,8 @@ export default function Quiz() {
   const handleAnswer = (answer: string) => {
     const question = questions[currentIndex];
     if (!question) return;
-    if (answers[question.id] !== undefined) return; // already answered
+    if (answers[question.id] !== undefined) return;
     setAnswers((prev) => ({ ...prev, [question.id]: answer }));
-    // Save to DB
     saveAnswer(question, answer);
   };
 
@@ -113,7 +111,6 @@ export default function Quiz() {
 
     sessionStorage.setItem('quizResults', JSON.stringify(resultData));
 
-    // Free users: show gate after first demo exam
     if (isFreeUser) {
       const demoTaken = sessionStorage.getItem('demoTaken');
       if (demoTaken) {
@@ -154,6 +151,7 @@ export default function Quiz() {
   const currentQuestion = questions[currentIndex];
   const answeredCount = Object.keys(answers).length;
   const showFeedback = mode === 'study' || mode === 'training';
+  const progressPercent = ((currentIndex + 1) / questions.length) * 100;
 
   return (
     <div className="min-h-screen bg-background">
@@ -192,47 +190,67 @@ export default function Quiz() {
           />
         </div>
 
-        <div className="mx-auto mt-8 flex max-w-2xl items-center justify-between">
-          <Button
-            variant="outline"
-            onClick={() => warpTo(Math.max(0, currentIndex - 1))}
-            disabled={currentIndex === 0}
-            className="gap-2 glow-hover"
-          >
-            <ChevronLeft className="h-4 w-4" />
-            {t('quiz.prev')}
-          </Button>
+        <div className="mx-auto mt-8 max-w-2xl space-y-4">
+          {/* Compact progress bar */}
+          <div className="space-y-1.5">
+            <Progress value={progressPercent} className="h-2" />
+            <div className="hidden sm:flex items-center gap-0.5 justify-center flex-wrap">
+              {/* Group dots into segments of 5 */}
+              {Array.from({ length: Math.ceil(questions.length / 5) }, (_, seg) => {
+                const start = seg * 5;
+                const end = Math.min(start + 5, questions.length);
+                const segQuestions = questions.slice(start, end);
+                const answeredInSeg = segQuestions.filter(q => answers[q.id] !== undefined).length;
+                const currentInSeg = currentIndex >= start && currentIndex < end;
 
-          <div className="hidden items-center gap-1 sm:flex">
-            {questions.map((q, i) => (
-              <button
-                key={q.id}
-                onClick={() => warpTo(i)}
-                className={`h-3 w-3 rounded-full transition-all ${
-                  i === currentIndex
-                    ? 'bg-primary scale-125 shadow-[0_0_8px_hsl(var(--primary)/0.5)]'
-                    : answers[q.id] !== undefined
-                    ? 'bg-primary/40'
-                    : 'bg-border'
-                }`}
-              />
-            ))}
+                return (
+                  <button
+                    key={seg}
+                    onClick={() => warpTo(start)}
+                    className={`h-5 rounded px-1.5 text-[10px] font-medium transition-all ${
+                      currentInSeg
+                        ? 'bg-primary text-primary-foreground shadow-[0_0_8px_hsl(var(--primary)/0.4)]'
+                        : answeredInSeg === segQuestions.length
+                        ? 'bg-primary/30 text-primary'
+                        : answeredInSeg > 0
+                        ? 'bg-primary/15 text-muted-foreground'
+                        : 'bg-muted text-muted-foreground'
+                    }`}
+                  >
+                    {start + 1}-{end}
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
-          {currentIndex === questions.length - 1 ? (
-            <Button onClick={handleFinish} className="gap-2 btn-glow">
-              <Flag className="h-4 w-4" />
-              {t('quiz.finish')}
-            </Button>
-          ) : (
+          {/* Navigation buttons */}
+          <div className="flex items-center justify-between">
             <Button
-              onClick={() => warpTo(Math.min(questions.length - 1, currentIndex + 1))}
-              className="gap-2 btn-glow"
+              variant="outline"
+              onClick={() => warpTo(Math.max(0, currentIndex - 1))}
+              disabled={currentIndex === 0}
+              className="gap-2 glow-hover"
             >
-              {t('quiz.next')}
-              <ChevronRight className="h-4 w-4" />
+              <ChevronLeft className="h-4 w-4" />
+              {t('quiz.prev')}
             </Button>
-          )}
+
+            {currentIndex === questions.length - 1 ? (
+              <Button onClick={handleFinish} className="gap-2 btn-glow">
+                <Flag className="h-4 w-4" />
+                {t('quiz.finish')}
+              </Button>
+            ) : (
+              <Button
+                onClick={() => warpTo(Math.min(questions.length - 1, currentIndex + 1))}
+                className="gap-2 btn-glow"
+              >
+                {t('quiz.next')}
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            )}
+          </div>
         </div>
       </main>
 
