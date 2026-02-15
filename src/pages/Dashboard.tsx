@@ -122,7 +122,13 @@ export default function Dashboard() {
     navigate(`/quiz?mode=training&category=${category}`);
   };
 
-  const handleStartExam = () => navigate(`/quiz?mode=exam&level=${selectedLevel}`);
+  const handleStartExam = () => {
+    if (!isStandardOrAbove) {
+      openGate('standard');
+      return;
+    }
+    navigate(`/quiz?mode=exam&level=${selectedLevel}`);
+  };
 
   if (authLoading || loading || tierLoading) {
     return (
@@ -232,7 +238,7 @@ export default function Dashboard() {
                 <div className="text-center">
                   <Lock className="mx-auto mb-2 h-8 w-8 text-muted-foreground" />
                   <p className="mb-3 text-sm font-medium text-foreground">{t('dash.subscriberOnly')}</p>
-                  <Button size="sm" className="btn-glow" onClick={() => openGate('standard')}>{t('dash.startTrial')}</Button>
+                  <Button size="sm" className="btn-glow" onClick={() => navigate('/quiz?mode=exam')}>Lancer la démo</Button>
                 </div>
               </div>
             )}
@@ -270,7 +276,7 @@ export default function Dashboard() {
         <div className="glass-card mb-8 p-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-serif text-lg font-semibold text-foreground">{t('dash.examLevel')}</h3>
-            <Button onClick={handleStartExam} size="sm" className="btn-glow">{t('dash.startExam')}</Button>
+            <Button onClick={handleStartExam} size="sm" className="btn-glow">Lancer l'examen</Button>
           </div>
           <LevelSelector selectedLevel={selectedLevel} onSelect={setSelectedLevel} isSubscribed={isStandardOrAbove} />
         </div>

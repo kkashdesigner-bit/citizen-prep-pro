@@ -1,4 +1,4 @@
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import Logo from '@/components/Logo';
 import {
@@ -7,13 +7,13 @@ import {
 } from 'lucide-react';
 
 const NAV_ITEMS = [
-  { key: 'dashboard', icon: LayoutDashboard, path: '/learn', label: 'Dashboard' },
-  { key: 'practice', icon: Dumbbell, path: '/learn?tab=practice', label: 'Practice' },
-  { key: 'modules', icon: BookOpen, path: '/learn?tab=modules', label: 'Modules' },
-  { key: 'progress', icon: BarChart3, path: '/progress', label: 'Progress' },
-  { key: 'community', icon: Users, path: '#', label: 'Community', disabled: true },
-  { key: 'profile', icon: UserCircle, path: '/dashboard', label: 'Profile' },
-  { key: 'settings', icon: Settings, path: '/dashboard', label: 'Settings' },
+  { key: 'dashboard', icon: LayoutDashboard, path: '/learn', label: 'Tableau de bord' },
+  { key: 'exams', icon: Dumbbell, path: '/exams', label: 'Examens' },
+  { key: 'modules', icon: BookOpen, path: '/study-material', label: "Matériel d'étude" },
+  { key: 'progress', icon: BarChart3, path: '/progress', label: 'Progression' },
+  { key: 'analytics', icon: Users, path: '/analytics', label: 'Analyses' },
+  { key: 'profile', icon: UserCircle, path: '/dashboard', label: 'Profil' },
+  { key: 'settings', icon: Settings, path: '/dashboard', label: 'Paramètres' },
 ];
 
 export default function LearnSidebar() {
@@ -25,43 +25,39 @@ export default function LearnSidebar() {
     if (item.path === '/learn' && item.key === 'dashboard') {
       return location.pathname === '/learn' && !location.search;
     }
-    return location.pathname + location.search === item.path;
+    return location.pathname === item.path;
   };
 
   return (
     <>
        {/* Desktop sidebar */}
        <aside className="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0 z-50 border-r border-border/30 bg-white">
-         <div className="flex h-16 items-center gap-2 px-6 border-b border-border/30">
-           <Logo size="sm" />
-         </div>
+          <div className="flex h-16 items-center gap-2 px-6 border-b border-border/30">
+            <Link to="/">
+              <Logo size="sm" />
+            </Link>
+          </div>
 
          <nav className="flex-1 space-y-1 px-3 py-4 overflow-y-auto">
            {NAV_ITEMS.map((item) => {
              const Icon = item.icon;
              const active = isActive(item);
              return (
-               <button
-                 key={item.key}
-                 onClick={() => !item.disabled && navigate(item.path)}
-                 disabled={item.disabled}
-                 className={`group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all ${
-                   active
-                     ? 'bg-[hsl(168,35,95)] text-primary'
-                     : item.disabled
-                     ? 'text-muted-foreground/40 cursor-not-allowed'
-                     : 'text-muted-foreground hover:bg-[hsl(220,50,96)] hover:text-foreground'
-                 }`}
-               >
-                 <Icon className={`h-5 w-5 transition-colors ${active ? 'text-primary' : ''}`} />
-                 <span>{item.label}</span>
-                 {item.disabled && (
-                   <span className="ml-auto text-[10px] uppercase tracking-wider text-muted-foreground/50">Soon</span>
-                 )}
-                 {active && (
-                   <span className="ml-auto h-2 w-2 rounded-full bg-secondary" />
-                 )}
-               </button>
+                <button
+                  key={item.key}
+                  onClick={() => navigate(item.path)}
+                  className={`group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all ${
+                    active
+                      ? 'bg-[hsl(168,35%,95%)] text-primary'
+                      : 'text-muted-foreground hover:bg-[hsl(220,50%,96%)] hover:text-foreground'
+                  }`}
+                >
+                  <Icon className={`h-5 w-5 transition-colors ${active ? 'text-primary' : ''}`} />
+                  <span>{item.label}</span>
+                  {active && (
+                    <span className="ml-auto h-2 w-2 rounded-full bg-secondary" />
+                  )}
+                </button>
              );
            })}
          </nav>
@@ -74,21 +70,18 @@ export default function LearnSidebar() {
              const Icon = item.icon;
              const active = isActive(item);
              return (
-               <button
-                 key={item.key}
-                 onClick={() => !item.disabled && navigate(item.path)}
-                 disabled={item.disabled}
-                 className={`flex flex-col items-center gap-0.5 rounded-lg px-3 py-1.5 text-[10px] font-medium transition-all ${
-                   active
-                     ? 'text-primary bg-[hsl(168,35,95)]'
-                     : item.disabled
-                     ? 'text-muted-foreground/30'
-                     : 'text-muted-foreground'
-                 }`}
-               >
-                 <Icon className={`h-5 w-5 ${active ? 'text-primary' : ''}`} />
-                 <span>{item.label}</span>
-               </button>
+                <button
+                  key={item.key}
+                  onClick={() => navigate(item.path)}
+                  className={`flex flex-col items-center gap-0.5 rounded-lg px-3 py-1.5 text-[10px] font-medium transition-all ${
+                    active
+                      ? 'text-primary bg-[hsl(168,35%,95%)]'
+                      : 'text-muted-foreground'
+                  }`}
+                >
+                  <Icon className={`h-5 w-5 ${active ? 'text-primary' : ''}`} />
+                  <span>{item.label}</span>
+                </button>
              );
            })}
          </div>
