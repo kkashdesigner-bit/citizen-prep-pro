@@ -13,47 +13,51 @@ function shuffle<T>(arr: T[]): T[] {
   return a;
 }
 
-/** Build a default balanced distribution of `total` questions across all categories */
-function defaultDistribution(total: number): Record<string, number> {
-  const cats = [...DB_CATEGORIES];
-  const perCat = Math.floor(total / cats.length);
-  let remainder = total - perCat * cats.length;
-  const dist: Record<string, number> = {};
-  for (const cat of cats) {
-    dist[cat] = perCat + (remainder > 0 ? 1 : 0);
-    if (remainder > 0) remainder--;
-  }
-  return dist;
-}
+export type QuizMode = 'exam' | 'study' | 'training' | 'demo';
 
 export interface UseQuizOptions {
-  /** Single category for training mode */
+  /** Single category for category training */
   category?: string | null;
   /** Exam level filter */
   level?: ExamLevel;
-  /** Total question limit (ignored when distribution is provided) */
-  limit?: number;
-  /** Custom distribution: category → count */
-  distribution?: Record<string, number>;
+  /** Quiz mode — determines question count, saving, feedback */
+  mode?: QuizMode;
   /** Mini-quiz mode: 5 questions, no timing */
   isMiniQuiz?: boolean;
-  /** Quiz mode hint — used to auto-compute distribution for exams */
-  mode?: 'exam' | 'study' | 'training';
+}
+
+/**
+ * Mode-specific question limits:
+ * - demo: 10 (free tier)
+ * - exam: 20 (standard/premium)
+ * - training: 50 per batch (standard/premium, unlimited via pagination)
+ * - study (category training): 20 per category (premium)
+ */
+function getQuestionLimit(mode: QuizMode, isMiniQuiz: boolean): number | null {
+  if (isMiniQuiz) return 5;
+  switch (mode) {
+    case 'demo': return 10;
+    case 'exam': return 20;
+    case 'training': return 50;
+    case 'study': return 20;
+    default: return 20;
+  }
 }
 
 export function useQuiz({
   category,
   level = 'CSP',
-  limit,
-  distribution,
-  isMiniQuiz,
-  mode,
+  mode = 'exam',
+  isMiniQuiz = false,
 }: UseQuizOptions = {}) {
   const { user } = useAuth();
   const { language } = useLanguage();
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Whether this mode saves answers to the database
+  const shouldSaveAnswers = mode !== 'demo';
 
   useEffect(() => {
     const fetchQuestions = async () => {
@@ -73,50 +77,36 @@ export function useQuiz({
         }
       }
 
-      // Determine effective question count
-      const effectiveLimit = isMiniQuiz ? 5 : limit;
-
-      // Determine distribution
-      let dist: Record<string, number> | null = null;
-
-      if (distribution) {
-        dist = distribution;
-      } else if (mode === 'exam' && !category) {
-        // Balanced exam: 40 questions spread across categories
-        dist = defaultDistribution(effectiveLimit ?? 40);
-      }
+      const questionLimit = getQuestionLimit(mode, isMiniQuiz);
 
       try {
         let allQuestions: Question[] = [];
 
-        if (dist) {
-          // Fetch per-category batches in parallel
-          const fetches = Object.entries(dist).map(async ([cat, count]) => {
-            let q = supabase
+        if (mode === 'exam' && !category) {
+          // Balanced exam: distribute questions across categories
+          const cats = [...DB_CATEGORIES];
+          const perCat = Math.floor((questionLimit ?? 20) / cats.length);
+          let remainder = (questionLimit ?? 20) - perCat * cats.length;
+
+          const fetches = cats.map(async (cat) => {
+            const count = perCat + (remainder-- > 0 ? 1 : 0);
+            // Fetch more than needed to allow randomization
+            const { data, error: fetchErr } = await supabase
               .from('questions')
               .select('*')
               .eq('language', dbLang)
-              .eq('category', cat);
+              .eq('category', cat)
+              .eq('level', level)
+              .limit(Math.min(count * 4, 100));
 
-            if (level) {
-              q = q.eq('level', level);
-            }
-
-            // Supabase doesn't support random() ordering directly,
-            // so we fetch more than needed and shuffle client-side
-            q = q.limit(Math.min(count * 3, 100));
-
-            const { data, error: fetchErr } = await q;
             if (fetchErr) throw fetchErr;
-
-            const shuffled = shuffle((data || []) as Question[]);
-            return shuffled.slice(0, count);
+            return shuffle((data || []) as Question[]).slice(0, count);
           });
 
           const results = await Promise.all(fetches);
           allQuestions = shuffle(results.flat());
         } else {
-          // Single category or unfiltered fetch
+          // Single category or unfiltered fetch (demo, training, study)
           let q = supabase
             .from('questions')
             .select('*')
@@ -130,13 +120,17 @@ export function useQuiz({
             q = q.eq('level', level);
           }
 
+          // Fetch a larger pool for randomization
+          const fetchSize = questionLimit ? Math.min(questionLimit * 4, 500) : 500;
+          q = q.limit(fetchSize);
+
           const { data, error: fetchErr } = await q;
           if (fetchErr) throw fetchErr;
 
           allQuestions = shuffle((data || []) as Question[]);
 
-          if (effectiveLimit && effectiveLimit > 0) {
-            allQuestions = allQuestions.slice(0, effectiveLimit);
+          if (questionLimit && questionLimit > 0) {
+            allQuestions = allQuestions.slice(0, questionLimit);
           }
         }
 
@@ -150,12 +144,13 @@ export function useQuiz({
     };
 
     fetchQuestions();
-  }, [language, category, user, limit, level, distribution, isMiniQuiz, mode]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [language, category, user, level, mode, isMiniQuiz]);
 
-  /** Save a single answer to user_answers table */
+  /** Save a single answer to user_answers table (skipped in demo mode) */
   const saveAnswer = useCallback(
     async (question: Question, selectedAnswer: string) => {
-      if (!user) return;
+      if (!user || !shouldSaveAnswers) return;
       const isCorrect = selectedAnswer === question.correct_answer;
       await supabase.from('user_answers' as any).insert({
         user_id: user.id,
@@ -165,8 +160,16 @@ export function useQuiz({
         category: question.category,
       });
     },
-    [user],
+    [user, shouldSaveAnswers],
   );
 
-  return { questions, loading, error, saveAnswer, isMiniQuiz: !!isMiniQuiz };
+  return {
+    questions,
+    loading,
+    error,
+    saveAnswer,
+    isMiniQuiz: !!isMiniQuiz,
+    mode,
+    shouldSaveAnswers,
+  };
 }
