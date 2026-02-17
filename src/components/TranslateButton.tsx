@@ -1,97 +1,103 @@
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { useLanguage } from '@/contexts/LanguageContext';
-import { LANGUAGES, Language } from '@/lib/types';
-import { Languages, Lock } from 'lucide-react';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { useSubscription } from '@/hooks/useSubscription';
-import SubscriptionGate from '@/components/SubscriptionGate';
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Globe } from "lucide-react";
+import { useSubscription } from "@/hooks/useSubscription";
 
-interface TranslateButtonProps {
-  translatedText: string | null;
+interface Props {
+  text: string;
+  onTranslated: (translated: string) => void;
 }
 
-export default function TranslateButton({ translatedText }: TranslateButtonProps) {
-  const { language, setLanguage } = useLanguage();
-  const { isPremium } = useSubscription();
-  const [showTranslation, setShowTranslation] = useState(false);
-  const [showGate, setShowGate] = useState(false);
-  const [selectedLang, setSelectedLang] = useState<Language | null>(
-    language !== 'fr' ? language : null,
-  );
+export default function TranslateButton({ text, onTranslated }: Props) {
 
-  const handleSelect = (lang: Language) => {
-    setSelectedLang(lang);
-    setLanguage(lang);
-    setShowTranslation(true);
-  };
+  const { subscriptionTier } = useSubscription();
 
-  if (!translatedText) {
-    return null;
+  const [loading, setLoading] = useState(false);
+
+  const isPremium = subscriptionTier === "premium";
+
+  async function translate() {
+
+    if (!isPremium) {
+
+      alert("Cette fonctionnalité est réservée aux abonnés Premium");
+
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+
+      const res = await fetch("/api/translate", {
+
+        method: "POST",
+
+        headers: {
+
+          "Content-Type": "application/json",
+
+        },
+
+        body: JSON.stringify({
+
+          text,
+
+        }),
+
+      });
+
+      const data = await res.json();
+
+      onTranslated(data.translation);
+
+    } catch {
+
+      alert("Erreur traduction");
+
+    }
+
+    setLoading(false);
+
   }
 
-  // Show translation content if Premium and translation is active
-  if (showTranslation && selectedLang && isPremium) {
-    return (
-      <div className="mt-2 rounded-md border border-border bg-muted/50 p-3">
-        <div className="mb-1 flex items-center justify-between">
-          <span className="text-xs font-medium text-muted-foreground">
-            {LANGUAGES[selectedLang]}
-          </span>
-          <button
-            onClick={() => setShowTranslation(false)}
-            className="text-xs text-muted-foreground hover:text-foreground"
-          >
-            ✕
-          </button>
-        </div>
-        <p className="text-sm italic text-muted-foreground">{translatedText}</p>
-      </div>
-    );
-  }
-
-  // Non-Premium users (Free + Standard): show button that opens Premium upgrade popup
-  if (!isPremium) {
-    return (
-      <>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="mt-1 gap-1.5 text-xs text-muted-foreground"
-          onClick={() => setShowGate(true)}
-        >
-          <Lock className="h-3.5 w-3.5" />
-          <Languages className="h-3.5 w-3.5" />
-          Traduire
-        </Button>
-        <SubscriptionGate open={showGate} onOpenChange={setShowGate} requiredTier="premium" />
-      </>
-    );
-  }
-
-  // Premium users: full translation dropdown
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="sm" className="mt-1 gap-1.5 text-xs text-muted-foreground">
-          <Languages className="h-3.5 w-3.5" />
-          Traduire
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="start">
-        {(Object.entries(LANGUAGES) as [Language, string][])
-          .filter(([code]) => code !== 'fr')
-          .map(([code, name]) => (
-            <DropdownMenuItem key={code} onClick={() => handleSelect(code)}>
-              {name}
-            </DropdownMenuItem>
-          ))}
-      </DropdownMenuContent>
-    </DropdownMenu>
+
+    <Button
+
+      onClick={translate}
+
+      disabled={loading}
+
+      variant={isPremium ? "default" : "outline"}
+
+      className={
+
+        isPremium
+
+          ? "bg-blue-600 hover:bg-blue-700 text-white"
+
+          : "opacity-50 cursor-not-allowed"
+
+      }
+
+    >
+
+      <Globe className="mr-2 h-4 w-4" />
+
+      Traduire
+
+      {!isPremium && (
+
+        <span className="ml-2 text-xs">
+
+          Premium
+
+        </span>
+
+      )}
+
+    </Button>
+
   );
 }
