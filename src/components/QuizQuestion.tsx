@@ -52,12 +52,13 @@ export default function QuizQuestion({
       </div>
 
       <div className="mb-8">
-        <h2 className="text-xl font-bold text-foreground md:text-2xl">
-          {question.question_text}
-        </h2>
-        {showTranslateButton && (
-          <TranslateButton translatedText={question.question_translated || null} />
-        )}
+     {showTranslateButton && (
+  <TranslateButton
+    text={question.question_text}
+    translatedText={question.question_translated}
+    isPremium={false}
+  />
+)}
       </div>
 
       <div className="space-y-3">
