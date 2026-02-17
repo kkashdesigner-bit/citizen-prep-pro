@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { GraduationCap, ArrowLeft } from 'lucide-react';
+import { GraduationCap, ArrowLeft, PlayCircle } from 'lucide-react';
 import LearnSidebar from '@/components/learn/LearnSidebar';
 import { useAuth } from '@/hooks/useAuth';
 import { useSubscription } from '@/hooks/useSubscription';
@@ -37,7 +37,7 @@ export default function ExamsPage() {
 
           <div className="rounded-2xl border border-border/40 bg-card p-6 mb-4">
             <h2 className="font-semibold text-foreground mb-2">Examen blanc complet</h2>
-            <p className="text-sm text-muted-foreground mb-4">40 questions · 45 min · 80% pour réussir</p>
+            <p className="text-sm text-muted-foreground mb-4">20 questions · 45 min · 80% pour réussir</p>
             <Button className="gap-2" onClick={handleStartExam}>
               <GraduationCap className="h-4 w-4" /> Lancer l'examen
             </Button>
@@ -45,9 +45,9 @@ export default function ExamsPage() {
 
           <div className="rounded-2xl border border-border/40 bg-card p-6">
             <h2 className="font-semibold text-foreground mb-2">Démo gratuite</h2>
-            <p className="text-sm text-muted-foreground mb-4">20 questions pour découvrir le format de l'examen</p>
-            <Button variant="outline" className="gap-2" onClick={() => navigate('/quiz?mode=exam')}>
-              Lancer la démo
+            <p className="text-sm text-muted-foreground mb-4">10 questions pour découvrir le format</p>
+            <Button variant="outline" className="gap-2" onClick={() => navigate('/quiz?mode=demo')}>
+              <PlayCircle className="h-4 w-4" /> Lancer la démo
             </Button>
           </div>
         </div>
