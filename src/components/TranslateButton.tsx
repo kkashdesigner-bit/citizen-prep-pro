@@ -9,12 +9,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
 import { useSubscription } from '@/hooks/useSubscription';
 import SubscriptionGate from '@/components/SubscriptionGate';
 
@@ -24,7 +18,7 @@ interface TranslateButtonProps {
 
 export default function TranslateButton({ translatedText }: TranslateButtonProps) {
   const { language, setLanguage } = useLanguage();
-  const { isPremium, isStandardOrAbove } = useSubscription();
+  const { isPremium } = useSubscription();
   const [showTranslation, setShowTranslation] = useState(false);
   const [showGate, setShowGate] = useState(false);
   const [selectedLang, setSelectedLang] = useState<Language | null>(
@@ -41,6 +35,7 @@ export default function TranslateButton({ translatedText }: TranslateButtonProps
     return null;
   }
 
+  // Show translation content if Premium and translation is active
   if (showTranslation && selectedLang && isPremium) {
     return (
       <div className="mt-2 rounded-md border border-border bg-muted/50 p-3">
@@ -60,32 +55,7 @@ export default function TranslateButton({ translatedText }: TranslateButtonProps
     );
   }
 
-  // Standard users: visible but disabled with tooltip
-  if (isStandardOrAbove && !isPremium) {
-    return (
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="mt-1 gap-1.5 text-xs text-muted-foreground opacity-60 cursor-not-allowed"
-              disabled
-            >
-              <Lock className="h-3.5 w-3.5" />
-              <Languages className="h-3.5 w-3.5" />
-              Traduire
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>Disponible en Premium</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-    );
-  }
-
-  // Free users: show locked button that opens gate
+  // Non-Premium users (Free + Standard): show button that opens Premium upgrade popup
   if (!isPremium) {
     return (
       <>
@@ -104,6 +74,7 @@ export default function TranslateButton({ translatedText }: TranslateButtonProps
     );
   }
 
+  // Premium users: full translation dropdown
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

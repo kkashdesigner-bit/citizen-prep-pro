@@ -58,7 +58,6 @@ export default function Dashboard() {
     if (!user) { navigate('/auth'); return; }
 
     const fetchData = async () => {
-      // Fetch profile
       const { data: profile } = await supabase
         .from('profiles')
         .select('exam_history, display_name, avatar_url, email')
@@ -72,13 +71,11 @@ export default function Dashboard() {
         setEmail(profile.email);
       }
 
-      // Total questions count
       const { count: totalCount } = await supabase
         .from('questions')
         .select('id', { count: 'exact', head: true });
       setTotalQuestionCount(totalCount || 0);
 
-      // Count unique questions answered by this user from user_answers
       const { data: answeredData } = await supabase
         .from('user_answers' as any)
         .select('question_id, category')
@@ -87,7 +84,6 @@ export default function Dashboard() {
       const uniqueQuestionIds = new Set((answeredData || []).map((a: any) => a.question_id));
       setUniqueAnsweredCount(uniqueQuestionIds.size);
 
-      // Calculate per-category progress
       const catProgressMap: Record<string, Set<number>> = {};
       (answeredData || []).forEach((a: any) => {
         const cat = a.category || 'Unknown';
@@ -95,7 +91,6 @@ export default function Dashboard() {
         catProgressMap[cat].add(a.question_id);
       });
 
-      // Get total per category
       const catProgressArr: CategoryProgress[] = [];
       for (const cat of DB_CATEGORIES) {
         const { count } = await supabase
@@ -109,17 +104,19 @@ export default function Dashboard() {
         });
       }
       setCategoryProgress(catProgressArr);
-
       setLoading(false);
     };
     fetchData();
   }, [user, authLoading, navigate]);
 
-  const openGate = (requiredTier: 'standard' | 'premium') => { setGateTier(requiredTier); setShowGate(true); };
+  const openGate = (requiredTier: 'standard' | 'premium') => {
+    setGateTier(requiredTier);
+    setShowGate(true);
+  };
 
   const handleCategorySelect = (category: Category) => {
-    if (!isStandardOrAbove) { openGate('standard'); return; }
-    navigate(`/quiz?mode=training&category=${category}`);
+    if (!isPremium) { openGate('premium'); return; }
+    navigate(`/quiz?mode=study&category=${category}`);
   };
 
   const handleStartExam = () => {
@@ -152,7 +149,6 @@ export default function Dashboard() {
     <div className="min-h-screen bg-background">
       <Header />
       <div className="container py-8">
-        {/* HEADER CARD */}
         <Card className="mb-8">
           <CardContent className="flex items-center gap-4 p-6">
             <Avatar className="h-16 w-16">
@@ -167,7 +163,6 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        {/* PROGRESS SECTION */}
         <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-3">
           <Card>
             <CardHeader className="pb-2">
@@ -238,7 +233,7 @@ export default function Dashboard() {
                 <div className="text-center">
                   <Lock className="mx-auto mb-2 h-8 w-8 text-muted-foreground" />
                   <p className="mb-3 text-sm font-medium text-foreground">{t('dash.subscriberOnly')}</p>
-                  <Button size="sm" className="btn-glow" onClick={() => navigate('/quiz?mode=exam')}>Lancer la démo</Button>
+                  <Button size="sm" className="btn-glow" onClick={() => navigate('/quiz?mode=demo')}>Lancer la d&eacute;mo</Button>
                 </div>
               </div>
             )}
@@ -247,12 +242,11 @@ export default function Dashboard() {
 
         <WeaknessAlert examHistory={examHistory} language={language} />
 
-        {/* Per-Category Progress */}
         <Card className="mb-8">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg">
               <Target className="h-5 w-5 text-primary" />
-              Progression par catégorie
+              Progression par cat&eacute;gorie
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -272,53 +266,49 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        {/* Level Selector */}
         <div className="glass-card mb-8 p-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-serif text-lg font-semibold text-foreground">{t('dash.examLevel')}</h3>
-            <Button onClick={handleStartExam} size="sm" className="btn-glow">Lancer l'examen</Button>
+            <Button onClick={handleStartExam} size="sm" className="btn-glow">{"Lancer l'examen"}</Button>
           </div>
           <LevelSelector selectedLevel={selectedLevel} onSelect={setSelectedLevel} isSubscribed={isStandardOrAbove} />
         </div>
 
-        {/* Category Training */}
         <div className="glass-card mb-8 p-6">
           <h3 className="font-serif text-lg font-semibold text-foreground mb-4">{t('dash.categoryTraining')}</h3>
           <div className="relative">
             <p className="mb-4 text-sm text-muted-foreground">
               {t('dash.chooseCat')}
-              {!isStandardOrAbove && ` (${t('dash.subscriberEssential')})`}
+              {!isPremium && ' (Exclusif Premium)'}
             </p>
             <CategorySelector onSelect={handleCategorySelect} />
-            {!isStandardOrAbove && (
+            {!isPremium && (
               <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-background/80 backdrop-blur-md">
                 <div className="text-center">
                   <Lock className="mx-auto mb-2 h-8 w-8 text-muted-foreground" />
-                  <p className="mb-3 text-sm font-medium text-foreground">{t('dash.subscriberEssential')}</p>
-                  <Button size="sm" className="btn-glow" onClick={() => openGate('standard')}>{t('dash.upgradeEssential')}</Button>
+                  <p className="mb-3 text-sm font-medium text-foreground">Exclusif Premium</p>
+                  <Button size="sm" className="btn-glow" onClick={() => openGate('premium')}>Passer en Premium</Button>
                 </div>
               </div>
             )}
           </div>
         </div>
 
-        {/* Premium Video Guides */}
         <div className="glass-card mb-8 p-6">
           <h3 className="font-serif text-lg font-semibold text-foreground mb-4">{t('dash.videoGuides')}</h3>
           <PremiumVideoGuides isTier2={isPremium} />
         </div>
 
-        {/* Exam history */}
         <div className="glass-card p-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-serif text-lg font-semibold text-foreground">{t('dash.examHistory')}</h3>
-            <Button onClick={() => navigate('/quiz?mode=exam')} size="sm" className="btn-glow">{t('dash.newExam')}</Button>
+            <Button onClick={() => isStandardOrAbove ? navigate('/quiz?mode=exam') : openGate('standard')} size="sm" className="btn-glow">{t('dash.newExam')}</Button>
           </div>
           {examHistory.length === 0 ? (
             <div className="py-8 text-center">
               <Clock className="mx-auto mb-3 h-10 w-10 text-muted-foreground" />
               <p className="text-muted-foreground">{t('dash.noExamsYet')}</p>
-              <Button className="mt-4 btn-glow" variant="outline" onClick={() => navigate('/quiz?mode=exam')}>{t('dash.takeFirst')}</Button>
+              <Button className="mt-4 btn-glow" variant="outline" onClick={() => navigate('/quiz?mode=demo')}>{t('dash.takeFirst')}</Button>
             </div>
           ) : (
             <div className="space-y-3">
@@ -336,7 +326,7 @@ export default function Dashboard() {
                           {entry.score}/{entry.totalQuestions} — {entry.passed ? t('dash.passed') : t('dash.failed')}
                         </p>
                         <p className="text-xs text-muted-foreground">
-                          {new Date(entry.date).toLocaleDateString(language === 'fr' ? 'fr-FR' : undefined)} · {mins} min
+                          {new Date(entry.date).toLocaleDateString(language === 'fr' ? 'fr-FR' : undefined)} &middot; {mins} min
                         </p>
                       </div>
                     </div>

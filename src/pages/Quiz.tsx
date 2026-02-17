@@ -16,8 +16,6 @@ import { Progress } from '@/components/ui/progress';
 
 const QUIZ_TIME = 45 * 60;
 
-// QuizMode is imported from useQuiz
-
 export default function Quiz() {
   const [searchParams] = useSearchParams();
   const mode = (searchParams.get('mode') as QuizMode) || 'exam';
@@ -30,23 +28,45 @@ export default function Quiz() {
 
   const isFreeUser = tier === 'free';
 
+  // --- Tier-based access enforcement ---
+  const [showGate, setShowGate] = useState(false);
+  const [gateTier, setGateTier] = useState<'standard' | 'premium'>('standard');
+
+  useEffect(() => {
+    if (tierLoading) return;
+    // Free users can only access demo mode
+    if (isFreeUser && mode !== 'demo') {
+      setGateTier('standard');
+      setShowGate(true);
+      return;
+    }
+    // Standard users trying category training → premium gate
+    if (isStandardOrAbove && !isPremium && mode === 'study' && categoryParam) {
+      setGateTier('premium');
+      setShowGate(true);
+      return;
+    }
+  }, [tierLoading, tier, mode, categoryParam, isFreeUser, isStandardOrAbove, isPremium]);
+
+  // Free users always get demo mode
+  const effectiveMode: QuizMode = isFreeUser ? 'demo' : mode;
+
   const { questions, loading, saveAnswer, shouldSaveAnswers } = useQuiz({
     category: categoryParam || undefined,
     level: levelParam,
     isMiniQuiz,
-    mode,
+    mode: effectiveMode,
   });
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<number, string>>({});
   const [timeRemaining, setTimeRemaining] = useState(QUIZ_TIME);
   const [startTime] = useState(Date.now());
-  const [showGate, setShowGate] = useState(false);
   const [warpState, setWarpState] = useState<'idle' | 'exit' | 'enter'>('idle');
   const pendingIndex = useRef<number | null>(null);
 
   useEffect(() => {
-    if (mode !== 'exam' || isMiniQuiz) return;
+    if (effectiveMode !== 'exam' || isMiniQuiz) return;
     const interval = setInterval(() => {
       setTimeRemaining((prev) => {
         if (prev <= 1) {
@@ -58,7 +78,7 @@ export default function Quiz() {
       });
     }, 1000);
     return () => clearInterval(interval);
-  }, [mode, isMiniQuiz]);
+  }, [effectiveMode, isMiniQuiz]);
 
   const handleAnswer = (answer: string) => {
     const question = questions[currentIndex];
@@ -109,17 +129,12 @@ export default function Quiz() {
 
     sessionStorage.setItem('quizResults', JSON.stringify(resultData));
 
-    if (isFreeUser) {
-      const demoTaken = sessionStorage.getItem('demoTaken');
-      if (demoTaken) {
-        setShowGate(true);
-        return;
-      }
+    if (isFreeUser && effectiveMode === 'demo') {
       sessionStorage.setItem('demoTaken', 'true');
     }
 
     navigate('/results');
-  }, [answers, questions, startTime, navigate]);
+  }, [answers, questions, startTime, navigate, isFreeUser, effectiveMode]);
 
   if (loading) {
     return (
@@ -148,7 +163,7 @@ export default function Quiz() {
 
   const currentQuestion = questions[currentIndex];
   const answeredCount = Object.keys(answers).length;
-  const showFeedback = mode === 'study' || mode === 'training';
+  const showFeedback = effectiveMode === 'study' || effectiveMode === 'training';
   const progressPercent = ((currentIndex + 1) / questions.length) * 100;
 
   return (
@@ -162,8 +177,8 @@ export default function Quiz() {
             total={questions.length}
             answeredCount={answeredCount}
           />
-          {mode === 'exam' && !isMiniQuiz && <QuizTimer timeRemaining={timeRemaining} />}
-          <ModeBadge mode={mode} category={categoryParam} />
+          {effectiveMode === 'exam' && !isMiniQuiz && <QuizTimer timeRemaining={timeRemaining} />}
+          <ModeBadge mode={effectiveMode} category={categoryParam} />
         </div>
       </div>
 
@@ -193,7 +208,6 @@ export default function Quiz() {
           <div className="space-y-1.5">
             <Progress value={progressPercent} className="h-2" />
             <div className="hidden sm:flex items-center gap-0.5 justify-center flex-wrap">
-              {/* Group dots into segments of 5 */}
               {Array.from({ length: Math.ceil(questions.length / 5) }, (_, seg) => {
                 const start = seg * 5;
                 const end = Math.min(start + 5, questions.length);
@@ -252,7 +266,16 @@ export default function Quiz() {
         </div>
       </main>
 
-      <SubscriptionGate open={showGate} onOpenChange={setShowGate} />
+      <SubscriptionGate
+        open={showGate}
+        onOpenChange={(open) => {
+          setShowGate(open);
+          if (!open && ((isFreeUser && mode !== 'demo') || (!isPremium && mode === 'study' && categoryParam))) {
+            navigate(-1);
+          }
+        }}
+        requiredTier={gateTier}
+      />
     </div>
   );
 }
@@ -263,15 +286,21 @@ function ModeBadge({ mode, category }: { mode: QuizMode; category?: string | nul
       ? `Entraînement — ${category}`
       : mode === 'exam'
       ? 'Examen'
-      : 'Étude';
+      : mode === 'demo'
+      ? 'Démo'
+      : mode === 'study'
+      ? 'Étude par catégorie'
+      : 'Entraînement';
 
   return (
     <span
       className={`shrink-0 rounded-full px-3 py-1 text-xs font-bold uppercase ${
         mode === 'exam'
           ? 'bg-destructive/20 text-destructive'
-          : mode === 'training'
+          : mode === 'demo'
           ? 'bg-secondary text-secondary-foreground'
+          : mode === 'training'
+          ? 'bg-primary/10 text-primary'
           : 'bg-primary/10 text-primary'
       }`}
     >
