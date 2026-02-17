@@ -1,86 +1,94 @@
-import { useState, useCallback, useRef } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { useLanguage } from '@/contexts/LanguageContext';
-import { useQuiz, QuizMode } from '@/hooks/useQuiz';
-import { useSubscription } from '@/hooks/useSubscription';
-import { Question, ExamLevel } from '@/lib/types';
-import Header from '@/components/Header';
-import QuizQuestion from '@/components/QuizQuestion';
-import QuizTimer from '@/components/QuizTimer';
-import QuizProgress from '@/components/QuizProgress';
-import SubscriptionGate from '@/components/SubscriptionGate';
-import { ChevronLeft, ChevronRight, Flag } from 'lucide-react';
-import { useEffect } from 'react';
-import { Progress } from '@/components/ui/progress';
-
-const QUIZ_TIME = 45 * 60;
-
-export default function Quiz() {
-  const [searchParams] = useSearchParams();
-  const mode = (searchParams.get('mode') as QuizMode) || 'exam';
-  const categoryParam = searchParams.get('category');
-  const levelParam = (searchParams.get('level') as ExamLevel) || 'CSP';
-  const isMiniQuiz = searchParams.get('mini') === '1';
-  const navigate = useNavigate();
-  const { t } = useLanguage();
-  const { tier, isStandardOrAbove, isPremium, loading: tierLoading } = useSubscription();
-
-  const isFreeUser = tier === 'free';
-
-  // --- Tier-based access enforcement ---
-  const [showGate, setShowGate] = useState(false);
-  const [gateTier, setGateTier] = useState<'standard' | 'premium'>('standard');
-
-  useEffect(() => {
-    if (tierLoading) return;
-    // Free users can only access demo mode
-    if (isFreeUser && mode !== 'demo') {
-      setGateTier('standard');
-      setShowGate(true);
-      return;
-    }
-    // Standard users trying category training → premium gate
-    if (isStandardOrAbove && !isPremium && mode === 'study' && categoryParam) {
-      setGateTier('premium');
-      setShowGate(true);
-      return;
-    }
-  }, [tierLoading, tier, mode, categoryParam, isFreeUser, isStandardOrAbove, isPremium]);
-
-  // Free users always get demo mode
-  const effectiveMode: QuizMode = isFreeUser ? 'demo' : mode;
-
-  const { questions, loading, saveAnswer, shouldSaveAnswers } = useQuiz({
-    category: categoryParam || undefined,
-    level: levelParam,
-    isMiniQuiz,
-    mode: effectiveMode,
-  });
-
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [answers, setAnswers] = useState<Record<number, string>>({});
-  const [timeRemaining, setTimeRemaining] = useState(QUIZ_TIME);
-  const [startTime] = useState(Date.now());
-  const [warpState, setWarpState] = useState<'idle' | 'exit' | 'enter'>('idle');
-  const pendingIndex = useRef<number | null>(null);
-
-  useEffect(() => {
-    if (effectiveMode !== 'exam' || isMiniQuiz) return;
-    const interval = setInterval(() => {
-      setTimeRemaining((prev) => {
-        if (prev <= 1) {
-          clearInterval(interval);
-          handleFinish();
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [effectiveMode, isMiniQuiz]);
-
-  const handleAnswer = (answer: string) => {
+diff --git a/src/pages/Quiz.tsx b/src/pages/Quiz.tsx
+index 81f60fb1664119b99731f9c04ff63f3b7a1436a8..317f5180190bcd5e95edcd1833d78c905d71c315 100644
+--- a/src/pages/Quiz.tsx
++++ b/src/pages/Quiz.tsx
+@@ -1,83 +1,86 @@
+ import { useState, useCallback, useRef } from 'react';
+ import { useNavigate, useSearchParams } from 'react-router-dom';
+ import { Button } from '@/components/ui/button';
+ import { useLanguage } from '@/contexts/LanguageContext';
+ import { useQuiz, QuizMode } from '@/hooks/useQuiz';
+ import { useSubscription } from '@/hooks/useSubscription';
+ import { Question, ExamLevel } from '@/lib/types';
+ import Header from '@/components/Header';
+ import QuizQuestion from '@/components/QuizQuestion';
+ import QuizTimer from '@/components/QuizTimer';
+ import QuizProgress from '@/components/QuizProgress';
+ import SubscriptionGate from '@/components/SubscriptionGate';
+ import { ChevronLeft, ChevronRight, Flag } from 'lucide-react';
+ import { useEffect } from 'react';
+ import { Progress } from '@/components/ui/progress';
+ 
+ const QUIZ_TIME = 45 * 60;
+ 
+ export default function Quiz() {
+   const [searchParams] = useSearchParams();
+   const mode = (searchParams.get('mode') as QuizMode) || 'exam';
+   const categoryParam = searchParams.get('category');
+   const levelParam = (searchParams.get('level') as ExamLevel) || 'CSP';
+   const isMiniQuiz = searchParams.get('mini') === '1';
++  const limitParam = Number(searchParams.get('limit'));
++  const questionLimit = Number.isFinite(limitParam) && limitParam > 0 ? limitParam : undefined;
+   const navigate = useNavigate();
+   const { t } = useLanguage();
+   const { tier, isStandardOrAbove, isPremium, loading: tierLoading } = useSubscription();
+ 
+   const isFreeUser = tier === 'free';
+ 
+   // --- Tier-based access enforcement ---
+   const [showGate, setShowGate] = useState(false);
+   const [gateTier, setGateTier] = useState<'standard' | 'premium'>('standard');
+ 
+   useEffect(() => {
+     if (tierLoading) return;
+     // Free users can only access demo mode
+     if (isFreeUser && mode !== 'demo') {
+       setGateTier('standard');
+       setShowGate(true);
+       return;
+     }
+     // Standard users trying category training → premium gate
+     if (isStandardOrAbove && !isPremium && mode === 'study' && categoryParam) {
+       setGateTier('premium');
+       setShowGate(true);
+       return;
+     }
+   }, [tierLoading, tier, mode, categoryParam, isFreeUser, isStandardOrAbove, isPremium]);
+ 
+   // Free users always get demo mode
+   const effectiveMode: QuizMode = isFreeUser ? 'demo' : mode;
+ 
+   const { questions, loading, saveAnswer, shouldSaveAnswers } = useQuiz({
+     category: categoryParam || undefined,
+     level: levelParam,
+     isMiniQuiz,
+     mode: effectiveMode,
++    questionLimit,
+   });
+ 
+   const [currentIndex, setCurrentIndex] = useState(0);
+   const [answers, setAnswers] = useState<Record<number, string>>({});
+   const [timeRemaining, setTimeRemaining] = useState(QUIZ_TIME);
+   const [startTime] = useState(Date.now());
+   const [warpState, setWarpState] = useState<'idle' | 'exit' | 'enter'>('idle');
+   const pendingIndex = useRef<number | null>(null);
+ 
+   useEffect(() => {
+     if (effectiveMode !== 'exam' || isMiniQuiz) return;
+     const interval = setInterval(() => {
+       setTimeRemaining((prev) => {
+         if (prev <= 1) {
+           clearInterval(interval);
+           handleFinish();
+           return 0;
+         }
+         return prev - 1;
+       });
+     }, 1000);
+     return () => clearInterval(interval);
+   }, [effectiveMode, isMiniQuiz]);
+ 
+   const handleAnswer = (answer: string) => {
     const question = questions[currentIndex];
     if (!question) return;
     if (answers[question.id] !== undefined) return;
