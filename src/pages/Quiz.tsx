@@ -2,7 +2,7 @@ import { useState, useCallback, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { useQuiz } from '@/hooks/useQuiz';
+import { useQuiz, QuizMode } from '@/hooks/useQuiz';
 import { useSubscription } from '@/hooks/useSubscription';
 import { Question, ExamLevel } from '@/lib/types';
 import Header from '@/components/Header';
@@ -16,7 +16,7 @@ import { Progress } from '@/components/ui/progress';
 
 const QUIZ_TIME = 45 * 60;
 
-type QuizMode = 'exam' | 'study' | 'training';
+// QuizMode is imported from useQuiz
 
 export default function Quiz() {
   const [searchParams] = useSearchParams();
@@ -29,12 +29,10 @@ export default function Quiz() {
   const { tier, isStandardOrAbove, isPremium, loading: tierLoading } = useSubscription();
 
   const isFreeUser = tier === 'free';
-  const effectiveLimit = isFreeUser && mode === 'exam' ? 20 : (mode === 'exam' ? 40 : mode === 'training' ? 20 : undefined);
 
-  const { questions, loading, saveAnswer } = useQuiz({
+  const { questions, loading, saveAnswer, shouldSaveAnswers } = useQuiz({
     category: categoryParam || undefined,
     level: levelParam,
-    limit: effectiveLimit,
     isMiniQuiz,
     mode,
   });
