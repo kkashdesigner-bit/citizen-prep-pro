@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Globe } from "lucide-react";
+import { Globe, X } from "lucide-react";
 import { useSubscription } from "@/hooks/useSubscription";
+import SubscriptionGate from "@/components/SubscriptionGate";
 
 interface Props {
   text: string;
@@ -9,95 +10,53 @@ interface Props {
 }
 
 export default function TranslateButton({ text, onTranslated }: Props) {
+  const { isPremium } = useSubscription();
+  const [showGate, setShowGate] = useState(false);
+  const [shown, setShown] = useState(false);
 
-  const { subscriptionTier } = useSubscription();
-
-  const [loading, setLoading] = useState(false);
-
-  const isPremium = subscriptionTier === "premium";
-
-  async function translate() {
-
+  function handleClick() {
     if (!isPremium) {
-
-      alert("Cette fonctionnalité est réservée aux abonnés Premium");
-
+      setShowGate(true);
       return;
     }
-
-    setLoading(true);
-
-    try {
-
-      const res = await fetch("/api/translate", {
-
-        method: "POST",
-
-        headers: {
-
-          "Content-Type": "application/json",
-
-        },
-
-        body: JSON.stringify({
-
-          text,
-
-        }),
-
-      });
-
-      const data = await res.json();
-
-      onTranslated(data.translation);
-
-    } catch {
-
-      alert("Erreur traduction");
-
+    if (shown) {
+      setShown(false);
+      return;
     }
-
-    setLoading(false);
-
+    setShown(true);
+    onTranslated(text);
   }
 
   return (
+    <>
+      <div className="flex flex-col gap-2">
+        <Button
+          onClick={handleClick}
+          variant="outline"
+          size="sm"
+          className="gap-2 self-start"
+        >
+          {shown ? <X className="h-4 w-4" /> : <Globe className="h-4 w-4" />}
+          {shown ? "Masquer la traduction" : "Traduire"}
+          {!isPremium && (
+            <span className="ml-1 rounded bg-primary/10 px-1.5 py-0.5 text-[10px] font-bold uppercase text-primary">
+              Premium
+            </span>
+          )}
+        </Button>
 
-    <Button
+        {shown && (
+          <div className="rounded-lg border border-primary/20 bg-primary/5 px-4 py-3 text-sm text-foreground">
+            {text}
+          </div>
+        )}
+      </div>
 
-      onClick={translate}
-
-      disabled={loading}
-
-      variant={isPremium ? "default" : "outline"}
-
-      className={
-
-        isPremium
-
-          ? "bg-blue-600 hover:bg-blue-700 text-white"
-
-          : "opacity-50 cursor-not-allowed"
-
-      }
-
-    >
-
-      <Globe className="mr-2 h-4 w-4" />
-
-      Traduire
-
-      {!isPremium && (
-
-        <span className="ml-2 text-xs">
-
-          Premium
-
-        </span>
-
-      )}
-
-    </Button>
-
+      <SubscriptionGate
+        open={showGate}
+        onOpenChange={setShowGate}
+        requiredTier="premium"
+      />
+    </>
   );
 }
