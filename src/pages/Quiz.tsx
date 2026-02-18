@@ -1,94 +1,87 @@
-diff --git a/src/pages/Quiz.tsx b/src/pages/Quiz.tsx
-index 81f60fb1664119b99731f9c04ff63f3b7a1436a8..317f5180190bcd5e95edcd1833d78c905d71c315 100644
---- a/src/pages/Quiz.tsx
-+++ b/src/pages/Quiz.tsx
-@@ -1,83 +1,86 @@
- import { useState, useCallback, useRef } from 'react';
- import { useNavigate, useSearchParams } from 'react-router-dom';
- import { Button } from '@/components/ui/button';
- import { useLanguage } from '@/contexts/LanguageContext';
- import { useQuiz, QuizMode } from '@/hooks/useQuiz';
- import { useSubscription } from '@/hooks/useSubscription';
- import { Question, ExamLevel } from '@/lib/types';
- import Header from '@/components/Header';
- import QuizQuestion from '@/components/QuizQuestion';
- import QuizTimer from '@/components/QuizTimer';
- import QuizProgress from '@/components/QuizProgress';
- import SubscriptionGate from '@/components/SubscriptionGate';
- import { ChevronLeft, ChevronRight, Flag } from 'lucide-react';
- import { useEffect } from 'react';
- import { Progress } from '@/components/ui/progress';
- 
- const QUIZ_TIME = 45 * 60;
- 
- export default function Quiz() {
-   const [searchParams] = useSearchParams();
-   const mode = (searchParams.get('mode') as QuizMode) || 'exam';
-   const categoryParam = searchParams.get('category');
-   const levelParam = (searchParams.get('level') as ExamLevel) || 'CSP';
-   const isMiniQuiz = searchParams.get('mini') === '1';
-+  const limitParam = Number(searchParams.get('limit'));
-+  const questionLimit = Number.isFinite(limitParam) && limitParam > 0 ? limitParam : undefined;
-   const navigate = useNavigate();
-   const { t } = useLanguage();
-   const { tier, isStandardOrAbove, isPremium, loading: tierLoading } = useSubscription();
- 
-   const isFreeUser = tier === 'free';
- 
-   // --- Tier-based access enforcement ---
-   const [showGate, setShowGate] = useState(false);
-   const [gateTier, setGateTier] = useState<'standard' | 'premium'>('standard');
- 
-   useEffect(() => {
-     if (tierLoading) return;
-     // Free users can only access demo mode
-     if (isFreeUser && mode !== 'demo') {
-       setGateTier('standard');
-       setShowGate(true);
-       return;
-     }
-     // Standard users trying category training → premium gate
-     if (isStandardOrAbove && !isPremium && mode === 'study' && categoryParam) {
-       setGateTier('premium');
-       setShowGate(true);
-       return;
-     }
-   }, [tierLoading, tier, mode, categoryParam, isFreeUser, isStandardOrAbove, isPremium]);
- 
-   // Free users always get demo mode
-   const effectiveMode: QuizMode = isFreeUser ? 'demo' : mode;
- 
-   const { questions, loading, saveAnswer, shouldSaveAnswers } = useQuiz({
-     category: categoryParam || undefined,
-     level: levelParam,
-     isMiniQuiz,
-     mode: effectiveMode,
-+    questionLimit,
-   });
- 
-   const [currentIndex, setCurrentIndex] = useState(0);
-   const [answers, setAnswers] = useState<Record<number, string>>({});
-   const [timeRemaining, setTimeRemaining] = useState(QUIZ_TIME);
-   const [startTime] = useState(Date.now());
-   const [warpState, setWarpState] = useState<'idle' | 'exit' | 'enter'>('idle');
-   const pendingIndex = useRef<number | null>(null);
- 
-   useEffect(() => {
-     if (effectiveMode !== 'exam' || isMiniQuiz) return;
-     const interval = setInterval(() => {
-       setTimeRemaining((prev) => {
-         if (prev <= 1) {
-           clearInterval(interval);
-           handleFinish();
-           return 0;
-         }
-         return prev - 1;
-       });
-     }, 1000);
-     return () => clearInterval(interval);
-   }, [effectiveMode, isMiniQuiz]);
- 
-   const handleAnswer = (answer: string) => {
+import { useState, useCallback, useRef, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { useQuiz, QuizMode } from '@/hooks/useQuiz';
+import { useSubscription } from '@/hooks/useSubscription';
+import { ExamLevel } from '@/lib/types';
+import Header from '@/components/Header';
+import QuizQuestion from '@/components/QuizQuestion';
+import QuizTimer from '@/components/QuizTimer';
+import QuizProgress from '@/components/QuizProgress';
+import SubscriptionGate from '@/components/SubscriptionGate';
+import { Progress } from '@/components/ui/progress';
+import { ChevronLeft, ChevronRight, Flag } from 'lucide-react';
+
+const QUIZ_TIME = 45 * 60;
+
+export default function Quiz() {
+  const [searchParams] = useSearchParams();
+  const rawMode = (searchParams.get('mode') as QuizMode) || 'exam';
+  const categoryParam = searchParams.get('category');
+  const levelParam = (searchParams.get('level') as ExamLevel) || 'CSP';
+  const isMiniQuiz = searchParams.get('mini') === '1';
+  const limitParam = searchParams.get('limit');
+  const questionLimit = limitParam && Number.isFinite(Number(limitParam)) && Number(limitParam) > 0
+    ? Number(limitParam)
+    : undefined;
+
+  const navigate = useNavigate();
+  const { t } = useLanguage();
+  const { tier, isStandardOrAbove, isPremium, loading: tierLoading } = useSubscription();
+
+  const isFreeUser = tier === 'free';
+
+  // --- Tier-based access gate ---
+  const [showGate, setShowGate] = useState(false);
+  const [gateTier, setGateTier] = useState<'standard' | 'premium'>('standard');
+
+  useEffect(() => {
+    if (tierLoading) return;
+    if (isFreeUser && rawMode !== 'demo') {
+      setGateTier('standard');
+      setShowGate(true);
+    } else if (isStandardOrAbove && !isPremium && rawMode === 'study') {
+      setGateTier('premium');
+      setShowGate(true);
+    }
+  }, [tierLoading, isFreeUser, isStandardOrAbove, isPremium, rawMode]);
+
+  // Free users are downgraded to demo mode
+  const effectiveMode: QuizMode = isFreeUser ? 'demo' : rawMode;
+
+  const { questions, loading, saveAnswer } = useQuiz({
+    category: categoryParam || undefined,
+    level: levelParam,
+    isMiniQuiz,
+    mode: effectiveMode,
+    questionLimit,
+  });
+
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [answers, setAnswers] = useState<Record<number, string>>({});
+  const [timeRemaining, setTimeRemaining] = useState(QUIZ_TIME);
+  const [startTime] = useState(Date.now());
+  const [warpState, setWarpState] = useState<'idle' | 'exit' | 'enter'>('idle');
+  const pendingIndex = useRef<number | null>(null);
+
+  // Timer for exam mode
+  useEffect(() => {
+    if (effectiveMode !== 'exam' || isMiniQuiz) return;
+    const interval = setInterval(() => {
+      setTimeRemaining((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [effectiveMode, isMiniQuiz]);
+
+  const handleAnswer = (answer: string) => {
     const question = questions[currentIndex];
     if (!question) return;
     if (answers[question.id] !== undefined) return;
@@ -136,13 +129,8 @@ index 81f60fb1664119b99731f9c04ff63f3b7a1436a8..317f5180190bcd5e95edcd1833d78c90
     };
 
     sessionStorage.setItem('quizResults', JSON.stringify(resultData));
-
-    if (isFreeUser && effectiveMode === 'demo') {
-      sessionStorage.setItem('demoTaken', 'true');
-    }
-
     navigate('/results');
-  }, [answers, questions, startTime, navigate, isFreeUser, effectiveMode]);
+  }, [answers, questions, startTime, navigate]);
 
   if (loading) {
     return (
@@ -207,12 +195,12 @@ index 81f60fb1664119b99731f9c04ff63f3b7a1436a8..317f5180190bcd5e95edcd1833d78c90
             selectedAnswer={answers[currentQuestion.id]}
             onAnswer={handleAnswer}
             showFeedback={showFeedback}
-            showTranslateButton={true}
+            showTranslateButton={isPremium}
           />
         </div>
 
         <div className="mx-auto mt-8 max-w-2xl space-y-4">
-          {/* Compact progress bar */}
+          {/* Progress bar + segment markers */}
           <div className="space-y-1.5">
             <Progress value={progressPercent} className="h-2" />
             <div className="hidden sm:flex items-center gap-0.5 justify-center flex-wrap">
@@ -220,7 +208,7 @@ index 81f60fb1664119b99731f9c04ff63f3b7a1436a8..317f5180190bcd5e95edcd1833d78c90
                 const start = seg * 5;
                 const end = Math.min(start + 5, questions.length);
                 const segQuestions = questions.slice(start, end);
-                const answeredInSeg = segQuestions.filter(q => answers[q.id] !== undefined).length;
+                const answeredInSeg = segQuestions.filter((q) => answers[q.id] !== undefined).length;
                 const currentInSeg = currentIndex >= start && currentIndex < end;
 
                 return (
@@ -237,14 +225,14 @@ index 81f60fb1664119b99731f9c04ff63f3b7a1436a8..317f5180190bcd5e95edcd1833d78c90
                         : 'bg-muted text-muted-foreground'
                     }`}
                   >
-                    {start + 1}-{end}
+                    {start + 1}–{end}
                   </button>
                 );
               })}
             </div>
           </div>
 
-          {/* Navigation buttons */}
+          {/* Navigation */}
           <div className="flex items-center justify-between">
             <Button
               variant="outline"
@@ -278,9 +266,7 @@ index 81f60fb1664119b99731f9c04ff63f3b7a1436a8..317f5180190bcd5e95edcd1833d78c90
         open={showGate}
         onOpenChange={(open) => {
           setShowGate(open);
-          if (!open && ((isFreeUser && mode !== 'demo') || (!isPremium && mode === 'study' && categoryParam))) {
-            navigate(-1);
-          }
+          if (!open) navigate(-1);
         }}
         requiredTier={gateTier}
       />
@@ -307,8 +293,6 @@ function ModeBadge({ mode, category }: { mode: QuizMode; category?: string | nul
           ? 'bg-destructive/20 text-destructive'
           : mode === 'demo'
           ? 'bg-secondary text-secondary-foreground'
-          : mode === 'training'
-          ? 'bg-primary/10 text-primary'
           : 'bg-primary/10 text-primary'
       }`}
     >
