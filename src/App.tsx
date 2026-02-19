@@ -19,6 +19,7 @@ const LessonPage = lazy(() => import("./pages/LessonPage"));
 const ExamsPage = lazy(() => import("./pages/ExamsPage"));
 const StudyMaterialPage = lazy(() => import("./pages/StudyMaterialPage"));
 const AnalyticsPage = lazy(() => import("./pages/AnalyticsPage"));
+const Onboarding = lazy(() => import("./pages/Onboarding"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
@@ -36,6 +37,7 @@ const App = () => (
                 <Route path="/" element={<Index />} />
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/learn" element={<LearningDashboard />} />
+                <Route path="/onboarding" element={<Onboarding />} />
                 <Route path="/progress" element={<ProgressPage />} />
                 <Route path="/lesson/:id" element={<LessonPage />} />
                 <Route path="/exams" element={<ExamsPage />} />
