@@ -264,6 +264,42 @@ export type Database = {
           },
         ]
       }
+      user_profile: {
+        Row: {
+          created_at: string
+          first_name: string | null
+          goal_type: string | null
+          id: string
+          level: string | null
+          onboarding_completed: boolean
+          timeline: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          first_name?: string | null
+          goal_type?: string | null
+          id?: string
+          level?: string | null
+          onboarding_completed?: boolean
+          timeline?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          first_name?: string | null
+          goal_type?: string | null
+          id?: string
+          level?: string | null
+          onboarding_completed?: boolean
+          timeline?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string
