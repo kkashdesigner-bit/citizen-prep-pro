@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useSubscription } from '@/hooks/useSubscription';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useUserProfile, GOAL_TO_LEVEL, GOAL_LABELS } from '@/hooks/useUserProfile';
 import { supabase } from '@/integrations/supabase/client';
 import LearnSidebar from '@/components/learn/LearnSidebar';
 import DashboardHeader from '@/components/learn/DashboardHeader';
@@ -44,6 +45,7 @@ export default function LearningDashboard() {
   const { tier, isStandardOrAbove, isPremium, loading: tierLoading } = useSubscription();
   const { t } = useLanguage();
   const navigate = useNavigate();
+  const { profile: userProfile, loading: profileLoading } = useUserProfile();
 
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [progress, setProgress] = useState<LessonProgress[]>([]);
@@ -56,6 +58,12 @@ export default function LearningDashboard() {
   useEffect(() => {
     if (authLoading) return;
     if (!user) { navigate('/auth'); return; }
+
+    // Redirect to onboarding if not completed
+    if (!profileLoading && userProfile !== undefined && !userProfile?.onboarding_completed) {
+      navigate('/onboarding');
+      return;
+    }
 
     const fetchData = async () => {
       const [lessonsRes, progressRes, profileRes] = await Promise.all([
@@ -70,15 +78,15 @@ export default function LearningDashboard() {
       setExamHistory((profileRes.data?.exam_history as unknown as ExamHistoryEntry[]) || []);
       setLoading(false);
     };
-    fetchData();
-  }, [user, authLoading, navigate]);
+    if (!profileLoading) fetchData();
+  }, [user, authLoading, navigate, userProfile, profileLoading]);
 
   const openGate = (required: 'standard' | 'premium') => {
     setGateTier(required);
     setShowGate(true);
   };
 
-  if (authLoading || loading || tierLoading) {
+  if (authLoading || loading || tierLoading || profileLoading) {
     return (
       <div className="flex min-h-screen bg-background">
         <LearnSidebar />
@@ -109,6 +117,14 @@ export default function LearningDashboard() {
 
   const firstName = displayName.split(' ')[0] || displayName || 'Learner';
 
+  // Persona-based exam level
+  const personaLevel = userProfile?.goal_type
+    ? GOAL_TO_LEVEL[userProfile.goal_type as keyof typeof GOAL_TO_LEVEL]
+    : 'CSP';
+  const personaGoalLabel = userProfile?.goal_type
+    ? GOAL_LABELS[userProfile.goal_type as keyof typeof GOAL_LABELS]
+    : null;
+
   return (
     <div className="flex min-h-screen bg-background">
       <LearnSidebar />
@@ -120,6 +136,7 @@ export default function LearningDashboard() {
             mastery={mastery}
             streak={streak}
             xp={xp}
+            goalLabel={personaGoalLabel}
           />
 
           {/* Focus Recommendation (dynamic weak area) */}
@@ -141,6 +158,7 @@ export default function LearningDashboard() {
             nextLesson={nextLesson || null}
             isStandardOrAbove={isStandardOrAbove}
             onGate={openGate}
+            personaLevel={personaLevel}
           />
 
           {/* Recent Activity */}

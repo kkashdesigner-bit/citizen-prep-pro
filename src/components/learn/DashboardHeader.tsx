@@ -1,4 +1,5 @@
 import { useLanguage } from '@/contexts/LanguageContext';
+import { Target } from 'lucide-react';
 
 interface DashboardHeaderProps {
   firstName: string;
@@ -6,14 +7,15 @@ interface DashboardHeaderProps {
   mastery: number;
   streak: number;
   xp: number;
+  goalLabel?: string | null;
 }
 
-export default function DashboardHeader({ firstName, avatarUrl, mastery, streak, xp }: DashboardHeaderProps) {
+export default function DashboardHeader({ firstName, avatarUrl, mastery, streak, xp, goalLabel }: DashboardHeaderProps) {
   const { t } = useLanguage();
 
   return (
     <div className="mb-6 md:mb-8">
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-start justify-between mb-4">
         <div>
           <h1 className="text-2xl md:text-3xl font-bold text-foreground">
             {t('learn.welcome').replace('{name}', firstName)} 👋
@@ -23,6 +25,14 @@ export default function DashboardHeader({ firstName, avatarUrl, mastery, streak,
           </p>
         </div>
       </div>
+
+      {/* Persona goal badge */}
+      {goalLabel && (
+        <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-2">
+          <Target className="h-4 w-4 text-primary" />
+          <span className="text-sm font-semibold text-primary">Objectif : {goalLabel}</span>
+        </div>
+      )}
 
       {/* Stat cards */}
       <div className="grid grid-cols-3 gap-3 md:gap-4">

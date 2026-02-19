@@ -8,9 +8,11 @@ interface ActionCardsProps {
   nextLesson?: { id: string; title: string; category: string; estimated_minutes: number } | null;
   isStandardOrAbove: boolean;
   onGate: (tier: 'standard' | 'premium') => void;
+  /** Exam level derived from user persona (e.g., 'Naturalisation', 'CR', 'CSP') */
+  personaLevel?: string;
 }
 
-export default function ActionCards({ nextLesson, isStandardOrAbove, onGate }: ActionCardsProps) {
+export default function ActionCards({ nextLesson, isStandardOrAbove, onGate, personaLevel = 'CSP' }: ActionCardsProps) {
   const navigate = useNavigate();
   const { t } = useLanguage();
   const { user } = useAuth();
@@ -98,11 +100,14 @@ export default function ActionCards({ nextLesson, isStandardOrAbove, onGate }: A
         <p className="text-sm text-muted-foreground mb-4">
           20 questions · 45 min · 80% to pass
         </p>
+        {personaLevel && personaLevel !== 'CSP' && (
+          <p className="text-xs text-primary/70 font-medium mb-3">Niveau : {personaLevel}</p>
+        )}
         <Button
           className="w-full gap-2 font-semibold"
           onClick={() => {
             if (!isStandardOrAbove) { onGate('standard'); return; }
-            navigate('/quiz?mode=exam');
+            navigate(`/quiz?mode=exam&level=${personaLevel}`);
           }}
         >
           <GraduationCap className="h-4 w-4" />
