@@ -7,6 +7,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { useUserProfile } from '@/hooks/useUserProfile';
 import Header from '@/components/Header';
 import Logo from '@/components/Logo';
 
@@ -20,6 +21,7 @@ export default function Auth() {
   const { signInWithEmail, signUpWithEmail, signInWithGoogle } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { profile } = useUserProfile();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,13 +29,15 @@ export default function Auth() {
     try {
       if (isLogin) {
         await signInWithEmail(email, password);
-        navigate('/learn');
+        // Redirect to onboarding if not completed, otherwise to learn
+        navigate(profile?.onboarding_completed ? '/learn' : '/onboarding');
       } else {
         await signUpWithEmail(email, password);
         toast({
-          title: t('auth.resetSent').split('!')[0] + '!',
-          description: t('auth.resetSent'),
+          title: 'Compte créé !',
+          description: 'Vérifiez votre email pour confirmer votre compte.',
         });
+        navigate('/onboarding');
       }
     } catch (error: any) {
       toast({

@@ -4,6 +4,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { ArrowRight } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
+import { useUserProfile } from '@/hooks/useUserProfile';
 import ParticleMesh from '@/components/ParticleMesh';
 import Logo from '@/components/Logo';
 
@@ -11,12 +12,20 @@ export default function HeroSection() {
   const { t } = useLanguage();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { profile, loading: profileLoading } = useUserProfile();
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => setLoaded(true), 100);
     return () => clearTimeout(timer);
   }, []);
+
+  const handleStart = () => {
+    if (!user) { navigate('/auth'); return; }
+    if (profileLoading) return;
+    if (!profile?.onboarding_completed) { navigate('/onboarding'); return; }
+    navigate('/learn');
+  };
 
   return (
     <section className="relative overflow-hidden bg-background min-h-[80vh] sm:min-h-[90vh] flex items-center justify-center">
@@ -150,7 +159,7 @@ export default function HeroSection() {
             size="lg"
             variant="gradient"
             className={`gap-2 px-6 sm:px-8 text-sm sm:text-base font-semibold ${loaded ? '' : ''}`}
-            onClick={() => navigate(user ? '/learn' : '/auth')}
+            onClick={handleStart}
           >
             {t('hero.startLearning')}
             <ArrowRight className="h-4 w-4" />
