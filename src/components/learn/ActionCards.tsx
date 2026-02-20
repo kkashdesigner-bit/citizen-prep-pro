@@ -10,9 +10,10 @@ interface ActionCardsProps {
   onGate: (tier: 'standard' | 'premium') => void;
   /** Exam level derived from user persona (e.g., 'Naturalisation', 'CR', 'CSP') */
   personaLevel?: string;
+  examHistory?: any[];
 }
 
-export default function ActionCards({ nextLesson, isStandardOrAbove, onGate, personaLevel = 'CSP' }: ActionCardsProps) {
+export default function ActionCards({ nextLesson, isStandardOrAbove, onGate, personaLevel = 'CSP', examHistory }: ActionCardsProps) {
   const navigate = useNavigate();
   const { t } = useLanguage();
   const { user } = useAuth();
@@ -106,7 +107,13 @@ export default function ActionCards({ nextLesson, isStandardOrAbove, onGate, per
         <Button
           className="w-full gap-2 font-semibold"
           onClick={() => {
-            if (!isStandardOrAbove) { onGate('standard'); return; }
+            const today = new Date().toISOString().split('T')[0];
+            const examsToday = examHistory?.filter((e: any) => e.date?.startsWith(today)).length || 0;
+
+            if (!isStandardOrAbove && examsToday >= 1) {
+              onGate('standard');
+              return;
+            }
             navigate(`/quiz?mode=exam&level=${personaLevel}`);
           }}
         >
