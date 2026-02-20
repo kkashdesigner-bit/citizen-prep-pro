@@ -95,6 +95,21 @@ export function useQuiz({
           ? questionLimit
           : modeLimit;
 
+      // Helper: try fetching with a level filter, fallback to no level filter
+      const fetchWithLevelFallback = async (
+        baseQuery: () => ReturnType<ReturnType<typeof supabase.from>['select']>,
+        levelVal: string,
+        limit: number
+      ) => {
+        const { data, error: err } = await baseQuery().eq('level', levelVal).limit(limit);
+        if (err) throw err;
+        if (data && data.length > 0) return data as Question[];
+        // Fallback: fetch without level filter
+        const { data: fallback, error: err2 } = await baseQuery().limit(limit);
+        if (err2) throw err2;
+        return (fallback || []) as Question[];
+      };
+
       try {
         let allQuestions: Question[] = [];
 
@@ -106,44 +121,24 @@ export function useQuiz({
 
           const fetches = cats.map(async (cat) => {
             const count = perCat + (remainder-- > 0 ? 1 : 0);
-            // Fetch a larger pool for randomisation
-            const { data, error: fetchErr } = await supabase
-              .from('questions')
-              .select('*')
-              .eq('language', dbLang)
-              .eq('category', cat)
-              .eq('level', resolvedLevel)
-              .limit(Math.min(count * 4, 100));
-
-            if (fetchErr) throw fetchErr;
-            return shuffle((data || []) as Question[]).slice(0, count);
+            const pool = Math.min(count * 4, 100);
+            const baseQ = () => supabase.from('questions').select('*').eq('language', dbLang).eq('category', cat);
+            const data = await fetchWithLevelFallback(baseQ, resolvedLevel, pool);
+            return shuffle(data).slice(0, count);
           });
 
           const results = await Promise.all(fetches);
           allQuestions = shuffle(results.flat());
         } else {
           // Single category or unfiltered fetch (demo, training, study)
-          let q = supabase
-            .from('questions')
-            .select('*')
-            .eq('language', dbLang);
-
-          if (category) {
-            q = q.eq('category', category);
-          }
-
-          if (resolvedLevel) {
-            q = q.eq('level', resolvedLevel);
-          }
-
-          // Fetch a larger pool for randomisation
           const fetchSize = Math.min(resolvedLimit * 4, 500);
-          q = q.limit(fetchSize);
-
-          const { data, error: fetchErr } = await q;
-          if (fetchErr) throw fetchErr;
-
-          allQuestions = shuffle((data || []) as Question[]).slice(0, resolvedLimit);
+          const baseQ = () => {
+            let q = supabase.from('questions').select('*').eq('language', dbLang);
+            if (category) q = q.eq('category', category);
+            return q;
+          };
+          const data = await fetchWithLevelFallback(baseQ, resolvedLevel, fetchSize);
+          allQuestions = shuffle(data).slice(0, resolvedLimit);
         }
 
         setQuestions(allQuestions);
