@@ -4,6 +4,8 @@ import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useQuiz, QuizMode } from '@/hooks/useQuiz';
 import { useSubscription } from '@/hooks/useSubscription';
+import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
 import { ExamLevel, getCorrectAnswerText } from '@/lib/types';
 import Header from '@/components/Header';
 import QuizQuestion from '@/components/QuizQuestion';
@@ -31,21 +33,48 @@ export default function Quiz() {
   const { tier, isStandardOrAbove, isPremium, loading: tierLoading } = useSubscription();
 
   const isFreeUser = tier === 'free';
+  const { user } = useAuth();
+  const [examsTakenToday, setExamsTakenToday] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (!user) {
+      setExamsTakenToday(0);
+      return;
+    }
+    const fetchExams = async () => {
+      const { data } = await supabase.from('profiles').select('exam_history').eq('id', user.id).maybeSingle();
+      if (data?.exam_history) {
+        const history = data.exam_history as any[];
+        const today = new Date().toISOString().split('T')[0];
+        const count = history.filter(e => e.date?.startsWith(today)).length;
+        setExamsTakenToday(count);
+      } else {
+        setExamsTakenToday(0);
+      }
+    };
+    fetchExams();
+  }, [user]);
 
   // --- Tier-based access gate ---
   const [showGate, setShowGate] = useState(false);
   const [gateTier, setGateTier] = useState<'standard' | 'premium'>('standard');
 
   useEffect(() => {
-    if (tierLoading) return;
+    if (tierLoading || examsTakenToday === null) return;
+
     if (isFreeUser && rawMode !== 'demo') {
-      setGateTier('standard');
-      setShowGate(true);
+      // Free users are allowed 1 exam per day
+      if (rawMode === 'exam' && examsTakenToday < 1) {
+        // Let them pass
+      } else {
+        setGateTier('standard');
+        setShowGate(true);
+      }
     } else if (isStandardOrAbove && !isPremium && rawMode === 'study') {
       setGateTier('premium');
       setShowGate(true);
     }
-  }, [tierLoading, isFreeUser, isStandardOrAbove, isPremium, rawMode]);
+  }, [tierLoading, isFreeUser, isStandardOrAbove, isPremium, rawMode, examsTakenToday]);
 
   // Free users are downgraded to demo mode
   const effectiveMode: QuizMode = isFreeUser ? 'demo' : rawMode;
@@ -184,8 +213,8 @@ export default function Quiz() {
             warpState === 'exit'
               ? 'warp-exit'
               : warpState === 'enter'
-              ? 'warp-enter'
-              : ''
+                ? 'warp-enter'
+                : ''
           }
         >
           <QuizQuestion
@@ -215,15 +244,14 @@ export default function Quiz() {
                   <button
                     key={seg}
                     onClick={() => warpTo(start)}
-                    className={`h-5 rounded px-1.5 text-[10px] font-medium transition-all ${
-                      currentInSeg
+                    className={`h-5 rounded px-1.5 text-[10px] font-medium transition-all ${currentInSeg
                         ? 'bg-primary text-primary-foreground shadow-[0_0_8px_hsl(var(--primary)/0.4)]'
                         : answeredInSeg === segQuestions.length
-                        ? 'bg-primary/30 text-primary'
-                        : answeredInSeg > 0
-                        ? 'bg-primary/15 text-muted-foreground'
-                        : 'bg-muted text-muted-foreground'
-                    }`}
+                          ? 'bg-primary/30 text-primary'
+                          : answeredInSeg > 0
+                            ? 'bg-primary/15 text-muted-foreground'
+                            : 'bg-muted text-muted-foreground'
+                      }`}
                   >
                     {start + 1}–{end}
                   </button>
@@ -279,22 +307,21 @@ function ModeBadge({ mode, category }: { mode: QuizMode; category?: string | nul
     mode === 'training' && category
       ? `Entraînement — ${category}`
       : mode === 'exam'
-      ? 'Examen'
-      : mode === 'demo'
-      ? 'Démo'
-      : mode === 'study'
-      ? 'Étude par catégorie'
-      : 'Entraînement';
+        ? 'Examen'
+        : mode === 'demo'
+          ? 'Démo'
+          : mode === 'study'
+            ? 'Étude par catégorie'
+            : 'Entraînement';
 
   return (
     <span
-      className={`shrink-0 rounded-full px-3 py-1 text-xs font-bold uppercase ${
-        mode === 'exam'
+      className={`shrink-0 rounded-full px-3 py-1 text-xs font-bold uppercase ${mode === 'exam'
           ? 'bg-destructive/20 text-destructive'
           : mode === 'demo'
-          ? 'bg-secondary text-secondary-foreground'
-          : 'bg-primary/10 text-primary'
-      }`}
+            ? 'bg-secondary text-secondary-foreground'
+            : 'bg-primary/10 text-primary'
+        }`}
     >
       {label}
     </span>
