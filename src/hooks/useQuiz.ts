@@ -2,7 +2,8 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { Question, ExamLevel, LANGUAGE_TO_DB, DB_CATEGORIES } from '@/lib/types';
+import { useUserProfile, GOAL_TO_LEVEL } from '@/hooks/useUserProfile';
+import { Question, ExamLevel, LANGUAGE_TO_DB, DB_CATEGORIES, getCorrectAnswerText } from '@/lib/types';
 
 function shuffle<T>(arr: T[]): T[] {
   const a = [...arr];
@@ -48,13 +49,20 @@ function getQuestionLimit(mode: QuizMode, isMiniQuiz: boolean): number {
 
 export function useQuiz({
   category,
-  level = 'CSP',
+  level,
   mode = 'exam',
   isMiniQuiz = false,
   questionLimit,
 }: UseQuizOptions = {}) {
   const { user } = useAuth();
   const { language } = useLanguage();
+  const { profile: userProfile } = useUserProfile();
+
+  // Resolve level: explicit param > persona goal > default CSP
+  const resolvedLevel: ExamLevel = level
+    || (userProfile?.goal_type
+      ? (GOAL_TO_LEVEL[userProfile.goal_type as keyof typeof GOAL_TO_LEVEL] as ExamLevel)
+      : 'CSP');
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -104,7 +112,7 @@ export function useQuiz({
               .select('*')
               .eq('language', dbLang)
               .eq('category', cat)
-              .eq('level', level)
+              .eq('level', resolvedLevel)
               .limit(Math.min(count * 4, 100));
 
             if (fetchErr) throw fetchErr;
@@ -124,8 +132,8 @@ export function useQuiz({
             q = q.eq('category', category);
           }
 
-          if (level) {
-            q = q.eq('level', level);
+          if (resolvedLevel) {
+            q = q.eq('level', resolvedLevel);
           }
 
           // Fetch a larger pool for randomisation
@@ -149,13 +157,14 @@ export function useQuiz({
 
     fetchQuestions();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [language, category, user, level, mode, isMiniQuiz, questionLimit]);
+  }, [language, category, user, resolvedLevel, mode, isMiniQuiz, questionLimit]);
 
   /** Save a single answer to user_answers table (skipped in demo mode) */
   const saveAnswer = useCallback(
     async (question: Question, selectedAnswer: string) => {
       if (!user || !shouldSaveAnswers) return;
-      const isCorrect = selectedAnswer === question.correct_answer;
+      const correctText = getCorrectAnswerText(question);
+      const isCorrect = selectedAnswer === correctText;
       await supabase.from('user_answers' as any).insert({
         user_id: user.id,
         question_id: question.id,

@@ -3,7 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { useUserProfile, GoalType, LevelType, TimelineType, GOAL_TO_LEVEL } from '@/hooks/useUserProfile';
-import { Check, ArrowRight, Target, Clock, Zap, ChevronLeft } from 'lucide-react';
+import {
+  Check, ArrowRight, Target, Clock, Zap, ChevronLeft,
+  Landmark, CreditCard, FileText, ClipboardList, HelpCircle,
+  Sprout, BookOpen, GraduationCap, ShieldQuestion,
+  PartyPopper, Crosshair, BarChart3, RotateCcw, Timer, Flag,
+} from 'lucide-react';
 import Logo from '@/components/Logo';
 
 const TOTAL_STEPS = 5;
@@ -35,18 +40,6 @@ export default function Onboarding() {
       setStep(next);
       setAnimating(false);
     }, 220);
-  };
-
-  const handleGoal = (goal: GoalType) => {
-    setData(d => ({ ...d, goal_type: goal }));
-  };
-
-  const handleLevel = (level: LevelType) => {
-    setData(d => ({ ...d, level }));
-  };
-
-  const handleTimeline = (timeline: TimelineType) => {
-    setData(d => ({ ...d, timeline }));
   };
 
   const handleComplete = async () => {
@@ -84,17 +77,12 @@ export default function Onboarding() {
               Retour
             </button>
           )}
-          {/* Step dots */}
           <div className="flex items-center gap-1.5">
             {Array.from({ length: TOTAL_STEPS }).map((_, i) => (
               <div
                 key={i}
                 className={`h-2 rounded-full transition-all duration-300 ${
-                  i + 1 < step
-                    ? 'w-6 bg-primary'
-                    : i + 1 === step
-                    ? 'w-6 bg-primary'
-                    : 'w-2 bg-border'
+                  i + 1 <= step ? 'w-6 bg-primary' : 'w-2 bg-border'
                 }`}
               />
             ))}
@@ -105,23 +93,34 @@ export default function Onboarding() {
 
       {/* Progress bar */}
       <div className="h-1 bg-border/40">
-        <div
-          className="h-full bg-primary transition-all duration-500"
-          style={{ width: `${(step / TOTAL_STEPS) * 100}%` }}
-        />
+        <div className="h-full bg-primary transition-all duration-500" style={{ width: `${(step / TOTAL_STEPS) * 100}%` }} />
       </div>
 
       {/* Step content */}
       <div className="flex-1 flex items-center justify-center px-4 py-8">
-        <div
-          className={`w-full max-w-xl transition-all duration-220 ${
-            animating ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'
-          }`}
-        >
+        <div className={`w-full max-w-xl transition-all duration-220 ${animating ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}>
           {step === 1 && <StepWelcome onContinue={() => goToStep(2)} />}
-          {step === 2 && <StepGoal selected={data.goal_type} onSelect={handleGoal} onContinue={() => goToStep(3)} />}
-          {step === 3 && <StepLevel selected={data.level} onSelect={handleLevel} onContinue={() => goToStep(4)} />}
-          {step === 4 && <StepTimeline selected={data.timeline} onSelect={handleTimeline} onContinue={() => goToStep(5)} />}
+          {step === 2 && (
+            <StepGoal
+              selected={data.goal_type}
+              onSelect={(g) => setData(d => ({ ...d, goal_type: g }))}
+              onContinue={() => goToStep(3)}
+            />
+          )}
+          {step === 3 && (
+            <StepLevel
+              selected={data.level}
+              onSelect={(l) => setData(d => ({ ...d, level: l }))}
+              onContinue={() => goToStep(4)}
+            />
+          )}
+          {step === 4 && (
+            <StepTimeline
+              selected={data.timeline}
+              onSelect={(t) => setData(d => ({ ...d, timeline: t }))}
+              onContinue={() => goToStep(5)}
+            />
+          )}
           {step === 5 && <StepComplete data={data} onStart={handleComplete} saving={saving} />}
         </div>
       </div>
@@ -134,8 +133,8 @@ function StepWelcome({ onContinue }: { onContinue: () => void }) {
   return (
     <div className="text-center space-y-8">
       <div className="space-y-4">
-        <div className="inline-flex h-20 w-20 items-center justify-center rounded-2xl bg-primary/10 text-4xl mx-auto">
-          🇫🇷
+        <div className="inline-flex h-20 w-20 items-center justify-center rounded-2xl bg-primary/10 mx-auto">
+          <Flag className="h-10 w-10 text-primary" />
         </div>
         <h1 className="text-3xl md:text-4xl font-bold text-foreground leading-tight">
           Commençons par comprendre<br />
@@ -148,12 +147,12 @@ function StepWelcome({ onContinue }: { onContinue: () => void }) {
 
       <div className="grid grid-cols-3 gap-4 text-center">
         {[
-          { icon: '🎯', label: 'Objectif ciblé' },
-          { icon: '📊', label: 'Progression suivi' },
-          { icon: '⚡', label: 'Résultats rapides' },
+          { icon: <Crosshair className="h-6 w-6 text-primary" />, label: 'Objectif ciblé' },
+          { icon: <BarChart3 className="h-6 w-6 text-primary" />, label: 'Progression suivie' },
+          { icon: <Zap className="h-6 w-6 text-primary" />, label: 'Résultats rapides' },
         ].map(item => (
-          <div key={item.label} className="rounded-2xl border border-border/60 bg-card p-4">
-            <div className="text-2xl mb-2">{item.icon}</div>
+          <div key={item.label} className="rounded-2xl border border-border/60 bg-card p-4 flex flex-col items-center gap-2">
+            {item.icon}
             <p className="text-xs text-muted-foreground font-medium">{item.label}</p>
           </div>
         ))}
@@ -168,12 +167,12 @@ function StepWelcome({ onContinue }: { onContinue: () => void }) {
 }
 
 /* ─── Step 2: Goal / Persona ─── */
-const GOALS: { value: GoalType; label: string; description: string; emoji: string }[] = [
-  { value: 'naturalisation', label: 'Naturalisation française', description: 'Je prépare ma demande de naturalisation', emoji: '🏛️' },
-  { value: 'carte_resident', label: 'Carte de Résident (CR)', description: 'Je renouvelle ou demande ma CR 10 ans', emoji: '🪪' },
-  { value: 'carte_resident_permanent', label: 'Carte de Résident Permanent (CPR)', description: 'Résidence permanente en France', emoji: '📋' },
-  { value: 'ofii', label: 'Test OFII', description: 'Test de connaissance du français/civisme', emoji: '📝' },
-  { value: 'unknown', label: 'Je ne sais pas encore', description: 'Je découvre et prépare à l\'avance', emoji: '🤔' },
+const GOALS: { value: GoalType; label: string; description: string; icon: React.ReactNode }[] = [
+  { value: 'naturalisation', label: 'Naturalisation française', description: 'Je prépare ma demande de naturalisation', icon: <Landmark className="h-6 w-6" /> },
+  { value: 'carte_resident', label: 'Carte de Résident (CR)', description: 'Je renouvelle ou demande ma CR 10 ans', icon: <CreditCard className="h-6 w-6" /> },
+  { value: 'carte_resident_permanent', label: 'Carte de Résident Permanent (CPR)', description: 'Résidence permanente en France', icon: <FileText className="h-6 w-6" /> },
+  { value: 'ofii', label: 'Test OFII', description: 'Test de connaissance du français/civisme', icon: <ClipboardList className="h-6 w-6" /> },
+  { value: 'unknown', label: 'Je ne sais pas encore', description: 'Je découvre et prépare à l\'avance', icon: <HelpCircle className="h-6 w-6" /> },
 ];
 
 function StepGoal({ selected, onSelect, onContinue }: {
@@ -200,7 +199,11 @@ function StepGoal({ selected, onSelect, onContinue }: {
                 : 'border-border/60 bg-card hover:border-primary/30 hover:bg-primary/3'
             }`}
           >
-            <span className="text-2xl flex-shrink-0">{goal.emoji}</span>
+            <div className={`flex-shrink-0 h-10 w-10 rounded-xl flex items-center justify-center transition-colors ${
+              selected === goal.value ? 'bg-primary text-primary-foreground' : 'bg-primary/10 text-primary'
+            }`}>
+              {goal.icon}
+            </div>
             <div className="flex-1 min-w-0">
               <p className="font-semibold text-foreground">{goal.label}</p>
               <p className="text-sm text-muted-foreground mt-0.5">{goal.description}</p>
@@ -228,10 +231,10 @@ function StepGoal({ selected, onSelect, onContinue }: {
 }
 
 /* ─── Step 3: Level ─── */
-const LEVELS: { value: LevelType; label: string; description: string; emoji: string }[] = [
-  { value: 'beginner', label: 'Débutant', description: 'Je commence à apprendre les bases', emoji: '🌱' },
-  { value: 'intermediate', label: 'Intermédiaire', description: 'J\'ai quelques connaissances du sujet', emoji: '📚' },
-  { value: 'advanced', label: 'Avancé', description: 'Je connais bien le sujet et veux affiner', emoji: '🎓' },
+const LEVELS: { value: LevelType; label: string; description: string; icon: React.ReactNode }[] = [
+  { value: 'beginner', label: 'Débutant', description: 'Je commence à apprendre les bases', icon: <Sprout className="h-6 w-6" /> },
+  { value: 'intermediate', label: 'Intermédiaire', description: 'J\'ai quelques connaissances du sujet', icon: <BookOpen className="h-6 w-6" /> },
+  { value: 'advanced', label: 'Avancé', description: 'Je connais bien le sujet et veux affiner', icon: <GraduationCap className="h-6 w-6" /> },
 ];
 
 function StepLevel({ selected, onSelect, onContinue }: {
@@ -258,7 +261,11 @@ function StepLevel({ selected, onSelect, onContinue }: {
                 : 'border-border/60 bg-card hover:border-primary/30'
             }`}
           >
-            <span className="text-3xl flex-shrink-0">{level.emoji}</span>
+            <div className={`flex-shrink-0 h-12 w-12 rounded-xl flex items-center justify-center transition-colors ${
+              selected === level.value ? 'bg-primary text-primary-foreground' : 'bg-primary/10 text-primary'
+            }`}>
+              {level.icon}
+            </div>
             <div className="flex-1">
               <p className="font-semibold text-foreground text-lg">{level.label}</p>
               <p className="text-sm text-muted-foreground">{level.description}</p>
@@ -290,7 +297,7 @@ const TIMELINES: { value: TimelineType; label: string; description: string; icon
   { value: 'less_1_month', label: 'Moins de 1 mois', description: 'Mode intensif — révision express', icon: <Zap className="h-5 w-5" /> },
   { value: '1_3_months', label: '1 à 3 mois', description: 'Préparation progressive et solide', icon: <Target className="h-5 w-5" /> },
   { value: 'more_3_months', label: 'Plus de 3 mois', description: 'Apprentissage approfondi et durable', icon: <Clock className="h-5 w-5" /> },
-  { value: 'not_sure', label: 'Pas sûr', description: 'Je veux juste m\'entraîner pour l\'instant', icon: <span className="text-lg">🤷</span> },
+  { value: 'not_sure', label: 'Pas sûr', description: 'Je veux juste m\'entraîner pour l\'instant', icon: <ShieldQuestion className="h-5 w-5" /> },
 ];
 
 function StepTimeline({ selected, onSelect, onContinue }: {
@@ -349,7 +356,7 @@ function StepTimeline({ selected, onSelect, onContinue }: {
 }
 
 /* ─── Step 5: Completion ─── */
-const GOAL_LABELS: Record<GoalType, string> = {
+const GOAL_LABELS_MAP: Record<GoalType, string> = {
   naturalisation: 'Naturalisation française',
   carte_resident: 'Carte de Résident',
   carte_resident_permanent: 'Carte de Résident Permanent',
@@ -373,8 +380,8 @@ function StepComplete({ data, onStart, saving }: {
   return (
     <div className="text-center space-y-8">
       <div className="space-y-4">
-        <div className="inline-flex h-24 w-24 items-center justify-center rounded-3xl bg-primary text-5xl mx-auto shadow-[0_8px_32px_hsl(var(--primary)/0.3)]">
-          🎉
+        <div className="inline-flex h-24 w-24 items-center justify-center rounded-3xl bg-primary mx-auto shadow-[0_8px_32px_hsl(var(--primary)/0.3)]">
+          <PartyPopper className="h-12 w-12 text-primary-foreground" />
         </div>
         <h2 className="text-3xl md:text-4xl font-bold text-foreground leading-tight">
           Votre parcours personnalisé<br />
@@ -387,12 +394,12 @@ function StepComplete({ data, onStart, saving }: {
 
       {/* Summary card */}
       <div className="rounded-2xl border border-border/60 bg-card p-6 text-left space-y-4">
-        <h3 className="font-semibold text-foreground text-sm uppercase tracking-wider text-muted-foreground">Votre profil</h3>
+        <h3 className="font-semibold text-sm uppercase tracking-wider text-muted-foreground">Votre profil</h3>
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <span className="text-muted-foreground text-sm">Objectif</span>
             <span className="font-semibold text-foreground text-sm">
-              {data.goal_type ? GOAL_LABELS[data.goal_type] : '—'}
+              {data.goal_type ? GOAL_LABELS_MAP[data.goal_type] : '—'}
             </span>
           </div>
           <div className="h-px bg-border/60" />
@@ -413,13 +420,13 @@ function StepComplete({ data, onStart, saving }: {
       {/* Features unlocked */}
       <div className="grid grid-cols-2 gap-3">
         {[
-          { emoji: '🎯', text: 'Questions adaptées à votre objectif' },
-          { emoji: '📊', text: 'Progression personnalisée' },
-          { emoji: '🔁', text: 'Révision des points faibles' },
-          { emoji: '⏱️', text: 'Simulations d\'examen' },
+          { icon: <Crosshair className="h-5 w-5 text-primary" />, text: 'Questions adaptées à votre objectif' },
+          { icon: <BarChart3 className="h-5 w-5 text-primary" />, text: 'Progression personnalisée' },
+          { icon: <RotateCcw className="h-5 w-5 text-primary" />, text: 'Révision des points faibles' },
+          { icon: <Timer className="h-5 w-5 text-primary" />, text: 'Simulations d\'examen' },
         ].map(item => (
           <div key={item.text} className="flex items-start gap-2 rounded-xl bg-primary/5 border border-primary/15 p-3 text-left">
-            <span className="text-lg flex-shrink-0">{item.emoji}</span>
+            <div className="flex-shrink-0 mt-0.5">{item.icon}</div>
             <p className="text-xs text-foreground font-medium leading-tight">{item.text}</p>
           </div>
         ))}
