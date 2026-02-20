@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Question, getQuestionOptions } from '@/lib/types';
+import { Question, getQuestionOptions, getCorrectAnswerText } from '@/lib/types';
 import { Badge } from '@/components/ui/badge';
 import { CheckCircle, XCircle, Info } from 'lucide-react';
 import { playCorrectSound, playIncorrectSound } from '@/lib/sounds';
@@ -26,7 +26,8 @@ export default function QuizQuestion({
   showTranslateButton = false,
 }: QuizQuestionProps) {
   const options = getQuestionOptions(question);
-  const isCorrect = selectedAnswer === question.correct_answer;
+  const correctAnswerText = getCorrectAnswerText(question);
+  const isCorrect = selectedAnswer === correctAnswerText;
   const hasAnswered = selectedAnswer !== undefined;
   const soundPlayed = useRef(false);
 
@@ -66,7 +67,7 @@ export default function QuizQuestion({
       <div className="space-y-3">
         {options.map((option, index) => {
           const isSelected = selectedAnswer === option;
-          const isCorrectOption = option === question.correct_answer;
+          const isCorrectOption = option === correctAnswerText;
           const showCorrectHighlight = showFeedback && hasAnswered && isCorrectOption;
           const showIncorrectHighlight = showFeedback && isSelected && !isCorrect;
 
