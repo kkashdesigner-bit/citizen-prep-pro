@@ -159,6 +159,7 @@ export default function LearningDashboard() {
             isStandardOrAbove={isStandardOrAbove}
             onGate={openGate}
             personaLevel={personaLevel}
+            examHistory={examHistory}
           />
 
           {/* Recent Activity */}
