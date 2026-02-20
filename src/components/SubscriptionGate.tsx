@@ -8,6 +8,9 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Award, BookOpen, CheckCircle, Sparkles, Target, Shield, Languages, PlayCircle } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 interface SubscriptionGateProps {
   open: boolean;
@@ -18,6 +21,7 @@ interface SubscriptionGateProps {
 export default function SubscriptionGate({ open, onOpenChange, requiredTier = 'standard' }: SubscriptionGateProps) {
   const navigate = useNavigate();
   const { t } = useLanguage();
+  const { user } = useAuth();
   const isPremium = requiredTier === 'premium';
 
   const STANDARD_FEATURES = [
@@ -92,7 +96,33 @@ export default function SubscriptionGate({ open, onOpenChange, requiredTier = 's
             size="lg"
             variant="gradient"
             className="w-full pulse-unlock shine-border btn-glow"
-            onClick={() => { onOpenChange(false); navigate('/#pricing'); }}
+            onClick={async () => {
+              if (!user) {
+                onOpenChange(false);
+                navigate('/auth');
+                return;
+              }
+
+              const tierValue = isPremium ? 'premium' : 'standard';
+              try {
+                const { error } = await supabase
+                  .from('profiles')
+                  .update({
+                    subscription_tier: tierValue,
+                    is_subscribed: true
+                  })
+                  .eq('id', user.id);
+
+                if (error) throw error;
+
+                toast.success(`Abonnement ${isPremium ? 'Premium' : 'Standard'} activé avec succès !`);
+                onOpenChange(false);
+                setTimeout(() => window.location.reload(), 1500);
+              } catch (err) {
+                toast.error("Erreur lors de l'activation de l'abonnement");
+                console.error(err);
+              }
+            }}
           >
             {isPremium ? t('gate.tier2Cta') : t('gate.tier1Cta')}
           </Button>
