@@ -84,8 +84,19 @@ export default function SubscriptionGate({ open, onOpenChange, requiredTier = 's
       if (error) throw error;
 
       toast.success(language === 'en' ? `Subscribed to ${selectedPlan} successfully!` : `Abonnement ${selectedPlan} activé avec succès !`);
-      onOpenChange(false);
-      setTimeout(() => window.location.reload(), 1500);
+
+      const premiumLink = 'https://buy.stripe.com/test_7sYfZ96hz9tI3t12A69AA01';
+      const standardLink = 'https://buy.stripe.com/test_28EcMXbBT6hw3t1a2y9AA00';
+      const baseUrl = selectedPlan === 'premium' ? premiumLink : standardLink;
+
+      // Append user info to the Stripe link
+      const url = new URL(baseUrl);
+      url.searchParams.set('client_reference_id', user.id);
+      if (user.email) {
+        url.searchParams.set('prefilled_email', user.email);
+      }
+
+      window.location.href = url.toString();
     } catch (err) {
       toast.error(language === 'en' ? "Failed to activate subscription" : "Erreur lors de l'activation de l'abonnement");
       console.error(err);
