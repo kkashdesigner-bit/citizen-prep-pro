@@ -131,8 +131,19 @@ export default function PricingSection() {
 
                       if (error) throw error;
 
-                      toast.success(`Abonnement ${tier.name} activé avec succès !`);
-                      setTimeout(() => window.location.reload(), 1500);
+                      toast.success(`Redirection vers le paiement...`);
+
+                      const premiumLink = 'https://buy.stripe.com/test_7sYfZ96hz9tI3t12A69AA01';
+                      const standardLink = 'https://buy.stripe.com/test_28EcMXbBT6hw3t1a2y9AA00';
+                      const baseUrl = tierValue === 'premium' ? premiumLink : standardLink;
+
+                      const url = new URL(baseUrl);
+                      url.searchParams.set('client_reference_id', user.id);
+                      if (user.email) {
+                        url.searchParams.set('prefilled_email', user.email);
+                      }
+
+                      window.location.href = url.toString();
                     } catch (err) {
                       toast.error("Erreur lors de l'activation de l'abonnement");
                       console.error(err);
