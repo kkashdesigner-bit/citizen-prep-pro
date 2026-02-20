@@ -36,6 +36,20 @@ export function getQuestionOptions(q: Question): string[] {
   return [q.option_a, q.option_b, q.option_c, q.option_d].filter(Boolean);
 }
 
+/** Map letter keys (a/b/c/d) to actual option text */
+const OPTION_KEY_MAP: Record<string, keyof Question> = {
+  a: 'option_a', b: 'option_b', c: 'option_c', d: 'option_d',
+};
+
+/** Resolve the correct answer — handles both letter keys ('b') and full text */
+export function getCorrectAnswerText(q: Question): string {
+  const key = q.correct_answer?.trim().toLowerCase();
+  if (key && OPTION_KEY_MAP[key]) {
+    return (q[OPTION_KEY_MAP[key]] as string) || q.correct_answer;
+  }
+  return q.correct_answer;
+}
+
 export interface QuizState {
   questions: Question[];
   currentIndex: number;

@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useQuiz, QuizMode } from '@/hooks/useQuiz';
 import { useSubscription } from '@/hooks/useSubscription';
-import { ExamLevel } from '@/lib/types';
+import { ExamLevel, getCorrectAnswerText } from '@/lib/types';
 import Header from '@/components/Header';
 import QuizQuestion from '@/components/QuizQuestion';
 import QuizTimer from '@/components/QuizTimer';
@@ -105,7 +105,7 @@ export default function Quiz() {
     const results = questions.map((q) => ({
       questionId: q.id,
       category: q.category,
-      correct: answers[q.id] === q.correct_answer,
+      correct: answers[q.id] === getCorrectAnswerText(q),
       selectedAnswer: answers[q.id],
       correctAnswer: q.correct_answer,
     }));
