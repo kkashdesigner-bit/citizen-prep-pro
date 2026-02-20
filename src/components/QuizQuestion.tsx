@@ -56,15 +56,14 @@ export default function QuizQuestion({
         <h2 className="mb-4 text-xl font-bold text-foreground md:text-2xl">
           {question.question_text}
         </h2>
-        {showTranslateButton && question.question_translated && (
-          <TranslateButton
-            text={question.question_translated}
-            onTranslated={(translated) => {
-              // Display translated text — handled by TranslateButton internally
-              void translated;
-            }}
-          />
-        )}
+
+        <TranslateButton
+          text={question.question_text}
+          onTranslated={(translated) => {
+            // Future implementation: this callback can update the state or handle the translated text
+            void translated;
+          }}
+        />
       </div>
 
       <div className="space-y-3">
@@ -79,33 +78,31 @@ export default function QuizQuestion({
               key={index}
               onClick={() => onAnswer(option)}
               disabled={showFeedback && hasAnswered}
-              className={`glass-card flex w-full items-center gap-4 rounded-lg border p-4 text-left transition-all ${
-                showCorrectHighlight
-                  ? 'heartbeat border-primary/50'
-                  : showIncorrectHighlight
+              className={`glass-card flex w-full items-center gap-4 rounded-lg border p-4 text-left transition-all ${showCorrectHighlight
+                ? 'heartbeat border-primary/50'
+                : showIncorrectHighlight
                   ? 'glitch border-destructive/50'
                   : isSelected
-                  ? 'border-primary/50 bg-primary/5'
-                  : 'border-border/30 hover:border-primary/30 hover:bg-primary/5'
-              }`}
+                    ? 'border-primary/50 bg-primary/5'
+                    : 'border-border/30 hover:border-primary/30 hover:bg-primary/5'
+                }`}
               style={
                 showCorrectHighlight
                   ? { boxShadow: '0 0 25px -5px hsl(var(--success) / 0.4)' }
                   : showIncorrectHighlight
-                  ? { boxShadow: '0 0 25px -5px hsl(var(--destructive) / 0.4)' }
-                  : undefined
+                    ? { boxShadow: '0 0 25px -5px hsl(var(--destructive) / 0.4)' }
+                    : undefined
               }
             >
               <span
-                className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 text-sm font-bold ${
-                  showCorrectHighlight
-                    ? 'border-primary bg-primary text-primary-foreground'
-                    : showIncorrectHighlight
+                className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 text-sm font-bold ${showCorrectHighlight
+                  ? 'border-primary bg-primary text-primary-foreground'
+                  : showIncorrectHighlight
                     ? 'border-destructive bg-destructive text-destructive-foreground'
                     : isSelected
-                    ? 'border-primary bg-primary text-primary-foreground'
-                    : 'border-border/50 text-muted-foreground'
-                }`}
+                      ? 'border-primary bg-primary text-primary-foreground'
+                      : 'border-border/50 text-muted-foreground'
+                  }`}
               >
                 {String.fromCharCode(65 + index)}
               </span>
@@ -121,11 +118,10 @@ export default function QuizQuestion({
 
       {showFeedback && hasAnswered && question.explanation && (
         <div
-          className={`mt-6 glass-card p-4 ${
-            isCorrect
-              ? 'shadow-[0_0_20px_hsl(var(--success)/0.15)]'
-              : 'shadow-[0_0_20px_hsl(var(--destructive)/0.15)]'
-          }`}
+          className={`mt-6 glass-card p-4 ${isCorrect
+            ? 'shadow-[0_0_20px_hsl(var(--success)/0.15)]'
+            : 'shadow-[0_0_20px_hsl(var(--destructive)/0.15)]'
+            }`}
         >
           <div className="flex items-center gap-2 mb-2">
             {isCorrect ? (
