@@ -53,6 +53,9 @@ export default function QuizQuestion({
       </div>
 
       <div className="mb-8">
+        <h2 className="mb-4 text-xl font-bold text-foreground md:text-2xl">
+          {question.question_text}
+        </h2>
         {showTranslateButton && question.question_translated && (
           <TranslateButton
             text={question.question_translated}
