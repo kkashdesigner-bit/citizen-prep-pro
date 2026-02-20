@@ -4,10 +4,14 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { Check, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import AnimatedSection from '@/components/AnimatedSection';
+import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 export default function PricingSection() {
   const { t } = useLanguage();
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const features = [
     { key: 'pricing.feat.browse', free: true, standard: true, premium: true },
@@ -66,11 +70,10 @@ export default function PricingSection() {
           {tiers.map((tier, i) => (
             <AnimatedSection key={tier.name} delay={i * 150}>
               <div
-                className={`glass-card glow-hover relative flex flex-col overflow-hidden p-6 transition-all duration-300 hover:scale-[1.02] ${
-                  tier.popular
-                    ? 'border-primary/40 shadow-[0_0_35px_hsl(var(--primary)/0.2)]'
-                    : ''
-                }`}
+                className={`glass-card glow-hover relative flex flex-col overflow-hidden p-6 transition-all duration-300 hover:scale-[1.02] ${tier.popular
+                  ? 'border-primary/40 shadow-[0_0_35px_hsl(var(--primary)/0.2)]'
+                  : ''
+                  }`}
               >
                 {tier.badge && (
                   <Badge
@@ -110,7 +113,36 @@ export default function PricingSection() {
                 <Button
                   className="w-full"
                   variant={tier.popular ? 'gradient' : 'outline'}
-                  onClick={tier.onClick}
+                  onClick={async () => {
+                    if (tier.name === t('pricing.free')) {
+                      tier.onClick();
+                      return;
+                    }
+                    if (!user) {
+                      navigate('/auth');
+                      return;
+                    }
+
+                    // Mock checkout for testing
+                    try {
+                      const tierValue = tier.name === 'Premium' ? 'premium' : 'standard';
+                      const { error } = await supabase
+                        .from('profiles')
+                        .update({
+                          subscription_tier: tierValue,
+                          is_subscribed: true
+                        })
+                        .eq('id', user.id);
+
+                      if (error) throw error;
+
+                      toast.success(`Abonnement ${tier.name} activé avec succès !`);
+                      setTimeout(() => window.location.reload(), 1500);
+                    } catch (err) {
+                      toast.error("Erreur lors de l'activation de l'abonnement");
+                      console.error(err);
+                    }
+                  }}
                 >
                   {tier.cta}
                 </Button>
