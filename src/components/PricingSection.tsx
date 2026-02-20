@@ -27,7 +27,7 @@ export default function PricingSection() {
 
   const tiers = [
     {
-      name: t('pricing.free'),
+      name: 'Liberté',
       price: '0 €',
       period: '',
       popular: false,
@@ -35,21 +35,19 @@ export default function PricingSection() {
       onClick: () => navigate('/auth'),
     },
     {
-      name: 'Standard',
+      name: 'Égalité',
       price: '6,99 €',
       period: '/mo',
       popular: true,
       badge: t('pricing.recommended'),
-      sub: '34,99 € /6mo',
       cta: t('pricing.ctaStandard'),
       onClick: () => navigate('/auth'),
     },
     {
-      name: 'Premium',
+      name: 'Fraternité',
       price: '10,99 €',
       period: '/mo',
       popular: false,
-      sub: '54,99 € /6mo',
       cta: t('pricing.ctaPremium'),
       onClick: () => navigate('/auth'),
     },
@@ -89,9 +87,6 @@ export default function PricingSection() {
                     <span className="font-serif text-4xl font-bold gradient-text">{tier.price}</span>
                     {tier.period && <span className="text-muted-foreground">{tier.period}</span>}
                   </div>
-                  {tier.sub && (
-                    <p className="mt-1 text-sm text-muted-foreground">{tier.sub}</p>
-                  )}
                 </div>
                 <ul className="mb-6 flex-1 space-y-2">
                   {features.map((feat) => {
@@ -114,7 +109,7 @@ export default function PricingSection() {
                   className="w-full"
                   variant={tier.popular ? 'gradient' : 'outline'}
                   onClick={async () => {
-                    if (tier.name === t('pricing.free')) {
+                    if (tier.name === 'Liberté' || tier.name === t('pricing.free')) {
                       tier.onClick();
                       return;
                     }
@@ -125,7 +120,7 @@ export default function PricingSection() {
 
                     // Mock checkout for testing
                     try {
-                      const tierValue = tier.name === 'Premium' ? 'premium' : 'standard';
+                      const tierValue = tier.name === 'Fraternité' ? 'premium' : 'standard';
                       const { error } = await supabase
                         .from('profiles')
                         .update({
