@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -5,13 +6,15 @@ import { Check, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import AnimatedSection from '@/components/AnimatedSection';
 import { useAuth } from '@/hooks/useAuth';
-import { supabase } from '@/integrations/supabase/client';
-import { toast } from 'sonner';
+import SubscriptionGate from '@/components/SubscriptionGate';
 
 export default function PricingSection() {
   const { t } = useLanguage();
   const navigate = useNavigate();
   const { user } = useAuth();
+
+  const [showGate, setShowGate] = useState(false);
+  const [gateTier, setGateTier] = useState<'standard' | 'premium'>('standard');
 
   const features = [
     { key: 'pricing.feat.browse', free: true, standard: true, premium: true },
@@ -41,7 +44,10 @@ export default function PricingSection() {
       popular: true,
       badge: t('pricing.recommended'),
       cta: t('pricing.ctaStandard'),
-      onClick: () => navigate('/auth'),
+      onClick: () => {
+        setGateTier('standard');
+        setShowGate(true);
+      },
     },
     {
       name: 'Fraternité',
@@ -49,7 +55,10 @@ export default function PricingSection() {
       period: '/mo',
       popular: false,
       cta: t('pricing.ctaPremium'),
-      onClick: () => navigate('/auth'),
+      onClick: () => {
+        setGateTier('premium');
+        setShowGate(true);
+      },
     },
   ];
 
@@ -108,47 +117,7 @@ export default function PricingSection() {
                 <Button
                   className="w-full"
                   variant={tier.popular ? 'gradient' : 'outline'}
-                  onClick={async () => {
-                    if (tier.name === 'Liberté' || tier.name === t('pricing.free')) {
-                      tier.onClick();
-                      return;
-                    }
-                    if (!user) {
-                      navigate('/auth');
-                      return;
-                    }
-
-                    // Mock checkout for testing
-                    try {
-                      const tierValue = tier.name === 'Fraternité' ? 'premium' : 'standard';
-                      const { error } = await supabase
-                        .from('profiles')
-                        .update({
-                          subscription_tier: tierValue,
-                          is_subscribed: true
-                        })
-                        .eq('id', user.id);
-
-                      if (error) throw error;
-
-                      toast.success(`Redirection vers le paiement...`);
-
-                      const premiumLink = 'https://buy.stripe.com/test_7sYfZ96hz9tI3t12A69AA01';
-                      const standardLink = 'https://buy.stripe.com/test_28EcMXbBT6hw3t1a2y9AA00';
-                      const baseUrl = tierValue === 'premium' ? premiumLink : standardLink;
-
-                      const url = new URL(baseUrl);
-                      url.searchParams.set('client_reference_id', user.id);
-                      if (user.email) {
-                        url.searchParams.set('prefilled_email', user.email);
-                      }
-
-                      window.location.href = url.toString();
-                    } catch (err) {
-                      toast.error("Erreur lors de l'activation de l'abonnement");
-                      console.error(err);
-                    }
-                  }}
+                  onClick={tier.onClick}
                 >
                   {tier.cta}
                 </Button>
@@ -157,6 +126,7 @@ export default function PricingSection() {
           ))}
         </div>
       </div>
+      <SubscriptionGate open={showGate} onOpenChange={setShowGate} requiredTier={gateTier} />
     </section>
   );
 }
