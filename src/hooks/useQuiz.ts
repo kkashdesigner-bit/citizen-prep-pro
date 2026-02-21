@@ -40,7 +40,7 @@ function getQuestionLimit(mode: QuizMode, isMiniQuiz: boolean): number {
   if (isMiniQuiz) return 5;
   switch (mode) {
     case 'demo': return 10;
-    case 'exam': return 20;
+    case 'exam': return 40;
     case 'training': return 50;
     case 'study': return 20;
     default: return 20;
