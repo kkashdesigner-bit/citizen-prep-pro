@@ -1,4 +1,5 @@
 import { cn } from '@/lib/utils';
+import logoImg from '@/assets/logo.png';
 
 interface LogoProps {
   size?: 'sm' | 'md' | 'lg';
@@ -6,16 +7,19 @@ interface LogoProps {
 }
 
 const sizeClasses = {
-  sm: 'text-xl',
-  md: 'text-2xl',
-  lg: 'text-3xl md:text-4xl',
+  sm: 'h-10 md:h-12 w-auto',
+  md: 'h-16 md:h-20 w-auto',
+  lg: 'h-32 md:h-48 w-auto',
 };
 
 export default function Logo({ size = 'sm', className }: LogoProps) {
   return (
-    <span className={cn('font-bold tracking-tight', sizeClasses[size], className)}>
-      <span className="text-[#EF4444]">Go</span>
-      <span className="text-foreground">Civique</span>
-    </span>
+    <div className={cn('flex items-center justify-center', className)}>
+      <img
+        src={logoImg}
+        alt="GoCivique Logo"
+        className={cn('object-contain rounded-md', sizeClasses[size])}
+      />
+    </div>
   );
 }
