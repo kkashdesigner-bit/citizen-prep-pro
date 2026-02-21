@@ -28,7 +28,7 @@ export default function HeroSection() {
   };
 
   return (
-    <section className="relative overflow-hidden bg-background min-h-[80vh] sm:min-h-[90vh] flex items-center justify-center">
+    <section className="relative overflow-hidden bg-gradient-to-r from-[#0055A4]/10 via-white via-50% to-[#EF4135]/10 min-h-[80vh] sm:min-h-[90vh] flex items-center justify-center">
       {/* Particle mesh background */}
       <div className="absolute inset-0">
         <ParticleMesh />
@@ -55,37 +55,38 @@ export default function HeroSection() {
       </div>
 
       {/* Floating glassmorphism cards — hidden on mobile */}
-      <div className={`hidden md:block absolute top-[18%] left-[10%] transition-all duration-1000 ${loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`} style={{ transitionDelay: '600ms' }}>
-        <div className="glass-card w-40 h-20 p-3 flex items-center gap-2 animate-float" style={{ animationDelay: '0s' }}>
-          <div className="h-8 w-8 rounded-lg bg-primary/20 flex items-center justify-center">
-            <svg className="w-4 h-4 text-primary" fill="currentColor" viewBox="0 0 20 20"><rect x="3" y="3" width="14" height="14" rx="2" /></svg>
+      <div className={`hidden md:block absolute top-[15%] left-[5%] xl:left-[10%] transition-all duration-1000 ${loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`} style={{ transitionDelay: '600ms' }}>
+        <div className="bg-white/80 backdrop-blur-md border border-[#E6EAF0] shadow-[0_8px_30px_rgba(0,0,0,0.04)] rounded-2xl p-4 flex items-start gap-4 animate-float max-w-[280px]" style={{ animationDelay: '0s' }}>
+          <div className="h-8 w-8 rounded-xl bg-[#0055A4]/10 flex items-center flex-shrink-0 justify-center border border-[#0055A4]/20">
+            <span className="text-[#0055A4] font-bold text-sm tracking-widest">Q</span>
           </div>
-          <div className="flex-1 space-y-1.5">
-            <div className="h-2 w-full rounded-full bg-muted-foreground/20" />
-            <div className="h-2 w-3/4 rounded-full bg-muted-foreground/10" />
-          </div>
-        </div>
-      </div>
-
-      <div className={`hidden md:block absolute top-[35%] right-[8%] transition-all duration-1000 ${loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`} style={{ transitionDelay: '800ms' }}>
-        <div className="glass-card w-44 h-20 p-3 flex items-center gap-2 animate-float" style={{ animationDelay: '1s' }}>
-          <div className="h-8 w-8 rounded-lg bg-accent/20 flex items-center justify-center">
-            <svg className="w-4 h-4 text-accent" fill="currentColor" viewBox="0 0 20 20"><rect x="3" y="3" width="14" height="14" rx="2" /></svg>
-          </div>
-          <div className="flex-1 space-y-1.5">
-            <div className="h-2 w-full rounded-full bg-muted-foreground/20" />
-            <div className="h-2 w-2/3 rounded-full bg-muted-foreground/10" />
+          <div>
+            <p className="text-sm font-bold text-[#1A1A1A] mb-1.5 leading-snug">Quelle est la devise de la République ?</p>
+            <p className="text-[11px] font-semibold text-[#0055A4]">Liberté, Égalité, Fraternité</p>
           </div>
         </div>
       </div>
 
-      <div className={`hidden md:block absolute bottom-[30%] left-[12%] transition-all duration-1000 ${loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`} style={{ transitionDelay: '1000ms' }}>
-        <div className="glass-card w-36 h-18 p-3 flex items-center gap-2 animate-float" style={{ animationDelay: '2s' }}>
-          <div className="h-7 w-7 rounded-lg bg-primary/20 flex items-center justify-center">
-            <svg className="w-3.5 h-3.5 text-primary" fill="currentColor" viewBox="0 0 20 20"><rect x="3" y="3" width="14" height="14" rx="2" /></svg>
+      <div className={`hidden md:block absolute top-[40%] right-[3%] xl:right-[6%] transition-all duration-1000 ${loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`} style={{ transitionDelay: '800ms' }}>
+        <div className="bg-white/80 backdrop-blur-md border border-[#E6EAF0] shadow-[0_8px_30px_rgba(0,0,0,0.04)] rounded-2xl p-4 flex items-start gap-4 animate-float max-w-[280px]" style={{ animationDelay: '1s' }}>
+          <div className="h-8 w-8 rounded-xl bg-[#EF4135]/10 flex items-center flex-shrink-0 justify-center border border-[#EF4135]/20">
+            <span className="text-[#EF4135] font-bold text-sm tracking-widest">Q</span>
           </div>
-          <div className="flex-1 space-y-1.5">
-            <div className="h-2 w-full rounded-full bg-muted-foreground/20" />
+          <div>
+            <p className="text-sm font-bold text-[#1A1A1A] mb-1.5 leading-snug">Qui a écrit La Marseillaise ?</p>
+            <p className="text-[11px] font-semibold text-[#EF4135]">Rouget de Lisle</p>
+          </div>
+        </div>
+      </div>
+
+      <div className={`hidden md:block absolute bottom-[20%] left-[8%] xl:left-[12%] transition-all duration-1000 ${loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`} style={{ transitionDelay: '1000ms' }}>
+        <div className="bg-white/80 backdrop-blur-md border border-[#E6EAF0] shadow-[0_8px_30px_rgba(0,0,0,0.04)] rounded-2xl p-4 flex items-start gap-4 animate-float max-w-[260px]" style={{ animationDelay: '2s' }}>
+          <div className="h-8 w-8 rounded-xl bg-[#F59E0B]/10 flex items-center flex-shrink-0 justify-center border border-[#F59E0B]/20">
+            <span className="text-[#F59E0B] font-bold text-sm tracking-widest">Q</span>
+          </div>
+          <div>
+            <p className="text-sm font-bold text-[#1A1A1A] mb-1.5 leading-snug">En quelle année a eu lieu la Révolution ?</p>
+            <p className="text-[11px] font-semibold text-[#F59E0B]">1789</p>
           </div>
         </div>
       </div>
@@ -93,15 +94,14 @@ export default function HeroSection() {
       {/* Centered content */}
       <div className="relative z-10 container flex flex-col items-center text-center px-4 py-16 md:py-20">
         {/* Logo + Brand */}
-        <div className={`mb-6 md:mb-8 transition-all duration-700 ${loaded ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}>
-          <Logo size="lg" />
+        <div className={`mb-8 md:mb-12 transition-all duration-700 flex flex-col items-center justify-center ${loaded ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}>
+          <Logo size="lg" className="!w-[280px] md:!w-[500px] !h-auto drop-shadow-2xl hover:scale-[1.02] transition-transform duration-500" />
         </div>
 
         {/* Main title */}
         <h1
-          className={`mb-3 font-serif text-3xl font-black tracking-tight text-foreground sm:text-5xl md:text-7xl lg:text-8xl transition-all duration-700 ${
-            loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
-          }`}
+          className={`mb-3 font-serif text-3xl font-black tracking-tight text-foreground sm:text-5xl md:text-7xl lg:text-8xl transition-all duration-700 ${loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
+            }`}
           style={{ transitionDelay: '200ms' }}
         >
           {t('hero.title')}
@@ -118,9 +118,8 @@ export default function HeroSection() {
 
         {/* Social proof bar */}
         <div
-          className={`mb-6 md:mb-8 flex flex-wrap items-center justify-center gap-2 sm:gap-3 rounded-2xl sm:rounded-full border border-primary/15 bg-card/60 backdrop-blur-xl px-4 py-2.5 transition-all duration-700 ${
-            loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-          }`}
+          className={`mb-6 md:mb-8 flex flex-wrap items-center justify-center gap-2 sm:gap-3 rounded-2xl sm:rounded-full border border-primary/15 bg-card/60 backdrop-blur-xl px-4 py-2.5 transition-all duration-700 ${loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+            }`}
           style={{ transitionDelay: '500ms' }}
         >
           <span className="flex items-center gap-1.5 text-xs font-semibold">
@@ -142,9 +141,8 @@ export default function HeroSection() {
 
         {/* Subtitle */}
         <p
-          className={`mb-8 md:mb-10 max-w-xl text-sm sm:text-base text-muted-foreground md:text-lg transition-all duration-700 px-2 ${
-            loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
-          }`}
+          className={`mb-8 md:mb-10 max-w-xl text-sm sm:text-base text-muted-foreground md:text-lg transition-all duration-700 px-2 ${loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
+            }`}
           style={{ transitionDelay: '600ms' }}
         >
           {t('hero.subtitle')}

@@ -81,9 +81,8 @@ export default function Onboarding() {
             {Array.from({ length: TOTAL_STEPS }).map((_, i) => (
               <div
                 key={i}
-                className={`h-2 rounded-full transition-all duration-300 ${
-                  i + 1 <= step ? 'w-6 bg-primary' : 'w-2 bg-border'
-                }`}
+                className={`h-2 rounded-full transition-all duration-300 ${i + 1 <= step ? 'w-6 bg-primary' : 'w-2 bg-border'
+                  }`}
               />
             ))}
           </div>
@@ -193,15 +192,13 @@ function StepGoal({ selected, onSelect, onContinue }: {
           <button
             key={goal.value}
             onClick={() => onSelect(goal.value)}
-            className={`w-full flex items-center gap-4 rounded-2xl border-2 p-4 text-left transition-all duration-200 hover:-translate-y-0.5 ${
-              selected === goal.value
+            className={`w-full flex items-center gap-4 rounded-2xl border-2 p-4 text-left transition-all duration-200 hover:-translate-y-0.5 ${selected === goal.value
                 ? 'border-primary bg-primary/5 shadow-[0_4px_16px_hsl(var(--primary)/0.15)]'
                 : 'border-border/60 bg-card hover:border-primary/30 hover:bg-primary/3'
-            }`}
+              }`}
           >
-            <div className={`flex-shrink-0 h-10 w-10 rounded-xl flex items-center justify-center transition-colors ${
-              selected === goal.value ? 'bg-primary text-primary-foreground' : 'bg-primary/10 text-primary'
-            }`}>
+            <div className={`flex-shrink-0 h-10 w-10 rounded-xl flex items-center justify-center transition-colors ${selected === goal.value ? 'bg-primary text-primary-foreground' : 'bg-primary/10 text-primary'
+              }`}>
               {goal.icon}
             </div>
             <div className="flex-1 min-w-0">
@@ -255,15 +252,13 @@ function StepLevel({ selected, onSelect, onContinue }: {
           <button
             key={level.value}
             onClick={() => onSelect(level.value)}
-            className={`w-full flex items-center gap-4 rounded-2xl border-2 p-5 text-left transition-all duration-200 hover:-translate-y-0.5 ${
-              selected === level.value
+            className={`w-full flex items-center gap-4 rounded-2xl border-2 p-5 text-left transition-all duration-200 hover:-translate-y-0.5 ${selected === level.value
                 ? 'border-primary bg-primary/5 shadow-[0_4px_16px_hsl(var(--primary)/0.15)]'
                 : 'border-border/60 bg-card hover:border-primary/30'
-            }`}
+              }`}
           >
-            <div className={`flex-shrink-0 h-12 w-12 rounded-xl flex items-center justify-center transition-colors ${
-              selected === level.value ? 'bg-primary text-primary-foreground' : 'bg-primary/10 text-primary'
-            }`}>
+            <div className={`flex-shrink-0 h-12 w-12 rounded-xl flex items-center justify-center transition-colors ${selected === level.value ? 'bg-primary text-primary-foreground' : 'bg-primary/10 text-primary'
+              }`}>
               {level.icon}
             </div>
             <div className="flex-1">
@@ -318,15 +313,13 @@ function StepTimeline({ selected, onSelect, onContinue }: {
           <button
             key={t.value}
             onClick={() => onSelect(t.value)}
-            className={`w-full flex items-center gap-4 rounded-2xl border-2 p-4 text-left transition-all duration-200 hover:-translate-y-0.5 ${
-              selected === t.value
+            className={`w-full flex items-center gap-4 rounded-2xl border-2 p-4 text-left transition-all duration-200 hover:-translate-y-0.5 ${selected === t.value
                 ? 'border-primary bg-primary/5 shadow-[0_4px_16px_hsl(var(--primary)/0.15)]'
                 : 'border-border/60 bg-card hover:border-primary/30'
-            }`}
+              }`}
           >
-            <div className={`flex-shrink-0 h-10 w-10 rounded-xl flex items-center justify-center ${
-              selected === t.value ? 'bg-primary text-primary-foreground' : 'bg-primary/10 text-primary'
-            }`}>
+            <div className={`flex-shrink-0 h-10 w-10 rounded-xl flex items-center justify-center ${selected === t.value ? 'bg-primary text-primary-foreground' : 'bg-primary/10 text-primary'
+              }`}>
               {t.icon}
             </div>
             <div className="flex-1">
