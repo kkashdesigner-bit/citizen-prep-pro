@@ -40,7 +40,7 @@ export default function LearnSidebar() {
     return location.pathname === item.path;
   };
 
-  const displayName = profile?.display_name || user?.email?.split('@')[0] || 'Étudiant';
+  const displayName = (profile as any)?.display_name || profile?.first_name || user?.email?.split('@')[0] || 'Étudiant';
 
   // French tier labels
   const tierLabels = {

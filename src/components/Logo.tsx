@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils';
-import logoImg from '@/assets/logo.svg';
+import logoImg from '@/assets/logo.png';
 
 interface LogoProps {
   size?: 'sm' | 'md' | 'lg';
