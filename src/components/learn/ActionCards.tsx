@@ -99,7 +99,7 @@ export default function ActionCards({ nextLesson, isStandardOrAbove, onGate, per
           <h3 className="font-semibold text-foreground">{t('learn.fullExam')}</h3>
         </div>
         <p className="text-sm text-muted-foreground mb-4">
-          20 questions · 45 min · 80% to pass
+          40 questions · 45 min · 80% to pass
         </p>
         {personaLevel && personaLevel !== 'CSP' && (
           <p className="text-xs text-primary/70 font-medium mb-3">Niveau : {personaLevel}</p>
