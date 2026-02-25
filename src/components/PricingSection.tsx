@@ -93,7 +93,7 @@ export default function PricingSection() {
                 <div className="mb-4">
                   <p className="text-lg font-semibold text-foreground">{tier.name}</p>
                   <div className="flex items-baseline gap-1">
-                    <span className="font-serif text-4xl font-bold gradient-text">{tier.price}</span>
+                    <span className="font-serif text-4xl font-bold text-primary">{tier.price}</span>
                     {tier.period && <span className="text-muted-foreground">{tier.period}</span>}
                   </div>
                 </div>
