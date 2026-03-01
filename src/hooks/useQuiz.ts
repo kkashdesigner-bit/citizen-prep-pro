@@ -173,7 +173,7 @@ export function useQuiz({
           const fetches = cats.map(async (cat) => {
             const count = perCat + (remainder-- > 0 ? 1 : 0);
             const pool = Math.min(count * 4, 100);
-            const baseQ = () => supabase.from('questions').select('*').eq('language', dbLang).eq('category', cat);
+            const baseQ = () => supabase.from('questions33').select('*').eq('language', dbLang).eq('category', cat);
             const data = await fetchWithLevelFallback(baseQ, resolvedLevel, pool);
             return shuffle(data).slice(0, count);
           });
@@ -184,7 +184,7 @@ export function useQuiz({
           // Single category or unfiltered fetch (training, study)
           const fetchSize = Math.min(resolvedLimit * 4, 500);
           const baseQ = () => {
-            let q = supabase.from('questions').select('*').eq('language', dbLang);
+            let q = supabase.from('questions33').select('*').eq('language', dbLang);
             if (category) q = q.eq('category', category);
             return q;
           };
@@ -211,7 +211,7 @@ export function useQuiz({
       if (!user || !shouldSaveAnswers) return;
       const correctText = getCorrectAnswerText(question);
       const isCorrect = selectedAnswer === correctText;
-      await supabase.from('user_answers' as any).insert({
+      await supabase.from('user_answers').insert({
         user_id: user.id,
         question_id: question.id,
         selected_answer: selectedAnswer,
