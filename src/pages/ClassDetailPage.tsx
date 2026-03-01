@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft, BookOpen, BrainCircuit, CheckCircle2, ChevronRight } from 'lucide-react';
 import { getCorrectAnswerText, getQuestionOptions } from '@/lib/types';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 
 export default function ClassDetailPage() {
     const { id } = useParams();
@@ -55,6 +56,21 @@ export default function ClassDetailPage() {
             await updateProgress(id, percent, passed);
             if (passed) {
                 toast.success(`Bravo ! Classe complétée avec ${percent}%.`);
+                // Save question IDs to used_questions so they never repeat
+                if (user && classData.questions.length > 0) {
+                    const newIds = classData.questions.map(q => String(q.id));
+                    const { data: profileData } = await supabase
+                        .from('profiles')
+                        .select('used_questions')
+                        .eq('id', user.id)
+                        .maybeSingle();
+                    const existing: string[] = (profileData?.used_questions as string[]) || [];
+                    const merged = [...new Set([...existing, ...newIds])];
+                    await supabase
+                        .from('profiles')
+                        .update({ used_questions: merged })
+                        .eq('id', user.id);
+                }
             } else {
                 toast.error(`Score insuffisant (${percent}%). Requis: 70%.`);
             }

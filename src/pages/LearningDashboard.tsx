@@ -8,8 +8,9 @@ import LearnSidebar from '@/components/learn/LearnSidebar';
 import DashboardRightSidebar from '@/components/learn/DashboardRightSidebar';
 import SubscriptionGate from '@/components/SubscriptionGate';
 import ParcoursCard from '@/components/learn/ParcoursCard';
-import { Target, Flag, Play, Landmark, FileText, HeartHandshake, History, Component, Clock } from 'lucide-react';
+import { Target, Flag, Play, Landmark, FileText, HeartHandshake, History, Component, Clock, X, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 
 export interface ExamHistoryEntry {
   date: string;
@@ -32,13 +33,15 @@ export default function LearningDashboard() {
   const { user, loading: authLoading } = useAuth();
   const { tier, isPremium, isStandardOrAbove, loading: tierLoading } = useSubscription();
   const navigate = useNavigate();
-  const { profile: userProfile, loading: profileLoading } = useUserProfile();
+  const { profile: userProfile, loading: profileLoading, saveProfile } = useUserProfile();
 
   const [examHistory, setExamHistory] = useState<ExamHistoryEntry[]>([]);
   const [displayName, setDisplayName] = useState('');
   const [loading, setLoading] = useState(true);
   const [showGate, setShowGate] = useState(false);
   const [gateTier, setGateTier] = useState<'standard' | 'premium'>('standard');
+  const [showGoalModal, setShowGoalModal] = useState(false);
+  const [savingGoal, setSavingGoal] = useState(false);
 
   useEffect(() => {
     if (authLoading) return;
@@ -144,7 +147,7 @@ export default function LearningDashboard() {
               </div>
               <Button
                 variant="outline"
-                onClick={() => navigate('/onboarding')}
+                onClick={() => setShowGoalModal(true)}
                 className="bg-white border-[#0055A4] text-[#0055A4] hover:bg-[#F5F7FA] font-semibold rounded-xl h-11 px-6 shadow-sm hover:scale-[1.02] transition-transform"
               >
                 Modifier mon objectif
@@ -255,6 +258,56 @@ export default function LearningDashboard() {
       </main>
 
       <SubscriptionGate open={showGate} onOpenChange={setShowGate} requiredTier={gateTier} />
+
+      {/* Goal Change Modal */}
+      <Dialog open={showGoalModal} onOpenChange={setShowGoalModal}>
+        <DialogContent className="sm:max-w-md p-0 rounded-2xl overflow-hidden bg-white border-0 shadow-2xl">
+          <div className="p-6">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl font-bold text-[#1A1A1A]">Modifier mon objectif</h2>
+              <button onClick={() => setShowGoalModal(false)} className="h-8 w-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 transition-colors">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="space-y-3">
+              {([
+                { value: 'naturalisation' as const, label: 'Naturalisation française', desc: 'Devenir citoyen français' },
+                { value: 'carte_resident' as const, label: 'Carte de Résident (CR)', desc: 'Obtenir la carte de résident de 10 ans' },
+                { value: 'csp' as const, label: 'Carte de Séjour Pluriannuelle (CSP)', desc: 'Renouveler votre titre de séjour' },
+              ]).map(goal => {
+                const isActive = userProfile?.goal_type === goal.value;
+                return (
+                  <button
+                    key={goal.value}
+                    disabled={savingGoal}
+                    onClick={async () => {
+                      setSavingGoal(true);
+                      await saveProfile({ goal_type: goal.value });
+                      setSavingGoal(false);
+                      setShowGoalModal(false);
+                    }}
+                    className={`w-full flex items-center gap-4 rounded-xl border-2 p-4 text-left transition-all duration-200 hover:-translate-y-0.5 ${isActive
+                      ? 'border-[#0055A4] bg-[#0055A4]/5'
+                      : 'border-slate-200 hover:border-[#0055A4]/40'
+                      }`}
+                  >
+                    <div className={`flex-shrink-0 h-10 w-10 rounded-xl flex items-center justify-center transition-colors ${isActive ? 'bg-[#0055A4] text-white' : 'bg-[#0055A4]/10 text-[#0055A4]'
+                      }`}>
+                      <Target className="h-5 w-5" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-[#1A1A1A]">{goal.label}</p>
+                      <p className="text-sm text-slate-500 mt-0.5">{goal.desc}</p>
+                    </div>
+                    {isActive && <Check className="h-5 w-5 text-[#0055A4] flex-shrink-0" />}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
