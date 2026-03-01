@@ -2,6 +2,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/hooks/useAuth';
+import { useSubscription } from '@/hooks/useSubscription';
 import { LANGUAGES, Language } from '@/lib/types';
 import { Globe, LogOut, User, LayoutDashboard, Menu, X, BarChart3, Settings } from 'lucide-react';
 import {
@@ -24,6 +25,7 @@ interface HeaderProps {
 export default function Header({ animate = false }: HeaderProps) {
   const { language, setLanguage, t } = useLanguage();
   const { user, displayName, avatarUrl, signOut } = useAuth();
+  const { isStandardOrAbove } = useSubscription();
   const navigate = useNavigate();
   const location = useLocation();
   const [loaded, setLoaded] = useState(!animate);
@@ -62,9 +64,8 @@ export default function Header({ animate = false }: HeaderProps) {
 
   return (
     <header
-      className={`sticky top-0 z-50 border-b border-primary/10 bg-background/60 backdrop-blur-xl transition-all duration-500 ${
-        loaded ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-3'
-      }`}
+      className={`sticky top-0 z-50 border-b border-primary/10 bg-background/60 backdrop-blur-xl transition-all duration-500 ${loaded ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-3'
+        }`}
     >
       <div className="container flex h-14 sm:h-16 items-center justify-between">
         <Link to="/" className="flex items-center glow-hover rounded-lg p-1">
@@ -108,9 +109,12 @@ export default function Header({ animate = false }: HeaderProps) {
                 <LayoutDashboard className="mr-1.5 h-4 w-4" />
                 {t('nav.learn') || 'Tableau de bord'}
               </Button>
-              <Button variant="ghost" size="sm" className="glow-hover" onClick={() => navigate('/quiz?mode=exam')}>
-                {t('nav.demo')}
-              </Button>
+
+              {!isStandardOrAbove && (
+                <Button variant="ghost" size="sm" className="glow-hover" onClick={() => navigate('/quiz?mode=exam')}>
+                  {t('nav.demo')}
+                </Button>
+              )}
 
               {/* Avatar dropdown */}
               <DropdownMenu>
@@ -236,14 +240,17 @@ export default function Header({ animate = false }: HeaderProps) {
             >
               {t('nav.about')}
             </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="justify-start glow-hover"
-              onClick={() => { navigate('/quiz?mode=exam'); setMobileMenuOpen(false); }}
-            >
-              {t('nav.demo')}
-            </Button>
+
+            {(!user || !isStandardOrAbove) && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="justify-start glow-hover"
+                onClick={() => { navigate('/quiz?mode=exam'); setMobileMenuOpen(false); }}
+              >
+                {t('nav.demo')}
+              </Button>
+            )}
 
             {!user && (
               <Button

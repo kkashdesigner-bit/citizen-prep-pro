@@ -29,9 +29,42 @@ export interface UseQuizOptions {
   questionLimit?: number;
 }
 
+const DEMO_QUESTIONS_PER_EXAM = 20;
+
+/** Parse the semicolon-delimited demo_questions.csv into Question objects */
+async function fetchDemoQuestionsFromCSV(): Promise<Question[]> {
+  const res = await fetch('/demo_questions.csv');
+  const text = await res.text();
+  const lines = text.trim().split('\n');
+  // Skip header row
+  const rows = lines.slice(1);
+  return rows.map((line, idx) => {
+    const cols = line.split(';');
+    return {
+      id: idx + 9000, // Use a high offset to avoid conflicts with DB ids
+      question_text: cols[0]?.trim() || '',
+      option_a: cols[1]?.trim() || '',
+      option_b: cols[2]?.trim() || '',
+      option_c: cols[3]?.trim() || '',
+      option_d: cols[4]?.trim() || '',
+      correct_answer: cols[5]?.trim() || '',
+      explanation: cols[6]?.trim() || '',
+      language: cols[7]?.trim() || 'fr',
+      category: cols[8]?.trim() || 'Principles and values of the Republic',
+      subcategory: null,
+      level: 'CSP' as ExamLevel,
+      question_translated: null,
+      option_a_translated: null,
+      option_b_translated: null,
+      option_c_translated: null,
+      option_d_translated: null,
+    } satisfies Question;
+  });
+}
+
 /**
  * Mode-specific question limits:
- * - demo: 10 (free tier)
+ * - demo: 20 (from CSV, no repeats)
  * - exam: 20 (standard/premium)
  * - training: 50 per batch
  * - study: 20 per category (premium)
@@ -39,7 +72,7 @@ export interface UseQuizOptions {
 function getQuestionLimit(mode: QuizMode, isMiniQuiz: boolean): number {
   if (isMiniQuiz) return 5;
   switch (mode) {
-    case 'demo': return 10;
+    case 'demo': return DEMO_QUESTIONS_PER_EXAM;
     case 'exam': return 40;
     case 'training': return 50;
     case 'study': return 20;
@@ -66,7 +99,6 @@ export function useQuiz({
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
   // Whether this mode saves answers to the database
   const shouldSaveAnswers = mode !== 'demo';
 
@@ -75,42 +107,61 @@ export function useQuiz({
       setLoading(true);
       setError(null);
 
-      // Resolve language from profile, fallback to context language
-      let dbLang = LANGUAGE_TO_DB[language] || 'fr';
-      if (user) {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('preferred_language')
-          .eq('id', user.id)
-          .maybeSingle();
-        if (profile?.preferred_language) {
-          dbLang = profile.preferred_language;
-        }
-      }
-
-      // Resolve the final question limit
-      const modeLimit = getQuestionLimit(mode, isMiniQuiz);
-      const resolvedLimit =
-        typeof questionLimit === 'number' && Number.isFinite(questionLimit) && questionLimit > 0
-          ? questionLimit
-          : modeLimit;
-
-      // Helper: try fetching with a level filter, fallback to no level filter
-      const fetchWithLevelFallback = async (
-        baseQuery: () => ReturnType<ReturnType<typeof supabase.from>['select']>,
-        levelVal: string,
-        limit: number
-      ) => {
-        const { data, error: err } = await baseQuery().eq('level', levelVal).limit(limit);
-        if (err) throw err;
-        if (data && data.length > 0) return data as Question[];
-        // Fallback: fetch without level filter
-        const { data: fallback, error: err2 } = await baseQuery().limit(limit);
-        if (err2) throw err2;
-        return (fallback || []) as Question[];
-      };
-
       try {
+        // ─── DEMO MODE: pull 20 random questions from CSV each time ───
+        if (mode === 'demo') {
+          const allDemo = await fetchDemoQuestionsFromCSV();
+          const picked = shuffle(allDemo).slice(0, DEMO_QUESTIONS_PER_EXAM);
+          setQuestions(picked);
+          setLoading(false);
+          return;
+        }
+
+        // ─── NON-DEMO MODES: fetch from Supabase ───
+        // Resolve language from profile, fallback to context language
+        let dbLang = LANGUAGE_TO_DB[language] || 'fr';
+        if (user) {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('preferred_language')
+            .eq('id', user.id)
+            .maybeSingle();
+          if (profile?.preferred_language) {
+            dbLang = profile.preferred_language;
+          }
+        }
+
+        // Resolve the final question limit
+        const modeLimit = getQuestionLimit(mode, isMiniQuiz);
+        const resolvedLimit =
+          typeof questionLimit === 'number' && Number.isFinite(questionLimit) && questionLimit > 0
+            ? questionLimit
+            : modeLimit;
+
+        // Resolve the levels to fetch based on hierarchy
+        const resolveLevelsToFetch = (targetLevel: ExamLevel): ExamLevel[] => {
+          if (targetLevel === 'Naturalisation') return ['Naturalisation', 'CR', 'CSP'];
+          if (targetLevel === 'CR') return ['CR', 'CSP'];
+          return ['CSP']; // targetLevel === 'CSP'
+        };
+
+        // Helper: try fetching with a level filter, fallback to no level filter
+        const fetchWithLevelFallback = async (
+          baseQuery: () => ReturnType<ReturnType<typeof supabase.from>['select']>,
+          levelVal: string,
+          limit: number
+        ) => {
+          const allowedLevels = resolveLevelsToFetch(levelVal as ExamLevel);
+          const { data, error: err } = await baseQuery().in('level', allowedLevels).limit(limit);
+          if (err) throw err;
+          if (data && data.length > 0) return data as Question[];
+
+          // Fallback: fetch without level filter
+          const { data: fallback, error: err2 } = await baseQuery().limit(limit);
+          if (err2) throw err2;
+          return (fallback || []) as Question[];
+        };
+
         let allQuestions: Question[] = [];
 
         if (mode === 'exam' && !category) {
@@ -130,7 +181,7 @@ export function useQuiz({
           const results = await Promise.all(fetches);
           allQuestions = shuffle(results.flat());
         } else {
-          // Single category or unfiltered fetch (demo, training, study)
+          // Single category or unfiltered fetch (training, study)
           const fetchSize = Math.min(resolvedLimit * 4, 500);
           const baseQ = () => {
             let q = supabase.from('questions').select('*').eq('language', dbLang);

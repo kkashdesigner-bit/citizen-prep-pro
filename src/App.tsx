@@ -21,6 +21,8 @@ const StudyMaterialPage = lazy(() => import("./pages/StudyMaterialPage"));
 const AnalyticsPage = lazy(() => import("./pages/AnalyticsPage"));
 const Onboarding = lazy(() => import("./pages/Onboarding"));
 const SubscriptionSuccess = lazy(() => import("./pages/SubscriptionSuccess"));
+const ParcoursPage = lazy(() => import("./pages/ParcoursPage"));
+const ClassDetailPage = lazy(() => import("./pages/ClassDetailPage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
@@ -49,6 +51,8 @@ const App = () => (
                 <Route path="/success" element={<SubscriptionSuccess />} />
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/about" element={<About />} />
+                <Route path="/parcours" element={<ParcoursPage />} />
+                <Route path="/parcours/classe/:id" element={<ClassDetailPage />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Suspense>

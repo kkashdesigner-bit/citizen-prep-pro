@@ -9,6 +9,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useSubscription } from '@/hooks/useSubscription';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
+import { useUserProfile } from '@/hooks/useUserProfile';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import WeaknessAlert from '@/components/WeaknessAlert';
@@ -45,6 +46,7 @@ export default function Dashboard() {
   const [totalQuestionCount, setTotalQuestionCount] = useState(0);
   const [uniqueAnsweredCount, setUniqueAnsweredCount] = useState(0);
   const [categoryProgress, setCategoryProgress] = useState<CategoryProgress[]>([]);
+  const { profile, saveProfile } = useUserProfile();
   const [selectedLevel, setSelectedLevel] = useState<ExamLevel>('CSP');
   const [loading, setLoading] = useState(true);
   const [showGate, setShowGate] = useState(false);
@@ -108,6 +110,19 @@ export default function Dashboard() {
     };
     fetchData();
   }, [user, authLoading, navigate]);
+
+  useEffect(() => {
+    if (profile?.goal_type) {
+      // Map goal_type to proper ExamLevel enum using GOAL_TO_LEVEL
+      // It will cast csp -> CSP, cr -> CR, naturalisation -> Naturalisation based on the mapping
+      const mappedLevel = {
+        csp: 'CSP',
+        carte_resident: 'CR',
+        naturalisation: 'Naturalisation'
+      }[profile.goal_type] as ExamLevel || 'CSP';
+      setSelectedLevel(mappedLevel);
+    }
+  }, [profile]);
 
   const openGate = (requiredTier: 'standard' | 'premium') => {
     setGateTier(requiredTier);
@@ -271,7 +286,19 @@ export default function Dashboard() {
             <h3 className="font-serif text-lg font-semibold text-foreground">{t('dash.examLevel')}</h3>
             <Button onClick={handleStartExam} size="sm" className="btn-glow">{"Lancer l'examen"}</Button>
           </div>
-          <LevelSelector selectedLevel={selectedLevel} onSelect={setSelectedLevel} isSubscribed={isStandardOrAbove} />
+          <p className="mb-4 text-sm text-muted-foreground">Changez votre objectif d'examen à tout moment.</p>
+          <LevelSelector
+            selectedLevel={selectedLevel}
+            onSelect={async (level: ExamLevel) => {
+              setSelectedLevel(level);
+              if (profile) {
+                // Determine GoalType mapped from the ExamLevel
+                const goalType = level === 'Naturalisation' ? 'naturalisation' : level === 'CR' ? 'carte_resident' : 'csp';
+                await saveProfile({ goal_type: goalType });
+              }
+            }}
+            isSubscribed={isStandardOrAbove}
+          />
         </div>
 
         <div className="glass-card mb-8 p-6">

@@ -71,6 +71,10 @@
     --shadow-lg: 0 12px 32px 0 hsl(0 0% 10% / 0.08);
     --shadow-xl: 0 16px 40px 0 hsl(0 0% 10% / 0.1);
     --shadow-2xl: 0 20px 48px 0 hsl(0 0% 10% / 0.12);
+
+    /* Gradient tokens used by .gradient-text and .gradient-card */
+    --gradient-text: linear-gradient(135deg, #0055A4 0%, #1a237e 40%, #7b1fa2 60%, #EF4135 100%);
+    --gradient-primary: linear-gradient(135deg, #0055A4, #1565c0, #7b1fa2);
   }
 }
 

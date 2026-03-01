@@ -1,12 +1,48 @@
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { CheckCircle, Route, Users, GraduationCap, PartyPopper, Star, ShieldCheck } from 'lucide-react';
 import Logo from '@/components/Logo';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function SubscriptionSuccess() {
     const navigate = useNavigate();
     const { user } = useAuth();
+    const { language } = useLanguage();
+    const [isUpdating, setIsUpdating] = useState(true);
+
+    useEffect(() => {
+        const updateSubscription = async () => {
+            if (!user) return;
+
+            const pendingTier = localStorage.getItem('pending_subscription_tier');
+            if (pendingTier) {
+                try {
+                    const { error } = await supabase
+                        .from('profiles')
+                        .update({
+                            subscription_tier: pendingTier,
+                            is_subscribed: true
+                        })
+                        .eq('id', user.id);
+
+                    if (error) throw error;
+
+                    toast.success(language === 'en' ? `Subscribed to ${pendingTier} successfully!` : `Abonnement ${pendingTier} activé avec succès !`);
+                    localStorage.removeItem('pending_subscription_tier');
+                } catch (err) {
+                    console.error('Error updating subscription:', err);
+                    toast.error(language === 'en' ? "Failed to activate subscription" : "Erreur lors de l'activation de l'abonnement");
+                }
+            }
+            setIsUpdating(false);
+        };
+
+        updateSubscription();
+    }, [user, language]);
 
     return (
         <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
@@ -50,7 +86,7 @@ export default function SubscriptionSuccess() {
                         Start My First Lesson
                         <span className="font-sans">→</span>
                     </Button>
-                    <Button variant="ghost" className="text-muted-foreground gap-2">
+                    <Button variant="ghost" className="text-muted-foreground gap-2" onClick={() => toast.success("Receipt will be emailed to you shortly.")}>
                         <Route className="h-4 w-4" />
                         View Receipt
                     </Button>

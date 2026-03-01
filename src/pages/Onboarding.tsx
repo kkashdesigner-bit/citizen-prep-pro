@@ -165,13 +165,10 @@ function StepWelcome({ onContinue }: { onContinue: () => void }) {
   );
 }
 
-/* ─── Step 2: Goal / Persona ─── */
 const GOALS: { value: GoalType; label: string; description: string; icon: React.ReactNode }[] = [
   { value: 'naturalisation', label: 'Naturalisation française', description: 'Je prépare ma demande de naturalisation', icon: <Landmark className="h-6 w-6" /> },
   { value: 'carte_resident', label: 'Carte de Résident (CR)', description: 'Je renouvelle ou demande ma CR 10 ans', icon: <CreditCard className="h-6 w-6" /> },
-  { value: 'carte_resident_permanent', label: 'Carte de Résident Permanent (CPR)', description: 'Résidence permanente en France', icon: <FileText className="h-6 w-6" /> },
-  { value: 'ofii', label: 'Test OFII', description: 'Test de connaissance du français/civisme', icon: <ClipboardList className="h-6 w-6" /> },
-  { value: 'unknown', label: 'Je ne sais pas encore', description: 'Je découvre et prépare à l\'avance', icon: <HelpCircle className="h-6 w-6" /> },
+  { value: 'csp', label: 'Carte de Séjour Pluriannuelle (CSP)', description: 'Valeurs républicaines fondamentales', icon: <ClipboardList className="h-6 w-6" /> },
 ];
 
 function StepGoal({ selected, onSelect, onContinue }: {
@@ -182,7 +179,6 @@ function StepGoal({ selected, onSelect, onContinue }: {
   return (
     <div className="space-y-6">
       <div className="text-center space-y-2">
-        <p className="text-xs font-semibold text-primary uppercase tracking-widest">Étape 1 sur 4</p>
         <h2 className="text-2xl md:text-3xl font-bold text-foreground">Quel est votre objectif ?</h2>
         <p className="text-muted-foreground">Sélectionnez votre situation actuelle</p>
       </div>
@@ -193,8 +189,8 @@ function StepGoal({ selected, onSelect, onContinue }: {
             key={goal.value}
             onClick={() => onSelect(goal.value)}
             className={`w-full flex items-center gap-4 rounded-2xl border-2 p-4 text-left transition-all duration-200 hover:-translate-y-0.5 ${selected === goal.value
-                ? 'border-primary bg-primary/5 shadow-[0_4px_16px_hsl(var(--primary)/0.15)]'
-                : 'border-border/60 bg-card hover:border-primary/30 hover:bg-primary/3'
+              ? 'border-primary bg-primary/5 shadow-[0_4px_16px_hsl(var(--primary)/0.15)]'
+              : 'border-border/60 bg-card hover:border-primary/30 hover:bg-primary/3'
               }`}
           >
             <div className={`flex-shrink-0 h-10 w-10 rounded-xl flex items-center justify-center transition-colors ${selected === goal.value ? 'bg-primary text-primary-foreground' : 'bg-primary/10 text-primary'
@@ -242,7 +238,6 @@ function StepLevel({ selected, onSelect, onContinue }: {
   return (
     <div className="space-y-6">
       <div className="text-center space-y-2">
-        <p className="text-xs font-semibold text-primary uppercase tracking-widest">Étape 2 sur 4</p>
         <h2 className="text-2xl md:text-3xl font-bold text-foreground">Quel est votre niveau actuel ?</h2>
         <p className="text-muted-foreground">Cela nous aide à calibrer vos questions</p>
       </div>
@@ -253,8 +248,8 @@ function StepLevel({ selected, onSelect, onContinue }: {
             key={level.value}
             onClick={() => onSelect(level.value)}
             className={`w-full flex items-center gap-4 rounded-2xl border-2 p-5 text-left transition-all duration-200 hover:-translate-y-0.5 ${selected === level.value
-                ? 'border-primary bg-primary/5 shadow-[0_4px_16px_hsl(var(--primary)/0.15)]'
-                : 'border-border/60 bg-card hover:border-primary/30'
+              ? 'border-primary bg-primary/5 shadow-[0_4px_16px_hsl(var(--primary)/0.15)]'
+              : 'border-border/60 bg-card hover:border-primary/30'
               }`}
           >
             <div className={`flex-shrink-0 h-12 w-12 rounded-xl flex items-center justify-center transition-colors ${selected === level.value ? 'bg-primary text-primary-foreground' : 'bg-primary/10 text-primary'
@@ -303,7 +298,6 @@ function StepTimeline({ selected, onSelect, onContinue }: {
   return (
     <div className="space-y-6">
       <div className="text-center space-y-2">
-        <p className="text-xs font-semibold text-primary uppercase tracking-widest">Étape 3 sur 4</p>
         <h2 className="text-2xl md:text-3xl font-bold text-foreground">Quand voulez-vous passer l'examen ?</h2>
         <p className="text-muted-foreground">Adaptez le rythme à votre calendrier</p>
       </div>
@@ -314,8 +308,8 @@ function StepTimeline({ selected, onSelect, onContinue }: {
             key={t.value}
             onClick={() => onSelect(t.value)}
             className={`w-full flex items-center gap-4 rounded-2xl border-2 p-4 text-left transition-all duration-200 hover:-translate-y-0.5 ${selected === t.value
-                ? 'border-primary bg-primary/5 shadow-[0_4px_16px_hsl(var(--primary)/0.15)]'
-                : 'border-border/60 bg-card hover:border-primary/30'
+              ? 'border-primary bg-primary/5 shadow-[0_4px_16px_hsl(var(--primary)/0.15)]'
+              : 'border-border/60 bg-card hover:border-primary/30'
               }`}
           >
             <div className={`flex-shrink-0 h-10 w-10 rounded-xl flex items-center justify-center ${selected === t.value ? 'bg-primary text-primary-foreground' : 'bg-primary/10 text-primary'
@@ -351,10 +345,8 @@ function StepTimeline({ selected, onSelect, onContinue }: {
 /* ─── Step 5: Completion ─── */
 const GOAL_LABELS_MAP: Record<GoalType, string> = {
   naturalisation: 'Naturalisation française',
-  carte_resident: 'Carte de Résident',
-  carte_resident_permanent: 'Carte de Résident Permanent',
-  ofii: 'Test OFII',
-  unknown: 'Parcours général',
+  carte_resident: 'Carte de Résident (CR)',
+  csp: 'Carte de Séjour Pluriannuelle (CSP)'
 };
 
 const LEVEL_LABELS: Record<LevelType, string> = {

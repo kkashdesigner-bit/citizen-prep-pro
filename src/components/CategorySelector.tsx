@@ -8,11 +8,11 @@ interface CategorySelectorProps {
 }
 
 const CATEGORY_ICONS: Record<string, React.ElementType> = {
-  Principles: BookOpen,
-  Institutions: Landmark,
-  Rights: Scale,
-  History: GraduationCap,
-  Living: Home,
+  'Principles and values of the Republic': BookOpen,
+  'Institutional and political system': Landmark,
+  'Rights and duties': Scale,
+  'History, geography and culture': GraduationCap,
+  'Living in French society': Home,
   Politics: Vote,
   Society: Users,
 };

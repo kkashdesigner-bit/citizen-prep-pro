@@ -25,7 +25,7 @@ export default function SubscriptionGate({ open, onOpenChange, requiredTier = 's
   const plans = [
     {
       id: 'free',
-      name: 'Liberté',
+      name: 'Gratuit',
       icon: GraduationCap,
       price: '0 €',
       period: 'Forever',
@@ -37,7 +37,7 @@ export default function SubscriptionGate({ open, onOpenChange, requiredTier = 's
     },
     {
       id: 'standard',
-      name: 'Égalité',
+      name: 'Standard',
       icon: Sparkles,
       price: '6,99 €',
       period: '/mo',
@@ -51,13 +51,13 @@ export default function SubscriptionGate({ open, onOpenChange, requiredTier = 's
     },
     {
       id: 'premium',
-      name: 'Fraternité',
+      name: 'Premium',
       icon: Users,
       price: '10,99 €',
       period: '/mo',
       popular: false,
       features: [
-        language === 'en' ? 'Everything in Égalité' : 'Tout dans Égalité',
+        language === 'en' ? 'Everything in Standard' : 'Tout dans Standard',
         language === 'en' ? 'Translations' : 'Traduction',
         language === 'en' ? 'Category training' : 'Catégories ciblées'
       ]
@@ -73,17 +73,8 @@ export default function SubscriptionGate({ open, onOpenChange, requiredTier = 's
 
     setIsProcessing(true);
     try {
-      const { error } = await supabase
-        .from('profiles')
-        .update({
-          subscription_tier: selectedPlan,
-          is_subscribed: true
-        })
-        .eq('id', user.id);
-
-      if (error) throw error;
-
-      toast.success(language === 'en' ? `Subscribed to ${selectedPlan} successfully!` : `Abonnement ${selectedPlan} activé avec succès !`);
+      // Store the pending tier so the success page knows what to activate
+      localStorage.setItem('pending_subscription_tier', selectedPlan);
 
       const premiumLink = 'https://buy.stripe.com/test_7sYfZ96hz9tI3t12A69AA01';
       const standardLink = 'https://buy.stripe.com/test_28EcMXbBT6hw3t1a2y9AA00';

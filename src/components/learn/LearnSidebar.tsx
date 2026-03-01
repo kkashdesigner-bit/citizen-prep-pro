@@ -12,7 +12,7 @@ import { supabase } from '@/integrations/supabase/client';
 const NAV_ITEMS = [
   { key: 'dashboard', icon: LayoutDashboard, path: '/learn', label: 'Tableau de bord' },
   { key: 'exams', icon: FileText, path: '/exams', label: 'Examens' },
-  { key: 'path', icon: Route, path: '/path', label: 'Parcours personnalisé' },
+  { key: 'path', icon: Route, path: '/parcours', label: 'Parcours 1→100' },
   { key: 'modules', icon: BookOpen, path: '/study-material', label: "Matériel d'étude" },
   { key: 'progress', icon: BarChart3, path: '/progress', label: 'Progression' },
   { key: 'settings', icon: Settings, path: '/dashboard', label: 'Paramètres' },
@@ -22,7 +22,7 @@ const NAV_ITEMS = [
 const MOBILE_NAV = [
   { key: 'dashboard', icon: LayoutDashboard, path: '/learn', label: 'Accueil' },
   { key: 'exams', icon: FileText, path: '/exams', label: 'Examens' },
-  { key: 'progress', icon: BarChart3, path: '/progress', label: 'Progression' },
+  { key: 'path', icon: Route, path: '/parcours', label: 'Parcours' },
   { key: 'profile', icon: UserCircle, path: '/dashboard', label: 'Profil' },
 ];
 
@@ -44,9 +44,9 @@ export default function LearnSidebar() {
 
   // French tier labels
   const tierLabels = {
-    free: 'Liberté',
-    standard: 'Égalité',
-    premium: 'Fraternité',
+    free: 'Gratuit',
+    standard: 'Standard',
+    premium: 'Premium',
   };
 
   // Mock progress percentage (could be fetched later)
@@ -91,7 +91,7 @@ export default function LearnSidebar() {
               </div>
               <div className="flex flex-col text-left">
                 <span className="text-sm font-bold text-[#1A1A1A] truncate max-w-[120px]">{displayName}</span>
-                <span className="text-xs font-semibold text-[#EF4135] uppercase tracking-wider">{tierLabels[tier] || 'Liberté'}</span>
+                <span className="text-xs font-semibold text-[#EF4135] uppercase tracking-wider">{tierLabels[tier] || 'Gratuit'}</span>
               </div>
             </div>
 

@@ -7,6 +7,7 @@ import { supabase } from '@/integrations/supabase/client';
 import LearnSidebar from '@/components/learn/LearnSidebar';
 import DashboardRightSidebar from '@/components/learn/DashboardRightSidebar';
 import SubscriptionGate from '@/components/SubscriptionGate';
+import ParcoursCard from '@/components/learn/ParcoursCard';
 import { Target, Flag, Play, Landmark, FileText, HeartHandshake, History, Component, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -56,7 +57,8 @@ export default function LearningDashboard() {
         .maybeSingle();
 
       setDisplayName(profileRes?.display_name || profileRes?.email || '');
-      setExamHistory((profileRes?.exam_history as unknown as ExamHistoryEntry[]) || []);
+      const history = profileRes?.exam_history;
+      setExamHistory(Array.isArray(history) ? (history as unknown as ExamHistoryEntry[]) : []);
       setLoading(false);
     };
     if (!profileLoading) fetchData();
@@ -83,7 +85,8 @@ export default function LearningDashboard() {
 
   // Calculate generic progress stats
   const today = new Date().toISOString().split('T')[0];
-  const examsToday = examHistory.filter(e => e.date?.startsWith(today)).length;
+  const validHistory = Array.isArray(examHistory) ? examHistory : [];
+  const examsToday = validHistory.filter(e => e.date?.startsWith(today)).length;
   // Free tier rule: 1 exam per day
   const canTakeExamFree = examsToday < 1;
 
@@ -147,6 +150,9 @@ export default function LearningDashboard() {
                 Modifier mon objectif
               </Button>
             </div>
+
+            {/* Parcours Guided Path Component */}
+            <ParcoursCard currentClassNumber={1} totalClasses={100} />
 
             {/* Recommended Exam Card */}
             <div className="mb-10 group bg-white rounded-2xl border-[2px] border-[#0055A4] p-6 md:p-8 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 relative overflow-hidden">

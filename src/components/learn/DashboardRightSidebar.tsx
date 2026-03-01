@@ -99,7 +99,7 @@ export default function DashboardRightSidebar({ score, streak, examHistory, tier
                         onClick={onUpgrade}
                         className="w-full bg-white text-[#0055A4] hover:bg-[#F5F7FA] font-bold border-0 shadow-sm rounded-xl py-6"
                     >
-                        Débloquer Fraternité
+                        Débloquer Premium
                         <ArrowRight className="h-4 w-4 ml-2" />
                     </Button>
                 </div>

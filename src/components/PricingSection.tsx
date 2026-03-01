@@ -30,7 +30,7 @@ export default function PricingSection() {
 
   const tiers = [
     {
-      name: 'Liberté',
+      name: 'Gratuit',
       price: '0 €',
       period: '',
       popular: false,
@@ -38,7 +38,7 @@ export default function PricingSection() {
       onClick: () => navigate('/auth'),
     },
     {
-      name: 'Égalité',
+      name: 'Standard',
       price: '6,99 €',
       period: '/mo',
       popular: true,
@@ -50,7 +50,7 @@ export default function PricingSection() {
       },
     },
     {
-      name: 'Fraternité',
+      name: 'Premium',
       price: '10,99 €',
       period: '/mo',
       popular: false,
@@ -91,13 +91,13 @@ export default function PricingSection() {
                   </Badge>
                 )}
                 <div className="mb-4">
-                  <p className="text-lg font-semibold text-foreground">{tier.name}</p>
-                  <div className="flex items-baseline gap-1">
-                    <span className="font-serif text-4xl font-bold text-primary">{tier.price}</span>
-                    {tier.period && <span className="text-muted-foreground">{tier.period}</span>}
+                  <p className="text-xl font-bold text-foreground">{tier.name}</p>
+                  <div className="flex items-baseline gap-1 mt-2">
+                    <span className="font-serif text-4xl font-bold gradient-text">{tier.price}</span>
+                    {tier.period && <span className="text-sm font-medium text-muted-foreground">{tier.period}</span>}
                   </div>
                 </div>
-                <ul className="mb-6 flex-1 space-y-2">
+                <ul className="mb-6 flex-1 space-y-3 mt-4">
                   {features.map((feat) => {
                     const included = i === 0 ? feat.free : i === 1 ? feat.standard : feat.premium;
                     return (
