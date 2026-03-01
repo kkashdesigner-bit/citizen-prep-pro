@@ -77,7 +77,7 @@ export type Database = {
             foreignKeyName: "lesson_questions_question_id_fkey"
             columns: ["question_id"]
             isOneToOne: false
-            referencedRelation: "questions33"
+            referencedRelation: "questions"
             referencedColumns: ["id"]
           },
         ]
@@ -170,48 +170,6 @@ export type Database = {
         Row: {
           category: string | null
           correct_answer: string | null
-          exam_category: string | null
-          explanation: string | null
-          id: number
-          language: string | null
-          option_a: string | null
-          option_b: string | null
-          option_c: string | null
-          option_d: string | null
-          question_text: string | null
-        }
-        Insert: {
-          category?: string | null
-          correct_answer?: string | null
-          exam_category?: string | null
-          explanation?: string | null
-          id: number
-          language?: string | null
-          option_a?: string | null
-          option_b?: string | null
-          option_c?: string | null
-          option_d?: string | null
-          question_text?: string | null
-        }
-        Update: {
-          category?: string | null
-          correct_answer?: string | null
-          exam_category?: string | null
-          explanation?: string | null
-          id?: number
-          language?: string | null
-          option_a?: string | null
-          option_b?: string | null
-          option_c?: string | null
-          option_d?: string | null
-          question_text?: string | null
-        }
-        Relationships: []
-      }
-      questions33: {
-        Row: {
-          category: string | null
-          correct_answer: string | null
           explanation: string | null
           id: number
           language: string | null
@@ -301,7 +259,7 @@ export type Database = {
             foreignKeyName: "user_answers_question_id_fkey"
             columns: ["question_id"]
             isOneToOne: false
-            referencedRelation: "questions33"
+            referencedRelation: "questions"
             referencedColumns: ["id"]
           },
         ]

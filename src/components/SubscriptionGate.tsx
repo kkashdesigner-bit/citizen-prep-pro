@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
-import { Check, CheckCircle2, Sparkles, GraduationCap, Users, ArrowRight, Loader2 } from 'lucide-react';
+import { Check, CheckCircle2, Sparkles, GraduationCap, Users, ArrowRight, Loader2, X } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -98,10 +98,19 @@ export default function SubscriptionGate({ open, onOpenChange, requiredTier = 's
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="p-0 sm:max-w-[850px] overflow-hidden bg-white border-0 grid grid-cols-1 md:grid-cols-[3fr_4fr] gap-0 rounded-3xl shadow-2xl">
+      <DialogContent className="p-0 sm:max-w-[850px] max-h-[90vh] overflow-y-auto bg-white border-0 grid grid-cols-1 md:grid-cols-[3fr_4fr] gap-0 rounded-3xl shadow-2xl">
+
+        {/* Mobile close button */}
+        <button
+          onClick={() => onOpenChange(false)}
+          className="absolute top-3 right-3 z-50 h-8 w-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 transition-colors"
+          aria-label="Close"
+        >
+          <X className="w-4 h-4" />
+        </button>
 
         {/* LEFT COLUMN - ILLUSTRATION (French Aesthetic) */}
-        <div className="relative flex flex-col items-center justify-center p-8 overflow-hidden text-center bg-gradient-to-br from-blue-50 via-white to-red-50">
+        <div className="relative hidden md:flex flex-col items-center justify-center p-8 overflow-hidden text-center bg-gradient-to-br from-blue-50 via-white to-red-50">
           <div className="absolute inset-0 opacity-40 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-100 via-transparent to-transparent"></div>
 
           {/* Abstract Eiffel Tower / French Flag Illustration */}

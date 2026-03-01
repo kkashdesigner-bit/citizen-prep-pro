@@ -139,14 +139,27 @@ export function useQuiz({
             : modeLimit;
 
         // Resolve the levels to fetch based on hierarchy
-        // The 'questions' table has no 'level' column — fetch without level filtering
-        const fetchPool = async (
+        const resolveLevelsToFetch = (targetLevel: ExamLevel): ExamLevel[] => {
+          if (targetLevel === 'Naturalisation') return ['Naturalisation', 'CR', 'CSP'];
+          if (targetLevel === 'CR') return ['CR', 'CSP'];
+          return ['CSP']; // targetLevel === 'CSP'
+        };
+
+        // Helper: try fetching with a level filter, fallback to no level filter
+        const fetchWithLevelFallback = async (
           baseQuery: () => ReturnType<ReturnType<typeof supabase.from>['select']>,
+          levelVal: string,
           limit: number
         ) => {
-          const { data, error: err } = await baseQuery().limit(limit);
+          const allowedLevels = resolveLevelsToFetch(levelVal as ExamLevel);
+          const { data, error: err } = await baseQuery().in('level', allowedLevels).limit(limit);
           if (err) throw err;
-          return (data || []) as Question[];
+          if (data && data.length > 0) return data as Question[];
+
+          // Fallback: fetch without level filter
+          const { data: fallback, error: err2 } = await baseQuery().limit(limit);
+          if (err2) throw err2;
+          return (fallback || []) as Question[];
         };
 
         let allQuestions: Question[] = [];
@@ -161,7 +174,7 @@ export function useQuiz({
             const count = perCat + (remainder-- > 0 ? 1 : 0);
             const pool = Math.min(count * 4, 100);
             const baseQ = () => supabase.from('questions').select('*').eq('language', dbLang).eq('category', cat);
-            const data = await fetchPool(baseQ, pool);
+            const data = await fetchWithLevelFallback(baseQ, resolvedLevel, pool);
             return shuffle(data).slice(0, count);
           });
 
@@ -175,7 +188,7 @@ export function useQuiz({
             if (category) q = q.eq('category', category);
             return q;
           };
-          const data = await fetchPool(baseQ, fetchSize);
+          const data = await fetchWithLevelFallback(baseQ, resolvedLevel, fetchSize);
           allQuestions = shuffle(data).slice(0, resolvedLimit);
         }
 
