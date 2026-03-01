@@ -48,7 +48,7 @@ export function useClassDetail(classId?: string) {
             if (qLinks && qLinks.length > 0) {
                 const questionIds = (qLinks as any[]).map((q: any) => q.question_id);
                 const { data: rawQuestions, error: qErr } = await supabase
-                    .from('questions33')
+                    .from('questions')
                     .select('*')
                     .in('id', questionIds);
 
