@@ -11,6 +11,7 @@ import ParcoursCard from '@/components/learn/ParcoursCard';
 import { Target, Flag, Play, Landmark, FileText, HeartHandshake, History, Component, Clock, X, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
+import MiniatureIcon from '@/components/MiniatureIcon';
 
 export interface ExamHistoryEntry {
   date: string;
@@ -19,14 +20,11 @@ export interface ExamHistoryEntry {
   passed: boolean;
 }
 
-const CATEGORY_MAP: Record<string, { icon: any, color: string, bg: string, desc: string }> = {
-  'Principles': { icon: Flag, color: 'text-[#EF4135]', bg: 'bg-[#EF4135]/10 border-[#EF4135]/20', desc: 'Valeurs et principes de la République' },
-  'Institutions': { icon: Landmark, color: 'text-[#0055A4]', bg: 'bg-[#0055A4]/10 border-[#0055A4]/20', desc: 'Fonctionnement de l\'État et des institutions' },
-  'Rights': { icon: FileText, color: 'text-[#1A1A1A]', bg: 'bg-[#F5F7FA] border-[#E6EAF0]', desc: 'Droits et devoirs du citoyen' },
-  'History': { icon: History, color: 'text-[#F59E0B]', bg: 'bg-[#F59E0B]/10 border-[#F59E0B]/20', desc: 'Histoire de France et repères clés' },
-  'Living': { icon: HeartHandshake, color: 'text-[#22C55E]', bg: 'bg-[#22C55E]/10 border-[#22C55E]/20', desc: 'Vivre ensemble et société' },
-  'Politics': { icon: Landmark, color: 'text-[#0055A4]', bg: 'bg-[#0055A4]/10 border-[#0055A4]/20', desc: 'Organisation politique de la France' },
-  'Society': { icon: Component, color: 'text-[#1A1A1A]', bg: 'bg-[#F5F7FA] border-[#E6EAF0]', desc: 'La société française contemporaine' },
+const CATEGORY_MAP: Record<string, { emoji: string, gradient: string, shadow: string, label: string, desc: string }> = {
+  'Principles': { emoji: '⚖️', gradient: 'from-blue-600 via-blue-500 to-indigo-600', shadow: 'shadow-blue-500/30', label: 'Fondamentaux', desc: 'Valeurs et principes de la République' },
+  'Institutions': { emoji: '🏛️', gradient: 'from-indigo-600 via-purple-500 to-violet-600', shadow: 'shadow-indigo-500/30', label: 'Institutions', desc: "Fonctionnement de l'État et des institutions" },
+  'Rights': { emoji: '🛡️', gradient: 'from-emerald-600 via-green-500 to-teal-600', shadow: 'shadow-emerald-500/30', label: 'Droits & Devoirs', desc: 'Droits et devoirs du citoyen' },
+  'History': { emoji: '📜', gradient: 'from-amber-600 via-orange-500 to-yellow-600', shadow: 'shadow-amber-500/30', label: 'Histoire & Culture', desc: 'Histoire de France et repères clés' },
 };
 
 export default function LearningDashboard() {
@@ -197,8 +195,7 @@ export default function LearningDashboard() {
               <h3 className="text-xl font-bold text-[#1A1A1A] mb-4">Entraînement par catégorie</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-                {Object.entries(CATEGORY_MAP).slice(0, 4).map(([cat, info], idx) => {
-                  const Icon = info.icon;
+                {Object.entries(CATEGORY_MAP).map(([cat, info], idx) => {
                   return (
                     <div
                       key={cat}
@@ -206,9 +203,13 @@ export default function LearningDashboard() {
                       style={{ animationDelay: `${idx * 100}ms` }}
                     >
                       <div className="flex items-start justify-between mb-4">
-                        <div className={`h-12 w-12 rounded-xl flex items-center justify-center border ${info.bg}`}>
-                          <Icon className={`h-6 w-6 ${info.color}`} />
-                        </div>
+                        <MiniatureIcon
+                          emoji={info.emoji}
+                          gradient={info.gradient}
+                          shadow={info.shadow}
+                          size="sm"
+                          delay={idx * 0.15}
+                        />
                         {tier !== 'premium' && (
                           <span className="bg-[#F59E0B]/10 text-[#F59E0B] text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
                             Premium
@@ -216,7 +217,7 @@ export default function LearningDashboard() {
                         )}
                       </div>
 
-                      <h4 className="text-lg font-bold text-[#1A1A1A] mb-1">{cat === 'Principles' ? 'Fondamentaux' : cat}</h4>
+                      <h4 className="text-lg font-bold text-[#1A1A1A] mb-1">{info.label}</h4>
                       <p className="text-sm text-[#1A1A1A]/60 font-medium mb-6 flex-1 line-clamp-2">{info.desc}</p>
 
                       <div className="space-y-4 mt-auto">

@@ -11,6 +11,7 @@ import Header from '@/components/Header';
 import QuizQuestion from '@/components/QuizQuestion';
 import ExamNavigator from '@/components/ExamNavigator';
 import SubscriptionGate from '@/components/SubscriptionGate';
+import ResultsOverlay, { QuizError } from '@/components/ResultsOverlay';
 import { Progress } from '@/components/ui/progress';
 import { ChevronLeft, ChevronRight, Flag, CheckCircle, SkipForward, BookmarkCheck } from 'lucide-react';
 import Logo from '@/components/Logo';
@@ -94,6 +95,11 @@ export default function Quiz() {
   const [warpState, setWarpState] = useState<'idle' | 'exit' | 'enter'>('idle');
   const pendingIndex = useRef<number | null>(null);
 
+  // Inline results overlay state
+  const [showResults, setShowResults] = useState(false);
+  const [resultData, setResultData] = useState<import('@/lib/types').ExamResult | null>(null);
+  const [resultErrors, setResultErrors] = useState<QuizError[]>([]);
+
   // Timer for exam mode
   useEffect(() => {
     if (effectiveMode !== 'exam' || isMiniQuiz) return;
@@ -159,7 +165,9 @@ export default function Quiz() {
       if (r.correct) categoryBreakdown[r.category].correct++;
     });
 
-    const resultData = {
+    const resultPayload = {
+      id: crypto.randomUUID?.() || String(Date.now()),
+      date: new Date().toISOString(),
       score,
       totalQuestions: questions.length,
       passed: score / questions.length >= 0.8,
@@ -167,10 +175,8 @@ export default function Quiz() {
       categoryBreakdown,
     };
 
-    sessionStorage.setItem('quizResults', JSON.stringify(resultData));
-
-    // Save detailed errors for the "Review errors" feature
-    const errors = results
+    // Build the errors list for the review section
+    const quizErrors: QuizError[] = results
       .filter(r => !r.correct)
       .map(r => {
         const q = questions.find(qq => qq.id === r.questionId)!;
@@ -183,10 +189,32 @@ export default function Quiz() {
           explanation: q.explanation || '',
         };
       });
-    sessionStorage.setItem('quizErrors', JSON.stringify(errors));
 
-    navigate('/results');
-  }, [answers, questions, startTime, navigate]);
+    // Also store in sessionStorage as fallback for the /results route
+    sessionStorage.setItem('quizResults', JSON.stringify(resultPayload));
+    sessionStorage.setItem('quizErrors', JSON.stringify(quizErrors));
+
+    // Show inline overlay instead of navigating
+    setResultData(resultPayload);
+    setResultErrors(quizErrors);
+    setShowResults(true);
+  }, [answers, questions, startTime]);
+
+  const handleRetry = useCallback(() => {
+    sessionStorage.removeItem('quizResults');
+    sessionStorage.removeItem('quizErrors');
+    setShowResults(false);
+    setResultData(null);
+    setResultErrors([]);
+    // Reload the page to get fresh questions
+    window.location.href = `/quiz?mode=${rawMode}${categoryParam ? `&category=${categoryParam}` : ''}`;
+  }, [rawMode, categoryParam]);
+
+  const handleGoHome = useCallback(() => {
+    sessionStorage.removeItem('quizResults');
+    sessionStorage.removeItem('quizErrors');
+    navigate('/');
+  }, [navigate]);
 
   // ─── Loading State ───
   if (loading) {
@@ -465,6 +493,17 @@ export default function Quiz() {
         }}
         requiredTier={gateTier}
       />
+
+      {/* Inline Results Overlay */}
+      {showResults && resultData && (
+        <ResultsOverlay
+          result={resultData}
+          errors={resultErrors}
+          isDemo={effectiveMode === 'demo'}
+          onRetry={handleRetry}
+          onHome={handleGoHome}
+        />
+      )}
     </div>
   );
 }
