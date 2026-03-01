@@ -1,4 +1,11 @@
-export type Category = 'Principles' | 'Institutions' | 'Rights' | 'History' | 'Living' | 'Politics' | 'Society';
+export type Category =
+  | 'Principles and values of the Republic'
+  | 'Institutional and political system'
+  | 'Rights and duties'
+  | 'History, geography and culture'
+  | 'Living in French society'
+  | 'Politics'
+  | 'Society';
 
 export type Subcategory =
   | 'Symbole' | 'Laïcité' | 'Situational'
@@ -92,16 +99,29 @@ export const LANGUAGE_TO_DB: Record<Language, string> = {
 };
 
 export const CATEGORY_LABELS: Record<Language, Record<Category, string>> = {
-  fr: { Principles: 'Principes', Institutions: 'Institutions', Rights: 'Droits', History: 'Histoire', Living: 'Vie quotidienne', Politics: 'Politique', Society: 'Société' },
-  en: { Principles: 'Principles', Institutions: 'Institutions', Rights: 'Rights', History: 'History', Living: 'Daily Living', Politics: 'Politics', Society: 'Society' },
-  ar: { Principles: 'المبادئ', Institutions: 'المؤسسات', Rights: 'الحقوق', History: 'التاريخ', Living: 'الحياة اليومية', Politics: 'السياسة', Society: 'المجتمع' },
-  es: { Principles: 'Principios', Institutions: 'Instituciones', Rights: 'Derechos', History: 'Historia', Living: 'Vida cotidiana', Politics: 'Política', Society: 'Sociedad' },
-  pt: { Principles: 'Princípios', Institutions: 'Instituições', Rights: 'Direitos', History: 'História', Living: 'Vida quotidiana', Politics: 'Política', Society: 'Sociedade' },
-  zh: { Principles: '原则', Institutions: '机构', Rights: '权利', History: '历史', Living: '日常生活', Politics: '政治', Society: '社会' },
+  fr: {
+    'Principles and values of the Republic': 'Principes et valeurs de la République',
+    'Institutional and political system': 'Système institutionnel et politique',
+    'Rights and duties': 'Droits et devoirs',
+    'History, geography and culture': 'Histoire, géographie et culture',
+    'Living in French society': 'Vivre dans la société française',
+    Politics: 'Politique',
+    Society: 'Société'
+  },
+  en: { 'Principles and values of the Republic': 'Principles', 'Institutional and political system': 'Institutions', 'Rights and duties': 'Rights', 'History, geography and culture': 'History', 'Living in French society': 'Daily Living', Politics: 'Politics', Society: 'Society' },
+  ar: { 'Principles and values of the Republic': 'المبادئ', 'Institutional and political system': 'المؤسسات', 'Rights and duties': 'الحقوق', 'History, geography and culture': 'التاريخ', 'Living in French society': 'الحياة اليومية', Politics: 'السياسة', Society: 'المجتمع' },
+  es: { 'Principles and values of the Republic': 'Principios', 'Institutional and political system': 'Instituciones', 'Rights and duties': 'Derechos', 'History, geography and culture': 'Historia', 'Living in French society': 'Vida cotidiana', Politics: 'Política', Society: 'Sociedad' },
+  pt: { 'Principles and values of the Republic': 'Princípios', 'Institutional and political system': 'Instituições', 'Rights and duties': 'Direitos', 'History, geography and culture': 'História', 'Living in French society': 'Vida quotidiana', Politics: 'Política', Society: 'Sociedade' },
+  zh: { 'Principles and values of the Republic': '原则', 'Institutional and political system': '机构', 'Rights and duties': '权利', 'History, geography and culture': '历史', 'Living in French society': '日常生活', Politics: '政治', Society: '社会' },
 };
 
-/** All seven exam categories */
-export const DB_CATEGORIES = ['Principles', 'Institutions', 'Rights', 'History', 'Living', 'Politics', 'Society'] as const;
+export const DB_CATEGORIES = [
+  'Principles and values of the Republic',
+  'Institutional and political system',
+  'Rights and duties',
+  'History, geography and culture',
+  'Living in French society'
+] as const;
 
 export const EXAM_LEVEL_LABELS: Record<ExamLevel, { name: string; description: string }> = {
   CSP: {

@@ -7,7 +7,7 @@ interface LogoProps {
 }
 
 const sizeClasses = {
-  sm: 'h-[60px] md:h-[72px] w-auto',
+  sm: 'h-10 md:h-12 w-auto',
   md: 'h-16 md:h-20 w-auto',
   lg: 'h-32 md:h-48 w-auto',
 };

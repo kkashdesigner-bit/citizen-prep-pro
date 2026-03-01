@@ -21,7 +21,7 @@ export default function HeroSection() {
   }, []);
 
   const handleStart = () => {
-    if (!user) { navigate('/auth'); return; }
+    if (!user) { navigate('/quiz?mode=demo'); return; }
     if (profileLoading) return;
     if (!profile?.onboarding_completed) { navigate('/onboarding'); return; }
     navigate('/learn');
@@ -138,15 +138,6 @@ export default function HeroSection() {
             <span className="ml-1 text-muted-foreground">{t('hero.usersActive') || 'Users active'}</span>
           </div>
         </div>
-
-        {/* Subtitle */}
-        <p
-          className={`mb-8 md:mb-10 max-w-xl text-sm sm:text-base text-muted-foreground md:text-lg transition-all duration-700 px-2 ${loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
-            }`}
-          style={{ transitionDelay: '600ms' }}
-        >
-          {t('hero.subtitle')}
-        </p>
 
         {/* CTA */}
         <div

@@ -1,4 +1,5 @@
 import { Flame, Star } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface LeftColumnProps {
     xp: number;
@@ -7,6 +8,7 @@ interface LeftColumnProps {
 }
 
 export default function DashboardLeftColumn({ xp, streak, dailyGoalProgress }: LeftColumnProps) {
+    const navigate = useNavigate();
     return (
         <div className="w-full flex flex-col gap-6">
 
@@ -37,7 +39,7 @@ export default function DashboardLeftColumn({ xp, streak, dailyGoalProgress }: L
             <div className="rounded-2xl border border-border/60 bg-card p-5 shadow-sm">
                 <div className="flex justify-between items-center mb-4">
                     <h3 className="font-bold text-foreground">Silver League</h3>
-                    <button className="text-xs font-bold text-[hsl(var(--success))] hover:underline tracking-wider uppercase">View all</button>
+                    <button onClick={() => navigate('/progress')} className="text-xs font-bold text-[hsl(var(--success))] hover:underline tracking-wider uppercase">View all</button>
                 </div>
 
                 <div className="space-y-2">
@@ -81,7 +83,7 @@ export default function DashboardLeftColumn({ xp, streak, dailyGoalProgress }: L
                 <p className="text-sm text-white/90 mb-5 relative z-10">
                     Complete 3 hard lessons without errors.
                 </p>
-                <button className="w-full bg-white text-[hsl(263,84%,58%)] font-bold py-2.5 rounded-xl hover:bg-white/95 transition-colors shadow-sm relative z-10">
+                <button onClick={() => navigate('/quiz?mode=exam')} className="w-full bg-white text-[hsl(263,84%,58%)] font-bold py-2.5 rounded-xl hover:bg-white/95 transition-colors shadow-sm relative z-10">
                     Accept Challenge
                 </button>
             </div>

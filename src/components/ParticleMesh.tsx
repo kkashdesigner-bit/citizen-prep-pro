@@ -6,6 +6,7 @@ interface Particle {
   vx: number;
   vy: number;
   size: number;
+  color: string;
 }
 
 export default function ParticleMesh() {
@@ -47,6 +48,8 @@ export default function ParticleMesh() {
     });
     ro.observe(canvas);
 
+    const FLAG_COLORS = ['#0055A4', '#FFFFFF', '#EF4135']; // Blue, White, Red
+
     for (let i = 0; i < COUNT; i++) {
       particles.push({
         x: Math.random() * cachedW,
@@ -54,6 +57,7 @@ export default function ParticleMesh() {
         vx: (Math.random() - 0.5) * 0.4,
         vy: (Math.random() - 0.5) * 0.4,
         size: Math.random() * 1.5 + 0.5,
+        color: FLAG_COLORS[Math.floor(Math.random() * FLAG_COLORS.length)]
       });
     }
 
@@ -76,15 +80,23 @@ export default function ParticleMesh() {
         if (p.y < 0 || p.y > h) p.vy *= -1;
       }
 
-      // Lines — purple/indigo
+      // Lines 
       for (let i = 0; i < particles.length; i++) {
         for (let j = i + 1; j < particles.length; j++) {
           const dx = particles[i].x - particles[j].x;
           const dy = particles[i].y - particles[j].y;
           const dist = Math.sqrt(dx * dx + dy * dy);
           if (dist < CONNECT_DIST) {
-            const alpha = (1 - dist / CONNECT_DIST) * 0.15;
-            ctx.strokeStyle = `hsla(263, 84%, 58%, ${alpha})`;
+            const alpha = (1 - dist / CONNECT_DIST) * 0.2;
+
+            // Generate a subtle gradient between the two connected particles
+            const grad = ctx.createLinearGradient(particles[i].x, particles[i].y, particles[j].x, particles[j].y);
+            const rgbPrimary = hexToRgb(particles[i].color);
+            const rgbSecondary = hexToRgb(particles[j].color);
+            grad.addColorStop(0, `rgba(${rgbPrimary}, ${alpha})`);
+            grad.addColorStop(1, `rgba(${rgbSecondary}, ${alpha})`);
+
+            ctx.strokeStyle = grad;
             ctx.lineWidth = 0.5;
             ctx.beginPath();
             ctx.moveTo(particles[i].x, particles[i].y);
@@ -94,24 +106,25 @@ export default function ParticleMesh() {
         }
       }
 
-      // Dots + mouse glow — purple
+      // Dots + mouse glow
       const mx = mouseRef.current.x;
       const my = mouseRef.current.y;
       for (const p of particles) {
         const mdx = p.x - mx;
         const mdy = p.y - my;
         const mDist = Math.sqrt(mdx * mdx + mdy * mdy);
-        const brightness = mDist < MOUSE_RADIUS ? 1 : 0.4;
+        const brightness = mDist < MOUSE_RADIUS ? 1 : 0.6;
+        const rgbColor = hexToRgb(p.color);
 
-        ctx.fillStyle = `hsla(272, 91%, 65%, ${brightness * 0.7})`;
+        ctx.fillStyle = `rgba(${rgbColor}, ${brightness})`;
         ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size * (mDist < MOUSE_RADIUS ? 1.8 : 1), 0, Math.PI * 2);
+        ctx.arc(p.x, p.y, p.size * (mDist < MOUSE_RADIUS ? 1.8 : 1.2), 0, Math.PI * 2);
         ctx.fill();
 
         // Extra glow lines to mouse
         if (mDist < MOUSE_RADIUS) {
-          const alpha = (1 - mDist / MOUSE_RADIUS) * 0.2;
-          ctx.strokeStyle = `hsla(263, 84%, 58%, ${alpha})`;
+          const alpha = (1 - mDist / MOUSE_RADIUS) * 0.25;
+          ctx.strokeStyle = `rgba(${rgbColor}, ${alpha})`;
           ctx.lineWidth = 0.5;
           ctx.beginPath();
           ctx.moveTo(p.x, p.y);
@@ -135,8 +148,16 @@ export default function ParticleMesh() {
   return (
     <canvas
       ref={canvasRef}
-      className="absolute inset-0 h-full w-full"
+      className="absolute inset-0 h-full w-full opacity-80"
       style={{ pointerEvents: 'auto' }}
     />
   );
+}
+
+// Helper to convert hex to rgb string for rgba interpolation
+function hexToRgb(hex: string) {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result ?
+    `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}`
+    : '255, 255, 255';
 }

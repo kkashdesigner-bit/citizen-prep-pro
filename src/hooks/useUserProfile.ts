@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 
-export type GoalType = 'naturalisation' | 'carte_resident' | 'carte_resident_permanent' | 'ofii' | 'unknown';
+export type GoalType = 'naturalisation' | 'carte_resident' | 'csp';
 export type LevelType = 'beginner' | 'intermediate' | 'advanced';
 export type TimelineType = 'less_1_month' | '1_3_months' | 'more_3_months' | 'not_sure';
 
@@ -20,17 +20,13 @@ export interface UserProfile {
 export const GOAL_TO_LEVEL: Record<GoalType, string> = {
   naturalisation: 'Naturalisation',
   carte_resident: 'CR',
-  carte_resident_permanent: 'CR',
-  ofii: 'CSP',
-  unknown: 'CSP',
+  csp: 'CSP',
 };
 
 export const GOAL_LABELS: Record<GoalType, string> = {
   naturalisation: 'Naturalisation française',
   carte_resident: 'Carte de Résident (CR)',
-  carte_resident_permanent: 'Carte de Résident Permanent (CPR)',
-  ofii: 'Test OFII',
-  unknown: 'Je ne sais pas encore',
+  csp: 'Carte de Séjour Pluriannuelle (CSP)'
 };
 
 export function useUserProfile() {
