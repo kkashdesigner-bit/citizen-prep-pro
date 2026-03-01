@@ -21,30 +21,24 @@ export function useClassDetail(classId?: string) {
 
         setLoading(true);
         try {
-            // Fetch core class info
-            const { data: classInfo, error: classInfoErr } = await supabase
-                .from('classes')
+            const fromAny = supabase.from as any;
+
+            const { data: classInfo, error: classInfoErr } = await fromAny('classes')
                 .select('*')
                 .eq('id', classId)
                 .maybeSingle();
 
             if (classInfoErr) throw classInfoErr;
-            if (!classInfo) {
-                throw new Error("Classe introuvable.");
-            }
+            if (!classInfo) throw new Error("Classe introuvable.");
 
-            // Fetch markdown content
-            const { data: lessonData, error: lessonErr } = await supabase
-                .from('class_lessons')
+            const { data: lessonData, error: lessonErr } = await fromAny('class_lessons')
                 .select('content_markdown')
                 .eq('class_id', classId)
                 .maybeSingle();
 
             if (lessonErr) throw lessonErr;
 
-            // Fetch questions mapped to this class
-            const { data: qLinks, error: qLinksErr } = await supabase
-                .from('class_questions')
+            const { data: qLinks, error: qLinksErr } = await fromAny('class_questions')
                 .select('question_id')
                 .eq('class_id', classId);
 
@@ -52,14 +46,14 @@ export function useClassDetail(classId?: string) {
 
             let validQuestions: Question[] = [];
             if (qLinks && qLinks.length > 0) {
-                const questionIds = qLinks.map(q => q.question_id);
+                const questionIds = (qLinks as any[]).map((q: any) => q.question_id);
                 const { data: rawQuestions, error: qErr } = await supabase
-                    .from('questions')
+                    .from('questions33')
                     .select('*')
                     .in('id', questionIds);
 
                 if (qErr) throw qErr;
-                validQuestions = (rawQuestions || []) as Question[];
+                validQuestions = (rawQuestions || []) as unknown as Question[];
             }
 
             setData({
