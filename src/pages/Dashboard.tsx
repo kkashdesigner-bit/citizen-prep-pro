@@ -16,7 +16,6 @@ import WeaknessAlert from '@/components/WeaknessAlert';
 import CategorySelector from '@/components/CategorySelector';
 import LevelSelector from '@/components/LevelSelector';
 import SubscriptionGate from '@/components/SubscriptionGate';
-import PremiumVideoGuides from '@/components/PremiumVideoGuides';
 import CircularProgress from '@/components/CircularProgress';
 import { BookOpen, CheckCircle, Clock, Lock, Target, XCircle } from 'lucide-react';
 import { Category, ExamLevel, DB_CATEGORIES, CATEGORY_LABELS } from '@/lib/types';
@@ -321,10 +320,6 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div className="glass-card mb-8 p-6">
-          <h3 className="font-serif text-lg font-semibold text-foreground mb-4">{t('dash.videoGuides')}</h3>
-          <PremiumVideoGuides isTier2={isPremium} />
-        </div>
 
         <div className="glass-card p-6">
           <div className="flex items-center justify-between mb-4">

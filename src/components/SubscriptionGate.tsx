@@ -28,11 +28,11 @@ export default function SubscriptionGate({ open, onOpenChange, requiredTier = 's
       name: 'Gratuit',
       icon: GraduationCap,
       price: '0 €',
-      period: 'Forever',
+      period: '/mois',
       popular: false,
       features: [
-        language === 'en' ? 'Basic History' : 'Histoire Basique',
-        language === 'en' ? '1 Quiz/day' : '1 Quiz/jour'
+        language === 'en' ? 'Limited access' : 'Accès limité',
+        language === 'en' ? '1 demo exam/day' : '1 examen démo/jour'
       ]
     },
     {
@@ -40,12 +40,12 @@ export default function SubscriptionGate({ open, onOpenChange, requiredTier = 's
       name: 'Standard',
       icon: Sparkles,
       price: '6,99 €',
-      period: '/mo',
+      period: '/mois',
       popular: true,
       features: [
-        language === 'en' ? 'Unlimited Quizzes' : 'Examens illimités',
+        language === 'en' ? 'Unlimited exams' : 'Examens illimités',
         language === 'en' ? 'Training mode' : 'Mode entraînement',
-        language === 'en' ? 'Progress Tracker' : 'Suivi progression',
+        language === 'en' ? 'Progress tracking' : 'Suivi de progression',
         language === 'en' ? 'Learning path' : 'Parcours structuré'
       ]
     },
@@ -54,12 +54,12 @@ export default function SubscriptionGate({ open, onOpenChange, requiredTier = 's
       name: 'Premium',
       icon: Users,
       price: '10,99 €',
-      period: '/mo',
+      period: '/mois',
       popular: false,
       features: [
         language === 'en' ? 'Everything in Standard' : 'Tout dans Standard',
-        language === 'en' ? 'Translations' : 'Traduction',
-        language === 'en' ? 'Category training' : 'Catégories ciblées'
+        language === 'en' ? 'Real-time translations' : 'Traduction en temps réel',
+        language === 'en' ? 'Category training' : 'Entraînement par catégorie'
       ]
     }
   ];
@@ -200,7 +200,7 @@ export default function SubscriptionGate({ open, onOpenChange, requiredTier = 's
                       {plan.price.split(' ')[1] && <span className="text-sm font-bold text-slate-900 ml-1">{plan.price.split(' ')[1]}</span>}
                       <span className="text-xs text-slate-500 ml-1">{plan.period}</span>
                     </div>
-                    {plan.period !== 'Forever' && (
+                    {plan.period && (
                       <div className="text-[10px] text-slate-500 mt-1">{language === 'en' ? 'Billed monthly' : 'Facturé mensuellement'}</div>
                     )}
                   </div>
@@ -228,22 +228,6 @@ export default function SubscriptionGate({ open, onOpenChange, requiredTier = 's
           </div>
 
           <div className="mt-auto pt-4 flex flex-col items-center">
-            {/* 7 Days Free Trial bar mock */}
-            <div className="w-full mb-4">
-              <div className="flex justify-between text-[11px] font-semibold mb-1">
-                <span className="text-slate-900">{language === 'en' ? 'Trial starts today' : 'Essai dès aujourd\'hui'}</span>
-                <span className={selectedPlan === 'premium' ? 'text-red-600' : 'text-blue-600'}>
-                  7 {language === 'en' ? 'Days Free' : 'Jours Gratuits'}
-                </span>
-              </div>
-              <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
-                <div className={`h-full w-[15%] rounded-full transition-colors ${selectedPlan === 'premium' ? 'bg-red-600' : 'bg-blue-600'}`}></div>
-              </div>
-              <div className="flex justify-between text-[10px] text-slate-400 mt-1">
-                <span>{language === 'en' ? 'Day 1' : 'Jour 1'}</span>
-                <span>{language === 'en' ? 'Day 7 (First charge)' : 'Jour 7 (Premier prélèvement)'}</span>
-              </div>
-            </div>
 
             <Button
               disabled={isProcessing}
@@ -261,7 +245,7 @@ export default function SubscriptionGate({ open, onOpenChange, requiredTier = 's
             </Button>
 
             <p className="text-[10px] text-slate-400 mt-4 text-center">
-              {language === 'en' ? 'Secure payment via Stripe. By continuing, you agree to our Terms.' : 'Paiement sécurisé via Stripe. En continuant, vous acceptez nos CGU.'}
+              {language === 'en' ? 'Secure payment via Stripe.' : 'Paiement sécurisé via Stripe.'}
             </p>
           </div>
         </div>

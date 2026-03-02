@@ -79,19 +79,23 @@ export default function Quiz() {
   // Free users are downgraded to demo mode
   const effectiveMode: QuizMode = isFreeUser ? 'demo' : rawMode;
 
+  // Retry counter — incrementing forces useQuiz to re-fetch fresh questions
+  const [retryKey, setRetryKey] = useState(0);
+
   const { questions, loading, saveAnswer } = useQuiz({
     category: categoryParam || undefined,
     level: levelParam,
     isMiniQuiz,
     mode: effectiveMode,
     questionLimit,
+    retryKey,
   });
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<number, string>>({});
   const [flagged, setFlagged] = useState<Set<number>>(new Set());
   const [timeRemaining, setTimeRemaining] = useState(QUIZ_TIME);
-  const [startTime] = useState(Date.now());
+  const [startTime, setStartTime] = useState(Date.now());
   const [warpState, setWarpState] = useState<'idle' | 'exit' | 'enter'>('idle');
   const pendingIndex = useRef<number | null>(null);
 
@@ -206,9 +210,13 @@ export default function Quiz() {
     setShowResults(false);
     setResultData(null);
     setResultErrors([]);
-    // Reload the page to get fresh questions
-    window.location.href = `/quiz?mode=${rawMode}${categoryParam ? `&category=${categoryParam}` : ''}`;
-  }, [rawMode, categoryParam]);
+    setCurrentIndex(0);
+    setAnswers({});
+    setFlagged(new Set());
+    setTimeRemaining(QUIZ_TIME);
+    setStartTime(Date.now());
+    setRetryKey(prev => prev + 1);
+  }, []);
 
   const handleGoHome = useCallback(() => {
     sessionStorage.removeItem('quizResults');
@@ -254,10 +262,10 @@ export default function Quiz() {
   const timerMinutes = Math.floor(timeRemaining / 60);
   const timerSeconds = timeRemaining % 60;
 
-  const modeLabel = effectiveMode === 'exam' ? 'Exam Mode'
-    : effectiveMode === 'demo' ? 'Demo Mode'
-      : effectiveMode === 'study' ? 'Study Mode'
-        : 'Training Mode';
+  const modeLabel = effectiveMode === 'exam' ? 'Mode Examen'
+    : effectiveMode === 'demo' ? 'Mode Démo'
+      : effectiveMode === 'study' ? 'Mode Étude'
+        : 'Mode Entraînement';
 
   const isFlaggedCurrent = flagged.has(currentQuestion.id);
 
@@ -272,7 +280,7 @@ export default function Quiz() {
           <div className="flex items-center gap-2 sm:gap-3 min-w-0">
             <Logo size="sm" />
             <div className="min-w-0">
-              <p className="text-[11px] sm:text-xs font-bold uppercase tracking-widest text-white/80 truncate">GoCivique Exam</p>
+              <p className="text-[11px] sm:text-xs font-bold uppercase tracking-widest text-white/80 truncate">GoCivique</p>
               <p className="text-[10px] sm:text-xs text-white/50 truncate">{modeLabel}</p>
             </div>
           </div>
@@ -280,7 +288,7 @@ export default function Quiz() {
           {/* Timer — hidden on very small screens in demo mode, always visible in exam mode */}
           {effectiveMode === 'exam' && !isMiniQuiz && (
             <div className="text-center mx-2">
-              <p className="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-white/60 hidden sm:block">Time Remaining</p>
+              <p className="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-white/60 hidden sm:block">Temps restant</p>
               <p className="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight tabular-nums">
                 {String(timerMinutes).padStart(2, '0')}:{String(timerSeconds).padStart(2, '0')}
               </p>
@@ -293,8 +301,8 @@ export default function Quiz() {
             onClick={handleFinish}
             className="gap-1.5 sm:gap-2 rounded-full bg-white text-primary font-bold hover:bg-white/90 px-3 sm:px-5 text-xs sm:text-sm shrink-0"
           >
-            <span className="hidden sm:inline">Finish Exam</span>
-            <span className="sm:hidden">Finish</span>
+            <span className="hidden sm:inline">Terminer l'examen</span>
+            <span className="sm:hidden">Terminer</span>
             <CheckCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
           </Button>
         </div>
@@ -310,7 +318,7 @@ export default function Quiz() {
             <div className="glass-card rounded-xl p-3 sm:p-4 mb-4 sm:mb-6">
               <div className="flex items-center justify-between mb-2">
                 <p className="text-xs sm:text-sm font-bold text-foreground">
-                  Question <span className="text-primary">{currentIndex + 1}</span> of {questions.length}
+                  Question <span className="text-primary">{currentIndex + 1}</span> sur {questions.length}
                 </p>
                 <p className="text-xs sm:text-sm font-bold text-primary">{completedPercent}% Completed</p>
               </div>
@@ -327,7 +335,7 @@ export default function Quiz() {
                     }`}
                 >
                   <Flag className={`h-3.5 w-3.5 ${isFlaggedCurrent ? 'fill-current' : ''}`} />
-                  {isFlaggedCurrent ? 'Flagged' : 'Flag for Review'}
+                  {isFlaggedCurrent ? 'Marquée' : 'Marquer pour révision'}
                 </button>
               </div>
 
@@ -355,7 +363,7 @@ export default function Quiz() {
                   }`}
               >
                 <Flag className={`h-4 w-4 ${isFlaggedCurrent ? 'fill-current' : ''}`} />
-                {isFlaggedCurrent ? '🚩 Flagged' : '🏳️ Flag Question'}
+                {isFlaggedCurrent ? '🚩 Marquée' : '🏳️ Marquer la question'}
               </button>
             </div>
 
@@ -368,8 +376,8 @@ export default function Quiz() {
                 className="gap-1 sm:gap-2 text-xs sm:text-sm px-3 sm:px-4 h-10 sm:h-11 rounded-xl"
               >
                 <ChevronLeft className="h-4 w-4" />
-                <span className="hidden sm:inline">Previous Question</span>
-                <span className="sm:hidden">Previous</span>
+                <span className="hidden sm:inline">Question précédente</span>
+                <span className="sm:hidden">Précédent</span>
               </Button>
 
               <Button
@@ -378,12 +386,12 @@ export default function Quiz() {
                 disabled={currentIndex === questions.length - 1}
                 className="gap-1 sm:gap-2 text-muted-foreground text-xs sm:text-sm h-10 sm:h-11"
               >
-                Skip
+                Passer
               </Button>
 
               {currentIndex === questions.length - 1 ? (
                 <Button onClick={handleFinish} className="gap-1 sm:gap-2 btn-glow text-xs sm:text-sm px-4 sm:px-6 h-10 sm:h-11 rounded-xl">
-                  Finish Exam
+                  Terminer l'examen
                   <CheckCircle className="h-4 w-4" />
                 </Button>
               ) : (
@@ -391,7 +399,7 @@ export default function Quiz() {
                   onClick={() => warpTo(Math.min(questions.length - 1, currentIndex + 1))}
                   className="gap-1 sm:gap-2 btn-glow text-xs sm:text-sm px-4 sm:px-6 h-10 sm:h-11 rounded-xl"
                 >
-                  <span className="hidden sm:inline">Save &</span> Next
+                  <span className="hidden sm:inline">Enregistrer &</span> Suivant
                   <ChevronRight className="h-4 w-4" />
                 </Button>
               )}
@@ -403,19 +411,19 @@ export default function Quiz() {
               <div className="grid grid-cols-3 gap-2 sm:gap-3">
                 <div className="rounded-xl border border-border/60 bg-card p-3 text-center">
                   <p className="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-0.5">
-                    Answered
+                    Répondu
                   </p>
                   <p className="text-xl sm:text-2xl font-extrabold text-foreground">{String(answeredCount).padStart(2, '0')}</p>
                 </div>
                 <div className="rounded-xl border border-border/60 bg-card p-3 text-center">
                   <p className="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-0.5">
-                    Flagged
+                    Marqué
                   </p>
                   <p className="text-xl sm:text-2xl font-extrabold text-[#EF4135]">{String(flaggedCount).padStart(2, '0')}</p>
                 </div>
                 <div className="rounded-xl border border-border/60 bg-card p-3 text-center">
                   <p className="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-0.5">
-                    Remaining
+                    Restant
                   </p>
                   <p className="text-xl sm:text-2xl font-extrabold text-foreground">{String(remainingCount).padStart(2, '0')}</p>
                 </div>
@@ -423,7 +431,7 @@ export default function Quiz() {
 
               {/* Question navigator grid */}
               <div className="rounded-xl border border-border/60 bg-card p-4">
-                <h3 className="text-xs font-bold text-foreground mb-3 uppercase tracking-widest">Exam Navigator</h3>
+                <h3 className="text-xs font-bold text-foreground mb-3 uppercase tracking-widest">Navigation</h3>
                 <div className="grid grid-cols-5 gap-1.5">
                   {questions.map((q, idx) => {
                     const isCurrent = idx === currentIndex;
@@ -452,19 +460,19 @@ export default function Quiz() {
                 {/* Mobile legend */}
                 <div className="grid grid-cols-2 gap-1.5 mt-3 text-[9px] font-bold uppercase tracking-widest text-muted-foreground">
                   <div className="flex items-center gap-1.5">
-                    <span className="w-2.5 h-2.5 rounded-sm bg-primary" /> Current
+                    <span className="w-2.5 h-2.5 rounded-sm bg-primary" /> Actuelle
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <span className="w-2.5 h-2.5 rounded-sm border-2 border-primary/40" /> Answered
+                    <span className="w-2.5 h-2.5 rounded-sm border-2 border-primary/40" /> Répondu
                   </div>
                   <div className="flex items-center gap-1.5">
                     <span className="w-2.5 h-2.5 rounded-sm border-2 border-[#EF4135]/50 relative">
                       <span className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 bg-[#EF4135] rounded-full" />
                     </span>
-                    Flagged
+                    Marquée
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <span className="w-2.5 h-2.5 rounded-sm bg-muted/50" /> Unvisited
+                    <span className="w-2.5 h-2.5 rounded-sm bg-muted/50" /> Non visité
                   </div>
                 </div>
               </div>
