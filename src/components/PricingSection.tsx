@@ -40,7 +40,7 @@ export default function PricingSection() {
     {
       name: 'Standard',
       price: '6,99 €',
-      period: '/mo',
+      period: '/mois',
       popular: true,
       badge: t('pricing.recommended'),
       cta: t('pricing.ctaStandard'),
@@ -52,7 +52,7 @@ export default function PricingSection() {
     {
       name: 'Premium',
       price: '10,99 €',
-      period: '/mo',
+      period: '/mois',
       popular: false,
       cta: t('pricing.ctaPremium'),
       onClick: () => {

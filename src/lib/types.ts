@@ -46,6 +46,7 @@ export function getQuestionOptions(q: Question): string[] {
 /** Map letter keys (a/b/c/d) to actual option text */
 const OPTION_KEY_MAP: Record<string, keyof Question> = {
   a: 'option_a', b: 'option_b', c: 'option_c', d: 'option_d',
+  option_a: 'option_a', option_b: 'option_b', option_c: 'option_c', option_d: 'option_d',
 };
 
 /** Resolve the correct answer — handles both letter keys ('b') and full text */

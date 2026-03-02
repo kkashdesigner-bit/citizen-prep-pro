@@ -27,6 +27,8 @@ export interface UseQuizOptions {
   isMiniQuiz?: boolean;
   /** Optional explicit question cap from route/query params */
   questionLimit?: number;
+  /** Retry counter — incrementing triggers a re-fetch of fresh questions */
+  retryKey?: number;
 }
 
 const DEMO_QUESTIONS_PER_EXAM = 20;
@@ -86,6 +88,7 @@ export function useQuiz({
   mode = 'exam',
   isMiniQuiz = false,
   questionLimit,
+  retryKey = 0,
 }: UseQuizOptions = {}) {
   const { user } = useAuth();
   const { language } = useLanguage();
@@ -202,8 +205,7 @@ export function useQuiz({
     };
 
     fetchQuestions();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [language, category, user, resolvedLevel, mode, isMiniQuiz, questionLimit]);
+  }, [language, category, user, resolvedLevel, mode, isMiniQuiz, questionLimit, retryKey]);
 
   /** Save a single answer to user_answers table (skipped in demo mode) */
   const saveAnswer = useCallback(

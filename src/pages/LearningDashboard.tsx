@@ -20,11 +20,12 @@ export interface ExamHistoryEntry {
   passed: boolean;
 }
 
-const CATEGORY_MAP: Record<string, { emoji: string, gradient: string, shadow: string, label: string, desc: string }> = {
-  'Principles': { emoji: '⚖️', gradient: 'from-blue-600 via-blue-500 to-indigo-600', shadow: 'shadow-blue-500/30', label: 'Fondamentaux', desc: 'Valeurs et principes de la République' },
-  'Institutions': { emoji: '🏛️', gradient: 'from-indigo-600 via-purple-500 to-violet-600', shadow: 'shadow-indigo-500/30', label: 'Institutions', desc: "Fonctionnement de l'État et des institutions" },
-  'Rights': { emoji: '🛡️', gradient: 'from-emerald-600 via-green-500 to-teal-600', shadow: 'shadow-emerald-500/30', label: 'Droits & Devoirs', desc: 'Droits et devoirs du citoyen' },
-  'History': { emoji: '📜', gradient: 'from-amber-600 via-orange-500 to-yellow-600', shadow: 'shadow-amber-500/30', label: 'Histoire & Culture', desc: 'Histoire de France et repères clés' },
+const CATEGORY_MAP: Record<string, { emoji: string, gradient: string, shadow: string, label: string, desc: string, dbCategory: string }> = {
+  'Principles': { emoji: '⚖️', gradient: 'from-blue-600 via-blue-500 to-indigo-600', shadow: 'shadow-blue-500/30', label: 'Fondamentaux', desc: 'Valeurs et principes de la République', dbCategory: 'Principles and values of the Republic' },
+  'Institutions': { emoji: '🏛️', gradient: 'from-indigo-600 via-purple-500 to-violet-600', shadow: 'shadow-indigo-500/30', label: 'Institutions', desc: "Fonctionnement de l'État et des institutions", dbCategory: 'Institutional and political system' },
+  'Rights': { emoji: '🛡️', gradient: 'from-emerald-600 via-green-500 to-teal-600', shadow: 'shadow-emerald-500/30', label: 'Droits & Devoirs', desc: 'Droits et devoirs du citoyen', dbCategory: 'Rights and duties' },
+  'History': { emoji: '📜', gradient: 'from-amber-600 via-orange-500 to-yellow-600', shadow: 'shadow-amber-500/30', label: 'Histoire & Culture', desc: 'Histoire de France et repères clés', dbCategory: 'History, geography and culture' },
+  'Living': { emoji: '🏠', gradient: 'from-sky-600 via-cyan-500 to-blue-600', shadow: 'shadow-sky-500/30', label: 'Vivre en société', desc: 'Vie quotidienne, éducation, santé, emploi', dbCategory: 'Living in French society' },
 };
 
 export default function LearningDashboard() {
@@ -104,7 +105,8 @@ export default function LearningDashboard() {
     }
 
     if (category) {
-      navigate(`/quiz?category=${category}`);
+      const dbCat = CATEGORY_MAP[category]?.dbCategory || category;
+      navigate(`/quiz?category=${encodeURIComponent(dbCat)}`);
     } else {
       navigate('/quiz');
     }
@@ -161,7 +163,7 @@ export default function LearningDashboard() {
                 <span className="bg-[#0055A4]/10 text-[#0055A4] text-xs font-bold px-3 py-1 rounded-full uppercase tracking-widest">Recommandé</span>
               </div>
 
-              <h2 className="text-2xl font-bold text-[#1A1A1A] mb-2 mt-4">Simulation Complète</h2>
+              <h2 className="text-2xl font-bold text-[#1A1A1A] mb-2 mt-4">Examen Blanc</h2>
               <p className="text-[#1A1A1A]/60 font-medium mb-6 max-w-lg">
                 Un examen blanc de 20 questions aléatoires couvrant tous les domaines. Idéal pour évaluer votre niveau global aujourd'hui.
               </p>

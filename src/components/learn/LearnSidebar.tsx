@@ -13,10 +13,9 @@ const NAV_ITEMS = [
   { key: 'dashboard', icon: LayoutDashboard, path: '/learn', label: 'Tableau de bord' },
   { key: 'exams', icon: FileText, path: '/exams', label: 'Examens' },
   { key: 'path', icon: Route, path: '/parcours', label: 'Parcours 1→100' },
-  { key: 'modules', icon: BookOpen, path: '/study-material', label: "Matériel d'étude" },
   { key: 'progress', icon: BarChart3, path: '/progress', label: 'Progression' },
   { key: 'settings', icon: Settings, path: '/dashboard', label: 'Paramètres' },
-  { key: 'help', icon: HelpCircle, path: '/about', label: 'Help' },
+  { key: 'help', icon: HelpCircle, path: '/about', label: 'Aide' },
 ];
 
 const MOBILE_NAV = [
