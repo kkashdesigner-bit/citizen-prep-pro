@@ -5,6 +5,8 @@ import { CheckCircle, XCircle, Info } from 'lucide-react';
 import { playCorrectSound, playIncorrectSound } from '@/lib/sounds';
 import { useEffect, useRef } from 'react';
 import TranslateButton from '@/components/TranslateButton';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { CATEGORY_LABELS, Category } from '@/lib/types';
 
 interface QuizQuestionProps {
   question: Question;
@@ -25,11 +27,15 @@ export default function QuizQuestion({
   showFeedback,
   showTranslateButton = false,
 }: QuizQuestionProps) {
+  const { language } = useLanguage();
   const options = getQuestionOptions(question);
   const correctAnswerText = getCorrectAnswerText(question);
   const isCorrect = selectedAnswer === correctAnswerText;
   const hasAnswered = selectedAnswer !== undefined;
   const soundPlayed = useRef(false);
+
+  // Translate category based on current language
+  const categoryLabel = CATEGORY_LABELS[language as keyof typeof CATEGORY_LABELS]?.[question.category as Category] || question.category;
 
   useEffect(() => {
     if (showFeedback && hasAnswered && !soundPlayed.current) {
@@ -49,7 +55,7 @@ export default function QuizQuestion({
         <Badge variant="outline" className="text-sm border-border/50">
           Question {questionNumber} sur {totalQuestions}
         </Badge>
-        <Badge variant="secondary">{question.category}</Badge>
+        <Badge variant="secondary">{categoryLabel}</Badge>
       </div>
 
       <div className="mb-8">

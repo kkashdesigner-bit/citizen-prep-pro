@@ -10,6 +10,7 @@ export interface UserProfile {
   id: string;
   user_id: string;
   first_name: string | null;
+  avatar_url: string | null;
   goal_type: GoalType | null;
   level: LevelType | null;
   timeline: TimelineType | null;

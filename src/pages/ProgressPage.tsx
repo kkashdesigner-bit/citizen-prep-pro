@@ -117,32 +117,32 @@ export default function ProgressPage() {
       <LearnSidebar />
       <main className="flex-1 md:ml-64 pb-20 md:pb-8">
         <div className="mx-auto max-w-4xl px-4 md:px-8 py-6 md:py-8">
-          <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-6">Your Progress</h1>
+          <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-6">Votre progression</h1>
 
           {/* Top stats */}
           <div className="grid grid-cols-2 md:grid-cols-5 gap-3 md:gap-4 mb-8">
-            <StatBox icon={Target} label="Predicted Score" value={`${overallAccuracy}%`}
-              subtext={overallAccuracy >= 80 ? 'On track' : 'Keep practicing'}
+            <StatBox icon={Target} label="Score prédit" value={`${overallAccuracy}%`}
+              subtext={overallAccuracy >= 80 ? 'En bonne voie' : 'Continuez à pratiquer'}
               accent={overallAccuracy >= 80}
             />
-            <StatBox icon={BarChart3} label="Accuracy" value={`${overallAccuracy}%`}
-              subtext={`${totalExams} exams`}
+            <StatBox icon={BarChart3} label="Précision" value={`${overallAccuracy}%`}
+              subtext={`${totalExams} examens`}
             />
-            <StatBox icon={CheckCircle} label="Pass Rate" value={`${passRate}%`}
+            <StatBox icon={CheckCircle} label="Taux de réussite" value={`${passRate}%`}
               subtext={`${examHistory.filter(e => e.passed).length}/${totalExams}`}
             />
-            <StatBox icon={Clock} label="Study Time" value={`${studyMinutes}m`}
-              subtext="Total time"
+            <StatBox icon={Clock} label="Temps d'étude" value={`${studyMinutes}m`}
+              subtext="Temps total"
             />
-            <StatBox icon={CheckCircle} label="Lessons" value={`${completedLessons}/${totalLessons}`}
-              subtext="Completed"
+            <StatBox icon={CheckCircle} label="Leçons" value={`${completedLessons}/${totalLessons}`}
+              subtext="Terminées"
             />
           </div>
 
           {/* Exam score trend chart */}
           {examChartData.length > 1 && (
             <section className="mb-8">
-              <h2 className="text-lg font-bold text-foreground mb-4">Exam Score Trend</h2>
+              <h2 className="text-lg font-bold text-foreground mb-4">Tendance des scores</h2>
               <div className="rounded-xl border border-border/50 bg-card p-4">
                 <ResponsiveContainer width="100%" height={200}>
                   <BarChart data={examChartData}>
@@ -167,7 +167,7 @@ export default function ProgressPage() {
           {/* Category performance chart */}
           {chartData.length > 0 && (
             <section className="mb-8">
-              <h2 className="text-lg font-bold text-foreground mb-4">Performance by Domain</h2>
+              <h2 className="text-lg font-bold text-foreground mb-4">Performance par domaine</h2>
               <div className="rounded-xl border border-border/50 bg-card p-4">
                 <ResponsiveContainer width="100%" height={250}>
                   <BarChart data={chartData} layout="vertical">
@@ -192,7 +192,7 @@ export default function ProgressPage() {
           {/* Domain Breakdown list */}
           {sortedCategories.length > 0 && (
             <section className="mb-8">
-              <h2 className="text-lg font-bold text-foreground mb-4">Domain Breakdown</h2>
+              <h2 className="text-lg font-bold text-foreground mb-4">Détail par domaine</h2>
               <div className="space-y-3">
                 {sortedCategories.map(({ category, accuracy, correct, total }) => {
                   const pct = Math.round(accuracy * 100);
@@ -217,7 +217,7 @@ export default function ProgressPage() {
               <div className="rounded-2xl border border-destructive/20 bg-destructive/5 p-4 md:p-5">
                 <div className="flex items-center gap-2 mb-3">
                   <TrendingDown className="h-5 w-5 text-destructive" />
-                  <h3 className="font-semibold text-foreground">Needs Improvement</h3>
+                  <h3 className="font-semibold text-foreground">À améliorer</h3>
                 </div>
                 <ul className="space-y-3">
                   {weakCategories.map(c => {
@@ -237,7 +237,7 @@ export default function ProgressPage() {
                                 : `/quiz?mode=study&category=${c.category}`
                             )}
                           >
-                            Practice <ArrowRight className="h-3 w-3" />
+                            Pratiquer <ArrowRight className="h-3 w-3" />
                           </Button>
                         </div>
                       </li>
@@ -252,7 +252,7 @@ export default function ProgressPage() {
             <div className="rounded-2xl border border-primary/20 bg-primary/5 p-4 md:p-5">
               <div className="flex items-center gap-2 mb-3">
                 <TrendingUp className="h-5 w-5 text-primary" />
-                <h3 className="font-semibold text-foreground">Strong Areas</h3>
+                <h3 className="font-semibold text-foreground">Points forts</h3>
               </div>
               <ul className="space-y-2">
                 {strongCategories.map(c => (
@@ -270,9 +270,9 @@ export default function ProgressPage() {
           {totalExams === 0 && (
             <div className="text-center py-12">
               <BarChart3 className="mx-auto h-12 w-12 text-muted-foreground/40 mb-4" />
-              <p className="text-muted-foreground mb-4">Take your first exam to see your progress analytics.</p>
+              <p className="text-muted-foreground mb-4">Passez votre premier examen pour voir vos statistiques de progression.</p>
               <Button onClick={() => navigate('/quiz?mode=exam')} className="gap-2">
-                Start Exam <ArrowRight className="h-4 w-4" />
+                Lancer un examen <ArrowRight className="h-4 w-4" />
               </Button>
             </div>
           )}

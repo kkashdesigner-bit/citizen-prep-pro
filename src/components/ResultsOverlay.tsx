@@ -168,36 +168,39 @@ export default function ResultsOverlay({ result, errors, isDemo, onRetry, onHome
                                     Vos erreurs ({errors.length})
                                 </h2>
                                 <div className="space-y-6">
-                                    {errors.map((err, idx) => (
-                                        <div key={idx} className="rounded-2xl bg-white p-5 border border-slate-100 shadow-sm">
-                                            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">{err.category}</p>
-                                            <p className="font-bold text-gray-900 mb-4">{err.questionText}</p>
-                                            <div className="space-y-2 mb-4">
-                                                {err.options.map((opt, oi) => {
-                                                    const isSelected = opt.trim() === err.selectedAnswer.trim();
-                                                    const isCorrect = opt.trim() === err.correctAnswer.trim();
-                                                    let cls = 'border-slate-100 text-slate-500';
-                                                    if (isCorrect) cls = 'border-green-200 bg-green-50 text-green-700';
-                                                    else if (isSelected) cls = 'border-red-200 bg-red-50 text-red-600';
-                                                    return (
-                                                        <div key={oi} className={`flex items-center gap-3 p-3 rounded-xl border text-sm font-medium ${cls}`}>
-                                                            <span className="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-xs font-bold shrink-0">
-                                                                {String.fromCharCode(65 + oi)}
-                                                            </span>
-                                                            {opt}
-                                                            {isCorrect && <Check className="h-4 w-4 ml-auto text-green-600" />}
-                                                            {isSelected && !isCorrect && <X className="h-4 w-4 ml-auto text-red-500" />}
-                                                        </div>
-                                                    );
-                                                })}
+                                    {errors.map((err, idx) => {
+                                        const errCategoryName = CATEGORY_LABELS[language as keyof typeof CATEGORY_LABELS]?.[err.category as keyof typeof CATEGORY_LABELS.fr] || err.category;
+                                        return (
+                                            <div key={idx} className="rounded-2xl bg-white p-5 border border-slate-100 shadow-sm">
+                                                <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">{errCategoryName}</p>
+                                                <p className="font-bold text-gray-900 mb-4">{err.questionText}</p>
+                                                <div className="space-y-2 mb-4">
+                                                    {err.options.map((opt, oi) => {
+                                                        const isSelected = opt.trim() === err.selectedAnswer.trim();
+                                                        const isCorrect = opt.trim() === err.correctAnswer.trim();
+                                                        let cls = 'border-slate-100 text-slate-500';
+                                                        if (isCorrect) cls = 'border-green-200 bg-green-50 text-green-700';
+                                                        else if (isSelected) cls = 'border-red-200 bg-red-50 text-red-600';
+                                                        return (
+                                                            <div key={oi} className={`flex items-center gap-3 p-3 rounded-xl border text-sm font-medium ${cls}`}>
+                                                                <span className="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-xs font-bold shrink-0">
+                                                                    {String.fromCharCode(65 + oi)}
+                                                                </span>
+                                                                {opt}
+                                                                {isCorrect && <Check className="h-4 w-4 ml-auto text-green-600" />}
+                                                                {isSelected && !isCorrect && <X className="h-4 w-4 ml-auto text-red-500" />}
+                                                            </div>
+                                                        );
+                                                    })}
+                                                </div>
+                                                {err.explanation && (
+                                                    <p className="text-sm text-slate-600 bg-blue-50 rounded-xl p-3 border border-blue-100">
+                                                        💡 {err.explanation}
+                                                    </p>
+                                                )}
                                             </div>
-                                            {err.explanation && (
-                                                <p className="text-sm text-slate-600 bg-blue-50 rounded-xl p-3 border border-blue-100">
-                                                    💡 {err.explanation}
-                                                </p>
-                                            )}
-                                        </div>
-                                    ))}
+                                        );
+                                    })}
                                 </div>
                             </div>
                         </div>

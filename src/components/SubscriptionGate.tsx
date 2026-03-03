@@ -1,11 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { useLanguage } from '@/contexts/LanguageContext';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
-import { Check, CheckCircle2, Sparkles, GraduationCap, Users, ArrowRight, Loader2, X } from 'lucide-react';
+import { Check, ArrowRight, Loader2, X, CheckCircle2 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
-import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
 interface SubscriptionGateProps {
@@ -14,55 +12,50 @@ interface SubscriptionGateProps {
   requiredTier?: 'standard' | 'premium';
 }
 
+const plans = [
+  {
+    id: 'free' as const,
+    name: 'Liberté',
+    iconSymbol: '🎓',
+    price: '0',
+    currency: '€',
+    period: 'Forever',
+    periodLabel: '',
+    popular: false,
+    colorClass: 'blue',
+    features: ['Histoire basique', '1 Quiz/jour'],
+  },
+  {
+    id: 'standard' as const,
+    name: 'Égalité',
+    iconSymbol: '✨',
+    price: '6,99',
+    currency: '€',
+    period: '/mo',
+    periodLabel: 'Facturé mensuellement',
+    popular: true,
+    colorClass: 'blue',
+    features: ['Examens illimités', 'Mode entraînement', 'Suivi progression', 'Parcours structuré'],
+  },
+  {
+    id: 'premium' as const,
+    name: 'Fraternité',
+    iconSymbol: '👥',
+    price: '10,99',
+    currency: '€',
+    period: '/mo',
+    periodLabel: 'Facturé mensuellement',
+    popular: false,
+    colorClass: 'red',
+    features: ['Tout dans Égalité', 'Traduction', 'Catégories ciblées'],
+  },
+];
+
 export default function SubscriptionGate({ open, onOpenChange, requiredTier = 'standard' }: SubscriptionGateProps) {
   const navigate = useNavigate();
-  const { t, language } = useLanguage();
   const { user } = useAuth();
-
   const [selectedPlan, setSelectedPlan] = useState<'standard' | 'premium'>(requiredTier === 'premium' ? 'premium' : 'standard');
   const [isProcessing, setIsProcessing] = useState(false);
-
-  const plans = [
-    {
-      id: 'free',
-      name: 'Gratuit',
-      icon: GraduationCap,
-      price: '0 €',
-      period: '/mois',
-      popular: false,
-      features: [
-        language === 'en' ? 'Limited access' : 'Accès limité',
-        language === 'en' ? '1 demo exam/day' : '1 examen démo/jour'
-      ]
-    },
-    {
-      id: 'standard',
-      name: 'Standard',
-      icon: Sparkles,
-      price: '6,99 €',
-      period: '/mois',
-      popular: true,
-      features: [
-        language === 'en' ? 'Unlimited exams' : 'Examens illimités',
-        language === 'en' ? 'Training mode' : 'Mode entraînement',
-        language === 'en' ? 'Progress tracking' : 'Suivi de progression',
-        language === 'en' ? 'Learning path' : 'Parcours structuré'
-      ]
-    },
-    {
-      id: 'premium',
-      name: 'Premium',
-      icon: Users,
-      price: '10,99 €',
-      period: '/mois',
-      popular: false,
-      features: [
-        language === 'en' ? 'Everything in Standard' : 'Tout dans Standard',
-        language === 'en' ? 'Real-time translations' : 'Traduction en temps réel',
-        language === 'en' ? 'Category training' : 'Entraînement par catégorie'
-      ]
-    }
-  ];
 
   const handleSubscribe = async () => {
     if (!user) {
@@ -73,14 +66,12 @@ export default function SubscriptionGate({ open, onOpenChange, requiredTier = 's
 
     setIsProcessing(true);
     try {
-      // Store the pending tier so the success page knows what to activate
       localStorage.setItem('pending_subscription_tier', selectedPlan);
 
       const premiumLink = 'https://buy.stripe.com/test_7sYfZ96hz9tI3t12A69AA01';
       const standardLink = 'https://buy.stripe.com/test_28EcMXbBT6hw3t1a2y9AA00';
       const baseUrl = selectedPlan === 'premium' ? premiumLink : standardLink;
 
-      // Append user info to the Stripe link
       const url = new URL(baseUrl);
       url.searchParams.set('client_reference_id', user.id);
       if (user.email) {
@@ -89,7 +80,7 @@ export default function SubscriptionGate({ open, onOpenChange, requiredTier = 's
 
       window.location.href = url.toString();
     } catch (err) {
-      toast.error(language === 'en' ? "Failed to activate subscription" : "Erreur lors de l'activation de l'abonnement");
+      toast.error("Erreur lors de l'activation de l'abonnement");
       console.error(err);
     } finally {
       setIsProcessing(false);
@@ -98,128 +89,140 @@ export default function SubscriptionGate({ open, onOpenChange, requiredTier = 's
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="p-0 sm:max-w-[850px] max-h-[90vh] overflow-y-auto bg-white border-0 grid grid-cols-1 md:grid-cols-[3fr_4fr] gap-0 rounded-3xl shadow-2xl">
+      <DialogContent className="p-0 sm:max-w-[920px] max-h-[90vh] overflow-y-auto bg-white border-0 grid grid-cols-1 md:grid-cols-[2fr_3fr] gap-0 rounded-3xl shadow-2xl">
 
-        {/* Mobile close button */}
+        {/* Close button */}
         <button
           onClick={() => onOpenChange(false)}
-          className="absolute top-3 right-3 z-50 h-8 w-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 transition-colors"
-          aria-label="Close"
+          className="absolute top-4 right-4 z-50 h-8 w-8 rounded-full bg-slate-100/80 hover:bg-slate-200 flex items-center justify-center text-slate-500 transition-colors"
+          aria-label="Fermer"
         >
           <X className="w-4 h-4" />
         </button>
 
-        {/* LEFT COLUMN - ILLUSTRATION (French Aesthetic) */}
-        <div className="relative hidden md:flex flex-col items-center justify-center p-8 overflow-hidden text-center bg-gradient-to-br from-blue-50 via-white to-red-50">
-          <div className="absolute inset-0 opacity-40 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-100 via-transparent to-transparent"></div>
-
-          {/* Abstract Eiffel Tower / French Flag Illustration */}
-          <div className="relative mb-8 h-32 w-32 animate-in fade-in slide-in-from-bottom-4 duration-700">
-            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-16 h-24 bg-slate-200" style={{ clipPath: 'polygon(50% 0%, 100% 100%, 0% 100%)' }}></div>
-            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-20 h-10 bg-slate-300"></div>
-
-            {/* Person */}
-            <div className="absolute bottom-4 right-4 z-10 w-12 h-16">
-              <div className="w-8 h-8 bg-amber-200 rounded-full mx-auto"></div>
-              <div className="w-12 h-12 bg-red-500 rounded-t-full mt-1 mx-auto" style={{ clipPath: 'polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%)' }}></div>
-            </div>
-
-            {/* Flag */}
-            <div className="absolute top-4 right-0 flex shadow-sm transform -rotate-6">
-              <div className="w-3 h-5 bg-blue-600"></div>
-              <div className="w-3 h-5 bg-white"></div>
-              <div className="w-3 h-5 bg-red-600"></div>
-              {/* Flagpole */}
-              <div className="w-0.5 h-12 bg-slate-800 absolute -left-0.5 top-0"></div>
-            </div>
-
-            <Sparkles className="w-6 h-6 text-yellow-500 absolute -left-2 top-4 animate-pulse" />
-            <Sparkles className="w-4 h-4 text-yellow-500 absolute right-8 top-0 animate-pulse delay-150" />
+        {/* ─── LEFT COLUMN — Illustration ─── */}
+        <div className="relative flex flex-col items-center justify-center p-6 md:p-10 overflow-hidden text-center bg-[#F7F9FC]">
+          {/* Decorative blurs */}
+          <div className="absolute inset-0 pointer-events-none overflow-hidden">
+            <div className="absolute -top-10 -left-10 w-40 h-40 rounded-full bg-[#0055A4]/8 blur-3xl" />
+            <div className="absolute -bottom-10 -right-10 w-40 h-40 rounded-full bg-[#EF4135]/8 blur-3xl" />
           </div>
 
-          <h2 className="z-10 mb-4 font-serif text-3xl font-bold text-slate-900 leading-tight">
+          {/* French-themed SVG illustration */}
+          <div className="relative mb-8" style={{ animation: 'subFloat 6s ease-in-out infinite' }}>
+            <svg width="180" height="220" viewBox="0 0 200 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+              {/* Eiffel Tower base */}
+              <path d="M60 220 L140 220 L130 180 L70 180 Z" fill="#CBD5E1" />
+              <path d="M75 180 L125 180 L115 120 L85 120 Z" fill="#94A3B8" />
+              <path d="M85 120 L115 120 L100 40 Z" fill="#64748B" />
+              {/* Person */}
+              <circle cx="130" cy="140" r="22" fill="#FFE4C4" />
+              <path d="M130 162 C112 162 103 215 103 215 L157 215 C157 215 148 162 130 162 Z" fill="#EF4135" opacity="0.85" />
+              {/* Flag */}
+              <path d="M150 140 L150 80 L190 80 L190 108 L150 108" fill="none" stroke="#334155" strokeWidth="2" />
+              <rect x="152" y="80" width="12" height="28" fill="#0055A4" />
+              <rect x="164" y="80" width="12" height="28" fill="#FFFFFF" />
+              <rect x="176" y="80" width="12" height="28" fill="#EF4135" />
+              {/* Stars */}
+              <path d="M30 60 L35 50 L40 60 L50 65 L40 70 L35 80 L30 70 L20 65 Z" fill="#FBBF24" opacity="0.8" style={{ animation: 'subPulse 3s ease-in-out infinite' }} />
+              <path d="M170 38 L173 33 L176 38 L181 40 L176 42 L173 47 L170 42 L165 40 Z" fill="#FBBF24" opacity="0.7" style={{ animation: 'subPulse 3s ease-in-out infinite 0.5s' }} />
+            </svg>
+          </div>
+
+          <h2 className="relative z-10 font-serif text-3xl font-bold text-slate-900 leading-tight mb-4">
             Maîtrisez votre destin.
           </h2>
-          <p className="z-10 mb-8 max-w-[260px] text-sm text-slate-600">
-            {language === 'en' ? 'Join thousands of future citizens preparing interactively for their French naturalization interview.' : 'Rejoignez des milliers de futurs citoyens se préparant de manière interactive à leur entretien de naturalisation.'}
+          <p className="relative z-10 text-sm text-slate-500 max-w-[260px] leading-relaxed mb-8">
+            Rejoignez des milliers de futurs citoyens se préparant de manière interactive à leur entretien de naturalisation.
           </p>
-
-          <div className="flex items-center gap-2 text-xs font-medium text-slate-500 z-10 bg-white/60 px-3 py-1.5 rounded-full shadow-sm">
+          <div className="relative z-10 inline-flex items-center gap-2 text-xs font-medium text-slate-500 bg-white/70 px-4 py-2 rounded-full shadow-sm border border-slate-100">
             <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-            {language === 'en' ? 'Trusted by 5,000+ candidates' : 'Approuvé par +5 000 candidats'}
+            Approuvé par +5 000 candidats
           </div>
         </div>
 
-        {/* RIGHT COLUMN - TIERS */}
+        {/* ─── RIGHT COLUMN — Tiers ─── */}
         <div className="relative p-6 md:p-8 flex flex-col bg-white">
-          <div className="flex justify-between items-start mb-6">
-            <div>
-              <h3 className="text-xl font-bold text-slate-900">{language === 'en' ? 'Choose your path' : 'Choisissez votre voie'}</h3>
-              <p className="text-sm text-slate-500">{language === 'en' ? 'Cancel anytime. No hidden fees.' : 'Annulation libre. Sans frais cachés.'}</p>
-            </div>
+          {/* Header */}
+          <div className="mb-6">
+            <h3 className="text-xl font-bold text-slate-900">Choisissez votre voie</h3>
+            <p className="text-sm text-slate-400 mt-0.5">Annulation libre. Sans frais cachés.</p>
           </div>
 
-          {/* Tier Cards Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-8">
+          {/* Tier Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
             {plans.map((plan) => {
-              const Icon = plan.icon;
               const isSelected = selectedPlan === plan.id;
-              const isSelectable = plan.id !== 'free'; // Force them to choose standard or premium in the modal
-
-              // Define colors based on the tier
-              const themeColor = plan.id === 'premium' ? 'red' : plan.id === 'standard' ? 'blue' : 'slate';
-              const borderClass = isSelected ? (themeColor === 'red' ? 'border-red-600 bg-red-50/30' : 'border-blue-600 bg-blue-50/30') : 'border-slate-100';
-              const hoverClass = isSelectable ? (themeColor === 'red' ? 'hover:border-red-200 cursor-pointer' : 'hover:border-blue-200 cursor-pointer') : 'opacity-70';
-              const textClass = themeColor === 'red' ? 'text-red-600' : themeColor === 'blue' ? 'text-blue-600' : 'text-slate-400';
-              const bgClass = themeColor === 'red' ? 'bg-red-600' : themeColor === 'blue' ? 'bg-blue-600' : 'bg-slate-400';
+              const isSelectable = plan.id !== 'free';
+              const accentColor = plan.id === 'premium' ? '#EF4135' : '#0055A4';
 
               return (
                 <div
                   key={plan.id}
-                  onClick={() => isSelectable && setSelectedPlan(plan.id as any)}
+                  onClick={() => isSelectable && setSelectedPlan(plan.id as 'standard' | 'premium')}
                   className={`
-                    relative flex flex-col p-4 rounded-xl border-2 transition-all duration-200 
-                    ${hoverClass} 
-                    ${borderClass}
+                    relative flex flex-col p-5 rounded-2xl border-2 transition-all duration-300
+                    ${isSelectable ? 'cursor-pointer hover:-translate-y-1 hover:shadow-md' : 'opacity-70'}
+                    ${isSelected ? 'shadow-lg' : 'border-slate-100 bg-white'}
                   `}
+                  style={isSelected ? {
+                    borderColor: accentColor,
+                    backgroundColor: `${accentColor}05`,
+                    boxShadow: `0 8px 24px ${accentColor}18`,
+                  } : {}}
                 >
+                  {/* Popular badge */}
                   {plan.popular && (
-                    <div className={`absolute -top-3 left-1/2 -translate-x-1/2 ${bgClass} text-white text-[10px] font-bold uppercase tracking-wider py-0.5 px-2 rounded-full whitespace-nowrap z-10`}>
-                      {language === 'en' ? 'Most Popular' : 'Plus Populaire'}
+                    <div
+                      className="absolute -top-3.5 left-1/2 -translate-x-1/2 text-white text-[10px] font-bold uppercase tracking-wider py-1 px-3 rounded-full whitespace-nowrap z-10"
+                      style={{ backgroundColor: accentColor }}
+                    >
+                      Plus Populaire
                     </div>
                   )}
 
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="font-serif font-bold text-slate-900">{plan.name}</span>
-                    <Icon className={`w-4 h-4 ${plan.id !== 'free' ? textClass : 'text-slate-400'}`} />
+                  {/* Top stripe for non-popular cards */}
+                  {!plan.popular && isSelectable && (
+                    <div className="absolute top-0 left-0 w-full h-1 rounded-t-2xl" style={{ backgroundColor: accentColor, opacity: 0.7 }} />
+                  )}
+
+                  {/* Name + icon */}
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="font-serif font-bold text-base text-slate-900">{plan.name}</span>
+                    <span className="text-lg">{plan.iconSymbol}</span>
                   </div>
 
-                  <div className="mb-4">
-                    <div className="flex items-baseline">
-                      <span className="text-2xl font-bold text-slate-900">{plan.price.split(' ')[0]}</span>
-                      {plan.price.split(' ')[1] && <span className="text-sm font-bold text-slate-900 ml-1">{plan.price.split(' ')[1]}</span>}
-                      <span className="text-xs text-slate-500 ml-1">{plan.period}</span>
+                  {/* Price */}
+                  <div className="mb-1">
+                    <div className="flex items-baseline gap-0.5">
+                      <span className="text-3xl font-extrabold text-slate-900">{plan.price}</span>
+                      <span className="text-base font-bold text-slate-900 ml-0.5">{plan.currency}</span>
+                      <span className="text-xs text-slate-400 ml-1">{plan.period}</span>
                     </div>
-                    {plan.period && (
-                      <div className="text-[10px] text-slate-500 mt-1">{language === 'en' ? 'Billed monthly' : 'Facturé mensuellement'}</div>
+                    {plan.periodLabel && (
+                      <p className="text-[10px] text-slate-400 mt-0.5">{plan.periodLabel}</p>
                     )}
                   </div>
 
-                  <ul className="flex-1 space-y-2 mb-4">
+                  {/* Features */}
+                  <ul className="flex-1 space-y-2 my-4">
                     {plan.features.map((feat, i) => (
-                      <li key={i} className="flex items-start gap-1.5 text-[10px] sm:text-xs text-slate-600">
-                        <Check className={`w-3 h-3 ${plan.id !== 'free' ? textClass : 'text-slate-400'} shrink-0 mt-0.5`} />
+                      <li key={i} className="flex items-start gap-2 text-xs text-slate-600">
+                        <Check className="w-3.5 h-3.5 shrink-0 mt-0.5" style={{ color: isSelectable ? accentColor : '#94A3B8' }} />
                         <span className="leading-tight">{feat}</span>
                       </li>
                     ))}
                   </ul>
 
-                  <div className="mt-auto flex justify-center">
-                    <div className={`
-                      w-4 h-4 rounded-full border-2 flex items-center justify-center transition-colors
-                      ${isSelected ? (themeColor === 'red' ? 'border-red-600' : 'border-blue-600') : 'border-slate-300'}
-                    `}>
-                      {isSelected && <div className={`w-2 h-2 rounded-full ${bgClass}`} />}
+                  {/* Radio dot */}
+                  <div className="mt-auto flex justify-center pt-2">
+                    <div
+                      className="w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all"
+                      style={{ borderColor: isSelected ? accentColor : '#CBD5E1' }}
+                    >
+                      {isSelected && (
+                        <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: accentColor }} />
+                      )}
                     </div>
                   </div>
                 </div>
@@ -227,28 +230,70 @@ export default function SubscriptionGate({ open, onOpenChange, requiredTier = 's
             })}
           </div>
 
-          <div className="mt-auto pt-4 flex flex-col items-center">
+          {/* Trial progress bar */}
+          <div className="mb-5">
+            <div className="flex justify-between text-xs font-medium text-slate-600 mb-1.5">
+              <span>Essai dès aujourd'hui</span>
+              <span className="font-bold" style={{ color: '#0055A4' }}>7 Jours Gratuits</span>
+            </div>
+            <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+              <div
+                className="h-2 rounded-full transition-all duration-1000"
+                style={{
+                  width: '15%',
+                  background: 'linear-gradient(90deg, #0055A4, #4D94E0)',
+                  boxShadow: '0 0 8px rgba(0,85,164,0.4)',
+                }}
+              />
+            </div>
+            <div className="flex justify-between text-[10px] text-slate-400 mt-1">
+              <span>Jour 1</span>
+              <span>Jour 7 (Premier prélèvement)</span>
+            </div>
+          </div>
 
+          {/* CTA Button */}
+          <div className="mt-auto">
             <Button
               disabled={isProcessing}
               onClick={handleSubscribe}
-              className={`w-full text-white rounded-full font-bold text-base py-6 shadow-lg transition-all hover:scale-[1.02]
-                ${selectedPlan === 'premium' ? 'bg-red-600 hover:bg-red-700 shadow-red-600/30' : 'bg-blue-600 hover:bg-blue-700 shadow-blue-600/30'}
-              `}
+              className="w-full text-white rounded-full font-bold text-base py-6 shadow-lg transition-all hover:scale-[1.02] active:scale-[0.98] bg-gradient-to-r from-[#0055A4] to-[#4D94E0] hover:from-[#003d7a] hover:to-[#3a7cc7]"
+              style={{
+                animation: 'subBtnPulse 2.5s infinite',
+              }}
             >
-              {isProcessing ? <Loader2 className="w-6 h-6 animate-spin" /> : (
+              {isProcessing ? (
+                <Loader2 className="w-6 h-6 animate-spin" />
+              ) : (
                 <>
-                  {language === 'en' ? 'Unlock Now' : 'Débloquer maintenant'}
+                  Débloquer maintenant
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </>
               )}
             </Button>
 
             <p className="text-[10px] text-slate-400 mt-4 text-center">
-              {language === 'en' ? 'Secure payment via Stripe.' : 'Paiement sécurisé via Stripe.'}
+              Paiement sécurisé via Stripe. En continuant, vous acceptez nos CGU.
             </p>
           </div>
         </div>
+
+        {/* Scoped animations */}
+        <style>{`
+          @keyframes subFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+          }
+          @keyframes subPulse {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+          }
+          @keyframes subBtnPulse {
+            0% { box-shadow: 0 0 0 0 rgba(0,85,164,0.5); }
+            70% { box-shadow: 0 0 0 10px rgba(0,85,164,0); }
+            100% { box-shadow: 0 0 0 0 rgba(0,85,164,0); }
+          }
+        `}</style>
       </DialogContent>
     </Dialog>
   );

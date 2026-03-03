@@ -275,21 +275,21 @@ export default function Quiz() {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       {/* ─── Exam Header ─── */}
-      <div className="sticky top-0 z-50 bg-primary text-white shadow-lg">
+      <div className="sticky top-0 z-50 bg-white border-b border-[#E6EAF0] shadow-sm">
         <div className="flex items-center justify-between py-2.5 px-3 sm:py-3 sm:px-4 md:px-6 max-w-7xl mx-auto w-full">
           <div className="flex items-center gap-2 sm:gap-3 min-w-0">
             <Logo size="sm" />
             <div className="min-w-0">
-              <p className="text-[11px] sm:text-xs font-bold uppercase tracking-widest text-white/80 truncate">GoCivique</p>
-              <p className="text-[10px] sm:text-xs text-white/50 truncate">{modeLabel}</p>
+              <p className="text-[11px] sm:text-xs font-bold uppercase tracking-widest text-[#0055A4] truncate">GoCivique</p>
+              <p className="text-[10px] sm:text-xs text-slate-400 truncate">{modeLabel}</p>
             </div>
           </div>
 
           {/* Timer — hidden on very small screens in demo mode, always visible in exam mode */}
           {effectiveMode === 'exam' && !isMiniQuiz && (
             <div className="text-center mx-2">
-              <p className="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-white/60 hidden sm:block">Temps restant</p>
-              <p className="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight tabular-nums">
+              <p className="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-slate-400 hidden sm:block">Temps restant</p>
+              <p className="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight tabular-nums text-slate-900">
                 {String(timerMinutes).padStart(2, '0')}:{String(timerSeconds).padStart(2, '0')}
               </p>
             </div>
@@ -299,7 +299,7 @@ export default function Quiz() {
             variant="secondary"
             size="sm"
             onClick={handleFinish}
-            className="gap-1.5 sm:gap-2 rounded-full bg-white text-primary font-bold hover:bg-white/90 px-3 sm:px-5 text-xs sm:text-sm shrink-0"
+            className="gap-1.5 sm:gap-2 rounded-full bg-[#0055A4] text-white font-bold hover:bg-[#1B6ED6] px-3 sm:px-5 text-xs sm:text-sm shrink-0"
           >
             <span className="hidden sm:inline">Terminer l'examen</span>
             <span className="sm:hidden">Terminer</span>

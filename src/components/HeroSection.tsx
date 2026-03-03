@@ -21,7 +21,7 @@ export default function HeroSection() {
   }, []);
 
   const handleStart = () => {
-    if (!user) { navigate('/quiz?mode=demo'); return; }
+    if (!user) { navigate('/auth'); return; }
     if (profileLoading) return;
     if (!profile?.onboarding_completed) { navigate('/onboarding'); return; }
     navigate('/learn');
@@ -141,17 +141,25 @@ export default function HeroSection() {
 
         {/* CTA */}
         <div
-          className={`transition-all duration-700 ${loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+          className={`flex flex-col items-center gap-3 transition-all duration-700 ${loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
           style={{ transitionDelay: '700ms' }}
         >
           <Button
             size="lg"
             variant="gradient"
-            className={`gap-2 px-6 sm:px-8 text-sm sm:text-base font-semibold ${loaded ? '' : ''}`}
+            className="gap-2 px-6 sm:px-8 text-sm sm:text-base font-semibold"
             onClick={handleStart}
           >
             {t('hero.startLearning')}
             <ArrowRight className="h-4 w-4" />
+          </Button>
+          <Button
+            size="lg"
+            variant="outline"
+            className="gap-2 px-6 sm:px-8 text-sm sm:text-base font-medium border-[#0055A4]/20 text-[#0055A4] hover:bg-[#0055A4]/5"
+            onClick={() => navigate('/quiz?mode=demo')}
+          >
+            Examen Démo
           </Button>
         </div>
       </div>
