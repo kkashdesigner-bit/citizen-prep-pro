@@ -280,7 +280,6 @@ export default function Quiz() {
           <div className="flex items-center gap-2 sm:gap-3 min-w-0">
             <Logo size="sm" />
             <div className="min-w-0">
-              <p className="text-[11px] sm:text-xs font-bold uppercase tracking-widest text-[#0055A4] truncate">GoCivique</p>
               <p className="text-[10px] sm:text-xs text-slate-400 truncate">{modeLabel}</p>
             </div>
           </div>

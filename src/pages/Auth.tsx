@@ -121,7 +121,6 @@ export default function Auth() {
         <div className="relative z-10">
           <div className="flex items-center gap-3">
             <Logo size="sm" />
-            <span className="text-white font-bold text-xl tracking-tight">GoCivique</span>
           </div>
         </div>
 
@@ -198,7 +197,6 @@ export default function Auth() {
         <div className="lg:hidden flex items-center justify-between p-4 border-b border-[#E6EAF0] bg-white">
           <div className="flex items-center gap-3">
             <Logo size="sm" />
-            <span className="text-[#1A1A1A] font-bold text-lg">GoCivique</span>
           </div>
           <div className="flex -space-x-2">
             {AVATARS.slice(0, 4).map((src, i) => (
