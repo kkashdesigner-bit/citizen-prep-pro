@@ -12,6 +12,7 @@ import { Target, Flag, Play, Landmark, FileText, HeartHandshake, History, Compon
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import MiniatureIcon from '@/components/MiniatureIcon';
+import { motion } from 'framer-motion';
 
 export interface ExamHistoryEntry {
   date: string;
@@ -36,6 +37,7 @@ export default function LearningDashboard() {
 
   const [examHistory, setExamHistory] = useState<ExamHistoryEntry[]>([]);
   const [displayName, setDisplayName] = useState('');
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [showGate, setShowGate] = useState(false);
   const [gateTier, setGateTier] = useState<'standard' | 'premium'>('standard');
@@ -54,11 +56,12 @@ export default function LearningDashboard() {
     const fetchData = async () => {
       const { data: profileRes } = await supabase
         .from('profiles')
-        .select('display_name, email, exam_history, total_questions_seen')
+        .select('display_name, email, exam_history, total_questions_seen, avatar_url')
         .eq('id', user.id)
         .maybeSingle();
 
       setDisplayName(profileRes?.display_name || profileRes?.email || '');
+      setAvatarUrl(profileRes?.avatar_url || null);
       const history = profileRes?.exam_history;
       setExamHistory(Array.isArray(history) ? (history as unknown as ExamHistoryEntry[]) : []);
       setLoading(false);
@@ -127,15 +130,32 @@ export default function LearningDashboard() {
         <div className="w-full max-w-7xl px-4 md:px-8 py-8 flex flex-col xl:flex-row gap-8">
 
           {/* Center Column: Main Content */}
-          <div className="flex-1 max-w-4xl animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={{
+              hidden: { opacity: 0 },
+              visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
+            }}
+            className="flex-1 max-w-4xl"
+          >
             {/* Header */}
-            <div className="mb-8">
-              <h1 className="text-3xl md:text-4xl font-bold text-[#1A1A1A] mb-2 font-sans tracking-tight">Bonjour, {firstName}</h1>
-              <p className="text-[#1A1A1A]/60 text-lg">Continuez votre parcours vers la citoyenneté française</p>
-            </div>
+            <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }} className="mb-8 flex items-center gap-4">
+              {avatarUrl && (
+                <img
+                  src={avatarUrl}
+                  alt="Avatar"
+                  className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl border-2 border-[#E6EAF0] object-cover shadow-sm flex-shrink-0"
+                />
+              )}
+              <div>
+                <h1 className="text-3xl md:text-4xl font-bold text-[#1A1A1A] mb-1 font-sans tracking-tight">Bonjour, {firstName}</h1>
+                <p className="text-[#1A1A1A]/60 text-base sm:text-lg">Continuez votre parcours vers la citoyenneté française</p>
+              </div>
+            </motion.div>
 
             {/* Persona Block */}
-            <div className="bg-[#F5F7FA] rounded-2xl border border-[#E6EAF0] p-6 mb-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }} className="bg-[#F5F7FA] rounded-2xl border border-[#E6EAF0] p-6 mb-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
               <div className="flex items-start gap-4">
                 <div className="mt-1 h-10 w-10 flex-shrink-0 bg-white rounded-xl shadow-sm border border-[#E6EAF0] flex items-center justify-center">
                   <Target className="h-5 w-5 text-[#0055A4]" />
@@ -152,13 +172,15 @@ export default function LearningDashboard() {
               >
                 Modifier mon objectif
               </Button>
-            </div>
+            </motion.div>
 
             {/* Parcours Guided Path Component */}
-            <ParcoursCard currentClassNumber={1} totalClasses={100} />
+            <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}>
+              <ParcoursCard currentClassNumber={1} totalClasses={100} />
+            </motion.div>
 
             {/* Recommended Exam Card */}
-            <div className="mb-10 group bg-white rounded-2xl border-[2px] border-[#0055A4] p-6 md:p-8 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 relative overflow-hidden">
+            <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }} className="mb-10 group bg-white rounded-2xl border-[2px] border-[#0055A4] p-6 md:p-8 shadow-[0_4px_20px_rgba(0,85,164,0.08)] hover:shadow-[0_8px_30px_rgba(0,85,164,0.12)] transition-all duration-300 hover:-translate-y-1 relative overflow-hidden">
               <div className="absolute top-0 right-0 p-4">
                 <span className="bg-[#0055A4]/10 text-[#0055A4] text-xs font-bold px-3 py-1 rounded-full uppercase tracking-widest">Recommandé</span>
               </div>
@@ -186,23 +208,24 @@ export default function LearningDashboard() {
               <Button
                 onClick={() => handleStartExam()}
                 size="lg"
-                className="w-full sm:w-auto bg-[#0055A4] hover:bg-[#1B6ED6] text-white font-bold rounded-xl h-12 px-8 shadow-sm hover:scale-[1.02] transition-transform"
+                className="w-full sm:w-auto bg-[#0055A4] hover:bg-[#1B6ED6] text-white font-bold rounded-xl h-12 px-8 shadow-[0_4px_14px_rgba(0,85,164,0.3)] hover:shadow-[0_6px_20px_rgba(0,85,164,0.4)] hover:-translate-y-0.5 transition-all"
               >
                 Commencer l'examen complet
               </Button>
-            </div>
+            </motion.div>
 
             {/* Category Exam Grid */}
-            <div className="mb-6">
+            <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }} className="mb-6">
               <h3 className="text-xl font-bold text-[#1A1A1A] mb-4">Entraînement par catégorie</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
                 {Object.entries(CATEGORY_MAP).map(([cat, info], idx) => {
                   return (
-                    <div
+                    <motion.div
                       key={cat}
-                      className="bg-white rounded-2xl border border-[#E6EAF0] p-5 shadow-[0_2px_6px_rgba(0,0,0,0.02)] hover:shadow-[0_8px_24px_rgba(0,85,164,0.08)] transition-all duration-300 hover:-translate-y-1 flex flex-col h-full animate-in fade-in slide-in-from-bottom-4"
-                      style={{ animationDelay: `${idx * 100}ms` }}
+                      variants={{ hidden: { opacity: 0, scale: 0.95 }, visible: { opacity: 1, scale: 1 } }}
+                      whileHover={{ y: -4, boxShadow: "0 10px 30px rgba(0,85,164,0.1)" }}
+                      className="bg-white rounded-2xl border border-[#E6EAF0] p-5 shadow-[0_2px_10px_rgba(0,0,0,0.04)] flex flex-col h-full bg-gradient-to-br hover:from-white hover:to-[#0055A4]/[0.02] transition-colors"
                     >
                       <div className="flex items-start justify-between mb-4">
                         <MiniatureIcon
@@ -210,7 +233,7 @@ export default function LearningDashboard() {
                           gradient={info.gradient}
                           shadow={info.shadow}
                           size="sm"
-                          delay={idx * 0.15}
+                          delay={idx * 0.1}
                         />
                         {tier !== 'premium' && (
                           <span className="bg-[#F59E0B]/10 text-[#F59E0B] text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
@@ -234,19 +257,19 @@ export default function LearningDashboard() {
                         <Button
                           onClick={() => handleStartExam(cat)}
                           variant="outline"
-                          className="w-full bg-white border-[#E6EAF0] hover:border-[#0055A4] text-[#1A1A1A] hover:text-[#0055A4] hover:bg-[#F5F7FA] font-bold rounded-xl h-10 shadow-sm hover:scale-[1.02] transition-transform"
+                          className="w-full bg-white border-[#E6EAF0] hover:border-[#0055A4] text-[#1A1A1A] hover:text-[#0055A4] hover:bg-[#0055A4]/5 font-bold rounded-xl h-10 shadow-sm transition-all"
                         >
                           S'entraîner
                         </Button>
                       </div>
-                    </div>
+                    </motion.div>
                   );
                 })}
 
               </div>
-            </div>
+            </motion.div>
 
-          </div>
+          </motion.div>
 
           {/* Right Column: Progress & Premium */}
           <DashboardRightSidebar

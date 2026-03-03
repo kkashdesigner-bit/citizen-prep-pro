@@ -1,6 +1,7 @@
 import { Target, Flame, FileText, ArrowRight, Globe } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ExamHistoryEntry } from '@/pages/LearningDashboard';
+import { motion } from 'framer-motion';
 
 interface RightSidebarProps {
     score: number;
@@ -14,10 +15,18 @@ export default function DashboardRightSidebar({ score, streak, examHistory, tier
     const recentExams = examHistory.slice(0, 3);
 
     return (
-        <aside className="w-full xl:w-[320px] flex-shrink-0 flex flex-col gap-6">
+        <motion.aside
+            initial="hidden"
+            animate="visible"
+            variants={{
+                hidden: { opacity: 0 },
+                visible: { opacity: 1, transition: { staggerChildren: 0.15, delayChildren: 0.2 } }
+            }}
+            className="w-full xl:w-[320px] flex-shrink-0 flex flex-col gap-6"
+        >
 
             {/* Progress Card */}
-            <div className="bg-white rounded-2xl border border-[#E6EAF0] p-6 shadow-sm">
+            <motion.div variants={{ hidden: { opacity: 0, x: 20 }, visible: { opacity: 1, x: 0 } }} className="bg-white rounded-2xl border border-[#E6EAF0] p-6 shadow-sm">
                 <h3 className="font-bold text-[#1A1A1A] mb-6 flex items-center justify-between">
                     Aperçu de progression
                     <Target className="h-4 w-4 text-[#1A1A1A]/50" />
@@ -47,8 +56,8 @@ export default function DashboardRightSidebar({ score, streak, examHistory, tier
                 </div>
 
                 {/* Streak */}
-                <div className="flex items-center gap-4 bg-[#F5F7FA] p-4 rounded-xl mb-6">
-                    <div className="h-10 w-10 bg-white rounded-lg shadow-sm flex items-center justify-center border border-[#E6EAF0]">
+                <div className="flex items-center gap-4 bg-[#F5F7FA] p-4 rounded-xl mb-6 shadow-inner border border-[#E6EAF0]/50">
+                    <div className="h-10 w-10 bg-white rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.04)] flex items-center justify-center border border-[#E6EAF0]">
                         <Flame className={`h-5 w-5 ${streak > 0 ? 'text-[#EF4135]' : 'text-[#1A1A1A]/30'}`} />
                     </div>
                     <div>
@@ -83,28 +92,29 @@ export default function DashboardRightSidebar({ score, streak, examHistory, tier
                         <p className="text-sm text-[#1A1A1A]/50 text-center py-4 bg-[#F5F7FA] rounded-xl border border-[#E6EAF0] border-dashed">Aucun examen récent</p>
                     )}
                 </div>
-            </div>
+            </motion.div>
 
             {/* Premium Upsell */}
             {tier !== 'premium' && (
-                <div className="bg-gradient-to-br from-[#0055A4] to-[#1B6ED6] rounded-2xl p-6 shadow-md text-white">
-                    <div className="flex items-center gap-2 mb-4">
+                <motion.div variants={{ hidden: { opacity: 0, x: 20 }, visible: { opacity: 1, x: 0 } }} className="bg-gradient-to-br from-[#0055A4] to-[#1B6ED6] rounded-2xl p-6 shadow-md text-white relative overflow-hidden group hover:shadow-lg transition-all">
+                    <div className="absolute -right-4 -top-4 w-24 h-24 bg-white/10 rounded-full blur-2xl group-hover:bg-white/20 transition-all" />
+                    <div className="flex items-center gap-2 mb-4 relative z-10">
                         <Globe className="h-6 w-6 text-white/90" />
-                        <h3 className="font-bold text-lg">Passez au niveau supérieur</h3>
+                        <h3 className="font-bold text-lg">Passez au supérieur</h3>
                     </div>
-                    <p className="text-sm text-white/90 mb-6 font-medium leading-relaxed">
-                        Débloquez la traduction instantanée des questions compliquées et la pratique ciblée par catégories.
+                    <p className="text-sm text-white/90 mb-6 font-medium leading-relaxed relative z-10">
+                        Débloquez la traduction instantanée et la pratique par catégories ciblées.
                     </p>
                     <Button
                         onClick={onUpgrade}
-                        className="w-full bg-white text-[#0055A4] hover:bg-[#F5F7FA] font-bold border-0 shadow-sm rounded-xl py-6"
+                        className="w-full bg-white text-[#0055A4] hover:bg-[#F5F7FA] font-bold border-0 shadow-sm rounded-xl py-6 relative z-10"
                     >
                         Débloquer Premium
                         <ArrowRight className="h-4 w-4 ml-2" />
                     </Button>
-                </div>
+                </motion.div>
             )}
 
-        </aside>
+        </motion.aside>
     );
 }
