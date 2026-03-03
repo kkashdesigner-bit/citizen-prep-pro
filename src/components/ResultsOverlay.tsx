@@ -63,164 +63,186 @@ export default function ResultsOverlay({ result, errors, isDemo, onRetry, onHome
 
     return (
         <>
+            {/* Backdrop */}
             <div
-                className="fixed inset-0 z-[100] flex flex-col overflow-y-auto"
-                style={{
-                    background: 'radial-gradient(circle at 50% 50%, #fdfdfd 0%, #f1f5f9 100%)',
-                    animation: 'overlayIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards',
-                }}
-            >
-                {/* Floating background shapes */}
-                <FloatingShapes />
+                className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm"
+                style={{ animation: 'overlayIn 0.3s ease forwards' }}
+                onClick={onHome}
+            />
 
-                <main className="flex-1 flex flex-col items-center justify-start relative z-10 px-4 py-8 md:py-12 max-w-2xl mx-auto w-full">
-
-                    {/* ─── Hero Banner ─── */}
-                    <HeroBanner passed={result.passed} scorePercent={scorePercent} />
-
-                    {/* ─── Score + Time Cards ─── */}
-                    <div className="grid grid-cols-2 gap-4 md:gap-6 w-full mb-8">
-                        <StatCard
-                            icon={<BarChart3 className="h-5 w-5 md:h-6 md:w-6 text-[#0055A4]" />}
-                            value={`${scorePercent}%`}
-                            label={`Score ${result.score}/${result.totalQuestions}`}
-                            bgClass="bg-blue-50"
-                            delay={100}
-                            animatedValue={scorePercent}
-                        />
-                        <StatCard
-                            icon={<Clock className="h-5 w-5 md:h-6 md:w-6 text-[#EF4135]" />}
-                            value={`${minutes}:${String(seconds).padStart(2, '0')}`}
-                            label={t('results.time') || 'Temps'}
-                            bgClass="bg-red-50"
-                            delay={200}
-                        />
-                    </div>
-
-                    {/* ─── Category Breakdown ─── */}
-                    <CategoryBreakdown
-                        result={result}
-                        language={language}
-                        onReviewErrors={handleToggleErrors}
-                        showErrors={showErrors}
-                        hasErrors={errors.length > 0}
-                    />
-
-                    {/* ─── Action Buttons ─── */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full mb-6"
-                        style={{ animation: 'slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards', animationDelay: '0.4s', opacity: 0 }}
+            {/* Popup scroll container */}
+            <div className="fixed inset-0 z-[101] flex items-start justify-center overflow-y-auto py-6 px-4 sm:py-10">
+                <div
+                    className="relative w-full max-w-2xl rounded-3xl shadow-2xl"
+                    style={{
+                        background: 'radial-gradient(circle at 50% 50%, #fdfdfd 0%, #f1f5f9 100%)',
+                        animation: 'overlayIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                    }}
+                    onClick={(e) => e.stopPropagation()}
+                >
+                    {/* X Close Button */}
+                    <button
+                        onClick={onHome}
+                        className="absolute top-4 right-4 z-20 h-10 w-10 rounded-full bg-white/80 hover:bg-white border border-slate-200 shadow-md flex items-center justify-center text-slate-500 hover:text-slate-800 transition-all hover:scale-105"
+                        aria-label="Fermer"
                     >
-                        <button
-                            onClick={onRetry}
-                            className="group w-full p-4 md:p-5 rounded-2xl transition-all flex items-center justify-center gap-3 text-slate-500 hover:text-[#0055A4]"
-                            style={{
-                                background: 'linear-gradient(145deg, #ffffff, #f0f4f8)',
-                                boxShadow: '8px 8px 16px #d1d9e6, -8px -8px 16px #ffffff',
-                                border: '1px solid rgba(255, 255, 255, 0.5)',
-                            }}
-                        >
-                            <RotateCcw className="h-5 w-5 group-hover:rotate-[-120deg] transition-transform duration-500" />
-                            <span className="font-bold text-sm uppercase tracking-widest">{t('results.retry') || "Refaire l'examen"}</span>
-                        </button>
-                        <button
-                            onClick={onHome}
-                            className="group w-full p-4 md:p-5 rounded-2xl transition-all flex items-center justify-center gap-3 text-slate-500 hover:text-[#0055A4]"
-                            style={{
-                                background: 'linear-gradient(145deg, #ffffff, #f0f4f8)',
-                                boxShadow: '8px 8px 16px #d1d9e6, -8px -8px 16px #ffffff',
-                                border: '1px solid rgba(255, 255, 255, 0.5)',
-                            }}
-                        >
-                            <LayoutDashboard className="h-5 w-5 group-hover:scale-110 transition-transform" />
-                            <span className="font-bold text-sm uppercase tracking-widest">{t('results.home') || 'Tableau de bord'}</span>
-                        </button>
+                        <X className="h-5 w-5" strokeWidth={2.5} />
+                    </button>
+
+                    {/* Floating background shapes */}
+                    <div className="absolute inset-0 overflow-hidden rounded-3xl pointer-events-none">
+                        <FloatingShapes />
                     </div>
 
-                    {/* ─── Subscription CTA ─── */}
-                    <div className="w-full mb-5" style={{ animation: 'slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards', animationDelay: '0.45s', opacity: 0 }}>
-                        <button
-                            onClick={() => setShowGate(true)}
-                            className="w-full p-4 md:p-5 rounded-2xl transition-all flex items-center justify-center gap-3 text-amber-600 hover:text-amber-700"
-                            style={{
-                                background: 'linear-gradient(145deg, #fffbeb, #fef3c7)',
-                                boxShadow: '8px 8px 16px #d1d9e6, -8px -8px 16px #ffffff',
-                                border: '1px solid rgba(251, 191, 36, 0.3)',
-                            }}
-                        >
-                            <Sparkles className="h-5 w-5" />
-                            <span className="font-bold text-sm uppercase tracking-widest">Accès complet — Débloquer</span>
-                        </button>
-                    </div>
+                    <main className="relative z-10 px-5 py-8 md:px-8 md:py-10">
 
-                    {/* ─── Error Review Section ─── */}
-                    {showErrors && errors.length > 0 && (
-                        <div ref={errorsRef} className="w-full mb-8" style={{ animation: 'slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards' }}>
-                            <div
-                                className="rounded-[2rem] p-6 md:p-10 w-full"
+                        {/* ─── Hero Banner ─── */}
+                        <HeroBanner passed={result.passed} scorePercent={scorePercent} />
+
+                        {/* ─── Score + Time Cards ─── */}
+                        <div className="grid grid-cols-2 gap-4 md:gap-6 w-full mb-8">
+                            <StatCard
+                                icon={<BarChart3 className="h-5 w-5 md:h-6 md:w-6 text-[#0055A4]" />}
+                                value={`${scorePercent}%`}
+                                label={`Score ${result.score}/${result.totalQuestions}`}
+                                bgClass="bg-blue-50"
+                                delay={100}
+                                animatedValue={scorePercent}
+                            />
+                            <StatCard
+                                icon={<Clock className="h-5 w-5 md:h-6 md:w-6 text-[#EF4135]" />}
+                                value={`${minutes}:${String(seconds).padStart(2, '0')}`}
+                                label={t('results.time') || 'Temps'}
+                                bgClass="bg-red-50"
+                                delay={200}
+                            />
+                        </div>
+
+                        {/* ─── Category Breakdown ─── */}
+                        <CategoryBreakdown
+                            result={result}
+                            language={language}
+                            onReviewErrors={handleToggleErrors}
+                            showErrors={showErrors}
+                            hasErrors={errors.length > 0}
+                        />
+
+                        {/* ─── Action Buttons ─── */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full mb-6"
+                            style={{ animation: 'slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards', animationDelay: '0.4s', opacity: 0 }}
+                        >
+                            <button
+                                onClick={onRetry}
+                                className="group w-full p-4 md:p-5 rounded-2xl transition-all flex items-center justify-center gap-3 text-slate-500 hover:text-[#0055A4]"
                                 style={{
                                     background: 'linear-gradient(145deg, #ffffff, #f0f4f8)',
                                     boxShadow: '8px 8px 16px #d1d9e6, -8px -8px 16px #ffffff',
                                     border: '1px solid rgba(255, 255, 255, 0.5)',
                                 }}
                             >
-                                <h2 className="text-xl font-extrabold text-gray-900 mb-6 flex items-center gap-2">
-                                    <X className="h-5 w-5 text-[#EF4135]" />
-                                    Vos erreurs ({errors.length})
-                                </h2>
-                                <div className="space-y-6">
-                                    {errors.map((err, idx) => {
-                                        const errCategoryName = CATEGORY_LABELS[language as keyof typeof CATEGORY_LABELS]?.[err.category as keyof typeof CATEGORY_LABELS.fr] || err.category;
-                                        return (
-                                            <div key={idx} className="rounded-2xl bg-white p-5 border border-slate-100 shadow-sm">
-                                                <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">{errCategoryName}</p>
-                                                <p className="font-bold text-gray-900 mb-4">{err.questionText}</p>
-                                                <div className="space-y-2 mb-4">
-                                                    {err.options.map((opt, oi) => {
-                                                        const isSelected = opt.trim() === err.selectedAnswer.trim();
-                                                        const isCorrect = opt.trim() === err.correctAnswer.trim();
-                                                        let cls = 'border-slate-100 text-slate-500';
-                                                        if (isCorrect) cls = 'border-green-200 bg-green-50 text-green-700';
-                                                        else if (isSelected) cls = 'border-red-200 bg-red-50 text-red-600';
-                                                        return (
-                                                            <div key={oi} className={`flex items-center gap-3 p-3 rounded-xl border text-sm font-medium ${cls}`}>
-                                                                <span className="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-xs font-bold shrink-0">
-                                                                    {String.fromCharCode(65 + oi)}
-                                                                </span>
-                                                                {opt}
-                                                                {isCorrect && <Check className="h-4 w-4 ml-auto text-green-600" />}
-                                                                {isSelected && !isCorrect && <X className="h-4 w-4 ml-auto text-red-500" />}
-                                                            </div>
-                                                        );
-                                                    })}
+                                <RotateCcw className="h-5 w-5 group-hover:rotate-[-120deg] transition-transform duration-500" />
+                                <span className="font-bold text-sm uppercase tracking-widest">{t('results.retry') || "Refaire l'examen"}</span>
+                            </button>
+                            <button
+                                onClick={onHome}
+                                className="group w-full p-4 md:p-5 rounded-2xl transition-all flex items-center justify-center gap-3 text-slate-500 hover:text-[#0055A4]"
+                                style={{
+                                    background: 'linear-gradient(145deg, #ffffff, #f0f4f8)',
+                                    boxShadow: '8px 8px 16px #d1d9e6, -8px -8px 16px #ffffff',
+                                    border: '1px solid rgba(255, 255, 255, 0.5)',
+                                }}
+                            >
+                                <LayoutDashboard className="h-5 w-5 group-hover:scale-110 transition-transform" />
+                                <span className="font-bold text-sm uppercase tracking-widest">{t('results.home') || 'Tableau de bord'}</span>
+                            </button>
+                        </div>
+
+                        {/* ─── Subscription CTA ─── */}
+                        <div className="w-full mb-5" style={{ animation: 'slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards', animationDelay: '0.45s', opacity: 0 }}>
+                            <button
+                                onClick={() => setShowGate(true)}
+                                className="w-full p-4 md:p-5 rounded-2xl transition-all flex items-center justify-center gap-3 text-amber-600 hover:text-amber-700"
+                                style={{
+                                    background: 'linear-gradient(145deg, #fffbeb, #fef3c7)',
+                                    boxShadow: '8px 8px 16px #d1d9e6, -8px -8px 16px #ffffff',
+                                    border: '1px solid rgba(251, 191, 36, 0.3)',
+                                }}
+                            >
+                                <Sparkles className="h-5 w-5" />
+                                <span className="font-bold text-sm uppercase tracking-widest">Accès complet — Débloquer</span>
+                            </button>
+                        </div>
+
+                        {/* ─── Error Review Section ─── */}
+                        {showErrors && errors.length > 0 && (
+                            <div ref={errorsRef} className="w-full mb-8" style={{ animation: 'slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards' }}>
+                                <div
+                                    className="rounded-[2rem] p-6 md:p-10 w-full"
+                                    style={{
+                                        background: 'linear-gradient(145deg, #ffffff, #f0f4f8)',
+                                        boxShadow: '8px 8px 16px #d1d9e6, -8px -8px 16px #ffffff',
+                                        border: '1px solid rgba(255, 255, 255, 0.5)',
+                                    }}
+                                >
+                                    <h2 className="text-xl font-extrabold text-gray-900 mb-6 flex items-center gap-2">
+                                        <X className="h-5 w-5 text-[#EF4135]" />
+                                        Vos erreurs ({errors.length})
+                                    </h2>
+                                    <div className="space-y-6">
+                                        {errors.map((err, idx) => {
+                                            const errCategoryName = CATEGORY_LABELS[language as keyof typeof CATEGORY_LABELS]?.[err.category as keyof typeof CATEGORY_LABELS.fr] || err.category;
+                                            return (
+                                                <div key={idx} className="rounded-2xl bg-white p-5 border border-slate-100 shadow-sm">
+                                                    <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">{errCategoryName}</p>
+                                                    <p className="font-bold text-gray-900 mb-4">{err.questionText}</p>
+                                                    <div className="space-y-2 mb-4">
+                                                        {err.options.map((opt, oi) => {
+                                                            const isSelected = opt.trim() === err.selectedAnswer.trim();
+                                                            const isCorrect = opt.trim() === err.correctAnswer.trim();
+                                                            let cls = 'border-slate-100 text-slate-500';
+                                                            if (isCorrect) cls = 'border-green-200 bg-green-50 text-green-700';
+                                                            else if (isSelected) cls = 'border-red-200 bg-red-50 text-red-600';
+                                                            return (
+                                                                <div key={oi} className={`flex items-center gap-3 p-3 rounded-xl border text-sm font-medium ${cls}`}>
+                                                                    <span className="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-xs font-bold shrink-0">
+                                                                        {String.fromCharCode(65 + oi)}
+                                                                    </span>
+                                                                    {opt}
+                                                                    {isCorrect && <Check className="h-4 w-4 ml-auto text-green-600" />}
+                                                                    {isSelected && !isCorrect && <X className="h-4 w-4 ml-auto text-red-500" />}
+                                                                </div>
+                                                            );
+                                                        })}
+                                                    </div>
+                                                    {err.explanation && (
+                                                        <p className="text-sm text-slate-600 bg-blue-50 rounded-xl p-3 border border-blue-100">
+                                                            💡 {err.explanation}
+                                                        </p>
+                                                    )}
                                                 </div>
-                                                {err.explanation && (
-                                                    <p className="text-sm text-slate-600 bg-blue-50 rounded-xl p-3 border border-blue-100">
-                                                        💡 {err.explanation}
-                                                    </p>
-                                                )}
-                                            </div>
-                                        );
-                                    })}
+                                            );
+                                        })}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    )}
+                        )}
 
-                    {/* ─── Next Exam CTA ─── */}
-                    <div className="w-full pb-8" style={{ animation: 'slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards', animationDelay: '0.5s', opacity: 0 }}>
-                        <button
-                            onClick={onRetry}
-                            className="w-full text-white p-5 md:p-6 rounded-2xl transition-all flex items-center justify-center gap-4 transform hover:-translate-y-1 active:scale-[0.98] group"
-                            style={{
-                                background: 'linear-gradient(145deg, #005dc3, #004d94)',
-                                boxShadow: '4px 4px 10px rgba(0, 85, 164, 0.3), inset 0 2px 4px rgba(255,255,255,0.3)',
-                            }}
-                        >
-                            <span className="font-bold text-lg md:text-xl tracking-wide">Prochain Examen</span>
-                            <ArrowRight className="h-6 w-6 group-hover:translate-x-2 transition-transform" />
-                        </button>
-                    </div>
-                </main>
+                        {/* ─── Next Exam CTA ─── */}
+                        <div className="w-full pb-4" style={{ animation: 'slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards', animationDelay: '0.5s', opacity: 0 }}>
+                            <button
+                                onClick={onRetry}
+                                className="w-full text-white p-5 md:p-6 rounded-2xl transition-all flex items-center justify-center gap-4 transform hover:-translate-y-1 active:scale-[0.98] group"
+                                style={{
+                                    background: 'linear-gradient(145deg, #005dc3, #004d94)',
+                                    boxShadow: '4px 4px 10px rgba(0, 85, 164, 0.3), inset 0 2px 4px rgba(255,255,255,0.3)',
+                                }}
+                            >
+                                <span className="font-bold text-lg md:text-xl tracking-wide">Prochain Examen</span>
+                                <ArrowRight className="h-6 w-6 group-hover:translate-x-2 transition-transform" />
+                            </button>
+                        </div>
+                    </main>
+                </div>
             </div>
 
             <SubscriptionGate open={showGate} onOpenChange={setShowGate} />
@@ -266,14 +288,14 @@ function FloatingShapes() {
     return (
         <>
             <div
-                className="fixed top-[10%] left-[5%] w-64 h-64 rounded-full opacity-20 pointer-events-none"
+                className="absolute top-[10%] left-[5%] w-64 h-64 rounded-full opacity-20 pointer-events-none"
                 style={{
                     background: 'radial-gradient(circle at 30% 30%, #0055A4 0%, rgba(0,0,0,0.1) 100%)',
                     animation: 'float 8s ease-in-out infinite',
                 }}
             />
             <div
-                className="fixed top-[40%] right-[-5%] w-80 h-80 opacity-15 rotate-12 pointer-events-none"
+                className="absolute top-[40%] right-[-5%] w-80 h-80 opacity-15 rotate-12 pointer-events-none"
                 style={{
                     borderRadius: '20%',
                     background: 'linear-gradient(135deg, #EF4135 0%, rgba(0,0,0,0.05) 100%)',
@@ -281,7 +303,7 @@ function FloatingShapes() {
                 }}
             />
             <div
-                className="fixed bottom-[-10%] left-[20%] w-48 h-48 rounded-full opacity-10 pointer-events-none"
+                className="absolute bottom-[-10%] left-[20%] w-48 h-48 rounded-full opacity-10 pointer-events-none"
                 style={{
                     background: 'radial-gradient(circle at 30% 30%, #0055A4 0%, rgba(0,0,0,0.1) 100%)',
                     animation: 'float 8s ease-in-out infinite',

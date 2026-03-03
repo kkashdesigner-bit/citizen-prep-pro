@@ -1,5 +1,4 @@
 import { cn } from '@/lib/utils';
-import logoImg from '@/assets/logo.svg';
 
 interface LogoProps {
   size?: 'sm' | 'md' | 'lg';
@@ -16,9 +15,9 @@ export default function Logo({ size = 'sm', className }: LogoProps) {
   return (
     <div className={cn('flex items-center justify-center', className)}>
       <img
-        src={logoImg}
-        alt="GoCivique Logo"
-        className={cn('object-contain rounded-md', sizeClasses[size])}
+        src="/LOGO.svg"
+        alt="GoCivique"
+        className={cn('object-contain', sizeClasses[size])}
       />
     </div>
   );

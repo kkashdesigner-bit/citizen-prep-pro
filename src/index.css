@@ -7,8 +7,7 @@
 
 @layer base {
 
-  :root,
-  .dark {
+  :root {
     --background: 0 0% 100%;
     --foreground: 0 0% 10%;
 
@@ -72,9 +71,85 @@
     --shadow-xl: 0 16px 40px 0 hsl(0 0% 10% / 0.1);
     --shadow-2xl: 0 20px 48px 0 hsl(0 0% 10% / 0.12);
 
-    /* Gradient tokens used by .gradient-text and .gradient-card */
     --gradient-text: linear-gradient(135deg, #0055A4 0%, #1a237e 40%, #7b1fa2 60%, #EF4135 100%);
     --gradient-primary: linear-gradient(135deg, #0055A4, #1565c0, #7b1fa2);
+
+    /* Dashboard-specific tokens */
+    --dash-bg: #F7F9FC;
+    --dash-card: #ffffff;
+    --dash-card-border: #E6EAF0;
+    --dash-text: #1A1A1A;
+    --dash-text-muted: rgba(26, 26, 26, 0.5);
+    --dash-surface: #F5F7FA;
+  }
+
+  .dark {
+    --background: 222 47% 11%;
+    --foreground: 210 40% 98%;
+
+    --card: 222 47% 14%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222 47% 14%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 209 100% 45%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 217 33% 17%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217 33% 17%;
+    --muted-foreground: 215 20% 65%;
+
+    --accent: 213 79% 55%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 63% 55%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 217 33% 20%;
+    --input: 217 33% 20%;
+    --ring: 209 100% 45%;
+
+    --sidebar-background: 222 47% 11%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 209 100% 45%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 217 33% 17%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 217 33% 20%;
+    --sidebar-ring: 209 100% 45%;
+
+    --success: 142 71% 45%;
+    --success-foreground: 0 0% 100%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+
+    --chart-1: 209 100% 45%;
+    --chart-2: 0 63% 55%;
+    --chart-3: 38 92% 50%;
+    --chart-4: 142 71% 45%;
+    --chart-5: 213 79% 55%;
+
+    --shadow-2xs: 0 1px 2px 0 hsl(0 0% 0% / 0.2);
+    --shadow-xs: 0 1px 3px 0 hsl(0 0% 0% / 0.25);
+    --shadow-sm: 0 2px 6px 0 hsl(0 0% 0% / 0.3);
+    --shadow: 0 6px 20px 0 hsl(0 0% 0% / 0.35);
+    --shadow-md: 0 8px 24px 0 hsl(0 0% 0% / 0.4);
+    --shadow-lg: 0 12px 32px 0 hsl(0 0% 0% / 0.45);
+    --shadow-xl: 0 16px 40px 0 hsl(0 0% 0% / 0.5);
+    --shadow-2xl: 0 20px 48px 0 hsl(0 0% 0% / 0.55);
+
+    --gradient-text: linear-gradient(135deg, #3B82F6 0%, #6366F1 40%, #A855F7 60%, #F43F5E 100%);
+    --gradient-primary: linear-gradient(135deg, #3B82F6, #6366F1, #A855F7);
+
+    --dash-bg: #111827;
+    --dash-card: #1F2937;
+    --dash-card-border: #374151;
+    --dash-text: #F9FAFB;
+    --dash-text-muted: rgba(249, 250, 251, 0.5);
+    --dash-surface: #1F2937;
   }
 }
 
@@ -228,6 +303,44 @@
 }
 
 @keyframes shimmer {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes wave {
+
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+
+  15% {
+    transform: rotate(14deg);
+  }
+
+  30% {
+    transform: rotate(-8deg);
+  }
+
+  45% {
+    transform: rotate(14deg);
+  }
+
+  60% {
+    transform: rotate(-4deg);
+  }
+
+  75% {
+    transform: rotate(10deg);
+  }
+}
+
+.animate-wave {
+  animation: wave 2.5s ease-in-out infinite;
+  animation-delay: 0.5s;
 }
