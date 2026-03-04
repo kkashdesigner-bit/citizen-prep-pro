@@ -9,11 +9,11 @@ import {
 } from 'lucide-react';
 
 const DOMAIN_META: { key: Category; icon: typeof Scale; desc_key: string }[] = [
-  { key: 'Principles', icon: Scale, desc_key: 'cat.Principles.desc' },
-  { key: 'Institutions', icon: Landmark, desc_key: 'cat.Institutions.desc' },
-  { key: 'Rights', icon: Shield, desc_key: 'cat.Rights.desc' },
-  { key: 'History', icon: ScrollText, desc_key: 'cat.History.desc' },
-  { key: 'Living', icon: Home, desc_key: 'cat.Living.desc' },
+  { key: 'Principles and values of the Republic', icon: Scale, desc_key: 'cat.Principles.desc' },
+  { key: 'Institutional and political system', icon: Landmark, desc_key: 'cat.Institutions.desc' },
+  { key: 'Rights and duties', icon: Shield, desc_key: 'cat.Rights.desc' },
+  { key: 'History, geography and culture', icon: ScrollText, desc_key: 'cat.History.desc' },
+  { key: 'Living in French society', icon: Home, desc_key: 'cat.Living.desc' },
   { key: 'Politics', icon: Vote, desc_key: 'cat.Politics.desc' },
   { key: 'Society', icon: Users, desc_key: 'cat.Society.desc' },
 ];
