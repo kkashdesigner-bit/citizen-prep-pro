@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 
@@ -11,7 +11,6 @@ const Index = lazy(() => import("./pages/Index"));
 const Auth = lazy(() => import("./pages/Auth"));
 const Quiz = lazy(() => import("./pages/Quiz"));
 const Results = lazy(() => import("./pages/Results"));
-const Dashboard = lazy(() => import("./pages/Dashboard"));
 const About = lazy(() => import("./pages/About"));
 const LearningDashboard = lazy(() => import("./pages/LearningDashboard"));
 const ProgressPage = lazy(() => import("./pages/ProgressPage"));
@@ -49,7 +48,7 @@ const App = () => (
                 <Route path="/quiz" element={<Quiz />} />
                 <Route path="/results" element={<Results />} />
                 <Route path="/success" element={<SubscriptionSuccess />} />
-                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/dashboard" element={<Navigate to="/learn" replace />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/parcours" element={<ParcoursPage />} />
                 <Route path="/parcours/classe/:id" element={<ClassDetailPage />} />

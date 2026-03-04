@@ -177,7 +177,7 @@ function computeWeaknessAlerts(mastery: DomainMastery[]): WeaknessAlert[] {
         }));
 }
 
-function buildRecentActivity(examHistory: ExamHistoryEntry[], answers: UserAnswer[]): ActivityItem[] {
+function buildRecentActivity(examHistory: ExamHistoryEntry[], answers: UserAnswer[], classProgress: { class_number: number; title: string; completed_at: string; score: number }[]): ActivityItem[] {
     const items: ActivityItem[] = [];
 
     // Exams
@@ -195,7 +195,24 @@ function buildRecentActivity(examHistory: ExamHistoryEntry[], answers: UserAnswe
         });
     }
 
-    // If no items at all, show a "no activity" message as a milestone
+    // Parcours class completions
+    for (const cp of classProgress.slice(0, 5)) {
+        const date = cp.completed_at?.split('T')[0] || '';
+        const today = new Date().toISOString().split('T')[0];
+        const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+        const relativeDate = date === today ? 'Aujourd\'hui' : date === yesterday ? 'Hier' : date;
+
+        items.push({
+            type: 'milestone',
+            title: `Classe ${cp.class_number} : ${cp.title}`,
+            date: relativeDate,
+            detail: `Score : ${cp.score}%`,
+        });
+    }
+
+    // Sort by date descending
+    items.sort((a, b) => (b.date > a.date ? 1 : -1));
+
     if (items.length === 0) {
         items.push({
             type: 'milestone',
@@ -219,6 +236,7 @@ export function useDashboardStats(): DashboardStats {
     const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
     const [examHistory, setExamHistory] = useState<ExamHistoryEntry[]>([]);
     const [allAnswers, setAllAnswers] = useState<UserAnswer[]>([]);
+    const [classCompletions, setClassCompletions] = useState<{ class_number: number; title: string; completed_at: string; score: number }[]>([]);
 
     useEffect(() => {
         if (authLoading || !user) {
@@ -253,6 +271,37 @@ export function useDashboardStats(): DashboardStats {
             // User answers
             setAllAnswers((answersResult.data as UserAnswer[]) || []);
 
+            // Fetch parcours class completions for recent activity
+            const { data: progressData } = await (supabase as any)
+                .from('user_class_progress')
+                .select('class_id, score, completed_at')
+                .eq('user_id', user.id)
+                .eq('status', 'completed')
+                .order('completed_at', { ascending: false })
+                .limit(10);
+
+            if (progressData && progressData.length > 0) {
+                const classIds = progressData.map(p => p.class_id);
+                const { data: classInfo } = await (supabase as any)
+                    .from('classes')
+                    .select('id, class_number, title')
+                    .in('id', classIds);
+
+                const classMap: Record<string, { class_number: number; title: string }> = {};
+                (classInfo || []).forEach((c: any) => { classMap[c.id] = c; });
+
+                setClassCompletions(
+                    progressData
+                        .filter(p => classMap[p.class_id])
+                        .map(p => ({
+                            class_number: classMap[p.class_id].class_number,
+                            title: classMap[p.class_id].title,
+                            completed_at: p.completed_at || '',
+                            score: p.score || 0,
+                        }))
+                );
+            }
+
             setLoading(false);
         };
 
@@ -275,7 +324,7 @@ export function useDashboardStats(): DashboardStats {
     const weeklyActivity = computeWeeklyActivity(allAnswers);
     const domainMastery = computeDomainMastery(allAnswers);
     const weaknessAlerts = computeWeaknessAlerts(domainMastery);
-    const recentActivity = buildRecentActivity(examHistory, allAnswers);
+    const recentActivity = buildRecentActivity(examHistory, allAnswers, classCompletions);
 
     return {
         loading: loading || authLoading,
