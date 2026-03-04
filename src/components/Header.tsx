@@ -134,7 +134,7 @@ export default function Header({ animate = false }: HeaderProps) {
                     <p className="text-xs text-muted-foreground truncate">{user.email}</p>
                   </div>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => navigate('/dashboard')}>
+                  <DropdownMenuItem onClick={() => navigate('/learn')}>
                     <User className="mr-2 h-4 w-4" />
                     Profil
                   </DropdownMenuItem>
@@ -142,7 +142,7 @@ export default function Header({ animate = false }: HeaderProps) {
                     <BarChart3 className="mr-2 h-4 w-4" />
                     Progression
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate('/dashboard')}>
+                  <DropdownMenuItem onClick={() => navigate('/learn')}>
                     <Settings className="mr-2 h-4 w-4" />
                     Paramètres
                   </DropdownMenuItem>
@@ -186,7 +186,7 @@ export default function Header({ animate = false }: HeaderProps) {
                   <p className="text-sm font-medium text-foreground truncate">{displayName}</p>
                 </div>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => navigate('/dashboard')}>
+                <DropdownMenuItem onClick={() => navigate('/learn')}>
                   <User className="mr-2 h-4 w-4" />
                   Profil
                 </DropdownMenuItem>

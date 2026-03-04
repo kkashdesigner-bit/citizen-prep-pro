@@ -12,6 +12,7 @@ import ResumeStudyCard from '@/components/learn/ResumeStudyCard';
 import WeeklyActivityChart from '@/components/learn/WeeklyActivityChart';
 import DomainMasteryBars from '@/components/learn/DomainMasteryBars';
 import WeaknessAlerts from '@/components/learn/WeaknessAlerts';
+import ParcoursCard from '@/components/learn/ParcoursCard';
 import MiniatureIcon from '@/components/MiniatureIcon';
 import { Target, FileText, Clock, X, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -105,6 +106,11 @@ export default function LearningDashboard() {
                 dailyGoalCurrent={stats.dailyGoalCurrent}
                 dailyGoalTarget={stats.dailyGoalTarget}
               />
+            </motion.div>
+
+            {/* Parcours Card — Real progress */}
+            <motion.div variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0 } }}>
+              <ParcoursCard />
             </motion.div>
 
             {/* Tabs */}
