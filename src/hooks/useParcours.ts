@@ -36,8 +36,12 @@ export function useParcours() {
 
         setLoading(true);
         try {
+<<<<<<< HEAD
             // 1. Fetch the path for the user's goal (or default to naturalisation)
             const goalType = profile?.goal_type || 'naturalisation';
+=======
+            // 1. Fetch the path for the user's goal
+>>>>>>> 642a9f9a82f99154b08385678092a98c561a2fac
             const { data: pathData, error: pathError } = await (supabase as any)
                 .from('learning_paths')
                 .select('id')
@@ -71,7 +75,7 @@ export function useParcours() {
                 .order('class_number', { ascending: true });
 
             if (classError) throw classError;
-            setClasses(classData as ParcoursClass[]);
+            setClasses((classData || []) as ParcoursClass[]);
 
             // 3. Fetch user progress
             const { data: progressData, error: progressError } = await (supabase as any)
@@ -82,7 +86,7 @@ export function useParcours() {
             if (progressError) throw progressError;
 
             const progressMap: Record<string, ClassProgress> = {};
-            progressData?.forEach(p => {
+            (progressData || []).forEach((p: any) => {
                 progressMap[p.class_id] = p as ClassProgress;
             });
             setProgress(progressMap);
