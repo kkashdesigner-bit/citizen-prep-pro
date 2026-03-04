@@ -37,7 +37,7 @@ export function useParcours() {
         setLoading(true);
         try {
             // 1. Fetch the path for the user's goal
-            const { data: pathData, error: pathError } = await supabase
+            const { data: pathData, error: pathError } = await (supabase as any)
                 .from('learning_paths')
                 .select('id')
                 .eq('persona_goal', profile.goal_type)
@@ -50,7 +50,7 @@ export function useParcours() {
 
             // Fallback: if no specific path exists for this persona_goal yet, get ANY path (useful for testing/demo)
             if (!pathId) {
-                const { data: fallbackPath } = await supabase.from('learning_paths').select('id').limit(1).maybeSingle();
+                const { data: fallbackPath } = await (supabase as any).from('learning_paths').select('id').limit(1).maybeSingle();
                 pathId = fallbackPath?.id;
             }
 
@@ -62,17 +62,17 @@ export function useParcours() {
             }
 
             // 2. Fetch classes for this path
-            const { data: classData, error: classError } = await supabase
+            const { data: classData, error: classError } = await (supabase as any)
                 .from('classes')
                 .select('id, class_number, title, description, estimated_minutes')
                 .eq('path_id', pathId)
                 .order('class_number', { ascending: true });
 
             if (classError) throw classError;
-            setClasses(classData as ParcoursClass[]);
+            setClasses((classData || []) as ParcoursClass[]);
 
             // 3. Fetch user progress
-            const { data: progressData, error: progressError } = await supabase
+            const { data: progressData, error: progressError } = await (supabase as any)
                 .from('user_class_progress')
                 .select('*')
                 .eq('user_id', user.id);
@@ -80,7 +80,7 @@ export function useParcours() {
             if (progressError) throw progressError;
 
             const progressMap: Record<string, ClassProgress> = {};
-            progressData?.forEach(p => {
+            (progressData || []).forEach((p: any) => {
                 progressMap[p.class_id] = p as ClassProgress;
             });
             setProgress(progressMap);
@@ -105,7 +105,7 @@ export function useParcours() {
             const now = new Date().toISOString();
 
             // Check if progress already exists to update it rather than insert
-            const { data: existing } = await supabase
+            const { data: existing } = await (supabase as any)
                 .from('user_class_progress')
                 .select('attempts_count, score, completed_at')
                 .eq('user_id', user.id)
@@ -113,7 +113,7 @@ export function useParcours() {
                 .maybeSingle();
 
             if (existing) {
-                await supabase
+                await (supabase as any)
                     .from('user_class_progress')
                     .update({
                         status,
@@ -124,7 +124,7 @@ export function useParcours() {
                     .eq('user_id', user.id)
                     .eq('class_id', classId);
             } else {
-                await supabase
+                await (supabase as any)
                     .from('user_class_progress')
                     .insert({
                         user_id: user.id,
