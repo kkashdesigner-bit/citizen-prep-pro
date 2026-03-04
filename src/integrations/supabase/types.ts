@@ -14,6 +14,126 @@ export type Database = {
   }
   public: {
     Tables: {
+      class_lessons: {
+        Row: {
+          class_id: string
+          content_markdown: string
+          created_at: string
+          id: string
+        }
+        Insert: {
+          class_id: string
+          content_markdown?: string
+          created_at?: string
+          id?: string
+        }
+        Update: {
+          class_id?: string
+          content_markdown?: string
+          created_at?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "class_lessons_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: true
+            referencedRelation: "classes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      class_questions: {
+        Row: {
+          class_id: string
+          created_at: string
+          id: string
+          question_id: number
+        }
+        Insert: {
+          class_id: string
+          created_at?: string
+          id?: string
+          question_id: number
+        }
+        Update: {
+          class_id?: string
+          created_at?: string
+          id?: string
+          question_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "class_questions_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      classes: {
+        Row: {
+          class_number: number
+          created_at: string
+          description: string | null
+          estimated_minutes: number
+          id: string
+          path_id: string
+          title: string
+        }
+        Insert: {
+          class_number: number
+          created_at?: string
+          description?: string | null
+          estimated_minutes?: number
+          id?: string
+          path_id: string
+          title: string
+        }
+        Update: {
+          class_number?: number
+          created_at?: string
+          description?: string | null
+          estimated_minutes?: number
+          id?: string
+          path_id?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "classes_path_id_fkey"
+            columns: ["path_id"]
+            isOneToOne: false
+            referencedRelation: "learning_paths"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      learning_paths: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          persona_goal: string
+          tier_min_required: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          persona_goal: string
+          tier_min_required?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          persona_goal?: string
+          tier_min_required?: string
+        }
+        Relationships: []
+      }
       lesson_progress: {
         Row: {
           id: string
@@ -77,7 +197,7 @@ export type Database = {
             foreignKeyName: "lesson_questions_question_id_fkey"
             columns: ["question_id"]
             isOneToOne: false
-            referencedRelation: "questions"
+            referencedRelation: "questions33"
             referencedColumns: ["id"]
           },
         ]
@@ -170,6 +290,69 @@ export type Database = {
         Row: {
           category: string | null
           correct_answer: string | null
+          exam_category: string | null
+          explanation: string | null
+          id: number
+          language: string | null
+          level: string | null
+          option_a: string | null
+          option_a_translated: string | null
+          option_b: string | null
+          option_b_translated: string | null
+          option_c: string | null
+          option_c_translated: string | null
+          option_d: string | null
+          option_d_translated: string | null
+          question_text: string | null
+          question_translated: string | null
+          subcategory: string | null
+        }
+        Insert: {
+          category?: string | null
+          correct_answer?: string | null
+          exam_category?: string | null
+          explanation?: string | null
+          id: number
+          language?: string | null
+          level?: string | null
+          option_a?: string | null
+          option_a_translated?: string | null
+          option_b?: string | null
+          option_b_translated?: string | null
+          option_c?: string | null
+          option_c_translated?: string | null
+          option_d?: string | null
+          option_d_translated?: string | null
+          question_text?: string | null
+          question_translated?: string | null
+          subcategory?: string | null
+        }
+        Update: {
+          category?: string | null
+          correct_answer?: string | null
+          exam_category?: string | null
+          explanation?: string | null
+          id?: number
+          language?: string | null
+          level?: string | null
+          option_a?: string | null
+          option_a_translated?: string | null
+          option_b?: string | null
+          option_b_translated?: string | null
+          option_c?: string | null
+          option_c_translated?: string | null
+          option_d?: string | null
+          option_d_translated?: string | null
+          question_text?: string | null
+          question_translated?: string | null
+          subcategory?: string | null
+        }
+        Relationships: []
+      }
+      questions33: {
+        Row: {
+          category: string | null
+          correct_answer: string | null
           explanation: string | null
           id: number
           language: string | null
@@ -259,13 +442,58 @@ export type Database = {
             foreignKeyName: "user_answers_question_id_fkey"
             columns: ["question_id"]
             isOneToOne: false
-            referencedRelation: "questions"
+            referencedRelation: "questions33"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_class_progress: {
+        Row: {
+          attempts_count: number
+          class_id: string
+          completed_at: string | null
+          created_at: string
+          id: string
+          score: number
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          attempts_count?: number
+          class_id: string
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          score?: number
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          attempts_count?: number
+          class_id?: string
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          score?: number
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_class_progress_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
             referencedColumns: ["id"]
           },
         ]
       }
       user_profile: {
         Row: {
+          avatar_url: string | null
           created_at: string
           first_name: string | null
           goal_type: string | null
@@ -277,6 +505,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          avatar_url?: string | null
           created_at?: string
           first_name?: string | null
           goal_type?: string | null
@@ -288,6 +517,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          avatar_url?: string | null
           created_at?: string
           first_name?: string | null
           goal_type?: string | null
