@@ -84,6 +84,7 @@ export default function TranslateButton({ text, onTranslated }: Props) {
         open={showGate}
         onOpenChange={setShowGate}
         requiredTier="premium"
+        featureLabel="Traduction instantanée"
       />
     </>
   );

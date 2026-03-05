@@ -56,16 +56,16 @@ export default function LandingPassProbability() {
         const prob =
           last5.length > 0
             ? Math.round(
-                last5.reduce((sum, e) => sum + (e.score / e.totalQuestions) * 100, 0) / last5.length
-              )
+              last5.reduce((sum, e) => sum + (e.score / e.totalQuestions) * 100, 0) / last5.length
+            )
             : 0;
 
         const avg =
           history.length > 0
             ? Math.round(
-                history.reduce((sum, e) => sum + (e.score / e.totalQuestions) * 100, 0) /
-                  history.length
-              )
+              history.reduce((sum, e) => sum + (e.score / e.totalQuestions) * 100, 0) /
+              history.length
+            )
             : 0;
 
         setPassProb(prob);
@@ -82,7 +82,7 @@ export default function LandingPassProbability() {
   // Guest view: sign-up invitation
   if (!user) {
     return (
-      <section className="relative bg-secondary/30 py-16 md:py-24 section-glow">
+      <section id="how-it-works" className="relative bg-secondary/30 py-16 md:py-24 section-glow">
         <div className="container">
           <AnimatedSection>
             <div className="mx-auto max-w-lg glass-card glow-hover p-8 text-center">
@@ -106,7 +106,7 @@ export default function LandingPassProbability() {
   }
 
   return (
-    <section className="relative bg-secondary/30 py-16 md:py-24 section-glow">
+    <section id="how-it-works" className="relative bg-secondary/30 py-16 md:py-24 section-glow">
       <div className="container">
         <AnimatedSection>
           <h2 className="mb-2 text-center font-serif text-3xl font-bold md:text-4xl">

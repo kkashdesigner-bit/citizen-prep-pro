@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useClassDetail } from '@/hooks/useClassDetail';
@@ -7,17 +7,43 @@ import { useSubscription } from '@/hooks/useSubscription';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import {
-    ArrowLeft, BookOpen, BrainCircuit, ChevronRight, XCircle
+    ArrowLeft, BookOpen, BrainCircuit, ChevronRight, XCircle, Lock
 } from 'lucide-react';
+import SubscriptionGate from '@/components/SubscriptionGate';
 
 export default function ClassDetailPage() {
     const { id } = useParams();
     const navigate = useNavigate();
     const { user } = useAuth();
-    const { tier } = useSubscription();
+    const { tier, loading: tierLoading } = useSubscription();
 
     const { data: classData, loading: detailLoading, error } = useClassDetail(id);
-    const { classes } = useParcours();
+    const { classes, progress } = useParcours();
+
+    const [showGate, setShowGate] = useState(false);
+    const [gateTier, setGateTier] = useState<'standard' | 'premium'>('standard');
+    const [gateLabel, setGateLabel] = useState('');
+
+    // ── Tier enforcement: free users blocked from class 4+ ──
+    useEffect(() => {
+        if (tierLoading || !classData) return;
+
+        if (tier === 'free' && classData.class_number > 3) {
+            setGateLabel(`Classe ${classData.class_number} — ${classData.title}`);
+            setGateTier('standard');
+            setShowGate(true);
+        }
+
+        // Sequential lock for non-premium: check previous class
+        if (tier !== 'premium' && classData.class_number > 1) {
+            const prevClass = classes.find(c => c.class_number === classData.class_number - 1);
+            if (prevClass && progress[prevClass.id]?.status !== 'completed') {
+                setGateLabel(`Classe ${classData.class_number} — Terminez d'abord la classe précédente`);
+                setGateTier(tier === 'free' ? 'standard' : 'standard');
+                setShowGate(true);
+            }
+        }
+    }, [tierLoading, tier, classData, classes, progress]);
 
     const renderMarkdown = (md: string) => {
         return md.split('\n\n').map((paragraph, idx) => {
@@ -37,7 +63,7 @@ export default function ClassDetailPage() {
         });
     };
 
-    if (detailLoading) {
+    if (detailLoading || tierLoading) {
         return (
             <div className="flex min-h-screen items-center justify-center bg-white">
                 <div className="h-12 w-12 animate-spin rounded-full border-4 border-[#0055A4] border-t-transparent" />
@@ -111,6 +137,17 @@ export default function ClassDetailPage() {
                     </div>
                 </motion.div>
             </div>
+
+            <SubscriptionGate
+                open={showGate}
+                onOpenChange={(open) => {
+                    setShowGate(open);
+                    if (!open) navigate('/parcours');
+                }}
+                requiredTier={gateTier}
+                featureLabel={gateLabel}
+            />
         </div>
     );
 }
+

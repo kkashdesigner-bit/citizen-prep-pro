@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
@@ -5,8 +6,9 @@ import { Progress } from '@/components/ui/progress';
 import { Category, CATEGORY_LABELS } from '@/lib/types';
 import {
   Scale, Landmark, Shield, ScrollText, Home,
-  Vote, Users, ArrowRight,
+  Vote, Users, ArrowRight, Lock,
 } from 'lucide-react';
+import SubscriptionGate from '@/components/SubscriptionGate';
 
 const DOMAIN_META: { key: Category; icon: typeof Scale; desc_key: string }[] = [
   { key: 'Principles and values of the Republic', icon: Scale, desc_key: 'cat.Principles.desc' },
@@ -28,63 +30,81 @@ interface DomainCardsProps {
 export default function DomainCards({ categoryProgress, isPremium, onGate, level = 'CSP' }: DomainCardsProps) {
   const navigate = useNavigate();
   const { language, t } = useLanguage();
+  const [showGate, setShowGate] = useState(false);
+  const [gateLabel, setGateLabel] = useState('');
+
+  const handleClick = (key: Category) => {
+    if (isPremium) {
+      navigate(`/quiz?mode=training&category=${key}&level=${level}`);
+    } else {
+      const label = CATEGORY_LABELS[language]?.[key] || key;
+      setGateLabel(`Entraînement ciblé — ${label}`);
+      if (onGate) {
+        onGate('premium');
+      } else {
+        setShowGate(true);
+      }
+    }
+  };
 
   return (
-     <section>
-       <h2 className="mb-4 text-lg md:text-xl font-bold text-foreground">Study Domains</h2>
-       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-         {DOMAIN_META.map(({ key, icon: Icon, desc_key }) => {
-           const cp = categoryProgress.find((c) => c.category === key);
-           const pct = cp && cp.total > 0 ? Math.round((cp.completed / cp.total) * 100) : 0;
-           const label = CATEGORY_LABELS[language]?.[key] || key;
+    <>
+      <section>
+        <h2 className="mb-4 text-lg md:text-xl font-bold text-foreground">Domaines d'étude</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {DOMAIN_META.map(({ key, icon: Icon, desc_key }) => {
+            const cp = categoryProgress.find((c) => c.category === key);
+            const pct = cp && cp.total > 0 ? Math.round((cp.completed / cp.total) * 100) : 0;
+            const label = CATEGORY_LABELS[language]?.[key] || key;
 
-           return (
+            return (
               <div
                 key={key}
                 className="group rounded-2xl border border-border/60 bg-white p-4 md:p-5 shadow-[0_4px_12px_hsl(225,48%,25%/0.05)] transition-all hover:border-secondary/50 hover:shadow-[0_12px_32px_hsl(225,48%,25%/0.12)] hover:-translate-y-1"
               >
-               <div className="flex items-center gap-3 mb-3">
-                 <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[hsl(192,31,58,0.15)] transition-all group-hover:bg-[hsl(192,31,58,0.25)]">
-                   <Icon className="h-5 w-5 text-secondary" />
-                 </div>
-                 <div className="flex-1 min-w-0">
-                   <h3 className="font-semibold text-foreground truncate">{label}</h3>
-                 </div>
-               </div>
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[hsl(192,31,58,0.15)] transition-all group-hover:bg-[hsl(192,31,58,0.25)]">
+                    <Icon className="h-5 w-5 text-secondary" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-foreground truncate">{label}</h3>
+                  </div>
+                </div>
 
-               <p className="text-xs text-muted-foreground mb-3 line-clamp-2">
-                 {t(desc_key) || ''}
-               </p>
+                <p className="text-xs text-muted-foreground mb-3 line-clamp-2">
+                  {t(desc_key) || ''}
+                </p>
 
-               <div className="mb-3">
-                 <div className="flex items-center justify-between text-xs mb-1">
-                   <span className="text-muted-foreground">Progress</span>
-                   <span className="font-semibold text-foreground">{pct}%</span>
-                 </div>
-                 <Progress value={pct} className="h-2" />
-               </div>
+                <div className="mb-3">
+                  <div className="flex items-center justify-between text-xs mb-1">
+                    <span className="text-muted-foreground">Progression</span>
+                    <span className="font-semibold text-foreground">{pct}%</span>
+                  </div>
+                  <Progress value={pct} className="h-2" />
+                </div>
 
                 <Button
                   variant="outline"
                   size="sm"
                   className="w-full gap-1.5 font-semibold"
-                  onClick={() => {
-                    if (isPremium) {
-                      navigate(`/quiz?mode=training&category=${key}&level=${level}`);
-                    } else if (onGate) {
-                      onGate('premium');
-                    } else {
-                      navigate(`/quiz?mode=study&category=${key}`);
-                    }
-                  }}
+                  onClick={() => handleClick(key)}
                 >
-                   {isPremium ? 'Entraînement ciblé' : 'S\'entraîner'}
-                   <ArrowRight className="h-3.5 w-3.5" />
-                 </Button>
-             </div>
-           );
-         })}
-       </div>
-     </section>
+                  {!isPremium && <Lock className="h-3.5 w-3.5 text-muted-foreground" />}
+                  {isPremium ? 'Entraînement ciblé' : 'S\'entraîner'}
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </Button>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      <SubscriptionGate
+        open={showGate}
+        onOpenChange={setShowGate}
+        requiredTier="premium"
+        featureLabel={gateLabel}
+      />
+    </>
   );
 }

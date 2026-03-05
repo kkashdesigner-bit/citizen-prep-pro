@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
-import { Check, ArrowRight, Loader2, X, CheckCircle2 } from 'lucide-react';
+import { Check, ArrowRight, Loader2, X, CheckCircle2, Lock } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useSubscription } from '@/hooks/useSubscription';
 import { toast } from 'sonner';
@@ -11,6 +11,8 @@ interface SubscriptionGateProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   requiredTier?: 'standard' | 'premium';
+  /** Optional label describing the feature being blocked, e.g. "Traduction instantanée" */
+  featureLabel?: string;
 }
 
 const plans = [
@@ -52,7 +54,7 @@ const plans = [
   },
 ];
 
-export default function SubscriptionGate({ open, onOpenChange, requiredTier = 'standard' }: SubscriptionGateProps) {
+export default function SubscriptionGate({ open, onOpenChange, requiredTier = 'standard', featureLabel }: SubscriptionGateProps) {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { isPremium } = useSubscription();
@@ -152,6 +154,15 @@ export default function SubscriptionGate({ open, onOpenChange, requiredTier = 's
           <div className="mb-6">
             <h3 className="text-xl font-bold text-slate-900">Choisissez votre voie</h3>
             <p className="text-sm text-slate-400 mt-0.5">Annulation libre. Sans frais cachés.</p>
+            {featureLabel && (
+              <div className="mt-3 flex items-center gap-2 rounded-xl bg-blue-50 border border-blue-100 px-4 py-2.5">
+                <Lock className="h-4 w-4 text-[#0055A4] shrink-0" />
+                <p className="text-sm text-slate-700">
+                  <span className="font-semibold">{featureLabel}</span> nécessite le forfait{' '}
+                  <span className="font-bold text-[#0055A4]">{requiredTier === 'premium' ? 'Fraternité' : 'Égalité'}</span>.
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Tier Cards */}

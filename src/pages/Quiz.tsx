@@ -8,13 +8,13 @@ import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { ExamLevel, getCorrectAnswerText } from '@/lib/types';
 import { useParcours } from '@/hooks/useParcours';
-import Header from '@/components/Header';
+
 import QuizQuestion from '@/components/QuizQuestion';
 import ExamNavigator from '@/components/ExamNavigator';
 import SubscriptionGate from '@/components/SubscriptionGate';
 
 import { Progress } from '@/components/ui/progress';
-import { ChevronLeft, ChevronRight, Flag, CheckCircle, SkipForward, BookmarkCheck } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Flag, CheckCircle, SkipForward, BookmarkCheck, X } from 'lucide-react';
 import Logo from '@/components/Logo';
 
 export interface QuizError {
@@ -267,7 +267,11 @@ export default function Quiz() {
   if (loading) {
     return (
       <div className="min-h-screen bg-background">
-        <Header />
+        <div className="sticky top-0 z-50 bg-white border-b border-slate-200 h-14 flex items-center px-4">
+          <button onClick={() => navigate('/learn')} className="text-slate-500 hover:text-slate-800 flex items-center gap-2 text-sm font-medium">
+            <X className="h-4 w-4" /> Quitter
+          </button>
+        </div>
         <div className="container flex items-center justify-center py-20">
           <div className="text-center">
             <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent" />
@@ -281,7 +285,11 @@ export default function Quiz() {
   if (questions.length === 0) {
     return (
       <div className="min-h-screen bg-background">
-        <Header />
+        <div className="sticky top-0 z-50 bg-white border-b border-slate-200 h-14 flex items-center px-4">
+          <button onClick={() => navigate('/learn')} className="text-slate-500 hover:text-slate-800 flex items-center gap-2 text-sm font-medium">
+            <X className="h-4 w-4" /> Quitter
+          </button>
+        </div>
         <div className="container flex flex-col items-center justify-center py-20 gap-4">
           <p className="text-muted-foreground">Aucune question disponible.</p>
           <Button variant="outline" onClick={() => navigate('/')}>
@@ -539,6 +547,7 @@ export default function Quiz() {
           if (!open) navigate(-1);
         }}
         requiredTier={gateTier}
+        featureLabel={gateTier === 'premium' ? 'Entraînement par catégorie' : 'Examens illimités'}
       />
 
 

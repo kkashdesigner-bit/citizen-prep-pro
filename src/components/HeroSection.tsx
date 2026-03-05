@@ -28,7 +28,7 @@ export default function HeroSection() {
   };
 
   return (
-    <section className="relative overflow-hidden bg-gradient-to-r from-[#0055A4]/10 via-white via-50% to-[#EF4135]/10 min-h-[80vh] sm:min-h-[90vh] flex items-center justify-center">
+    <section id="hero" className="relative overflow-hidden bg-gradient-to-r from-[#0055A4]/10 via-white via-50% to-[#EF4135]/10 min-h-[80vh] sm:min-h-[90vh] flex items-center justify-center">
       {/* Particle mesh background */}
       <div className="absolute inset-0">
         <ParticleMesh />

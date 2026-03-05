@@ -160,7 +160,7 @@ export default function LandingCategoryTabs() {
   const navigate = useNavigate();
 
   return (
-    <section className="relative bg-background py-16 md:py-28 overflow-hidden">
+    <section id="features" className="relative bg-background py-16 md:py-28 overflow-hidden">
       {/* Soft ambient glow */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[60%] rounded-full opacity-[0.06]"

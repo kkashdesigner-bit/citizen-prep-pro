@@ -360,7 +360,7 @@ export default function Dashboard() {
         </div>
       </div>
       <Footer />
-      <SubscriptionGate open={showGate} onOpenChange={setShowGate} requiredTier={gateTier} />
+      <SubscriptionGate open={showGate} onOpenChange={setShowGate} requiredTier={gateTier} featureLabel={gateTier === 'premium' ? 'Entraînement par catégorie' : 'Examens blancs illimités'} />
     </div>
   );
 }

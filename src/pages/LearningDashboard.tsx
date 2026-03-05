@@ -14,7 +14,7 @@ import DomainMasteryBars from '@/components/learn/DomainMasteryBars';
 import WeaknessAlerts from '@/components/learn/WeaknessAlerts';
 import ParcoursCard from '@/components/learn/ParcoursCard';
 import MiniatureIcon from '@/components/MiniatureIcon';
-import { Target, FileText, Clock, X, Check } from 'lucide-react';
+import { Target, FileText, Clock, X, Check, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { motion } from 'framer-motion';
@@ -200,8 +200,9 @@ export default function LearningDashboard() {
                             <Button
                               onClick={() => handleStartExam(cat)}
                               variant="outline"
-                              className="w-full border-[var(--dash-card-border)] hover:border-[#0055A4] text-[var(--dash-text)] hover:text-[#0055A4] hover:bg-blue-500/5 font-bold rounded-xl h-9 text-sm transition-all"
+                              className="w-full border-[var(--dash-card-border)] hover:border-[#0055A4] text-[var(--dash-text)] hover:text-[#0055A4] hover:bg-blue-500/5 font-bold rounded-xl h-9 text-sm transition-all gap-1.5"
                             >
+                              {tier !== 'premium' && <Lock className="h-3.5 w-3.5 text-slate-400" />}
                               S'entraîner
                             </Button>
                           </div>
@@ -223,7 +224,7 @@ export default function LearningDashboard() {
         </div>
       </main>
 
-      <SubscriptionGate open={showGate} onOpenChange={setShowGate} requiredTier={gateTier} />
+      <SubscriptionGate open={showGate} onOpenChange={setShowGate} requiredTier={gateTier} featureLabel={gateTier === 'premium' ? 'Entraînement par catégorie' : 'Examens illimités'} />
 
       {/* Goal Modal */}
       <Dialog open={showGoalModal} onOpenChange={setShowGoalModal}>

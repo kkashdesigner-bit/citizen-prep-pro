@@ -5,11 +5,12 @@ import { useSubscription } from '@/hooks/useSubscription';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
 import LearnSidebar from '@/components/learn/LearnSidebar';
+import SubscriptionGate from '@/components/SubscriptionGate';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import { CATEGORY_LABELS, Category } from '@/lib/types';
 import {
-  BarChart3, TrendingUp, TrendingDown, Target, Clock, CheckCircle, ArrowRight,
+  BarChart3, TrendingUp, TrendingDown, Target, Clock, CheckCircle, ArrowRight, Lock,
 } from 'lucide-react';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Cell,
@@ -40,6 +41,8 @@ export default function ProgressPage() {
   const [lessonProgress, setLessonProgress] = useState<LessonProgressEntry[]>([]);
   const [totalLessons, setTotalLessons] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [showGate, setShowGate] = useState(false);
+  const [gateLabel, setGateLabel] = useState('');
 
   useEffect(() => {
     if (authLoading) return;
@@ -231,12 +234,16 @@ export default function ProgressPage() {
                             size="sm"
                             variant="ghost"
                             className="gap-1 text-xs"
-                            onClick={() => navigate(
-                              isPremium
-                                ? `/quiz?mode=training&category=${c.category}`
-                                : `/quiz?mode=study&category=${c.category}`
-                            )}
+                            onClick={() => {
+                              if (!isPremium) {
+                                setGateLabel(`Entraînement ciblé — ${CATEGORY_LABELS[language]?.[c.category as Category] || c.category}`);
+                                setShowGate(true);
+                              } else {
+                                navigate(`/quiz?mode=training&category=${c.category}`);
+                              }
+                            }}
                           >
+                            {!isPremium && <Lock className="h-3 w-3" />}
                             Pratiquer <ArrowRight className="h-3 w-3" />
                           </Button>
                         </div>
@@ -278,6 +285,12 @@ export default function ProgressPage() {
           )}
         </div>
       </main>
+      <SubscriptionGate
+        open={showGate}
+        onOpenChange={setShowGate}
+        requiredTier="premium"
+        featureLabel={gateLabel}
+      />
     </div>
   );
 }
