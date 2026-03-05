@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Check, ArrowRight, Loader2, X, CheckCircle2 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
+import { useSubscription } from '@/hooks/useSubscription';
 import { toast } from 'sonner';
 
 interface SubscriptionGateProps {
@@ -23,7 +24,7 @@ const plans = [
     periodLabel: '',
     popular: false,
     colorClass: 'blue',
-    features: ['Histoire basique', '1 Quiz/jour'],
+    features: ['Histoire basique', '2 Quiz/jour'],
   },
   {
     id: 'standard' as const,
@@ -54,8 +55,12 @@ const plans = [
 export default function SubscriptionGate({ open, onOpenChange, requiredTier = 'standard' }: SubscriptionGateProps) {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { isPremium } = useSubscription();
   const [selectedPlan, setSelectedPlan] = useState<'standard' | 'premium'>(requiredTier === 'premium' ? 'premium' : 'standard');
   const [isProcessing, setIsProcessing] = useState(false);
+
+  // Premium users never see subscription gates
+  if (isPremium) return null;
 
   const handleSubscribe = async () => {
     if (!user) {

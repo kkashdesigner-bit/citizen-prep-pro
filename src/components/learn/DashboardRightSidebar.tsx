@@ -28,10 +28,10 @@ function StatusDot({ status }: { status: 'completed' | 'current' | 'locked' }) {
     }
     if (status === 'current') {
         return (
-            <div className="relative h-8 w-8 rounded-full bg-[#0055A4] dark:bg-blue-500 flex items-center justify-center shadow-[0_0_12px_rgba(0,85,164,0.3)]">
+            <div className="relative h-8 w-8 rounded-full bg-[#0055A4] flex items-center justify-center shadow-[0_0_12px_rgba(0,85,164,0.3)]">
                 <Sparkles className="h-4 w-4 text-white" />
                 <motion.div
-                    className="absolute inset-0 rounded-full border-2 border-[#0055A4]/40 dark:border-blue-400/40"
+                    className="absolute inset-0 rounded-full border-2 border-[#0055A4]/40"
                     animate={{ scale: [1, 1.4, 1], opacity: [0.6, 0, 0.6] }}
                     transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
                 />
@@ -77,7 +77,7 @@ export default function DashboardRightSidebar({ tier, onUpgrade, recentActivity 
                                         {stage.desc}
                                     </p>
                                     {stage.status === 'current' && (
-                                        <span className="inline-block mt-1.5 text-[10px] font-bold uppercase tracking-widest text-[#0055A4] dark:text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded-full">
+                                        <span className="inline-block mt-1.5 text-[10px] font-bold uppercase tracking-widest text-[#0055A4] bg-blue-500/10 px-2 py-0.5 rounded-full">
                                             En cours
                                         </span>
                                     )}

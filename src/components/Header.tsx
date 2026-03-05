@@ -13,7 +13,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import ThemeToggle from '@/components/ThemeToggle';
+
+
 import { useEffect, useState } from 'react';
 import Logo from '@/components/Logo';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -81,7 +82,7 @@ export default function Header({ animate = false }: HeaderProps) {
             {t('nav.about')}
           </Button>
 
-          <ThemeToggle />
+
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -168,7 +169,7 @@ export default function Header({ animate = false }: HeaderProps) {
 
         {/* Mobile nav controls */}
         <div className="flex sm:hidden items-center gap-1">
-          <ThemeToggle />
+
           {user && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

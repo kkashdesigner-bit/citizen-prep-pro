@@ -56,7 +56,7 @@ export default function ParcoursCard() {
                                 <span>Classe {nextClassNumber} / {totalClasses}</span>
                                 <span className="text-[#0055A4]">{progressPercent}%</span>
                             </div>
-                            <div className="h-2 w-full bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-full overflow-hidden">
+                            <div className="h-2 w-full bg-gray-100 border border-gray-200 rounded-full overflow-hidden">
                                 <motion.div
                                     initial={{ width: 0 }}
                                     animate={{ width: `${progressPercent}%` }}

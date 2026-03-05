@@ -106,11 +106,11 @@ export default function ParcoursPage() {
     }
 
     return (
-        <div className="flex min-h-screen bg-white">
+        <div className="flex min-h-screen bg-white overflow-x-hidden">
             <LearnSidebar />
 
-            <main className="flex-1 md:ml-[260px] pb-24 md:pb-8 flex justify-center">
-                <div className="w-full max-w-4xl px-4 md:px-8 py-6 md:py-8">
+            <main className="flex-1 md:ml-[260px] pb-24 md:pb-8 flex justify-center overflow-x-hidden">
+                <div className="w-full max-w-4xl px-3 sm:px-4 md:px-8 py-6 md:py-8">
 
                     {/* Header */}
                     <motion.div
@@ -216,7 +216,7 @@ export default function ParcoursPage() {
                                             {mod.icon}
                                         </div>
                                         <div className="flex-1">
-                                            <h2 className="text-lg font-bold text-gray-900">{mod.label}</h2>
+                                            <h2 className="text-base sm:text-lg font-bold text-gray-900 truncate">{mod.label}</h2>
                                             <div className="flex items-center gap-3 mt-1">
                                                 <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden max-w-xs">
                                                     <div

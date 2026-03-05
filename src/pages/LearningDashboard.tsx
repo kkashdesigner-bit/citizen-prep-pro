@@ -47,7 +47,7 @@ export default function LearningDashboard() {
       <div className="flex min-h-screen bg-[var(--dash-bg)]">
         <LearnSidebar />
         <div className="flex-1 md:ml-[260px] flex items-center justify-center pb-20 md:pb-0">
-          <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-[#0055A4] dark:border-blue-400 border-t-transparent" />
+          <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-[#0055A4] border-t-transparent" />
         </div>
       </div>
     );
@@ -131,10 +131,10 @@ export default function LearningDashboard() {
                 {/* Recommended Exam */}
                 <motion.div
                   whileHover={{ y: -2 }}
-                  className="bg-[var(--dash-card)] rounded-2xl border-2 border-[#0055A4] dark:border-blue-500 p-5 md:p-6 shadow-[0_4px_20px_rgba(0,85,164,0.06)] mb-8 relative overflow-hidden"
+                  className="bg-[var(--dash-card)] rounded-2xl border-2 border-[#0055A4] p-5 md:p-6 shadow-[0_4px_20px_rgba(0,85,164,0.06)] mb-8 relative overflow-hidden"
                 >
                   <div className="absolute top-0 right-0 p-3">
-                    <span className="bg-blue-500/10 text-[#0055A4] dark:text-blue-400 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-widest">Recommandé</span>
+                    <span className="bg-blue-500/10 text-[#0055A4] text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-widest">Recommandé</span>
                   </div>
                   <h2 className="text-xl font-bold text-[var(--dash-text)] mb-1.5 mt-3">Examen Blanc</h2>
                   <p className="text-sm text-[var(--dash-text-muted)] font-medium mb-5 max-w-lg">
@@ -154,7 +154,7 @@ export default function LearningDashboard() {
                   </div>
                   <Button
                     onClick={() => handleStartExam()}
-                    className="w-full sm:w-auto bg-[#0055A4] hover:bg-[#1B6ED6] dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-bold rounded-xl h-11 px-8 shadow-[0_4px_14px_rgba(0,85,164,0.25)] hover:-translate-y-0.5 transition-all"
+                    className="w-full sm:w-auto bg-[#0055A4] hover:bg-[#1B6ED6] text-white font-bold rounded-xl h-11 px-8 shadow-[0_4px_14px_rgba(0,85,164,0.25)] hover:-translate-y-0.5 transition-all"
                   >
                     Commencer l'examen
                   </Button>
@@ -187,20 +187,20 @@ export default function LearningDashboard() {
                           <div className="space-y-2.5 mt-auto">
                             <div className="flex justify-between items-center text-[10px] font-bold text-[var(--dash-text-muted)] uppercase tracking-widest">
                               <span>Progression</span>
-                              <span className="text-[#0055A4] dark:text-blue-400">{masteryPercent}%</span>
+                              <span className="text-[#0055A4]">{masteryPercent}%</span>
                             </div>
                             <div className="h-1.5 w-full bg-[var(--dash-surface)] rounded-full overflow-hidden">
                               <motion.div
                                 initial={{ width: 0 }}
                                 animate={{ width: `${masteryPercent}%` }}
                                 transition={{ duration: 0.8, delay: 0.2 + idx * 0.1, ease: "easeOut" }}
-                                className="h-full bg-[#0055A4] dark:bg-blue-500 rounded-full"
+                                className="h-full bg-[#0055A4] rounded-full"
                               />
                             </div>
                             <Button
                               onClick={() => handleStartExam(cat)}
                               variant="outline"
-                              className="w-full border-[var(--dash-card-border)] hover:border-[#0055A4] dark:hover:border-blue-400 text-[var(--dash-text)] hover:text-[#0055A4] dark:hover:text-blue-400 hover:bg-blue-500/5 font-bold rounded-xl h-9 text-sm transition-all"
+                              className="w-full border-[var(--dash-card-border)] hover:border-[#0055A4] text-[var(--dash-text)] hover:text-[#0055A4] hover:bg-blue-500/5 font-bold rounded-xl h-9 text-sm transition-all"
                             >
                               S'entraîner
                             </Button>
@@ -247,16 +247,16 @@ export default function LearningDashboard() {
                     key={goal.value}
                     disabled={savingGoal}
                     onClick={async () => { setSavingGoal(true); await saveProfile({ goal_type: goal.value }); setSavingGoal(false); setShowGoalModal(false); }}
-                    className={`w-full flex items-center gap-4 rounded-xl border-2 p-4 text-left transition-all hover:-translate-y-0.5 ${isActive ? 'border-[#0055A4] dark:border-blue-400 bg-blue-500/5' : 'border-[var(--dash-card-border)] hover:border-[#0055A4]/40'}`}
+                    className={`w-full flex items-center gap-4 rounded-xl border-2 p-4 text-left transition-all hover:-translate-y-0.5 ${isActive ? 'border-[#0055A4] bg-blue-500/5' : 'border-[var(--dash-card-border)] hover:border-[#0055A4]/40'}`}
                   >
-                    <div className={`flex-shrink-0 h-10 w-10 rounded-xl flex items-center justify-center transition-colors ${isActive ? 'bg-[#0055A4] dark:bg-blue-500 text-white' : 'bg-blue-500/10 text-[#0055A4] dark:text-blue-400'}`}>
+                    <div className={`flex-shrink-0 h-10 w-10 rounded-xl flex items-center justify-center transition-colors ${isActive ? 'bg-[#0055A4] text-white' : 'bg-blue-500/10 text-[#0055A4]'}`}>
                       <Target className="h-5 w-5" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="font-semibold text-[var(--dash-text)]">{goal.label}</p>
                       <p className="text-sm text-[var(--dash-text-muted)] mt-0.5">{goal.desc}</p>
                     </div>
-                    {isActive && <Check className="h-5 w-5 text-[#0055A4] dark:text-blue-400 flex-shrink-0" />}
+                    {isActive && <Check className="h-5 w-5 text-[#0055A4] flex-shrink-0" />}
                   </button>
                 );
               })}
