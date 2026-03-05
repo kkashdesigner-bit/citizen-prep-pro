@@ -42,7 +42,7 @@ export default function AppHeader({ pageTitle, pageIcon, backTo = '/learn', back
         ? { label: 'Premium', icon: <Crown className="h-3 w-3" />, color: 'bg-amber-100 text-amber-700 border-amber-200' }
         : isStandardOrAbove
             ? { label: 'Standard', icon: <Sparkles className="h-3 w-3" />, color: 'bg-[#f04e42]/10 text-[#f04e42] border-[#f04e42]/20' }
-            : { label: 'Gratuit', icon: null, color: 'bg-slate-100 text-slate-500 border-slate-200' };
+            : { label: 'Gratuit', icon: null, color: 'bg-[#f04e42]/10 text-[#f04e42] border-[#f04e42]/20' };
 
     return (
         <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-xl border-b border-slate-200/60 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">

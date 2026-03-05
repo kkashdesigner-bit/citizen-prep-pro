@@ -129,7 +129,7 @@ export default function PricingSection() {
                       {tier.id === 'standard' && <Sparkles className="h-4 w-4 text-[#f04e42]" />}
                     </p>
                     <div className="flex items-baseline gap-1 mt-2">
-                      <span className={`font-serif text-4xl font-bold ${tier.id === 'standard' ? 'text-[#f04e42]' : 'gradient-text'}`}>{tier.price}</span>
+                      <span className={`font-serif text-4xl font-bold ${tier.id === 'standard' || tier.id === 'free' ? 'text-[#f04e42]' : 'gradient-text'}`}>{tier.price}</span>
                       {tier.period && <span className="text-sm font-medium text-muted-foreground">{tier.period}</span>}
                     </div>
                   </div>
@@ -139,7 +139,7 @@ export default function PricingSection() {
                       return (
                         <li key={feat.key} className="flex items-center gap-2 text-sm">
                           {included ? (
-                            <Check className={`h-4 w-4 shrink-0 ${tier.id === 'standard' ? 'text-[#f04e42]' : 'text-primary'}`} />
+                            <Check className={`h-4 w-4 shrink-0 ${tier.id === 'standard' || tier.id === 'free' ? 'text-[#f04e42]' : 'text-primary'}`} />
                           ) : (
                             <X className="h-4 w-4 shrink-0 text-muted-foreground/40" />
                           )}
@@ -162,8 +162,8 @@ export default function PricingSection() {
                     </Button>
                   ) : (
                     <Button
-                      className={`w-full ${tier.id === 'standard' ? 'bg-[#f04e42] hover:bg-[#d94337] text-white border-0 shadow-lg shadow-[#f04e42]/25 hover:shadow-[#f04e42]/40' : ''}`}
-                      variant={tier.id === 'standard' ? 'default' : 'outline'}
+                      className={`w-full ${tier.id === 'standard' || tier.id === 'free' ? 'bg-[#f04e42] hover:bg-[#d94337] text-white border-0 shadow-lg shadow-[#f04e42]/25 hover:shadow-[#f04e42]/40' : ''}`}
+                      variant={tier.id === 'standard' || tier.id === 'free' ? 'default' : 'outline'}
                       onClick={tier.onClick}
                     >
                       {tier.cta}
