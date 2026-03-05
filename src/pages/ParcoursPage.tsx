@@ -232,7 +232,7 @@ export default function ParcoursPage() {
                                     </div>
 
                                     {/* Vertical Timeline of Classes */}
-                                    <div className="relative ml-5 md:ml-[22px] border-l-2 border-gray-100 pl-8 md:pl-10 space-y-1">
+                                    <div className="relative ml-3 sm:ml-5 md:ml-[22px] border-l-2 border-gray-100 pl-6 sm:pl-8 md:pl-10 space-y-1">
                                         {moduleClasses.map((clazz, idx) => {
                                             const clazzProgress = progress[clazz.id];
                                             const status = clazzProgress?.status || 'not_started';
@@ -249,13 +249,13 @@ export default function ParcoursPage() {
                                                     className="relative"
                                                 >
                                                     {/* Timeline Node (dot on the line) */}
-                                                    <div className={`absolute -left-[41px] md:-left-[49px] top-4 w-4 h-4 rounded-full border-2 z-10 ${isCompleted
-                                                            ? 'bg-emerald-500 border-emerald-500'
-                                                            : isNext && unlocked
-                                                                ? 'bg-[#0055A4] border-[#0055A4] ring-4 ring-[#0055A4]/20 animate-pulse'
-                                                                : unlocked
-                                                                    ? 'bg-white border-[#0055A4]'
-                                                                    : 'bg-gray-100 border-gray-200'
+                                                    <div className={`absolute -left-[33px] sm:-left-[41px] md:-left-[49px] top-4 w-4 h-4 rounded-full border-2 z-10 ${isCompleted
+                                                        ? 'bg-emerald-500 border-emerald-500'
+                                                        : isNext && unlocked
+                                                            ? 'bg-[#0055A4] border-[#0055A4] ring-4 ring-[#0055A4]/20 animate-pulse'
+                                                            : unlocked
+                                                                ? 'bg-white border-[#0055A4]'
+                                                                : 'bg-gray-100 border-gray-200'
                                                         }`}>
                                                         {isCompleted && (
                                                             <CheckCircle2 className="w-3 h-3 text-white absolute top-0 left-0" />
@@ -279,12 +279,12 @@ export default function ParcoursPage() {
                                                         <div className="flex items-center gap-4">
                                                             {/* Class Number */}
                                                             <span className={`text-lg font-black font-mono w-8 text-center flex-shrink-0 ${isCompleted
-                                                                    ? 'text-emerald-500'
-                                                                    : isNext && unlocked
-                                                                        ? 'text-[#0055A4]'
-                                                                        : unlocked
-                                                                            ? 'text-gray-800'
-                                                                            : 'text-gray-300'
+                                                                ? 'text-emerald-500'
+                                                                : isNext && unlocked
+                                                                    ? 'text-[#0055A4]'
+                                                                    : unlocked
+                                                                        ? 'text-gray-800'
+                                                                        : 'text-gray-300'
                                                                 }`}>
                                                                 {clazz.class_number}
                                                             </span>

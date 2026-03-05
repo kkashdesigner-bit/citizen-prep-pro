@@ -3,476 +3,285 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { CATEGORY_LABELS, ExamResult } from '@/lib/types';
 import SubscriptionGate from '@/components/SubscriptionGate';
-import { Check, X, BarChart3, Clock, RotateCcw, LayoutDashboard, ArrowRight, ListChecks, Sparkles, ChevronDown, ChevronUp } from 'lucide-react';
+import Header from '@/components/Header';
+import { useParcours } from '@/hooks/useParcours';
+import { Trophy, ArrowRight, Scale, Landmark, HeartHandshake, LayoutDashboard, RotateCcw, AlertTriangle, Medal, Sparkles, Check, X, ChevronUp, ChevronDown, ChevronRight } from 'lucide-react';
 
 interface QuizError {
-  questionText: string;
-  options: string[];
-  selectedAnswer: string;
-  correctAnswer: string;
-  category: string;
-  explanation: string;
-}
-
-/* ─── Animated counter hook ─── */
-function useAnimatedCounter(target: number, duration = 1800) {
-  const [value, setValue] = useState(0);
-  const rafRef = useRef<number>(0);
-
-  useEffect(() => {
-    const start = performance.now();
-    const animate = (now: number) => {
-      const elapsed = now - start;
-      const progress = Math.min(elapsed / duration, 1);
-      // Ease out cubic
-      const eased = 1 - Math.pow(1 - progress, 3);
-      setValue(Math.round(target * eased));
-      if (progress < 1) rafRef.current = requestAnimationFrame(animate);
-    };
-    rafRef.current = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(rafRef.current);
-  }, [target, duration]);
-
-  return value;
+    questionText: string;
+    options: string[];
+    selectedAnswer: string;
+    correctAnswer: string;
+    category: string;
+    explanation: string;
 }
 
 export default function Results() {
-  const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const { t, language } = useLanguage();
-  const [result, setResult] = useState<ExamResult | null>(null);
-  const [showGate, setShowGate] = useState(false);
-  const [errors, setErrors] = useState<QuizError[]>([]);
-  const [showErrors, setShowErrors] = useState(false);
-  const errorsRef = useRef<HTMLDivElement>(null);
+    const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
+    const { t, language } = useLanguage();
+    const [result, setResult] = useState<ExamResult | null>(null);
+    const [errors, setErrors] = useState<QuizError[]>([]);
+    const [showErrors, setShowErrors] = useState(false);
+    const [showGate, setShowGate] = useState(false);
+    const errorsRef = useRef<HTMLDivElement>(null);
+    const [classId, setClassId] = useState<string | null>(null);
+    const { classes } = useParcours();
 
-  const isDemo = searchParams.get('demo') === '1';
+    useEffect(() => {
+        const stored = sessionStorage.getItem('quizResults');
+        if (stored) {
+            setResult(JSON.parse(stored));
+            const storedErrors = sessionStorage.getItem('quizErrors');
+            if (storedErrors) setErrors(JSON.parse(storedErrors));
+            const storedClassId = sessionStorage.getItem('quizClassId');
+            if (storedClassId) setClassId(storedClassId);
+        } else {
+            navigate('/');
+        }
+    }, [navigate]);
 
-  useEffect(() => {
-    const stored = sessionStorage.getItem('quizResults');
-    if (stored) {
-      setResult(JSON.parse(stored));
-      const storedErrors = sessionStorage.getItem('quizErrors');
-      if (storedErrors) setErrors(JSON.parse(storedErrors));
-    } else {
-      navigate('/');
-    }
-  }, [navigate]);
+    const handleToggleErrors = () => {
+        setShowErrors(prev => !prev);
+        if (!showErrors) {
+            setTimeout(() => errorsRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
+        }
+    };
 
-  const handleToggleErrors = () => {
-    setShowErrors(prev => !prev);
-    if (!showErrors) {
-      setTimeout(() => errorsRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
-    }
-  };
+    if (!result) return null;
 
-  if (!result) return null;
+    const scorePercent = result.totalQuestions > 0 ? Math.round((result.score / result.totalQuestions) * 100) : 0;
+    const entries = result.categoryBreakdown ? Object.entries(result.categoryBreakdown) : [];
+    const primaryColor = "#135bec";
+    const accentRed = "#ef4444";
 
-  const scorePercent = Math.round((result.score / result.totalQuestions) * 100);
-  const minutes = Math.floor(result.timeSpent / 60);
-  const seconds = result.timeSpent % 60;
+    return (
+        <div className="min-h-screen bg-[#f6f6f8] text-slate-900 font-sans flex flex-col overflow-x-hidden">
+            <style>{`
+ .font-display { font-family: 'Lexend', sans-serif; }
+ .confetti-bg {
+ background-image: 
+ radial-gradient(circle at 20% 30%, #135bec 2px, transparent 2px),
+ radial-gradient(circle at 80% 10%, #ef4444 2px, transparent 2px),
+ radial-gradient(circle at 50% 50%, #135bec 3px, transparent 3px),
+ radial-gradient(circle at 10% 80%, #ef4444 2px, transparent 2px),
+ radial-gradient(circle at 90% 70%, #135bec 2px, transparent 2px),
+ radial-gradient(circle at 30% 90%, #ef4444 3px, transparent 3px);
+ background-size: 200px 200px;
+ }
+ .tricolor-fill {
+ background: linear-gradient(90deg, #135bec 0%, #135bec 33%, #ffffff 33%, #ffffff 66%, #ef4444 66%, #ef4444 100%);
+ }
+ `}</style>
 
-  return (
-    <>
-      <div className="min-h-screen flex flex-col font-sans text-slate-800 selection:bg-blue-100 overflow-x-hidden"
-        style={{ background: 'radial-gradient(circle at 50% 50%, #fdfdfd 0%, #f1f5f9 100%)' }}
-      >
-        {/* Floating background shapes */}
-        <FloatingShapes />
+            {/* Kept Original Header from the app framework */}
+            <Header />
 
-        <main className="flex-1 flex flex-col items-center justify-start relative z-10 px-4 py-8 md:py-12 max-w-2xl mx-auto w-full">
-
-          {/* ─── Hero Banner ─── */}
-          <HeroBanner passed={result.passed} scorePercent={scorePercent} />
-
-          {/* ─── Score + Time Cards ─── */}
-          <div className="grid grid-cols-2 gap-6 w-full mb-8">
-            <StatCard
-              icon={<BarChart3 className="h-6 w-6 text-[#0055A4]" />}
-              value={`${scorePercent}%`}
-              label={`Score ${result.score}/${result.totalQuestions}`}
-              bgClass="bg-blue-50"
-              delay={100}
-              animatedValue={scorePercent}
-            />
-            <StatCard
-              icon={<Clock className="h-6 w-6 text-[#EF4135]" />}
-              value={`${minutes}:${String(seconds).padStart(2, '0')}`}
-              label={t('results.time') || 'Temps'}
-              bgClass="bg-red-50"
-              delay={200}
-            />
-          </div>
-
-          {/* ─── Category Breakdown ─── */}
-          <CategoryBreakdown result={result} language={language} onReviewErrors={handleToggleErrors} showErrors={showErrors} hasErrors={errors.length > 0} />
-
-          {/* ─── Action Buttons ─── */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 w-full mb-6"
-            style={{ animation: 'slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards', animationDelay: '0.4s', opacity: 0 }}
-          >
-            <button
-              onClick={() => { sessionStorage.removeItem('quizResults'); sessionStorage.removeItem('quizErrors'); navigate('/quiz?mode=exam'); }}
-              className="group w-full p-5 rounded-2xl transition-all flex items-center justify-center gap-3 text-slate-500 hover:text-[#0055A4]"
-              style={{
-                background: 'linear-gradient(145deg, #ffffff, #f0f4f8)',
-                boxShadow: '12px 12px 24px #d1d9e6, -12px -12px 24px #ffffff',
-                border: '1px solid rgba(255, 255, 255, 0.5)',
-              }}
-            >
-              <RotateCcw className="h-5 w-5 group-hover:rotate-[-120deg] transition-transform duration-500" />
-              <span className="font-bold text-sm uppercase tracking-widest">{t('results.retry') || "Refaire l'examen"}</span>
-            </button>
-            <button
-              onClick={() => { sessionStorage.removeItem('quizResults'); sessionStorage.removeItem('quizErrors'); navigate('/'); }}
-              className="group w-full p-5 rounded-2xl transition-all flex items-center justify-center gap-3 text-slate-500 hover:text-[#0055A4]"
-              style={{
-                background: 'linear-gradient(145deg, #ffffff, #f0f4f8)',
-                boxShadow: '12px 12px 24px #d1d9e6, -12px -12px 24px #ffffff',
-                border: '1px solid rgba(255, 255, 255, 0.5)',
-              }}
-            >
-              <LayoutDashboard className="h-5 w-5 group-hover:scale-110 transition-transform" />
-              <span className="font-bold text-sm uppercase tracking-widest">{t('results.home') || 'Tableau de bord'}</span>
-            </button>
-          </div>
-
-          {/* ─── Subscription CTA for demo users ─── */}
-          <div className="w-full mb-5" style={{ animation: 'slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards', animationDelay: '0.45s', opacity: 0 }}>
-            <button
-              onClick={() => setShowGate(true)}
-              className="w-full p-5 rounded-2xl transition-all flex items-center justify-center gap-3 text-amber-600 hover:text-amber-700"
-              style={{
-                background: 'linear-gradient(145deg, #fffbeb, #fef3c7)',
-                boxShadow: '12px 12px 24px #d1d9e6, -12px -12px 24px #ffffff',
-                border: '1px solid rgba(251, 191, 36, 0.3)',
-              }}
-            >
-              <Sparkles className="h-5 w-5" />
-              <span className="font-bold text-sm uppercase tracking-widest">Accès complet — Débloquer</span>
-            </button>
-          </div>
-
-          {/* ─── Error Review Section ─── */}
-          {showErrors && errors.length > 0 && (
-            <div ref={errorsRef} className="w-full mb-8" style={{ animation: 'slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards' }}>
-              <div
-                className="rounded-[2.5rem] p-8 md:p-10 w-full"
-                style={{
-                  background: 'linear-gradient(145deg, #ffffff, #f0f4f8)',
-                  boxShadow: '12px 12px 24px #d1d9e6, -12px -12px 24px #ffffff',
-                  border: '1px solid rgba(255, 255, 255, 0.5)',
-                }}
-              >
-                <h2 className="text-xl font-extrabold text-gray-900 mb-6 flex items-center gap-2">
-                  <X className="h-5 w-5 text-[#EF4135]" />
-                  Vos erreurs ({errors.length})
-                </h2>
-                <div className="space-y-6">
-                  {errors.map((err, idx) => (
-                    <div key={idx} className="rounded-2xl bg-white p-5 border border-slate-100 shadow-sm">
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">{err.category}</p>
-                      <p className="font-bold text-gray-900 mb-4">{err.questionText}</p>
-                      <div className="space-y-2 mb-4">
-                        {err.options.map((opt, oi) => {
-                          const isSelected = opt.trim() === err.selectedAnswer.trim();
-                          const isCorrect = opt.trim() === err.correctAnswer.trim();
-                          let cls = 'border-slate-100 text-slate-500';
-                          if (isCorrect) cls = 'border-green-200 bg-green-50 text-green-700';
-                          else if (isSelected) cls = 'border-red-200 bg-red-50 text-red-600';
-                          return (
-                            <div key={oi} className={`flex items-center gap-3 p-3 rounded-xl border text-sm font-medium ${cls}`}>
-                              <span className="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-xs font-bold shrink-0">
-                                {String.fromCharCode(65 + oi)}
-                              </span>
-                              {opt}
-                              {isCorrect && <Check className="h-4 w-4 ml-auto text-green-600" />}
-                              {isSelected && !isCorrect && <X className="h-4 w-4 ml-auto text-red-500" />}
+            <main className="flex flex-1 justify-center py-6 px-4 lg:px-0">
+                <div className="flex flex-col max-w-[1000px] flex-1 gap-8 w-full mt-4">
+                    <section className="relative overflow-hidden bg-[#135bec] rounded-[2.5rem] p-1 shadow-2xl">
+                        <div className="bg-white rounded-[2.3rem] p-10 lg:p-16 confetti-bg relative overflow-hidden">
+                            <div className="absolute inset-0 opacity-5 pointer-events-none flex items-center justify-center">
+                                <Sparkles size={400} />
                             </div>
-                          );
-                        })}
-                      </div>
-                      {err.explanation && (
-                        <p className="text-sm text-slate-600 bg-blue-50 rounded-xl p-3 border border-blue-100">
-                          💡 {err.explanation}
-                        </p>
-                      )}
+                            <div className="relative z-10 flex flex-col items-center">
+                                <span className={`px-6 py-2 ${result.passed ? 'bg-green-500' : 'bg-red-500'} text-white rounded-full text-sm font-black uppercase tracking-[0.2em] mb-8 shadow-lg`}>
+                                    {result.passed ? 'Examen Réussi' : 'Examen Échoué'}
+                                </span>
+
+                                <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-24 w-full justify-center">
+                                    <div className="relative group">
+                                        <div className="absolute inset-0 bg-yellow-400 blur-3xl opacity-20 group-hover:opacity-40 transition-opacity"></div>
+                                        <div className="relative bg-gradient-to-b from-yellow-300 to-yellow-600 p-8 rounded-[3rem] shadow-[0_20px_50px_rgba(234,179,8,0.3)] transform hover:scale-105 transition-transform duration-500">
+                                            <div className="bg-white/10 p-6 rounded-[2rem] border border-white/20 backdrop-blur-sm flex flex-col items-center">
+                                                <Trophy size={100} className="text-white drop-shadow-lg mb-2 fill-white" />
+                                                <div className="text-white text-center">
+                                                    <span className="block text-6xl font-black font-display tracking-tighter">{scorePercent}%</span>
+                                                    <span className="block text-xs font-bold uppercase tracking-widest opacity-80">Score Total</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="text-center lg:text-left max-w-md">
+                                        <h1 className="text-slate-900 text-5xl lg:text-7xl font-black mb-6 font-display leading-tight italic transform -rotate-1">
+                                            {result.passed ? 'Félicitations !' : 'Dommage !'}
+                                        </h1>
+                                        <p className="text-slate-600 text-xl font-medium leading-relaxed">
+                                            {result.passed
+                                                ? "Vous avez validé l'examen blanc avec brio. Vous êtes sur la bonne voie pour obtenir votre certificat !"
+                                                : "Vous n'avez pas atteint le score nécessaire. Continuez à vous entraîner !"
+                                            }
+                                        </p>
+                                        <div className="mt-10 flex flex-wrap gap-4 justify-center lg:justify-start">
+                                            <button
+                                                onClick={() => { sessionStorage.removeItem('quizResults'); sessionStorage.removeItem('quizErrors'); navigate('/quiz?mode=exam'); }}
+                                                className="bg-[#135bec] text-white py-4 px-10 rounded-2xl font-black flex items-center gap-4 hover:scale-105 transition-all shadow-xl shadow-blue-500/30"
+                                            >
+                                                <span>Prochain Examen</span>
+                                                <ArrowRight size={24} />
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                        <div className="lg:col-span-8 space-y-4">
+                            <div className="flex items-center justify-between px-2">
+                                <h3 className="text-xl font-black font-display italic text-slate-800">Résultats par catégorie</h3>
+                                <span className="bg-blue-100 text-[#135bec] text-xs font-bold px-3 py-1 rounded-full">
+                                    {entries.length} catégories
+                                </span>
+                            </div>
+
+                            <div className="bg-white rounded-2xl border-2 border-slate-100 shadow-lg overflow-hidden divide-y divide-slate-100">
+                                {entries.map(([cat, data], idx) => {
+                                    const catPercent = data.total > 0 ? Math.round((data.correct / data.total) * 100) : 0;
+                                    const categoryName = CATEGORY_LABELS[language as keyof typeof CATEGORY_LABELS]?.[cat as keyof typeof CATEGORY_LABELS.fr] || cat;
+
+                                    let Icon = Landmark;
+                                    if (cat.toLowerCase().includes('valeur')) Icon = Scale;
+                                    if (cat.toLowerCase().includes('droit') || cat.toLowerCase().includes('devoir')) Icon = HeartHandshake;
+
+                                    return (
+                                        <div key={idx} className="flex items-center gap-3 sm:gap-4 px-4 sm:px-6 py-4 hover:bg-slate-50 transition-colors">
+                                            <div className="size-10 shrink-0 rounded-xl bg-blue-50 text-[#135bec] flex items-center justify-center">
+                                                <Icon size={20} />
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <div className="flex items-center justify-between mb-1.5">
+                                                    <h4 className="font-bold text-sm text-slate-800 truncate pr-2">{categoryName}</h4>
+                                                    <span className="text-sm font-black text-[#135bec] font-display shrink-0">{catPercent}%</span>
+                                                </div>
+                                                <div className="w-full bg-slate-100 rounded-full overflow-hidden h-2">
+                                                    <div className="h-full tricolor-fill rounded-full" style={{ width: `${catPercent}%` }}></div>
+                                                </div>
+                                            </div>
+                                            <span className="text-xs text-slate-400 font-bold shrink-0 hidden sm:block">{data.correct}/{data.total}</span>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+
+
+                        <div className="lg:col-span-4 space-y-4">
+                            <h3 className="text-xl font-black px-1 font-display uppercase tracking-widest text-slate-400">Actions</h3>
+                            <button
+                                onClick={() => navigate('/dashboard')}
+                                className="w-full bg-slate-100 text-slate-700 py-4 px-6 rounded-2xl font-bold flex items-center gap-4 hover:bg-slate-200 transition-all border-b-4 border-slate-300 active:border-b-0 active:translate-y-1"
+                            >
+                                <LayoutDashboard className="text-[#135bec]" />
+                                Tableau de bord
+                            </button>
+
+                            {classId && (() => {
+                                const currentClass = classes.find(c => c.id === classId);
+                                const nextClass = currentClass ? classes.find(c => c.class_number === currentClass.class_number + 1) : null;
+                                return nextClass ? (
+                                    <button
+                                        onClick={() => { sessionStorage.removeItem('quizResults'); sessionStorage.removeItem('quizErrors'); sessionStorage.removeItem('quizClassId'); navigate(`/parcours/classe/${nextClass.id}`); }}
+                                        className="w-full bg-[#135bec] text-white py-4 px-6 rounded-2xl font-bold flex items-center gap-4 hover:bg-[#0d4fd4] transition-all shadow-lg shadow-blue-500/20 border-b-4 border-blue-700 active:border-b-0 active:translate-y-1"
+                                    >
+                                        <ChevronRight className="text-white" />
+                                        Classe suivante
+                                    </button>
+                                ) : null;
+                            })()}
+
+                            <button
+                                onClick={() => { sessionStorage.removeItem('quizResults'); sessionStorage.removeItem('quizErrors'); navigate('/quiz?mode=exam'); }}
+                                className="w-full border-2 border-slate-200 text-slate-600 py-4 px-6 rounded-2xl font-bold flex items-center gap-4 hover:bg-slate-50 transition-all border-b-4 border-slate-200 active:border-b-0 active:translate-y-1"
+                            >
+                                <RotateCcw className="text-[#ef4444]" />
+                                Refaire l'examen
+                            </button>
+
+                            {errors.length > 0 && (
+                                <button
+                                    onClick={handleToggleErrors}
+                                    className="w-full bg-slate-100 text-slate-700 py-4 px-6 rounded-2xl font-bold flex items-center gap-4 hover:bg-slate-200 transition-all border-b-4 border-slate-300 active:border-b-0 active:translate-y-1"
+                                >
+                                    <AlertTriangle className="text-yellow-500 fill-yellow-500" />
+                                    {showErrors ? 'Masquer mes erreurs' : 'Revoir mes erreurs'}
+                                    {showErrors ? <ChevronUp className="h-5 w-5 ml-auto text-slate-400" /> : <ChevronDown className="h-5 w-5 ml-auto text-slate-400" />}
+                                </button>
+                            )}
+
+                            <div className="mt-8 p-6 rounded-[2rem] bg-gradient-to-br from-slate-900 to-[#135bec] text-white relative overflow-hidden group">
+                                <div className="absolute top-0 right-0 p-2">
+                                    <Medal className="text-yellow-400 text-4xl opacity-30 w-12 h-12" />
+                                </div>
+                                <h4 className="text-lg font-black font-display mb-2 italic">Passez au Pass Premium</h4>
+                                <p className="text-slate-400 text-xs mb-6 font-medium">Débloquez 500+ questions et simulations d'entretiens.</p>
+                                <button onClick={() => setShowGate(true)} className="w-full bg-white text-[#135bec] py-3 rounded-xl font-black text-sm hover:scale-[1.02] transition-transform shadow-xl">
+                                    Débloquer maintenant
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
 
-          {/* ─── Next Exam CTA ─── */}
-          <div className="w-full" style={{ animation: 'slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards', animationDelay: '0.5s', opacity: 0 }}>
-            <button
-              onClick={() => { sessionStorage.removeItem('quizResults'); sessionStorage.removeItem('quizErrors'); navigate('/quiz?mode=exam'); }}
-              className="w-full text-white p-6 rounded-2xl transition-all flex items-center justify-center gap-4 transform hover:-translate-y-1 active:scale-[0.98] group"
-              style={{
-                background: 'linear-gradient(145deg, #005dc3, #004d94)',
-                boxShadow: '4px 4px 10px rgba(0, 85, 164, 0.3), inset 0 2px 4px rgba(255,255,255,0.3)',
-              }}
-            >
-              <span className="font-bold text-xl tracking-wide">Prochain Examen</span>
-              <ArrowRight className="h-6 w-6 group-hover:translate-x-2 transition-transform" />
-            </button>
-          </div>
-        </main>
+                    {/* ─── Error Review Section ─── */}
+                    {
+                        showErrors && errors.length > 0 && (
+                            <div ref={errorsRef} className="w-full mb-8 pt-6">
+                                <div className="rounded-[2.5rem] p-8 md:p-10 w-full bg-white border-2 border-slate-100 shadow-xl">
+                                    <h2 className="text-2xl font-black font-display text-slate-900 mb-6 flex items-center gap-3">
+                                        <AlertTriangle className="h-6 w-6 text-[#ef4444] fill-[#ef4444]" />
+                                        Vos erreurs ({errors.length})
+                                    </h2>
+                                    <div className="space-y-6">
+                                        {errors.map((err, idx) => (
+                                            <div key={idx} className="rounded-2xl bg-[#f6f6f8] p-6 border-l-4 border-[#ef4444] shadow-sm">
+                                                <p className="text-[10px] font-bold uppercase tracking-widest text-[#135bec] mb-2">{err.category}</p>
+                                                <p className="font-bold text-slate-900 text-lg mb-5">{err.questionText}</p>
+                                                <div className="space-y-3 mb-5">
+                                                    {err.options.map((opt, oi) => {
+                                                        const isSelected = opt.trim() === err.selectedAnswer.trim();
+                                                        const isCorrect = opt.trim() === err.correctAnswer.trim();
+                                                        let cls = 'border-slate-200 bg-white text-slate-600 ';
+                                                        if (isCorrect) cls = 'border-green-200 bg-green-50 text-green-700 ring-1 ring-green-500';
+                                                        else if (isSelected) cls = 'border-red-200 bg-red-50 text-red-600 ring-1 ring-red-500';
+                                                        return (
+                                                            <div key={oi} className={`flex items-center gap-3 p-4 rounded-xl border-2 text-sm font-bold ${cls} transition-colors`}>
+                                                                <span className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-black shrink-0 ${isCorrect ? 'bg-green-100 ' : isSelected ? 'bg-red-100 ' : 'bg-slate-100 '}`}>
+                                                                    {String.fromCharCode(65 + oi)}
+                                                                </span>
+                                                                {opt}
+                                                                {isCorrect && <Check className="h-5 w-5 ml-auto text-green-600 " strokeWidth={3} />}
+                                                                {isSelected && !isCorrect && <X className="h-5 w-5 ml-auto text-red-500 " strokeWidth={3} />}
+                                                            </div>
+                                                        );
+                                                    })}
+                                                </div>
+                                                {err.explanation && (
+                                                    <p className="text-sm text-[#135bec] bg-blue-50 rounded-xl p-4 border border-blue-100 font-medium">
+                                                        💡 {err.explanation}
+                                                    </p>
+                                                )}
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        )
+                    }
 
-        {/* Footer */}
-        <footer className="relative z-10 py-8 px-8 mt-12 border-t border-slate-200/30 bg-white/40 backdrop-blur-xl">
-          <div className="max-w-[1400px] mx-auto flex flex-col md:flex-row items-center justify-between text-[10px] md:text-xs text-slate-500 font-bold gap-6">
-            <div className="flex items-center gap-6 uppercase tracking-[0.2em]">
-              <span className="opacity-70">© 2026 GoCivique</span>
-              <a className="hover:text-[#0055A4] transition-colors cursor-pointer">Aide</a>
-              <a className="hover:text-[#0055A4] transition-colors cursor-pointer">Confidentialité</a>
-            </div>
-          </div>
-        </footer>
-      </div>
+                    <footer className="my-8 text-center pb-8 border-t border-slate-200 pt-8">
+                        <p className="text-slate-400 text-sm font-bold tracking-tight">© 2026 GoCivique. Préparation citoyenne moderne.</p>
+                        <div className="flex justify-center gap-8 mt-6">
+                            <a className="text-slate-400 hover:text-[#135bec] transition-colors text-[10px] uppercase tracking-[0.2em] font-black cursor-pointer">Confidentialité</a>
+                            <a className="text-slate-400 hover:text-[#135bec] transition-colors text-[10px] uppercase tracking-[0.2em] font-black cursor-pointer">Conditions</a>
+                            <a className="text-slate-400 hover:text-[#135bec] transition-colors text-[10px] uppercase tracking-[0.2em] font-black cursor-pointer">Contact</a>
+                        </div>
+                    </footer>
+                </div >
+            </main >
 
-      <SubscriptionGate open={showGate} onOpenChange={setShowGate} />
-
-      {/* Keyframes */}
-      <style>{`
-        @keyframes float {
-          0%, 100% { transform: translate(0, 0) rotate(0deg); }
-          33% { transform: translate(15px, -25px) rotate(5deg); }
-          66% { transform: translate(-10px, 15px) rotate(-5deg); }
-        }
-        @keyframes scaleIn {
-          0% { transform: scale(0.9) translateY(10px); opacity: 0; }
-          100% { transform: scale(1) translateY(0); opacity: 1; }
-        }
-        @keyframes slideUp {
-          0% { transform: translateY(30px); opacity: 0; }
-          100% { transform: translateY(0); opacity: 1; }
-        }
-        @keyframes growWidth {
-          0% { width: 0%; }
-          100% { width: var(--target-width); }
-        }
-        @keyframes pulseGlow {
-          0%, 100% { box-shadow: 0 0 0 0 rgba(0, 85, 164, 0.2), inset 0 2px 4px rgba(255,255,255,0.3); }
-          50% { box-shadow: 0 0 0 15px rgba(0, 85, 164, 0), inset 0 2px 4px rgba(255,255,255,0.3); }
-        }
-        @keyframes bounceScale {
-          0%, 100% { transform: scale(1); }
-          50% { transform: scale(1.05); }
-        }
-      `}</style>
-    </>
-  );
-}
-
-/* ─── Floating Background Shapes ─── */
-function FloatingShapes() {
-  return (
-    <>
-      <div
-        className="fixed top-[10%] left-[5%] w-64 h-64 rounded-full opacity-20 pointer-events-none"
-        style={{
-          background: 'radial-gradient(circle at 30% 30%, #0055A4 0%, rgba(0,0,0,0.1) 100%)',
-          boxShadow: 'inset -5px -5px 15px rgba(0,0,0,0.1)',
-          animation: 'float 8s ease-in-out infinite',
-        }}
-      />
-      <div
-        className="fixed top-[40%] right-[-5%] w-80 h-80 opacity-15 rotate-12 pointer-events-none"
-        style={{
-          borderRadius: '20%',
-          background: 'linear-gradient(135deg, #EF4135 0%, rgba(0,0,0,0.05) 100%)',
-          boxShadow: '8px 8px 20px rgba(0,0,0,0.05), inset -2px -2px 10px rgba(0,0,0,0.1)',
-          animation: 'float 12s ease-in-out infinite 2s',
-        }}
-      />
-      <div
-        className="fixed bottom-[-10%] left-[20%] w-48 h-48 rounded-full opacity-10 pointer-events-none"
-        style={{
-          background: 'radial-gradient(circle at 30% 30%, #0055A4 0%, rgba(0,0,0,0.1) 100%)',
-          boxShadow: 'inset -5px -5px 15px rgba(0,0,0,0.1)',
-          animation: 'float 8s ease-in-out infinite',
-        }}
-      />
-      <div
-        className="fixed top-[-5%] right-[15%] w-32 h-32 opacity-10 -rotate-12 pointer-events-none"
-        style={{
-          borderRadius: '20%',
-          background: 'linear-gradient(135deg, #EF4135 0%, rgba(0,0,0,0.05) 100%)',
-          boxShadow: '8px 8px 20px rgba(0,0,0,0.05), inset -2px -2px 10px rgba(0,0,0,0.1)',
-          animation: 'float 8s ease-in-out infinite',
-        }}
-      />
-    </>
-  );
-}
-
-/* ─── Hero Banner ─── */
-function HeroBanner({ passed, scorePercent }: { passed: boolean; scorePercent: number }) {
-  return (
-    <div
-      className="w-full rounded-[2.5rem] p-10 md:p-14 text-center mb-8 relative overflow-hidden"
-      style={{
-        background: passed
-          ? 'linear-gradient(145deg, #0055A4, #004482)'
-          : 'linear-gradient(145deg, #EF4135, #c62828)',
-        boxShadow: passed
-          ? '0 20px 40px -10px rgba(0, 85, 164, 0.4)'
-          : '0 20px 40px -10px rgba(239, 65, 53, 0.4)',
-        animation: 'scaleIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards',
-      }}
-    >
-      {/* Radial highlight */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(255,255,255,0.2)_0%,transparent_70%)]" />
-
-      {/* Checkmark / X icon */}
-      <div
-        className="w-24 h-24 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center mx-auto mb-6 border border-white/30"
-        style={{
-          boxShadow: '0 10px 30px rgba(0,0,0,0.15)',
-          animation: 'bounceScale 3s infinite',
-        }}
-      >
-        <div className={`w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-inner ${passed ? 'text-[#0055A4]' : 'text-[#EF4135]'
-          }`}>
-          {passed ? <Check className="h-9 w-9" strokeWidth={3} /> : <X className="h-9 w-9" strokeWidth={3} />}
-        </div>
-      </div>
-
-      <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-3 tracking-tight uppercase">
-        {passed ? 'Réussi' : 'Échoué'}
-      </h1>
-      <p className="text-white/80 font-medium tracking-wide">
-        Seuil de réussite : 80%
-      </p>
-
-      {/* Decorative dots */}
-      <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
-        <div className="absolute top-[20%] left-[10%] w-3 h-3 bg-white/30 rounded-full" />
-        <div className="absolute top-[30%] right-[15%] w-4 h-4 bg-white/20 rounded-sm rotate-45" />
-        <div className="absolute top-[60%] left-[20%] w-2 h-2 bg-white/40 rounded-full" />
-      </div>
-    </div>
-  );
-}
-
-/* ─── Stat Card ─── */
-function StatCard({
-  icon,
-  value,
-  label,
-  bgClass,
-  delay,
-  animatedValue,
-}: {
-  icon: React.ReactNode;
-  value: string;
-  label: string;
-  bgClass: string;
-  delay: number;
-  animatedValue?: number;
-}) {
-  const counter = useAnimatedCounter(animatedValue ?? 0, 1800);
-
-  return (
-    <div
-      className="rounded-[2rem] p-8 flex flex-col items-center justify-center gap-2"
-      style={{
-        background: 'linear-gradient(145deg, #ffffff, #f0f4f8)',
-        boxShadow: '12px 12px 24px #d1d9e6, -12px -12px 24px #ffffff',
-        border: '1px solid rgba(255, 255, 255, 0.5)',
-        animation: 'slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards',
-        animationDelay: `${delay / 1000}s`,
-        opacity: 0,
-      }}
-    >
-      <div
-        className={`w-12 h-12 rounded-2xl ${bgClass} flex items-center justify-center mb-2`}
-        style={{
-          boxShadow: 'inset 2px 2px 5px rgba(0,0,0,0.05), inset -2px -2px 5px rgba(255,255,255,0.8)',
-        }}
-      >
-        {icon}
-      </div>
-      <div className="text-4xl md:text-5xl font-extrabold text-gray-900">
-        {animatedValue !== undefined ? `${counter}%` : value}
-      </div>
-      <div className="text-xs md:text-sm text-slate-500 font-bold uppercase tracking-widest text-center">{label}</div>
-    </div>
-  );
-}
-
-/* ─── Category Breakdown ─── */
-function CategoryBreakdown({ result, language, onReviewErrors, showErrors, hasErrors }: { result: ExamResult; language: string; onReviewErrors: () => void; showErrors: boolean; hasErrors: boolean }) {
-  const entries = Object.entries(result.categoryBreakdown);
-
-  return (
-    <div
-      className="rounded-[2.5rem] p-8 md:p-10 w-full mb-8"
-      style={{
-        background: 'linear-gradient(145deg, #ffffff, #f0f4f8)',
-        boxShadow: '12px 12px 24px #d1d9e6, -12px -12px 24px #ffffff',
-        border: '1px solid rgba(255, 255, 255, 0.5)',
-        animation: 'slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards',
-        animationDelay: '0.3s',
-        opacity: 0,
-      }}
-    >
-      <div className="flex items-center justify-between mb-8">
-        <h2 className="text-xl font-extrabold text-gray-900">Par catégorie</h2>
-      </div>
-
-      <div className="space-y-8">
-        {entries.map(([cat, data], idx) => {
-          const catPercent = Math.round((data.correct / data.total) * 100);
-          const categoryName =
-            CATEGORY_LABELS[language as keyof typeof CATEGORY_LABELS]?.[cat as keyof typeof CATEGORY_LABELS.fr] || cat;
-          const barColor = catPercent >= 80 ? '#0055A4' : '#EF4135';
-
-          return (
-            <div key={cat}>
-              <div className="flex justify-between text-sm mb-3">
-                <span className="font-bold text-gray-700">{categoryName}</span>
-                <span className="text-slate-500 font-bold">
-                  {data.correct}/{data.total} ({catPercent}%)
-                </span>
-              </div>
-              <div
-                className="h-4 bg-slate-100 rounded-full overflow-hidden"
-                style={{
-                  boxShadow: 'inset 2px 2px 5px rgba(0,0,0,0.05), inset -2px -2px 5px rgba(255,255,255,0.8)',
-                }}
-              >
-                <div
-                  className="h-full rounded-full"
-                  style={{
-                    '--target-width': `${catPercent}%`,
-                    background: barColor,
-                    boxShadow: 'inset 0 1px 2px rgba(255,255,255,0.4)',
-                    animation: 'growWidth 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards',
-                    animationDelay: `${0.5 + idx * 0.15}s`,
-                    width: 0,
-                  } as React.CSSProperties}
-                />
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      {/* Review errors button */}
-      {hasErrors && (
-        <button
-          onClick={onReviewErrors}
-          className="mt-10 w-full py-5 rounded-2xl border border-[#0055A4]/10 bg-blue-50 text-[#0055A4] font-bold uppercase tracking-[0.2em] hover:bg-blue-100/80 transition-all flex items-center justify-center gap-3"
-          style={{ animation: 'pulseGlow 3s infinite' }}
-        >
-          <ListChecks className="h-5 w-5" />
-          {showErrors ? 'Masquer mes erreurs' : 'Revoir mes erreurs'}
-          {showErrors ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-        </button>
-      )}
-    </div>
-  );
+            <SubscriptionGate open={showGate} onOpenChange={setShowGate} requiredTier="premium" />
+        </div >
+    );
 }

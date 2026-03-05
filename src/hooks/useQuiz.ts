@@ -29,6 +29,8 @@ export interface UseQuizOptions {
   questionLimit?: number;
   /** Retry counter — incrementing triggers a re-fetch of fresh questions */
   retryKey?: number;
+  /** Parcours class ID — fetch class-specific questions */
+  classId?: string | null;
 }
 
 const DEMO_QUESTIONS_PER_EXAM = 20;
@@ -89,6 +91,7 @@ export function useQuiz({
   isMiniQuiz = false,
   questionLimit,
   retryKey = 0,
+  classId,
 }: UseQuizOptions = {}) {
   const { user } = useAuth();
   const { language } = useLanguage();
@@ -111,6 +114,52 @@ export function useQuiz({
       setError(null);
 
       try {
+        // ─── CLASS MODE: fetch class-specific questions ───
+        if (classId) {
+          // Check for manually mapped questions first
+          const { data: qLinks } = await (supabase as any)
+            .from('class_questions')
+            .select('question_id')
+            .eq('class_id', classId);
+
+          let classQuestions: Question[] = [];
+
+          if (qLinks && qLinks.length > 0) {
+            const questionIds = qLinks.map((q: any) => q.question_id);
+            const { data: rawQuestions } = await supabase
+              .from('questions')
+              .select('*')
+              .in('id', questionIds);
+            classQuestions = (rawQuestions || []) as Question[];
+          } else {
+            // Dynamic: fetch random questions from the full pool
+            let usedIds: number[] = [];
+            if (user) {
+              const { data: profileData } = await supabase
+                .from('profiles')
+                .select('used_questions')
+                .eq('id', user.id)
+                .maybeSingle();
+              if (profileData?.used_questions) {
+                usedIds = (profileData.used_questions as string[]).map(Number).filter(n => !isNaN(n));
+              }
+            }
+
+            let query = supabase.from('questions').select('*').limit(50);
+            if (usedIds.length > 0) {
+              query = query.not('id', 'in', `(${usedIds.join(',')})`);
+            }
+
+            const { data: poolQuestions, error: poolErr } = await query;
+            if (poolErr) throw poolErr;
+            classQuestions = shuffle((poolQuestions || []) as Question[]).slice(0, 5);
+          }
+
+          setQuestions(classQuestions);
+          setLoading(false);
+          return;
+        }
+
         // ─── DEMO MODE: pull 20 random questions from CSV each time ───
         if (mode === 'demo') {
           const allDemo = await fetchDemoQuestionsFromCSV();
@@ -205,7 +254,7 @@ export function useQuiz({
     };
 
     fetchQuestions();
-  }, [language, category, user, resolvedLevel, mode, isMiniQuiz, questionLimit, retryKey]);
+  }, [language, category, user, resolvedLevel, mode, isMiniQuiz, questionLimit, retryKey, classId]);
 
   /** Save a single answer to user_answers table (skipped in demo mode) */
   const saveAnswer = useCallback(
