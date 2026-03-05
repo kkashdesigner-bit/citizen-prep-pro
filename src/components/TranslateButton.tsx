@@ -185,7 +185,7 @@ export default function TranslateButton({ text, onTranslated }: Props) {
               ) : (
                 <>
                   <Crown className="w-5 h-5 text-amber-300" />
-                  Passer au forfait Fraternité
+                  Passer au forfait Premium
                   <ArrowRight className="w-4 h-4" />
                 </>
               )}
