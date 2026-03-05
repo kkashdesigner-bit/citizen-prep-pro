@@ -60,7 +60,7 @@ export default function MarketingHeader() {
     const tierBadge = isPremium
         ? { label: 'Premium', icon: <Crown className="h-3 w-3" />, color: 'bg-amber-100 text-amber-700 border-amber-200' }
         : isStandardOrAbove
-            ? { label: 'Standard', icon: <Sparkles className="h-3 w-3" />, color: 'bg-blue-100 text-blue-700 border-blue-200' }
+            ? { label: 'Standard', icon: <Sparkles className="h-3 w-3" />, color: 'bg-[#f04e42]/10 text-[#f04e42] border-[#f04e42]/20' }
             : null;
 
     const navLinks = [

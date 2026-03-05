@@ -124,7 +124,7 @@ export default function LearningDashboard() {
                         <Crown className="h-3 w-3 sm:h-3.5 sm:w-3.5" /> Premium
                       </div>
                     ) : isStandardOrAbove ? (
-                      <div className="inline-flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-bold border bg-blue-100 text-blue-700 border-blue-200">
+                      <div className="inline-flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-bold border bg-[#f04e42]/10 text-[#f04e42] border-[#f04e42]/20">
                         <Sparkles className="h-3 w-3 sm:h-3.5 sm:w-3.5" /> Standard
                       </div>
                     ) : (

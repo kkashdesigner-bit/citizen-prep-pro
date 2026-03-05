@@ -24,7 +24,7 @@ import {
 /* ─────────────── tier display config ─────────────── */
 const TIER_CONFIG = {
     free: { label: 'Gratuit', color: 'slate', icon: null, price: 'Gratuit' },
-    standard: { label: 'Standard', color: 'blue', icon: Sparkles, price: '6,99€/mois' },
+    standard: { label: 'Standard', color: 'red', icon: Sparkles, price: '6,99€/mois' },
     premium: { label: 'Premium', color: 'amber', icon: Crown, price: '10,99€/mois' },
 } as const;
 
