@@ -121,15 +121,15 @@ export default function LearningDashboard() {
                     {/* Tier Badge */}
                     {isPremium ? (
                       <div className="inline-flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-bold border bg-amber-100 text-amber-700 border-amber-200">
-                        <Crown className="h-3 w-3 sm:h-3.5 sm:w-3.5" /> Fraternité
+                        <Crown className="h-3 w-3 sm:h-3.5 sm:w-3.5" /> Premium
                       </div>
                     ) : isStandardOrAbove ? (
                       <div className="inline-flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-bold border bg-blue-100 text-blue-700 border-blue-200">
-                        <Sparkles className="h-3 w-3 sm:h-3.5 sm:w-3.5" /> Égalité
+                        <Sparkles className="h-3 w-3 sm:h-3.5 sm:w-3.5" /> Standard
                       </div>
                     ) : (
                       <div className="inline-flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-bold border bg-slate-100 text-slate-500 border-slate-200">
-                        Liberté
+                        Gratuit
                       </div>
                     )}
 

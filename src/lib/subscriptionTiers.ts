@@ -1,7 +1,7 @@
 import type { SubscriptionTier } from '@/hooks/useSubscription';
 
 export const TIER_LABELS: Record<SubscriptionTier, string> = {
-  free: 'Gratuit — 0 €',
+  free: 'Gratuit',
   standard: 'Standard — 6,99 €/mois',
   premium: 'Premium — 10,99 €/mois',
 };

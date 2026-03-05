@@ -18,7 +18,7 @@ interface SubscriptionGateProps {
 const plans = [
   {
     id: 'free' as const,
-    name: 'Liberté',
+    name: 'Gratuit',
     iconSymbol: '🎓',
     price: '0',
     currency: '€',
@@ -30,7 +30,7 @@ const plans = [
   },
   {
     id: 'standard' as const,
-    name: 'Égalité',
+    name: 'Standard',
     iconSymbol: '✨',
     price: '6,99',
     currency: '€',
@@ -42,7 +42,7 @@ const plans = [
   },
   {
     id: 'premium' as const,
-    name: 'Fraternité',
+    name: 'Premium',
     iconSymbol: '👥',
     price: '10,99',
     currency: '€',
@@ -50,7 +50,7 @@ const plans = [
     periodLabel: 'Facturé mensuellement',
     popular: false,
     colorClass: 'red',
-    features: ['Tout dans Égalité', 'Traduction', 'Catégories ciblées'],
+    features: ['Tout dans Standard', 'Traduction', 'Catégories ciblées'],
   },
 ];
 
@@ -159,7 +159,7 @@ export default function SubscriptionGate({ open, onOpenChange, requiredTier = 's
                 <Lock className="h-4 w-4 text-[#0055A4] shrink-0" />
                 <p className="text-sm text-slate-700">
                   <span className="font-semibold">{featureLabel}</span> nécessite le forfait{' '}
-                  <span className="font-bold text-[#0055A4]">{requiredTier === 'premium' ? 'Fraternité' : 'Égalité'}</span>.
+                  <span className="font-bold text-[#0055A4]">{requiredTier === 'premium' ? 'Premium' : 'Standard'}</span>.
                 </p>
               </div>
             )}
