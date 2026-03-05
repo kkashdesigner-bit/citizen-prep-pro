@@ -55,10 +55,8 @@ export default function SettingsPage() {
     }
 
     /* ── Security state ── */
-    const [currentPw, setCurrentPw] = useState('');
     const [newPw, setNewPw] = useState('');
     const [confirmPw, setConfirmPw] = useState('');
-    const [showCurrent, setShowCurrent] = useState(false);
     const [showNew, setShowNew] = useState(false);
     const [savingPw, setSavingPw] = useState(false);
     const isGoogleUser = user?.app_metadata?.provider === 'google';
@@ -100,7 +98,6 @@ export default function SettingsPage() {
             const { error } = await supabase.auth.updateUser({ password: newPw });
             if (error) throw error;
             toast.success('Mot de passe modifié avec succès !');
-            setCurrentPw('');
             setNewPw('');
             setConfirmPw('');
         } catch (err: any) {
@@ -254,8 +251,8 @@ export default function SettingsPage() {
                                                 {(Object.entries(GOAL_LABELS) as [GoalType, string][]).map(([key, label]) => (
                                                     <button key={key} onClick={() => { setGoal(key); setProfileDirty(true); }}
                                                         className={`flex items-center gap-2 px-3 py-2.5 rounded-xl border text-sm font-medium transition-all ${goal === key
-                                                                ? 'border-[#0055A4] bg-blue-500/10 text-[#0055A4]'
-                                                                : 'border-[var(--dash-card-border)] bg-[var(--dash-surface)] text-[var(--dash-text-muted)] hover:border-[#0055A4]/40'
+                                                            ? 'border-[#0055A4] bg-blue-500/10 text-[#0055A4]'
+                                                            : 'border-[var(--dash-card-border)] bg-[var(--dash-surface)] text-[var(--dash-text-muted)] hover:border-[#0055A4]/40'
                                                             }`}
                                                     >
                                                         {goal === key && <Check className="h-4 w-4 text-[#0055A4] shrink-0" />}
@@ -289,18 +286,6 @@ export default function SettingsPage() {
                                         </div>
                                     ) : (
                                         <div className="space-y-4 mt-4">
-                                            <div>
-                                                <Label htmlFor="currentPw" className="text-xs font-bold text-[var(--dash-text-muted)] uppercase tracking-wider">Mot de passe actuel</Label>
-                                                <div className="relative mt-1.5">
-                                                    <Input id="currentPw" type={showCurrent ? 'text' : 'password'} value={currentPw}
-                                                        onChange={(e) => setCurrentPw(e.target.value)} placeholder="••••••••"
-                                                        className="bg-[var(--dash-surface)] border-[var(--dash-card-border)] text-[var(--dash-text)] focus:border-[#0055A4] focus:ring-[#0055A4]/20 rounded-xl h-11 pr-10" />
-                                                    <button type="button" onClick={() => setShowCurrent(!showCurrent)}
-                                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--dash-text-muted)] hover:text-[var(--dash-text)]">
-                                                        {showCurrent ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                                                    </button>
-                                                </div>
-                                            </div>
 
                                             <div>
                                                 <Label htmlFor="newPw" className="text-xs font-bold text-[var(--dash-text-muted)] uppercase tracking-wider">Nouveau mot de passe</Label>
@@ -344,8 +329,8 @@ export default function SettingsPage() {
 
                                     {/* Plan display */}
                                     <div className={`rounded-xl border-2 p-5 ${tier === 'premium' ? 'border-amber-300 bg-amber-50/50' :
-                                            tier === 'standard' ? 'border-blue-300 bg-blue-50/50' :
-                                                'border-[var(--dash-card-border)] bg-[var(--dash-surface)]'
+                                        tier === 'standard' ? 'border-blue-300 bg-blue-50/50' :
+                                            'border-[var(--dash-card-border)] bg-[var(--dash-surface)]'
                                         }`}>
                                         <div className="flex items-center justify-between">
                                             <div className="flex items-center gap-3">
@@ -356,8 +341,8 @@ export default function SettingsPage() {
                                                 </div>
                                             </div>
                                             <span className={`text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full ${tier === 'premium' ? 'bg-amber-100 text-amber-700' :
-                                                    tier === 'standard' ? 'bg-blue-100 text-blue-700' :
-                                                        'bg-slate-100 text-slate-500'
+                                                tier === 'standard' ? 'bg-blue-100 text-blue-700' :
+                                                    'bg-slate-100 text-slate-500'
                                                 }`}>Actif</span>
                                         </div>
 

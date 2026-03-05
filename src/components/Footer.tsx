@@ -30,13 +30,13 @@ export default function Footer() {
               <ShieldCheck className="w-5 h-5 text-[hsl(var(--success))]" />
               <span className="text-sm font-medium text-foreground">{t('footer.securePayment')}</span>
             </div>
-            {/* Payment Icons */}
-            <div className="flex flex-wrap gap-2 mt-1 opacity-70">
-              <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/Apple_Pay_logo.svg" alt="Apple Pay" className="h-6" loading="lazy" />
-              <img src="https://upload.wikimedia.org/wikipedia/commons/f/f2/Google_Pay_Logo.svg" alt="Google Pay" className="h-6" loading="lazy" />
-              <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa" className="h-4 mt-1" loading="lazy" />
-              <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" className="h-5 mt-0.5" loading="lazy" />
-              <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal" className="h-4 mt-1" loading="lazy" />
+            {/* Payment Icons — inline SVGs to avoid hotlink issues */}
+            <div className="flex flex-wrap items-center gap-3 mt-1 opacity-70">
+              <span className="text-[10px] font-bold text-foreground/60 border border-foreground/20 rounded px-2 py-0.5 tracking-wider">VISA</span>
+              <span className="text-[10px] font-bold text-foreground/60 border border-foreground/20 rounded px-2 py-0.5 tracking-wider">MASTERCARD</span>
+              <span className="text-[10px] font-bold text-foreground/60 border border-foreground/20 rounded px-2 py-0.5 tracking-wider">APPLE PAY</span>
+              <span className="text-[10px] font-bold text-foreground/60 border border-foreground/20 rounded px-2 py-0.5 tracking-wider">GOOGLE PAY</span>
+              <span className="text-[10px] font-bold text-foreground/60 border border-foreground/20 rounded px-2 py-0.5 tracking-wider">PAYPAL</span>
             </div>
           </div>
 

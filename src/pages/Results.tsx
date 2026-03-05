@@ -110,7 +110,7 @@ export default function Results() {
                                         </h1>
                                         <p className="text-slate-600 text-sm sm:text-xl font-medium leading-relaxed">
                                             {result.passed
-                                                ? "Vous avez validé l'examen blanc avec brio. Vous êtes sur la bonne voie pour obtenir votre certificat !"
+                                                ? "Bravo ! Continuez comme ça, vous progressez bien vers votre objectif."
                                                 : "Vous n'avez pas atteint le score nécessaire. Continuez à vous entraîner !"
                                             }
                                         </p>
@@ -157,7 +157,7 @@ export default function Results() {
                                                     <h4 className="font-bold text-sm text-slate-800 truncate pr-2">{categoryName}</h4>
                                                     <span className="text-sm font-black text-[#135bec] font-display shrink-0">{catPercent}%</span>
                                                 </div>
-                                                <div className="w-full bg-slate-100 rounded-full overflow-hidden h-2">
+                                                <div className="w-full bg-slate-100 rounded-full overflow-hidden h-2 border border-slate-200">
                                                     <div className="h-full tricolor-fill rounded-full" style={{ width: `${catPercent}%` }}></div>
                                                 </div>
                                             </div>
@@ -172,7 +172,7 @@ export default function Results() {
                         <div className="lg:col-span-4 space-y-4">
                             <h3 className="text-xl font-black px-1 font-display uppercase tracking-widest text-slate-400">Actions</h3>
                             <button
-                                onClick={() => navigate('/dashboard')}
+                                onClick={() => navigate('/learn')}
                                 className="w-full bg-slate-100 text-slate-700 py-4 px-6 rounded-2xl font-bold flex items-center gap-4 hover:bg-slate-200 transition-all border-b-4 border-slate-300 active:border-b-0 active:translate-y-1"
                             >
                                 <LayoutDashboard className="text-[#135bec]" />
@@ -217,7 +217,7 @@ export default function Results() {
                                     <Medal className="text-yellow-400 text-4xl opacity-30 w-12 h-12" />
                                 </div>
                                 <h4 className="text-lg font-black font-display mb-2 italic">Passez au Pass Premium</h4>
-                                <p className="text-slate-400 text-xs mb-6 font-medium">Débloquez 500+ questions et simulations d'entretiens.</p>
+                                <p className="text-slate-400 text-xs mb-6 font-medium">Débloquez 2000+ questions et simulations d'entretiens.</p>
                                 <button onClick={() => setShowGate(true)} className="w-full bg-white text-[#135bec] py-3 rounded-xl font-black text-sm hover:scale-[1.02] transition-transform shadow-xl">
                                     Débloquer maintenant
                                 </button>
