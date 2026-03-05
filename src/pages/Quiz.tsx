@@ -373,7 +373,7 @@ export default function Quiz() {
                 <p className="text-xs sm:text-sm font-bold text-foreground">
                   Question <span className="text-primary">{currentIndex + 1}</span> sur {questions.length}
                 </p>
-                <p className="text-xs sm:text-sm font-bold text-primary">{completedPercent}% Completed</p>
+                <p className="text-xs sm:text-sm font-bold text-primary">{completedPercent}% Complété</p>
               </div>
               <Progress value={progressPercent} className="h-1.5 sm:h-2" />
             </div>

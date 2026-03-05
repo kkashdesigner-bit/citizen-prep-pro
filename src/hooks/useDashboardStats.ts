@@ -318,7 +318,7 @@ export function useDashboardStats(): DashboardStats {
         : 0;
 
     const streak = computeStreak(examHistory);
-    const dailyGoalTarget = 20;
+    const dailyGoalTarget = 100;
     const dailyGoalCurrent = Math.min(answeredToday, dailyGoalTarget);
 
     const weeklyActivity = computeWeeklyActivity(allAnswers);

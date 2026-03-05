@@ -150,10 +150,9 @@ export default function TranslateButton({ text, onTranslated }: Props) {
           {/* Bottom content */}
           <div className="px-8 py-6">
             {/* Feature highlights */}
-            <div className="space-y-3 mb-6">
+            <div className="space-y-3 mb-4">
               {[
                 { icon: Globe, text: "Traduction instantanée de toutes les questions" },
-                { icon: Sparkles, text: "Toutes les langues disponibles" },
                 { icon: Crown, text: "Accès à toutes les fonctionnalités Premium" },
               ].map(({ icon: Icon, text }, i) => (
                 <div key={i} className="flex items-center gap-3">
@@ -163,6 +162,16 @@ export default function TranslateButton({ text, onTranslated }: Props) {
                   <p className="text-sm text-slate-700 font-medium">{text}</p>
                 </div>
               ))}
+            </div>
+
+            {/* Supported languages */}
+            <div className="mb-5">
+              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Langues disponibles</p>
+              <div className="flex flex-wrap gap-1.5">
+                {['🇬🇧 Anglais', '🇸🇦 Arabe', '🇪🇸 Espagnol', '🇧🇷 Portugais', '🇨🇳 Chinois'].map((lang) => (
+                  <span key={lang} className="text-xs bg-slate-100 text-slate-600 px-2.5 py-1 rounded-full font-medium">{lang}</span>
+                ))}
+              </div>
             </div>
 
             {/* CTA */}

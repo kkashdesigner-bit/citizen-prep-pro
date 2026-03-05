@@ -23,10 +23,10 @@ export default function ActionCards({ nextLesson, isStandardOrAbove, onGate, per
     return (
       <div className="mb-8 rounded-2xl border border-border/40 bg-card p-6 text-center">
         <LogIn className="mx-auto h-10 w-10 text-primary mb-3" />
-        <h3 className="text-lg font-bold text-foreground mb-1">Create an account to start learning</h3>
-        <p className="text-sm text-muted-foreground mb-4">Track your progress, take exams, and access the full curriculum.</p>
+        <h3 className="text-lg font-bold text-foreground mb-1">Créez un compte pour commencer</h3>
+        <p className="text-sm text-muted-foreground mb-4">Suivez votre progression, passez des examens et accédez au programme complet.</p>
         <Button className="gap-2" onClick={() => navigate('/auth')}>
-          Sign Up
+          S'inscrire
           <ArrowRight className="h-4 w-4" />
         </Button>
       </div>
@@ -99,7 +99,7 @@ export default function ActionCards({ nextLesson, isStandardOrAbove, onGate, per
           <h3 className="font-semibold text-foreground">{t('learn.fullExam')}</h3>
         </div>
         <p className="text-sm text-muted-foreground mb-4">
-          40 questions · 45 min · 80% to pass
+          40 questions · 45 min · 80% pour réussir
         </p>
         {personaLevel && personaLevel !== 'CSP' && (
           <p className="text-xs text-primary/70 font-medium mb-3">Niveau : {personaLevel}</p>

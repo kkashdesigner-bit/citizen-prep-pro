@@ -136,9 +136,8 @@ export default function HeroSection() {
               />
             ))}
           </div>
-          <div className="text-xs sm:text-sm">
-            <span className="font-bold text-foreground">+ de 2000</span>
-            <span className="ml-1 text-muted-foreground">abonnés</span>
+          <div className="text-xs sm:text-sm font-bold text-foreground">
+            {t('hero.subscribers')}
           </div>
         </div>
 
@@ -162,7 +161,7 @@ export default function HeroSection() {
             className="gap-2 px-6 sm:px-8 text-sm sm:text-base font-medium border-[#0055A4]/20 text-[#0055A4] hover:bg-[#0055A4]/5"
             onClick={() => navigate('/quiz?mode=demo')}
           >
-            Examen Démo
+            {t('hero.demoExam')}
           </Button>
         </div>
       </div>
