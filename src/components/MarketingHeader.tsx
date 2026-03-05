@@ -58,9 +58,9 @@ export default function MarketingHeader() {
         : user?.email?.slice(0, 2).toUpperCase() || '??';
 
     const tierBadge = isPremium
-        ? { label: 'Fraternité', icon: <Crown className="h-3 w-3" />, color: 'bg-amber-100 text-amber-700 border-amber-200' }
+        ? { label: 'Premium', icon: <Crown className="h-3 w-3" />, color: 'bg-amber-100 text-amber-700 border-amber-200' }
         : isStandardOrAbove
-            ? { label: 'Égalité', icon: <Sparkles className="h-3 w-3" />, color: 'bg-blue-100 text-blue-700 border-blue-200' }
+            ? { label: 'Standard', icon: <Sparkles className="h-3 w-3" />, color: 'bg-blue-100 text-blue-700 border-blue-200' }
             : null;
 
     const navLinks = [
