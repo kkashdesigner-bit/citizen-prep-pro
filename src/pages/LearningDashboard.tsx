@@ -14,7 +14,7 @@ import DomainMasteryBars from '@/components/learn/DomainMasteryBars';
 import WeaknessAlerts from '@/components/learn/WeaknessAlerts';
 import ParcoursCard from '@/components/learn/ParcoursCard';
 import MiniatureIcon from '@/components/MiniatureIcon';
-import { Target, FileText, Clock, X, Check, Lock } from 'lucide-react';
+import { Target, FileText, Clock, X, Check, Lock, Crown, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { motion } from 'framer-motion';
@@ -29,7 +29,7 @@ const CATEGORY_MAP: Record<string, { emoji: string; gradient: string; shadow: st
 };
 
 export default function LearningDashboard() {
-  const { tier, loading: tierLoading } = useSubscription();
+  const { tier, isPremium, isStandardOrAbove, loading: tierLoading } = useSubscription();
   const navigate = useNavigate();
   const { profile: userProfile, loading: profileLoading, saveProfile } = useUserProfile();
   const stats = useDashboardStats();
@@ -85,16 +85,52 @@ export default function LearningDashboard() {
             variants={{ hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.06 } } }}
             className="flex-1 min-w-0"
           >
-            {/* Header */}
-            <motion.div variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0 } }} className="mb-6 flex items-center gap-4">
-              {stats.avatarUrl && (
-                <img src={stats.avatarUrl} alt="Avatar" className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl border-2 border-[var(--dash-card-border)] object-cover shadow-md flex-shrink-0" />
-              )}
-              <div>
-                <h1 className="text-2xl sm:text-3xl font-bold text-[var(--dash-text)] tracking-tight">
+            {/* ─── User Profile Card ─── */}
+            <motion.div variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0 } }} className="mb-6 bg-[var(--dash-card)] rounded-2xl border border-[var(--dash-card-border)] p-5 md:p-6 shadow-[0_2px_10px_rgba(0,0,0,0.03)] flex flex-col sm:flex-row items-center gap-5 relative overflow-hidden">
+              {/* Decorative blurs */}
+              <div className="absolute -top-10 -right-10 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
+              <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-indigo-500/5 rounded-full blur-3xl pointer-events-none" />
+
+              <div className="relative shrink-0">
+                {stats.avatarUrl ? (
+                  <img src={stats.avatarUrl} alt="Avatar" className="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-4 border-white object-cover shadow-lg" />
+                ) : (
+                  <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-4 border-white bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-2xl shadow-lg">
+                    {firstName.charAt(0)}
+                  </div>
+                )}
+              </div>
+
+              <div className="flex-1 text-center sm:text-left z-10 w-full">
+                <h1 className="text-2xl sm:text-3xl font-bold text-[var(--dash-text)] tracking-tight mb-1">
                   Bonjour, {firstName} <span className="inline-block animate-wave origin-bottom-right">👋</span>
                 </h1>
-                <p className="text-[var(--dash-text-muted)] text-sm">{personaGoalLabel} — Continuez votre parcours</p>
+
+                <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 mt-3">
+                  {/* Tier Badge */}
+                  {isPremium ? (
+                    <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold border bg-amber-100 text-amber-700 border-amber-200">
+                      <Crown className="h-3.5 w-3.5" /> Forfait Fraternité
+                    </div>
+                  ) : isStandardOrAbove ? (
+                    <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold border bg-blue-100 text-blue-700 border-blue-200">
+                      <Sparkles className="h-3.5 w-3.5" /> Forfait Égalité
+                    </div>
+                  ) : (
+                    <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold border bg-slate-100 text-slate-500 border-slate-200">
+                      Forfait Liberté
+                    </div>
+                  )}
+
+                  {/* Level / Goal Badge */}
+                  <button
+                    onClick={() => setShowGoalModal(true)}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors shadow-sm"
+                  >
+                    <Target className="h-3.5 w-3.5 text-[#0055A4]" />
+                    Objectif : {personaGoalLabel}
+                  </button>
+                </div>
               </div>
             </motion.div>
 
