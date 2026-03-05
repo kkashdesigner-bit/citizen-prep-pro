@@ -127,15 +127,18 @@ export default function HeroSection() {
             <span className="text-[hsl(var(--success))]">LIVE</span>
           </span>
           <div className="flex -space-x-2">
-            {[0, 1, 2, 3].map(i => (
-              <div key={i} className="h-6 w-6 sm:h-7 sm:w-7 rounded-full border-2 border-card bg-muted" style={{
-                background: `hsl(${260 + i * 30} 50% ${55 + i * 5}%)`,
-              }} />
+            {[33, 47, 12, 65].map((imgId, i) => (
+              <img
+                key={i}
+                src={`https://i.pravatar.cc/100?img=${imgId}`}
+                alt="User avatar"
+                className="h-6 w-6 sm:h-7 sm:w-7 rounded-full border-2 border-card object-cover"
+              />
             ))}
           </div>
           <div className="text-xs sm:text-sm">
-            <span className="font-bold text-foreground">35,000+</span>
-            <span className="ml-1 text-muted-foreground">{t('hero.usersActive') || 'Users active'}</span>
+            <span className="font-bold text-foreground">+ de 2000</span>
+            <span className="ml-1 text-muted-foreground">abonnés</span>
           </div>
         </div>
 

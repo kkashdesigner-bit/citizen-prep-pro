@@ -56,7 +56,7 @@ export default function DashboardLeftColumn({ xp, streak, dailyGoalProgress }: L
                         <div className="flex items-center gap-3">
                             <span className="text-sm font-bold text-muted-foreground w-4 text-center">2</span>
                             <div className="h-8 w-8 rounded-full overflow-hidden">
-                                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah" alt="Sarah" className="h-full w-full object-cover" />
+                                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah" alt="Avatar du membre de la ligue Sarah" className="h-full w-full object-cover" />
                             </div>
                             <span className="text-sm font-medium text-foreground">Sarah M.</span>
                         </div>
@@ -67,7 +67,7 @@ export default function DashboardLeftColumn({ xp, streak, dailyGoalProgress }: L
                         <div className="flex items-center gap-3">
                             <span className="text-sm font-bold text-muted-foreground w-4 text-center">3</span>
                             <div className="h-8 w-8 rounded-full overflow-hidden">
-                                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=John" alt="John" className="h-full w-full object-cover" />
+                                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=John" alt="Avatar du membre de la ligue John" className="h-full w-full object-cover" />
                             </div>
                             <span className="text-sm font-medium text-foreground">John D.</span>
                         </div>

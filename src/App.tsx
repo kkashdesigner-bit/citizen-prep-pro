@@ -1,4 +1,5 @@
 import { lazy, Suspense } from "react";
+import { HelmetProvider } from "react-helmet-async";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -23,43 +24,53 @@ const SubscriptionSuccess = lazy(() => import("./pages/SubscriptionSuccess"));
 const ParcoursPage = lazy(() => import("./pages/ParcoursPage"));
 const ClassDetailPage = lazy(() => import("./pages/ClassDetailPage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
+const SettingsPage = lazy(() => import("./pages/SettingsPage"));
+const Terms = lazy(() => import("./pages/Terms"));
+const Privacy = lazy(() => import("./pages/Privacy"));
+const Refunds = lazy(() => import("./pages/Refunds"));
 
 const queryClient = new QueryClient();
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
-      <LanguageProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Suspense fallback={null}>
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/auth" element={<Auth />} />
-                <Route path="/learn" element={<LearningDashboard />} />
-                <Route path="/onboarding" element={<Onboarding />} />
-                <Route path="/progress" element={<ProgressPage />} />
-                <Route path="/lesson/:id" element={<LessonPage />} />
-                <Route path="/exams" element={<ExamsPage />} />
-                <Route path="/study-material" element={<StudyMaterialPage />} />
-                <Route path="/analytics" element={<AnalyticsPage />} />
-                <Route path="/quiz" element={<Quiz />} />
-                <Route path="/results" element={<Results />} />
-                <Route path="/success" element={<SubscriptionSuccess />} />
-                <Route path="/dashboard" element={<Navigate to="/learn" replace />} />
-                <Route path="/about" element={<About />} />
-                <Route path="/parcours" element={<ParcoursPage />} />
-                <Route path="/parcours/classe/:id" element={<ClassDetailPage />} />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </Suspense>
-          </BrowserRouter>
-        </TooltipProvider>
-      </LanguageProvider>
-    </ThemeProvider>
-  </QueryClientProvider>
+  <HelmetProvider>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
+        <LanguageProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <Suspense fallback={null}>
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/auth" element={<Auth />} />
+                  <Route path="/learn" element={<LearningDashboard />} />
+                  <Route path="/onboarding" element={<Onboarding />} />
+                  <Route path="/progress" element={<ProgressPage />} />
+                  <Route path="/lesson/:id" element={<LessonPage />} />
+                  <Route path="/exams" element={<ExamsPage />} />
+                  <Route path="/study-material" element={<StudyMaterialPage />} />
+                  <Route path="/analytics" element={<AnalyticsPage />} />
+                  <Route path="/quiz" element={<Quiz />} />
+                  <Route path="/results" element={<Results />} />
+                  <Route path="/success" element={<SubscriptionSuccess />} />
+                  <Route path="/dashboard" element={<Navigate to="/learn" replace />} />
+                  <Route path="/about" element={<About />} />
+                  <Route path="/parcours" element={<ParcoursPage />} />
+                  <Route path="/parcours/classe/:id" element={<ClassDetailPage />} />
+                  <Route path="/settings" element={<SettingsPage />} />
+                  <Route path="/terms" element={<Terms />} />
+                  <Route path="/privacy" element={<Privacy />} />
+                  <Route path="/refunds" element={<Refunds />} />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </Suspense>
+            </BrowserRouter>
+          </TooltipProvider>
+        </LanguageProvider>
+      </ThemeProvider>
+    </QueryClientProvider>
+  </HelmetProvider>
 );
 
 export default App;

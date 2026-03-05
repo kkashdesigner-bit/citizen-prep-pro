@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { AlertTriangle } from 'lucide-react';
+import { AlertTriangle, ShieldCheck, Mail, MapPin } from 'lucide-react';
 import Logo from '@/components/Logo';
 
 export default function Footer() {
@@ -15,41 +15,76 @@ export default function Footer() {
   };
 
   return (
-    <footer className="border-t border-border/50 bg-background/60 backdrop-blur-xl">
-      {/* Legal disclaimer */}
-      <div className="container py-6">
-        <div className="mx-auto max-w-3xl glass-card p-4 border-destructive/30">
+    <footer className="border-t border-border/50 bg-white pt-16 pb-8">
+      <div className="container">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
+          {/* Brand & Trust */}
+          <div className="flex flex-col gap-4">
+            <Link to="/" className="flex items-center gap-1 mb-2">
+              <Logo size="sm" />
+            </Link>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              {t('footer.desc')}
+            </p>
+            <div className="flex items-center gap-2 mt-2">
+              <ShieldCheck className="w-5 h-5 text-[hsl(var(--success))]" />
+              <span className="text-sm font-medium text-foreground">{t('footer.securePayment')}</span>
+            </div>
+            {/* Payment Icons */}
+            <div className="flex flex-wrap gap-2 mt-1 opacity-70">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/Apple_Pay_logo.svg" alt="Apple Pay" className="h-6" loading="lazy" />
+              <img src="https://upload.wikimedia.org/wikipedia/commons/f/f2/Google_Pay_Logo.svg" alt="Google Pay" className="h-6" loading="lazy" />
+              <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa" className="h-4 mt-1" loading="lazy" />
+              <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" className="h-5 mt-0.5" loading="lazy" />
+              <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal" className="h-4 mt-1" loading="lazy" />
+            </div>
+          </div>
+
+          {/* Resources / Préparation */}
+          <div className="flex flex-col gap-3">
+            <h4 className="font-bold text-foreground mb-2 uppercase tracking-wider text-xs">{t('footer.preparation')}</h4>
+            <Link to="/exams" className="text-sm text-muted-foreground hover:text-primary transition-colors">{t('footer.exams')}</Link>
+            <Link to="/quiz" className="text-sm text-muted-foreground hover:text-primary transition-colors">{t('footer.quiz')}</Link>
+            <Link to="/about" className="text-sm text-muted-foreground hover:text-primary transition-colors">{t('footer.understand')}</Link>
+            <a href="#" className="text-sm text-muted-foreground hover:text-primary transition-colors">{t('footer.booklet')}</a>
+          </div>
+
+          {/* Navigation / GoCivique */}
+          <div className="flex flex-col gap-3">
+            <h4 className="font-bold text-foreground mb-2 uppercase tracking-wider text-xs">{t('footer.nav')}</h4>
+            <Link to="/#pricing" onClick={handlePricingClick} className="text-sm text-muted-foreground hover:text-primary transition-colors">{t('footer.offers')}</Link>
+            <Link to="/auth" className="text-sm text-muted-foreground hover:text-primary transition-colors">{t('footer.memberSpace')}</Link>
+            <a href="#" className="text-sm text-muted-foreground hover:text-primary transition-colors flex items-center gap-2">
+              <Mail className="w-4 h-4" /> {t('footer.support')}
+            </a>
+          </div>
+
+          {/* Legal */}
+          <div className="flex flex-col gap-3">
+            <h4 className="font-bold text-foreground mb-2 uppercase tracking-wider text-xs">{t('footer.legal')}</h4>
+            <Link to="/terms" className="text-sm text-muted-foreground hover:text-primary transition-colors">{t('footer.terms')}</Link>
+            <Link to="/privacy" className="text-sm text-muted-foreground hover:text-primary transition-colors">{t('footer.privacy')}</Link>
+            <Link to="/refunds" className="text-sm text-muted-foreground hover:text-primary transition-colors">{t('footer.refunds')}</Link>
+          </div>
+        </div>
+
+        {/* Disclaimer */}
+        <div className="bg-[#F5F7FA] rounded-2xl p-5 mb-8 border border-[#E6EAF0]">
           <div className="flex items-start gap-3">
-            <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-destructive" />
-            <p className="text-sm text-foreground">
-              {t('footer.disclaimer')}
+            <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-amber-500" />
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              <strong>{t('footer.warning')}</strong> {t('footer.disclaimerFull')}
             </p>
           </div>
         </div>
-      </div>
 
-      {/* Footer links */}
-      <div className="container border-t border-border/50 py-6">
-        <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
-          <Link to="/" className="flex items-center gap-1">
-            <Logo size="sm" />
-          </Link>
-
-          <nav className="flex flex-wrap items-center justify-center gap-4 text-sm">
-            <Link to="/about" className="text-foreground/70 transition-colors hover:text-primary">
-              {t('nav.about')}
-            </Link>
-            <Link
-              to="/#pricing"
-              onClick={handlePricingClick}
-              className="text-foreground/70 transition-colors hover:text-primary"
-            >
-              {t('nav.pricing')}
-            </Link>
-          </nav>
-
-          <p className="text-xs text-foreground/70">
+        {/* Bottom Bar */}
+        <div className="border-t border-border/50 pt-8 flex flex-col items-center justify-center text-center gap-2">
+          <p className="text-xs text-muted-foreground">
             {t('footer.rights')}
+          </p>
+          <p className="text-xs text-muted-foreground/60 flex items-center gap-1">
+            <MapPin className="w-3 h-3" /> {t('footer.madeWith')}
           </p>
         </div>
       </div>

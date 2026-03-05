@@ -1,4 +1,5 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
+import SEOHead from '@/components/SEOHead';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -322,6 +323,11 @@ export default function Quiz() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
+      <SEOHead
+        titleKey="seo.quizTitle"
+        descriptionKey="seo.quizDesc"
+        path="/quiz"
+      />
       {/* ─── Exam Header ─── */}
       <div className="sticky top-0 z-50 bg-white border-b border-[#E6EAF0] shadow-sm">
         <div className="flex items-center justify-between py-2.5 px-3 sm:py-3 sm:px-4 md:px-6 max-w-7xl mx-auto w-full">

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import SEOHead from '@/components/SEOHead';
 import { useNavigate } from 'react-router-dom';
 import { useSubscription } from '@/hooks/useSubscription';
 import { useUserProfile, GOAL_LABELS } from '@/hooks/useUserProfile';
@@ -75,6 +76,12 @@ export default function LearningDashboard() {
 
   return (
     <div className="flex min-h-screen bg-[var(--dash-bg)] transition-colors duration-300 overflow-x-hidden">
+      <SEOHead
+        titleKey="seo.dashboardTitle"
+        descriptionKey="seo.dashboardDesc"
+        path="/learn"
+        noindex
+      />
       <LearnSidebar />
 
       <main className="flex-1 md:ml-[260px] pb-24 md:pb-8 flex justify-center overflow-x-hidden">
