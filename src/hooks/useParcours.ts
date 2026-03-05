@@ -36,12 +36,8 @@ export function useParcours() {
 
         setLoading(true);
         try {
-<<<<<<< HEAD
             // 1. Fetch the path for the user's goal (or default to naturalisation)
             const goalType = profile?.goal_type || 'naturalisation';
-=======
-            // 1. Fetch the path for the user's goal
->>>>>>> 642a9f9a82f99154b08385678092a98c561a2fac
             const { data: pathData, error: pathError } = await (supabase as any)
                 .from('learning_paths')
                 .select('id')
