@@ -170,7 +170,7 @@ export default function SubscriptionGate({ open, onOpenChange, requiredTier = 's
             {plans.map((plan) => {
               const isSelected = selectedPlan === plan.id;
               const isSelectable = plan.id !== 'free';
-              const accentColor = plan.id === 'premium' ? '#EF4135' : '#0055A4';
+              const accentColor = plan.id === 'premium' ? '#EF4135' : plan.id === 'standard' ? '#f04e42' : '#94A3B8';
 
               return (
                 <div
