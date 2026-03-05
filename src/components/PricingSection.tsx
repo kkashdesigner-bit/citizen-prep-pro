@@ -98,9 +98,11 @@ export default function PricingSection() {
                 <div
                   className={`glass-card glow-hover relative flex flex-col overflow-hidden p-6 transition-all duration-300 hover:scale-[1.02] ${isCurrent
                       ? 'border-emerald-400 shadow-[0_0_35px_rgba(16,185,129,0.15)] ring-2 ring-emerald-400/30'
-                      : tier.popular && !isBelow
-                        ? 'border-primary/40 shadow-[0_0_35px_hsl(var(--primary)/0.2)]'
-                        : ''
+                      : tier.id === 'standard' && !isBelow
+                        ? 'border-[#f04e42]/40 shadow-[0_0_35px_rgba(240,78,66,0.15)]'
+                        : tier.popular && !isBelow
+                          ? 'border-primary/40 shadow-[0_0_35px_hsl(var(--primary)/0.2)]'
+                          : ''
                     }`}
                 >
                   {/* Current tier badge */}
@@ -113,8 +115,8 @@ export default function PricingSection() {
                   {/* Popular badge — only show if not current */}
                   {tier.badge && !isCurrent && (
                     <Badge
-                      className="absolute right-4 top-4 text-primary-foreground"
-                      style={{ background: 'linear-gradient(135deg, hsl(263 84% 58%), hsl(239 84% 67%))' }}
+                      className="absolute right-4 top-4 text-white border-0"
+                      style={{ background: tier.id === 'standard' ? 'linear-gradient(135deg, #f04e42, #ff7b6b)' : 'linear-gradient(135deg, hsl(263 84% 58%), hsl(239 84% 67%))' }}
                     >
                       {tier.badge}
                     </Badge>
@@ -124,10 +126,10 @@ export default function PricingSection() {
                     <p className="text-xl font-bold text-foreground flex items-center gap-2">
                       {tier.name}
                       {tier.id === 'premium' && <Crown className="h-4 w-4 text-amber-500" />}
-                      {tier.id === 'standard' && <Sparkles className="h-4 w-4 text-blue-500" />}
+                      {tier.id === 'standard' && <Sparkles className="h-4 w-4 text-[#f04e42]" />}
                     </p>
                     <div className="flex items-baseline gap-1 mt-2">
-                      <span className="font-serif text-4xl font-bold gradient-text">{tier.price}</span>
+                      <span className={`font-serif text-4xl font-bold ${tier.id === 'standard' ? 'text-[#f04e42]' : 'gradient-text'}`}>{tier.price}</span>
                       {tier.period && <span className="text-sm font-medium text-muted-foreground">{tier.period}</span>}
                     </div>
                   </div>
@@ -137,7 +139,7 @@ export default function PricingSection() {
                       return (
                         <li key={feat.key} className="flex items-center gap-2 text-sm">
                           {included ? (
-                            <Check className="h-4 w-4 shrink-0 text-primary" />
+                            <Check className={`h-4 w-4 shrink-0 ${tier.id === 'standard' ? 'text-[#f04e42]' : 'text-primary'}`} />
                           ) : (
                             <X className="h-4 w-4 shrink-0 text-muted-foreground/40" />
                           )}
@@ -160,8 +162,8 @@ export default function PricingSection() {
                     </Button>
                   ) : (
                     <Button
-                      className="w-full"
-                      variant={tier.popular ? 'gradient' : 'outline'}
+                      className={`w-full ${tier.id === 'standard' ? 'bg-[#f04e42] hover:bg-[#d94337] text-white border-0 shadow-lg shadow-[#f04e42]/25 hover:shadow-[#f04e42]/40' : ''}`}
+                      variant={tier.id === 'standard' ? 'default' : 'outline'}
                       onClick={tier.onClick}
                     >
                       {tier.cta}
