@@ -124,12 +124,12 @@ export default function ProgressPage() {
 
           {/* Top stats */}
           <div className="grid grid-cols-2 md:grid-cols-5 gap-3 md:gap-4 mb-8">
-            <StatBox icon={Target} label="Score prédit" value={`${overallAccuracy}%`}
-              subtext={overallAccuracy >= 80 ? 'En bonne voie' : 'Continuez à pratiquer'}
+            <StatBox icon={Target} label="Préparation" value={`${overallAccuracy}%`}
+              subtext={overallAccuracy >= 80 ? 'Prêt pour l\'examen !' : 'Objectif: 80%'}
               accent={overallAccuracy >= 80}
             />
-            <StatBox icon={BarChart3} label="Précision" value={`${overallAccuracy}%`}
-              subtext={`${totalExams} examens`}
+            <StatBox icon={BarChart3} label="Précision Max" value={`${Math.max(0, ...examHistory.map(e => e.score / e.totalQuestions * 100).filter(n => !isNaN(n))) || overallAccuracy}%`}
+              subtext="Meilleure note"
             />
             <StatBox icon={CheckCircle} label="Taux de réussite" value={`${passRate}%`}
               subtext={`${examHistory.filter(e => e.passed).length}/${totalExams}`}
