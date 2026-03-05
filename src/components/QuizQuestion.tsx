@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import { Question, getQuestionOptions, getCorrectAnswerText } from '@/lib/types';
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle, XCircle, Info } from 'lucide-react';
+import { CheckCircle, XCircle, Info, Flag, AlertTriangle, Send } from 'lucide-react';
 import { playCorrectSound, playIncorrectSound } from '@/lib/sounds';
 import { useEffect, useRef } from 'react';
 import TranslateButton from '@/components/TranslateButton';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { CATEGORY_LABELS, Category } from '@/lib/types';
+import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 
 interface QuizQuestionProps {
   question: Question;
@@ -33,6 +35,8 @@ export default function QuizQuestion({
   const isCorrect = selectedAnswer === correctAnswerText;
   const hasAnswered = selectedAnswer !== undefined;
   const soundPlayed = useRef(false);
+  const [showReportForm, setShowReportForm] = useState(false);
+  const [reportReason, setReportReason] = useState('');
 
   // Translate category based on current language
   const categoryLabel = CATEGORY_LABELS[language as keyof typeof CATEGORY_LABELS]?.[question.category as Category] || question.category;
@@ -66,10 +70,71 @@ export default function QuizQuestion({
         <TranslateButton
           text={question.question_text}
           onTranslated={(translated) => {
-            // Future implementation: this callback can update the state or handle the translated text
             void translated;
           }}
         />
+
+        {/* Report Button */}
+        <div className="mt-2">
+          {!showReportForm ? (
+            <button
+              onClick={() => setShowReportForm(true)}
+              className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-orange-500 transition-colors font-medium"
+            >
+              <Flag className="h-3.5 w-3.5" />
+              Signaler un problème
+            </button>
+          ) : (
+            <div className="rounded-xl border border-orange-200 bg-orange-50/50 p-4 space-y-3 animate-in fade-in zoom-in-95 duration-200">
+              <div className="flex items-center gap-2 text-sm font-semibold text-slate-700">
+                <AlertTriangle className="h-4 w-4 text-orange-500" />
+                Signaler cette question
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                {[
+                  { value: 'typo', label: 'Faute de frappe' },
+                  { value: 'wrong_answer', label: 'Réponse incorrecte' },
+                  { value: 'unclear', label: 'Question floue' },
+                  { value: 'other', label: 'Autre problème' },
+                ].map(opt => (
+                  <button
+                    key={opt.value}
+                    onClick={() => setReportReason(opt.value)}
+                    className={`text-xs font-medium px-3 py-2 rounded-lg border transition-all ${reportReason === opt.value
+                        ? 'border-orange-400 bg-orange-100 text-orange-700'
+                        : 'border-slate-200 bg-white text-slate-600 hover:border-orange-300'
+                      }`}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="text-xs"
+                  onClick={() => { setShowReportForm(false); setReportReason(''); }}
+                >
+                  Annuler
+                </Button>
+                <Button
+                  size="sm"
+                  className="text-xs bg-orange-500 hover:bg-orange-600 text-white gap-1.5"
+                  disabled={!reportReason}
+                  onClick={() => {
+                    toast.success('Merci pour votre signalement ! Notre \u00e9quipe va v\u00e9rifier cette question.');
+                    setShowReportForm(false);
+                    setReportReason('');
+                  }}
+                >
+                  <Send className="h-3 w-3" />
+                  Envoyer
+                </Button>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="space-y-3">

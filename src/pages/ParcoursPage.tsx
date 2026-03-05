@@ -65,10 +65,13 @@ export default function ParcoursPage() {
             if (clazz.class_number > 3) return false;
         }
 
-        // Sequential: Class 1 always open, others need previous class completed
+        // Sequential: Class 1 always open, others need previous class completed WITH passing score
         if (clazz.class_number === 1) return true;
         const prevClass = classes.find(c => c.class_number === clazz.class_number - 1);
-        return prevClass ? progress[prevClass.id]?.status === 'completed' : false;
+        if (!prevClass) return false;
+        const prevProgress = progress[prevClass.id];
+        // Must be completed AND have a passing score (>= 60%)
+        return prevProgress?.status === 'completed' && (prevProgress?.score ?? 0) >= 60;
     };
 
     const handleClassClick = (clazz: any) => {
@@ -155,6 +158,11 @@ export default function ParcoursPage() {
                                 <span className="text-4xl font-black">
                                     {progressPercent}<span className="text-lg text-white/60">%</span>
                                 </span>
+                                {nextClass && (
+                                    <span className="text-sm text-white/80 font-bold">
+                                        Niveau actuel : Classe {nextClass.class_number}
+                                    </span>
+                                )}
                             </div>
                             <div className="h-3 w-full bg-white/20 rounded-full overflow-hidden">
                                 <motion.div
@@ -262,6 +270,13 @@ export default function ParcoursPage() {
                                                         )}
                                                     </div>
 
+                                                    {/* "Vous êtes ici" indicator */}
+                                                    {isNext && unlocked && (
+                                                        <div className="absolute -left-[90px] sm:-left-[100px] md:-left-[112px] top-3 text-[9px] font-bold text-[#0055A4] uppercase tracking-wider whitespace-nowrap hidden sm:block">
+                                                            ← Vous êtes ici
+                                                        </div>
+                                                    )}
+
                                                     {/* Class Card */}
                                                     <motion.div
                                                         whileHover={unlocked ? { x: 4 } : {}}
@@ -307,6 +322,12 @@ export default function ParcoursPage() {
                                                                             {score}% · {mastery.label}
                                                                         </span>
                                                                     )}
+                                                                    {/* Failed tag — attempted but didn't pass */}
+                                                                    {!isCompleted && status !== 'not_started' && (clazzProgress?.score ?? 0) < 60 && (clazzProgress?.score ?? 0) > 0 && (
+                                                                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-red-500/10 text-red-500">
+                                                                            {clazzProgress?.score}% · Non réussi — Réessayez
+                                                                        </span>
+                                                                    )}
                                                                 </div>
                                                             </div>
 
@@ -342,9 +363,9 @@ export default function ParcoursPage() {
                     </div>
 
                 </div>
-            </main>
+            </main >
 
             <SubscriptionGate open={showGate} onOpenChange={setShowGate} requiredTier={gateTier} featureLabel="Accès aux classes avancées du parcours" />
-        </div>
+        </div >
     );
 }
