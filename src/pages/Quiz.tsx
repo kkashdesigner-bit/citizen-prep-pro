@@ -7,14 +7,24 @@ import { useSubscription } from '@/hooks/useSubscription';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { ExamLevel, getCorrectAnswerText } from '@/lib/types';
+import { useParcours } from '@/hooks/useParcours';
 import Header from '@/components/Header';
 import QuizQuestion from '@/components/QuizQuestion';
 import ExamNavigator from '@/components/ExamNavigator';
 import SubscriptionGate from '@/components/SubscriptionGate';
-import ResultsOverlay, { QuizError } from '@/components/ResultsOverlay';
+
 import { Progress } from '@/components/ui/progress';
 import { ChevronLeft, ChevronRight, Flag, CheckCircle, SkipForward, BookmarkCheck } from 'lucide-react';
 import Logo from '@/components/Logo';
+
+export interface QuizError {
+  questionText: string;
+  options: string[];
+  selectedAnswer: string;
+  correctAnswer: string;
+  category: string;
+  explanation: string;
+}
 
 const QUIZ_TIME = 45 * 60;
 
@@ -28,6 +38,7 @@ export default function Quiz() {
   const questionLimit = limitParam && Number.isFinite(Number(limitParam)) && Number(limitParam) > 0
     ? Number(limitParam)
     : undefined;
+  const classIdParam = searchParams.get('classId');
 
   const navigate = useNavigate();
   const { t } = useLanguage();
@@ -35,6 +46,7 @@ export default function Quiz() {
 
   const isFreeUser = tier === 'free';
   const { user } = useAuth();
+  const { updateProgress: updateClassProgress } = useParcours();
   const [examsTakenToday, setExamsTakenToday] = useState<number | null>(null);
 
   useEffect(() => {
@@ -63,7 +75,7 @@ export default function Quiz() {
   useEffect(() => {
     if (tierLoading || examsTakenToday === null) return;
 
-    if (isFreeUser && rawMode !== 'demo') {
+    if (isFreeUser && rawMode !== 'demo' && !classIdParam) {
       if (rawMode === 'exam' && examsTakenToday < 1) {
         // Let them pass
       } else {
@@ -89,6 +101,7 @@ export default function Quiz() {
     mode: effectiveMode,
     questionLimit,
     retryKey,
+    classId: classIdParam || undefined,
   });
 
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -198,11 +211,30 @@ export default function Quiz() {
     sessionStorage.setItem('quizResults', JSON.stringify(resultPayload));
     sessionStorage.setItem('quizErrors', JSON.stringify(quizErrors));
 
-    // Show inline overlay instead of navigating
-    setResultData(resultPayload);
-    setResultErrors(quizErrors);
-    setShowResults(true);
-  }, [answers, questions, startTime]);
+    // If this is a parcours class quiz, update class progress and store classId
+    if (classIdParam) {
+      sessionStorage.setItem('quizClassId', classIdParam);
+      const percent = Math.round((score / questions.length) * 100);
+      const passed = score / questions.length >= 0.7; // Parcours uses 70% threshold
+      updateClassProgress(classIdParam, percent, passed).catch(console.error);
+
+      // Save used question IDs to profile
+      if (user && passed) {
+        const newIds = questions.map(q => String(q.id));
+        supabase.from('profiles').select('used_questions').eq('id', user.id).maybeSingle()
+          .then(({ data: profileData }) => {
+            const existing: string[] = (profileData?.used_questions as string[]) || [];
+            const merged = [...new Set([...existing, ...newIds])];
+            supabase.from('profiles').update({ used_questions: merged }).eq('id', user.id);
+          });
+      }
+    } else {
+      sessionStorage.removeItem('quizClassId');
+    }
+
+    // Navigate to the results page
+    navigate('/results');
+  }, [answers, questions, startTime, classIdParam, updateClassProgress, user]);
 
   const handleRetry = useCallback(() => {
     sessionStorage.removeItem('quizResults');
@@ -255,17 +287,18 @@ export default function Quiz() {
 
   const currentQuestion = questions[currentIndex];
   const answeredCount = Object.keys(answers).length;
-  const showFeedback = effectiveMode === 'study' || effectiveMode === 'training';
+  const showFeedback = effectiveMode === 'study' || effectiveMode === 'training' || !!classIdParam;
   const progressPercent = ((currentIndex + 1) / questions.length) * 100;
   const completedPercent = Math.round((answeredCount / questions.length) * 100);
 
   const timerMinutes = Math.floor(timeRemaining / 60);
   const timerSeconds = timeRemaining % 60;
 
-  const modeLabel = effectiveMode === 'exam' ? 'Mode Examen'
-    : effectiveMode === 'demo' ? 'Mode Démo'
-      : effectiveMode === 'study' ? 'Mode Étude'
-        : 'Mode Entraînement';
+  const modeLabel = classIdParam ? 'Mode Parcours'
+    : effectiveMode === 'exam' ? 'Mode Examen'
+      : effectiveMode === 'demo' ? 'Mode Démo'
+        : effectiveMode === 'study' ? 'Mode Étude'
+          : 'Mode Entraînement';
 
   const isFlaggedCurrent = flagged.has(currentQuestion.id);
 
@@ -501,16 +534,7 @@ export default function Quiz() {
         requiredTier={gateTier}
       />
 
-      {/* Inline Results Overlay */}
-      {showResults && resultData && (
-        <ResultsOverlay
-          result={resultData}
-          errors={resultErrors}
-          isDemo={effectiveMode === 'demo'}
-          onRetry={handleRetry}
-          onHome={handleGoHome}
-        />
-      )}
+
     </div>
   );
 }
