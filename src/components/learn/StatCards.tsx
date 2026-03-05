@@ -23,10 +23,11 @@ export default function StatCards({ successRate, streak, dailyGoalCurrent, daily
             initial="hidden"
             animate="visible"
             variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.08 } } }}
-            className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8"
+            className="flex sm:grid sm:grid-cols-3 gap-3 sm:gap-4 mb-6 sm:mb-8 overflow-x-auto sm:overflow-visible snap-x snap-mandatory pb-1 sm:pb-0"
+            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
         >
             {/* ── Success Rate ── */}
-            <motion.div variants={cardVariants} className="bg-[var(--dash-card)] rounded-2xl border border-[var(--dash-card-border)] p-5 shadow-[0_2px_12px_rgba(0,0,0,0.04)] flex flex-col items-center gap-3">
+            <motion.div variants={cardVariants} className="snap-center shrink-0 w-[65vw] max-w-[240px] sm:w-auto sm:max-w-none bg-[var(--dash-card)] rounded-2xl border border-[var(--dash-card-border)] p-4 sm:p-5 shadow-[0_2px_12px_rgba(0,0,0,0.04)] flex flex-col items-center gap-3">
                 <div className="relative w-24 h-24 flex items-center justify-center">
                     <svg className="absolute inset-0 w-full h-full -rotate-90">
                         <circle cx="48" cy="48" r="40" stroke="var(--dash-card-border)" strokeWidth="6" fill="none" />
@@ -49,7 +50,7 @@ export default function StatCards({ successRate, streak, dailyGoalCurrent, daily
             </motion.div>
 
             {/* ── Streak ── */}
-            <motion.div variants={cardVariants} className="bg-[var(--dash-card)] rounded-2xl border border-[var(--dash-card-border)] p-5 shadow-[0_2px_12px_rgba(0,0,0,0.04)] flex flex-col items-center justify-center gap-2">
+            <motion.div variants={cardVariants} className="snap-center shrink-0 w-[65vw] max-w-[240px] sm:w-auto sm:max-w-none bg-[var(--dash-card)] rounded-2xl border border-[var(--dash-card-border)] p-4 sm:p-5 shadow-[0_2px_12px_rgba(0,0,0,0.04)] flex flex-col items-center justify-center gap-2">
                 <div className="flex items-center gap-2">
                     <Flame className={`h-7 w-7 ${streak > 0 ? 'text-[#F59E0B]' : 'text-[var(--dash-text-muted)]'}`} />
                     <span className="text-3xl font-bold text-[var(--dash-text)]">{streak}</span>
@@ -61,7 +62,7 @@ export default function StatCards({ successRate, streak, dailyGoalCurrent, daily
             </motion.div>
 
             {/* ── Daily Goal ── */}
-            <motion.div variants={cardVariants} className="bg-[var(--dash-card)] rounded-2xl border border-[var(--dash-card-border)] p-5 shadow-[0_2px_12px_rgba(0,0,0,0.04)] flex flex-col gap-3">
+            <motion.div variants={cardVariants} className="snap-center shrink-0 w-[65vw] max-w-[240px] sm:w-auto sm:max-w-none bg-[var(--dash-card)] rounded-2xl border border-[var(--dash-card-border)] p-4 sm:p-5 shadow-[0_2px_12px_rgba(0,0,0,0.04)] flex flex-col gap-3">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                         <Target className="h-5 w-5 text-[#22C55E]" />

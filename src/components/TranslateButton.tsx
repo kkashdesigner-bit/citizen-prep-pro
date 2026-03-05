@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Globe, X, Loader2, Lock, Crown, ArrowRight, Sparkles } from "lucide-react";
 import { useSubscription } from "@/hooks/useSubscription";
+import { useAuth } from "@/hooks/useAuth";
+import { toast } from "sonner";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Props {
@@ -13,12 +15,14 @@ interface Props {
 
 export default function TranslateButton({ text, onTranslated }: Props) {
   const { isPremium } = useSubscription();
+  const { user } = useAuth();
   const { language } = useLanguage();
   const navigate = useNavigate();
   const [showPopup, setShowPopup] = useState(false);
   const [shown, setShown] = useState(false);
   const [loading, setLoading] = useState(false);
   const [translatedText, setTranslatedText] = useState("");
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const simulateTranslation = async (originalText: string, targetLang: string) => {
     await new Promise(resolve => setTimeout(resolve, 800));
@@ -47,6 +51,32 @@ export default function TranslateButton({ text, onTranslated }: Props) {
       setLoading(false);
     }
   }
+
+  const handleSubscribe = async () => {
+    if (!user) {
+      setShowPopup(false);
+      navigate('/auth');
+      return;
+    }
+
+    setIsProcessing(true);
+    try {
+      localStorage.setItem('pending_subscription_tier', 'premium');
+
+      const premiumLink = 'https://buy.stripe.com/test_7sYfZ96hz9tI3t12A69AA01';
+      const url = new URL(premiumLink);
+      url.searchParams.set('client_reference_id', user.id);
+      if (user.email) {
+        url.searchParams.set('prefilled_email', user.email);
+      }
+
+      window.location.href = url.toString();
+    } catch (err) {
+      console.error(err);
+      toast.error("Erreur lors de l'activation de l'abonnement");
+      setIsProcessing(false);
+    }
+  };
 
   return (
     <>
@@ -137,12 +167,19 @@ export default function TranslateButton({ text, onTranslated }: Props) {
 
             {/* CTA */}
             <Button
-              onClick={() => { setShowPopup(false); navigate('/pricing'); }}
+              disabled={isProcessing}
+              onClick={handleSubscribe}
               className="w-full bg-gradient-to-r from-[#0055A4] to-[#1B6ED6] hover:from-[#003F7F] hover:to-[#0055A4] text-white font-bold rounded-xl h-12 shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 transition-all hover:scale-[1.02] text-base gap-2"
             >
-              <Crown className="w-5 h-5 text-amber-300" />
-              Passer au forfait Fraternité
-              <ArrowRight className="w-4 h-4" />
+              {isProcessing ? (
+                <Loader2 className="w-5 h-5 animate-spin" />
+              ) : (
+                <>
+                  <Crown className="w-5 h-5 text-amber-300" />
+                  Passer au forfait Fraternité
+                  <ArrowRight className="w-4 h-4" />
+                </>
+              )}
             </Button>
 
             <p className="text-center text-xs text-slate-400 mt-3">
