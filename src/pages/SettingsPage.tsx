@@ -23,15 +23,15 @@ import {
 
 /* ─────────────── tier display config ─────────────── */
 const TIER_CONFIG = {
-    free: { label: 'Liberté', color: 'slate', icon: null, price: 'Gratuit' },
-    standard: { label: 'Égalité', color: 'blue', icon: Sparkles, price: '5,99€/mois' },
-    premium: { label: 'Fraternité', color: 'amber', icon: Crown, price: '10,99€/mois' },
+    free: { label: 'Gratuit', color: 'slate', icon: null, price: 'Gratuit' },
+    standard: { label: 'Standard', color: 'blue', icon: Sparkles, price: '6,99€/mois' },
+    premium: { label: 'Premium', color: 'amber', icon: Crown, price: '10,99€/mois' },
 } as const;
 
 const TIER_FEATURES: Record<string, string[]> = {
     free: ['3 classes gratuites', 'Mode Démo (20 questions)', 'Quiz limité'],
     standard: ['Parcours complet 1→100', 'Toutes les catégories', 'Examens blancs illimités'],
-    premium: ['Tout dans Égalité', 'Traduction instantanée', 'Catégories ciblées', 'Support prioritaire'],
+    premium: ['Tout dans Standard', 'Traduction instantanée', 'Catégories ciblées', 'Support prioritaire'],
 };
 
 export default function SettingsPage() {
