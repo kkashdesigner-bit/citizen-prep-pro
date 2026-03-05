@@ -23,7 +23,7 @@ export default function DashboardTabs({ children }: DashboardTabsProps) {
                         key={tab.key}
                         onClick={() => setActiveTab(tab.key)}
                         className={`relative px-4 py-3 text-sm font-semibold transition-colors ${activeTab === tab.key
-                                ? 'text-[#0055A4] dark:text-blue-400'
+                                ? 'text-[#0055A4]'
                                 : 'text-[var(--dash-text-muted)] hover:text-[var(--dash-text)]'
                             }`}
                     >
@@ -31,7 +31,7 @@ export default function DashboardTabs({ children }: DashboardTabsProps) {
                         {activeTab === tab.key && (
                             <motion.div
                                 layoutId="dashboardTabIndicator"
-                                className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#0055A4] dark:bg-blue-400 rounded-t-full"
+                                className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#0055A4] rounded-t-full"
                                 transition={{ type: "spring", stiffness: 400, damping: 30 }}
                             />
                         )}

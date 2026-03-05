@@ -9,7 +9,7 @@ import {
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { motion } from 'framer-motion';
-import ThemeToggle from './ThemeToggle';
+
 
 const NAV_ITEMS = [
   { key: 'dashboard', icon: LayoutDashboard, path: '/learn', label: 'Tableau de bord' },
@@ -59,7 +59,7 @@ export default function LearnSidebar() {
           <Link to="/" className="flex items-center gap-2">
             <Logo size="sm" />
           </Link>
-          <ThemeToggle />
+
         </div>
 
         {/* Nav */}
@@ -77,18 +77,18 @@ export default function LearnSidebar() {
                 key={item.key}
                 onClick={() => navigate(item.path)}
                 className={`group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all relative ${active
-                  ? 'bg-blue-500/10 text-[#0055A4] dark:text-blue-400 font-semibold'
+                  ? 'bg-blue-500/10 text-[#0055A4] font-semibold'
                   : 'text-[var(--dash-text-muted)] hover:bg-[var(--dash-surface)] hover:text-[var(--dash-text)]'
                   }`}
               >
                 {active && (
                   <motion.div
                     layoutId="sidebarActive"
-                    className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-[#0055A4] dark:bg-blue-400 rounded-r-full"
+                    className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-[#0055A4] rounded-r-full"
                     transition={{ type: "spring", stiffness: 300, damping: 25 }}
                   />
                 )}
-                <Icon className={`h-5 w-5 transition-colors ${active ? 'text-[#0055A4] dark:text-blue-400' : 'text-[var(--dash-text-muted)] group-hover:text-[var(--dash-text)]'}`} />
+                <Icon className={`h-5 w-5 transition-colors ${active ? 'text-[#0055A4]' : 'text-[var(--dash-text-muted)] group-hover:text-[var(--dash-text)]'}`} />
                 <span>{item.label}</span>
               </motion.button>
             );
@@ -102,7 +102,7 @@ export default function LearnSidebar() {
         >
           <div className="bg-[var(--dash-surface)] rounded-2xl p-4 flex flex-col gap-3 border border-[var(--dash-card-border)] shadow-sm">
             <div className="flex items-center gap-3">
-              <div className="h-9 w-9 rounded-full bg-[#0055A4] dark:bg-blue-500 text-white flex items-center justify-center font-bold text-sm">
+              <div className="h-9 w-9 rounded-full bg-[#0055A4] text-white flex items-center justify-center font-bold text-sm">
                 {displayName.charAt(0).toUpperCase()}
               </div>
               <div className="flex flex-col text-left">
@@ -114,7 +114,7 @@ export default function LearnSidebar() {
             <div>
               <div className="flex justify-between text-[10px] font-medium text-[var(--dash-text-muted)] mb-1 uppercase tracking-wide">
                 <span>Progression</span>
-                <span className="text-[#0055A4] dark:text-blue-400 font-bold">{progressPercent}%</span>
+                <span className="text-[#0055A4] font-bold">{progressPercent}%</span>
               </div>
               <div className="h-1.5 w-full bg-[var(--dash-card-border)] rounded-full overflow-hidden">
                 <motion.div
@@ -152,7 +152,7 @@ export default function LearnSidebar() {
                 key={item.key}
                 onClick={() => navigate(item.path)}
                 className={`relative flex flex-col items-center gap-1 rounded-xl px-3 py-2 text-[10px] font-bold transition-all ${active
-                  ? 'text-[#0055A4] dark:text-blue-400'
+                  ? 'text-[#0055A4]'
                   : 'text-[var(--dash-text-muted)] hover:text-[var(--dash-text)]'
                   }`}
               >

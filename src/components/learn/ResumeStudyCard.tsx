@@ -24,8 +24,8 @@ export default function ResumeStudyCard({
             onClick={() => navigate('/parcours')}
         >
             <div className="flex items-start gap-4">
-                <div className="flex-shrink-0 h-12 w-12 rounded-xl bg-blue-500/10 dark:bg-blue-500/20 flex items-center justify-center">
-                    <BookOpen className="h-6 w-6 text-[#0055A4] dark:text-blue-400" />
+                <div className="flex-shrink-0 h-12 w-12 rounded-xl bg-blue-500/10 flex items-center justify-center">
+                    <BookOpen className="h-6 w-6 text-[#0055A4]" />
                 </div>
 
                 <div className="flex-1 min-w-0">
@@ -34,7 +34,7 @@ export default function ResumeStudyCard({
 
                     <div className="flex items-center justify-between text-xs font-semibold text-[var(--dash-text-muted)] mb-2">
                         <span>Chapitre {chapterNumber}/{totalChapters}</span>
-                        <span className="text-[#0055A4] dark:text-blue-400">{progressPercent}%</span>
+                        <span className="text-[#0055A4]">{progressPercent}%</span>
                     </div>
                     <div className="h-2 w-full bg-[var(--dash-surface)] rounded-full overflow-hidden border border-[var(--dash-card-border)]">
                         <motion.div
@@ -46,7 +46,7 @@ export default function ResumeStudyCard({
                     </div>
                 </div>
 
-                <div className="flex-shrink-0 h-10 w-10 rounded-full bg-[#0055A4] dark:bg-blue-500 flex items-center justify-center shadow-sm self-center group-hover:bg-[#1B6ED6] transition-colors">
+                <div className="flex-shrink-0 h-10 w-10 rounded-full bg-[#0055A4] flex items-center justify-center shadow-sm self-center group-hover:bg-[#1B6ED6] transition-colors">
                     <ArrowRight className="h-4 w-4 text-white group-hover:translate-x-0.5 transition-transform" />
                 </div>
             </div>

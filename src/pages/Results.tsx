@@ -79,8 +79,8 @@ export default function Results() {
 
             <main className="flex flex-1 justify-center py-6 px-4 lg:px-0">
                 <div className="flex flex-col max-w-[1000px] flex-1 gap-8 w-full mt-4">
-                    <section className="relative overflow-hidden bg-[#135bec] rounded-[2.5rem] p-1 shadow-2xl">
-                        <div className="bg-white rounded-[2.3rem] p-10 lg:p-16 confetti-bg relative overflow-hidden">
+                    <section className="relative overflow-hidden bg-[#135bec] rounded-2xl sm:rounded-[2.5rem] p-0.5 sm:p-1 shadow-2xl">
+                        <div className="bg-white rounded-[1.2rem] sm:rounded-[2.3rem] p-5 sm:p-10 lg:p-16 confetti-bg relative overflow-hidden">
                             <div className="absolute inset-0 opacity-5 pointer-events-none flex items-center justify-center">
                                 <Sparkles size={400} />
                             </div>
@@ -89,25 +89,26 @@ export default function Results() {
                                     {result.passed ? 'Examen Réussi' : 'Examen Échoué'}
                                 </span>
 
-                                <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-24 w-full justify-center">
+                                <div className="flex flex-col items-center gap-6 sm:gap-12 lg:flex-row lg:gap-24 w-full justify-center">
                                     <div className="relative group">
                                         <div className="absolute inset-0 bg-yellow-400 blur-3xl opacity-20 group-hover:opacity-40 transition-opacity"></div>
-                                        <div className="relative bg-gradient-to-b from-yellow-300 to-yellow-600 p-8 rounded-[3rem] shadow-[0_20px_50px_rgba(234,179,8,0.3)] transform hover:scale-105 transition-transform duration-500">
-                                            <div className="bg-white/10 p-6 rounded-[2rem] border border-white/20 backdrop-blur-sm flex flex-col items-center">
-                                                <Trophy size={100} className="text-white drop-shadow-lg mb-2 fill-white" />
+                                        <div className="relative bg-gradient-to-b from-yellow-300 to-yellow-600 p-4 sm:p-8 rounded-2xl sm:rounded-[3rem] shadow-[0_20px_50px_rgba(234,179,8,0.3)] transform hover:scale-105 transition-transform duration-500">
+                                            <div className="bg-white/10 p-3 sm:p-6 rounded-xl sm:rounded-[2rem] border border-white/20 backdrop-blur-sm flex flex-col items-center">
+                                                <Trophy size={48} className="sm:hidden text-white drop-shadow-lg mb-1 fill-white" />
+                                                <Trophy size={100} className="hidden sm:block text-white drop-shadow-lg mb-2 fill-white" />
                                                 <div className="text-white text-center">
-                                                    <span className="block text-6xl font-black font-display tracking-tighter">{scorePercent}%</span>
-                                                    <span className="block text-xs font-bold uppercase tracking-widest opacity-80">Score Total</span>
+                                                    <span className="block text-3xl sm:text-6xl font-black font-display tracking-tighter">{scorePercent}%</span>
+                                                    <span className="block text-[10px] sm:text-xs font-bold uppercase tracking-widest opacity-80">Score Total</span>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
 
                                     <div className="text-center lg:text-left max-w-md">
-                                        <h1 className="text-slate-900 text-5xl lg:text-7xl font-black mb-6 font-display leading-tight italic transform -rotate-1">
+                                        <h1 className="text-slate-900 text-3xl sm:text-5xl lg:text-7xl font-black mb-3 sm:mb-6 font-display leading-tight italic transform -rotate-1">
                                             {result.passed ? 'Félicitations !' : 'Dommage !'}
                                         </h1>
-                                        <p className="text-slate-600 text-xl font-medium leading-relaxed">
+                                        <p className="text-slate-600 text-sm sm:text-xl font-medium leading-relaxed">
                                             {result.passed
                                                 ? "Vous avez validé l'examen blanc avec brio. Vous êtes sur la bonne voie pour obtenir votre certificat !"
                                                 : "Vous n'avez pas atteint le score nécessaire. Continuez à vous entraîner !"
@@ -278,10 +279,10 @@ export default function Results() {
                             <a className="text-slate-400 hover:text-[#135bec] transition-colors text-[10px] uppercase tracking-[0.2em] font-black cursor-pointer">Contact</a>
                         </div>
                     </footer>
-                </div >
-            </main >
+                </div>
+            </main>
 
             <SubscriptionGate open={showGate} onOpenChange={setShowGate} requiredTier="premium" />
-        </div >
+        </div>
     );
 }

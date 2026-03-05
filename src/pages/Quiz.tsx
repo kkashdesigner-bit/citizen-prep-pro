@@ -75,13 +75,20 @@ export default function Quiz() {
   useEffect(() => {
     if (tierLoading || examsTakenToday === null) return;
 
+    // Premium users never see gates
+    if (isPremium) return;
+
     if (isFreeUser && rawMode !== 'demo' && !classIdParam) {
-      if (rawMode === 'exam' && examsTakenToday < 1) {
-        // Let them pass
+      if (rawMode === 'exam' && examsTakenToday < 2) {
+        // Free users get 2 demo exams
       } else {
         setGateTier('standard');
         setShowGate(true);
       }
+    } else if (isFreeUser && rawMode === 'demo' && examsTakenToday >= 2) {
+      // Block free users after 2 demo exams
+      setGateTier('standard');
+      setShowGate(true);
     } else if (isStandardOrAbove && !isPremium && rawMode === 'study') {
       setGateTier('premium');
       setShowGate(true);

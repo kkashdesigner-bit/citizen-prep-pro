@@ -40,7 +40,7 @@ export default function StatCards({ successRate, streak, dailyGoalCurrent, daily
                             initial={{ strokeDashoffset: circumference }}
                             animate={{ strokeDashoffset: strokeOffset }}
                             transition={{ duration: 1.2, delay: 0.3, ease: "easeOut" }}
-                            className="dark:stroke-blue-400"
+                            className=""
                         />
                     </svg>
                     <span className="text-2xl font-bold text-[var(--dash-text)]">{successRate}%</span>
