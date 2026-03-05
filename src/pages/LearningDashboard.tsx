@@ -13,6 +13,7 @@ import ResumeStudyCard from '@/components/learn/ResumeStudyCard';
 import WeeklyActivityChart from '@/components/learn/WeeklyActivityChart';
 import DomainMasteryBars from '@/components/learn/DomainMasteryBars';
 import WeaknessAlerts from '@/components/learn/WeaknessAlerts';
+import ExamReadinessCard from '@/components/learn/ExamReadinessCard';
 import ParcoursCard from '@/components/learn/ParcoursCard';
 import MiniatureIcon from '@/components/MiniatureIcon';
 import { Target, FileText, Clock, X, Check, Lock, Crown, Sparkles, Flame } from 'lucide-react';
@@ -167,14 +168,24 @@ export default function LearningDashboard() {
               </div>
             </motion.div>
 
-            {/* Stat Cards — desktop only (hidden on mobile, merged into profile card above) */}
+            {/* Stat Cards & Readiness — desktop only (hidden on mobile, merged into profile card above) */}
             <motion.div variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }} className="hidden sm:block">
-              <StatCards
-                successRate={stats.successRate}
-                streak={stats.streak}
-                dailyGoalCurrent={stats.dailyGoalCurrent}
-                dailyGoalTarget={stats.dailyGoalTarget}
-              />
+              <div className="flex flex-col lg:flex-row gap-4 mb-6 sm:mb-8">
+                <div className="flex-1">
+                  <StatCards
+                    successRate={stats.successRate}
+                    streak={stats.streak}
+                    dailyGoalCurrent={stats.dailyGoalCurrent}
+                    dailyGoalTarget={stats.dailyGoalTarget}
+                  />
+                </div>
+                <div className="w-full lg:w-[320px] flex-shrink-0">
+                  <ExamReadinessCard
+                    successRate={stats.successRate}
+                    totalExams={stats.examHistory.length}
+                  />
+                </div>
+              </div>
             </motion.div>
 
             {/* Parcours Card — Real progress */}
