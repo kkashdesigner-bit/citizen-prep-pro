@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { useUserProfile } from '@/hooks/useUserProfile';
 import { useSubscription } from '@/hooks/useSubscription';
 import {
     LogOut, User, BarChart3, Settings, Crown, Sparkles, ChevronLeft, Flame,
@@ -21,6 +22,7 @@ interface AppHeaderProps {
 
 export default function AppHeader({ pageTitle, pageIcon, backTo = '/learn', backLabel = 'Tableau de bord' }: AppHeaderProps) {
     const { user, displayName, avatarUrl, signOut } = useAuth();
+    const { profile: userProfile } = useUserProfile();
     const { tier, isPremium, isStandardOrAbove } = useSubscription();
     const navigate = useNavigate();
 
@@ -29,9 +31,12 @@ export default function AppHeader({ pageTitle, pageIcon, backTo = '/learn', back
         navigate('/');
     };
 
-    const initials = displayName
-        ? displayName.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2)
-        : user?.email?.slice(0, 2).toUpperCase() || '??';
+    const finalDisplayName = userProfile?.first_name || displayName || user?.email?.split('@')[0] || '';
+    const finalAvatarUrl = userProfile?.avatar_url || avatarUrl;
+
+    const initials = finalDisplayName
+        ? finalDisplayName.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2)
+        : '??';
 
     const tierConfig = isPremium
         ? { label: 'Fraternité', icon: <Crown className="h-3 w-3" />, color: 'bg-amber-100 text-amber-700 border-amber-200' }
@@ -89,7 +94,7 @@ export default function AppHeader({ pageTitle, pageIcon, backTo = '/learn', back
                         <DropdownMenuTrigger asChild>
                             <button className="relative rounded-full ring-2 ring-slate-200 hover:ring-blue-300 transition-all focus:outline-none">
                                 <Avatar className="h-8 w-8">
-                                    {avatarUrl && <AvatarImage src={avatarUrl} alt={displayName || ''} />}
+                                    {finalAvatarUrl && <AvatarImage src={finalAvatarUrl} alt={finalDisplayName} />}
                                     <AvatarFallback className="bg-blue-50 text-blue-600 text-xs font-semibold">
                                         {initials}
                                     </AvatarFallback>
@@ -102,7 +107,7 @@ export default function AppHeader({ pageTitle, pageIcon, backTo = '/learn', back
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="w-52 bg-white border shadow-lg rounded-xl">
                             <div className="px-3 py-2">
-                                <p className="text-sm font-medium text-slate-900 truncate">{displayName}</p>
+                                <p className="text-sm font-medium text-slate-900 truncate">{finalDisplayName}</p>
                                 <p className="text-xs text-slate-400 truncate">{user?.email}</p>
                                 <span className={`inline-flex items-center gap-1 mt-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold border ${tierConfig.color}`}>
                                     {tierConfig.icon} {tierConfig.label}
