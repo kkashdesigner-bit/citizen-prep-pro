@@ -61,7 +61,7 @@ export default function SubscriptionSuccess() {
                     <div className="w-48 h-48 rounded-full bg-secondary/20 p-2 relative overflow-visible flex items-center justify-center shadow-xl">
                         <img
                             src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.email || 'Leo'}&backgroundColor=b6e3f4`}
-                            alt="Avatar"
+                            alt="Avatar de profil utilisateur"
                             className="w-full h-full rounded-full object-cover"
                         />
                         <div className="absolute -bottom-2 -right-2 h-12 w-12 bg-white rounded-xl shadow-lg flex items-center justify-center border border-border">

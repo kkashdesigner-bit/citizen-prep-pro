@@ -146,7 +146,7 @@ export default function Auth() {
                     animationDelay: `${i * 0.4}s`,
                   }}
                 >
-                  <img src={src} alt="" className="w-full h-full object-cover" loading="lazy" />
+                  <img src={src} alt="Avatar utilisateur GoCivique" className="w-full h-full object-cover" loading="lazy" />
                 </div>
               );
             })}

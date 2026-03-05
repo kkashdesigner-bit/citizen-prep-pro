@@ -16,7 +16,7 @@ const NAV_ITEMS = [
   { key: 'exams', icon: FileText, path: '/exams', label: 'Examens' },
   { key: 'path', icon: Route, path: '/parcours', label: 'Parcours 1→100' },
   { key: 'progress', icon: BarChart3, path: '/progress', label: 'Progression' },
-  { key: 'settings', icon: Settings, path: '/learn', label: 'Paramètres' },
+  { key: 'settings', icon: Settings, path: '/settings', label: 'Paramètres' },
   { key: 'help', icon: HelpCircle, path: '/about', label: 'Aide' },
 ];
 
@@ -24,7 +24,7 @@ const MOBILE_NAV = [
   { key: 'dashboard', icon: LayoutDashboard, path: '/learn', label: 'Accueil' },
   { key: 'exams', icon: FileText, path: '/exams', label: 'Examens' },
   { key: 'path', icon: Route, path: '/parcours', label: 'Parcours' },
-  { key: 'profile', icon: UserCircle, path: '/learn', label: 'Profil' },
+  { key: 'profile', icon: UserCircle, path: '/settings', label: 'Profil' },
 ];
 
 export default function LearnSidebar() {

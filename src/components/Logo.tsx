@@ -16,7 +16,7 @@ export default function Logo({ size = 'sm', className }: LogoProps) {
     <div className={cn('flex items-center justify-center', className)}>
       <img
         src="/LOGO.svg"
-        alt="GoCivique"
+        alt="Logo Officiel GoCivique - Préparation Examen Civique Français"
         className={cn('object-contain', sizeClasses[size])}
       />
     </div>

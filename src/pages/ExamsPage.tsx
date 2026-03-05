@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import SEOHead from '@/components/SEOHead';
 import { Button } from '@/components/ui/button';
 import { GraduationCap, PlayCircle } from 'lucide-react';
 import { useSubscription } from '@/hooks/useSubscription';
@@ -22,6 +23,11 @@ export default function ExamsPage() {
 
   return (
     <div className="flex min-h-screen bg-background">
+      <SEOHead
+        titleKey="seo.examsTitle"
+        descriptionKey="seo.examsDesc"
+        path="/exams"
+      />
       <LearnSidebar />
       <div className="flex-1 md:ml-64 flex flex-col">
         <AppHeader

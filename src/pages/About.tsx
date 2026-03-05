@@ -1,4 +1,5 @@
 import Header from '@/components/Header';
+import SEOHead from '@/components/SEOHead';
 import Footer from '@/components/Footer';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -20,6 +21,11 @@ export default function About() {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead
+        titleKey="seo.aboutTitle"
+        descriptionKey="seo.aboutDesc"
+        path="/about"
+      />
       <Header />
       <main className="container py-10">
         <div className="mx-auto max-w-3xl">
