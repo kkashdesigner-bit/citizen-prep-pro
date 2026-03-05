@@ -1,4 +1,4 @@
-import Header from '@/components/Header';
+import MarketingHeader from '@/components/MarketingHeader';
 import HeroSection from '@/components/HeroSection';
 import LandingCategoryTabs from '@/components/LandingCategoryTabs';
 import LandingPassProbability from '@/components/LandingPassProbability';
@@ -8,8 +8,8 @@ import Footer from '@/components/Footer';
 export default function Index() {
   return (
     <div className="min-h-screen bg-background">
-      <Header animate />
-      <main>
+      <MarketingHeader />
+      <main className="pt-16">
         <HeroSection />
         <LandingCategoryTabs />
         <LandingPassProbability />
@@ -19,3 +19,4 @@ export default function Index() {
     </div>
   );
 }
+

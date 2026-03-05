@@ -344,7 +344,7 @@ export default function ParcoursPage() {
                 </div>
             </main>
 
-            <SubscriptionGate open={showGate} onOpenChange={setShowGate} requiredTier={gateTier} />
+            <SubscriptionGate open={showGate} onOpenChange={setShowGate} requiredTier={gateTier} featureLabel="Accès aux classes avancées du parcours" />
         </div>
     );
 }
