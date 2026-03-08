@@ -45,21 +45,31 @@ export default function ClassDetailPage() {
         }
     }, [tierLoading, tier, classData, classes, progress]);
 
+    const renderInline = (text: string) => {
+        const parts = text.split(/(\*\*.*?\*\*)/g);
+        return parts.map((part, index) => {
+            if (part.startsWith('**') && part.endsWith('**')) {
+                return <strong key={index} className="font-bold text-gray-900">{part.slice(2, -2)}</strong>;
+            }
+            return part;
+        });
+    };
+
     const renderMarkdown = (md: string) => {
         return md.split('\n\n').map((paragraph, idx) => {
             if (paragraph.startsWith('# '))
-                return <h2 key={idx} className="text-xl font-bold text-gray-900 mb-3 mt-6">{paragraph.slice(2)}</h2>;
+                return <h2 key={idx} className="text-xl font-bold text-gray-900 mb-3 mt-6">{renderInline(paragraph.slice(2))}</h2>;
             if (paragraph.startsWith('## '))
-                return <h3 key={idx} className="text-lg font-bold text-gray-900 mb-2 mt-5">{paragraph.slice(3)}</h3>;
+                return <h3 key={idx} className="text-lg font-bold text-gray-900 mb-2 mt-5">{renderInline(paragraph.slice(3))}</h3>;
             if (paragraph.startsWith('- ')) {
                 const items = paragraph.split('\n').filter(l => l.startsWith('- '));
                 return (
                     <ul key={idx} className="list-disc pl-6 mb-4 space-y-1.5">
-                        {items.map((item, i) => <li key={i} className="text-gray-600 leading-relaxed">{item.slice(2)}</li>)}
+                        {items.map((item, i) => <li key={i} className="text-gray-600 leading-relaxed">{renderInline(item.slice(2))}</li>)}
                     </ul>
                 );
             }
-            return <p key={idx} className="mb-4 text-gray-600 leading-relaxed">{paragraph}</p>;
+            return <p key={idx} className="mb-4 text-gray-600 leading-relaxed">{renderInline(paragraph)}</p>;
         });
     };
 
