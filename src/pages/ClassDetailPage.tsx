@@ -49,7 +49,7 @@ export default function ClassDetailPage() {
         const parts = text.split(/(\*\*.*?\*\*)/g);
         return parts.map((part, index) => {
             if (part.startsWith('**') && part.endsWith('**')) {
-                return <strong key={index} className="font-bold text-gray-900">{part.slice(2, -2)}</strong>;
+                return <strong key={index} className="font-bold text-[#0055A4]">{part.slice(2, -2)}</strong>;
             }
             return part;
         });
@@ -58,18 +58,30 @@ export default function ClassDetailPage() {
     const renderMarkdown = (md: string) => {
         return md.split('\n\n').map((paragraph, idx) => {
             if (paragraph.startsWith('# '))
-                return <h2 key={idx} className="text-xl font-bold text-gray-900 mb-3 mt-6">{renderInline(paragraph.slice(2))}</h2>;
+                return <h2 key={idx} className="text-2xl font-black text-gray-900 mb-4 mt-8 pb-3 border-b border-gray-100 tracking-tight">{renderInline(paragraph.slice(2))}</h2>;
             if (paragraph.startsWith('## '))
-                return <h3 key={idx} className="text-lg font-bold text-gray-900 mb-2 mt-5">{renderInline(paragraph.slice(3))}</h3>;
+                return (
+                    <h3 key={idx} className="text-lg font-bold text-gray-800 mb-4 mt-8 flex items-center gap-2">
+                        <div className="w-1.5 h-1.5 rounded-full bg-[#0055A4]" />
+                        {renderInline(paragraph.slice(3))}
+                    </h3>
+                );
             if (paragraph.startsWith('- ')) {
                 const items = paragraph.split('\n').filter(l => l.startsWith('- '));
                 return (
-                    <ul key={idx} className="list-disc pl-6 mb-4 space-y-1.5">
-                        {items.map((item, i) => <li key={i} className="text-gray-600 leading-relaxed">{renderInline(item.slice(2))}</li>)}
-                    </ul>
+                    <div key={idx} className="bg-[#F8FAFC] rounded-2xl p-5 mb-6 border border-gray-100">
+                        <ul className="list-none space-y-3 m-0 p-0">
+                            {items.map((item, i) => (
+                                <li key={i} className="text-gray-700 leading-relaxed text-[15px] flex items-start gap-3">
+                                    <div className="mt-2 w-1.5 h-1.5 shrink-0 rounded-full bg-blue-300" />
+                                    <span>{renderInline(item.slice(2))}</span>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
                 );
             }
-            return <p key={idx} className="mb-4 text-gray-600 leading-relaxed">{renderInline(paragraph)}</p>;
+            return <p key={idx} className="mb-6 text-gray-700 text-[15px] leading-relaxed">{renderInline(paragraph)}</p>;
         });
     };
 
