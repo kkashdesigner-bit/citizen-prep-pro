@@ -25,6 +25,7 @@ const ParcoursPage = lazy(() => import("./pages/ParcoursPage"));
 const ClassDetailPage = lazy(() => import("./pages/ClassDetailPage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const SettingsPage = lazy(() => import("./pages/SettingsPage"));
+const Contact = lazy(() => import('./pages/Contact'));
 const Terms = lazy(() => import("./pages/Terms"));
 const Privacy = lazy(() => import("./pages/Privacy"));
 const Refunds = lazy(() => import("./pages/Refunds"));
@@ -59,6 +60,7 @@ const App = () => (
                   <Route path="/parcours" element={<ParcoursPage />} />
                   <Route path="/parcours/classe/:id" element={<ClassDetailPage />} />
                   <Route path="/settings" element={<SettingsPage />} />
+                  <Route path="/contact" element={<Contact />} />
                   <Route path="/terms" element={<Terms />} />
                   <Route path="/privacy" element={<Privacy />} />
                   <Route path="/refunds" element={<Refunds />} />

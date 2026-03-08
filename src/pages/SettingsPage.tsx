@@ -328,9 +328,9 @@ export default function SettingsPage() {
                                     <h2 className="text-lg font-bold text-[var(--dash-text)] mb-5">Votre abonnement</h2>
 
                                     {/* Plan display */}
-                                    <div className={`rounded-xl border-2 p-5 ${tier === 'premium' ? 'border-amber-300 bg-amber-50/50' :
+                                    <div className={`rounded-xl border-2 p-5 transition-colors ${tier === 'premium' ? 'border-amber-300 bg-amber-50/50' :
                                         tier === 'standard' ? 'border-blue-300 bg-blue-50/50' :
-                                            'border-[var(--dash-card-border)] bg-[var(--dash-surface)]'
+                                            'border-[#1764ac]/30 bg-[#1764ac]/5'
                                         }`}>
                                         <div className="flex items-center justify-between">
                                             <div className="flex items-center gap-3">
@@ -342,7 +342,7 @@ export default function SettingsPage() {
                                             </div>
                                             <span className={`text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full ${tier === 'premium' ? 'bg-amber-100 text-amber-700' :
                                                 tier === 'standard' ? 'bg-blue-100 text-blue-700' :
-                                                    'bg-slate-100 text-slate-500'
+                                                    'bg-[#1764ac]/10 text-[#1764ac]'
                                                 }`}>Actif</span>
                                         </div>
 

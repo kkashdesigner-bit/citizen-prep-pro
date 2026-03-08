@@ -54,9 +54,9 @@ export default function Footer() {
             <h4 className="font-bold text-foreground mb-2 uppercase tracking-wider text-xs">{t('footer.nav')}</h4>
             <Link to="/#pricing" onClick={handlePricingClick} className="text-sm text-muted-foreground hover:text-primary transition-colors">{t('footer.offers')}</Link>
             <Link to="/auth" className="text-sm text-muted-foreground hover:text-primary transition-colors">{t('footer.memberSpace')}</Link>
-            <a href="#" className="text-sm text-muted-foreground hover:text-primary transition-colors flex items-center gap-2">
+            <Link to="/contact" className="text-sm text-muted-foreground hover:text-primary transition-colors flex items-center gap-2">
               <Mail className="w-4 h-4" /> {t('footer.support')}
-            </a>
+            </Link>
           </div>
 
           {/* Legal */}

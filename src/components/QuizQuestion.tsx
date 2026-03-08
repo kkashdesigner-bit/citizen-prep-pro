@@ -9,6 +9,8 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { CATEGORY_LABELS, Category } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
 
 interface QuizQuestionProps {
   question: Question;
@@ -37,6 +39,8 @@ export default function QuizQuestion({
   const soundPlayed = useRef(false);
   const [showReportForm, setShowReportForm] = useState(false);
   const [reportReason, setReportReason] = useState('');
+  const [isSubmittingReport, setIsSubmittingReport] = useState(false);
+  const { user } = useAuth();
 
   // Translate category based on current language
   const categoryLabel = CATEGORY_LABELS[language as keyof typeof CATEGORY_LABELS]?.[question.category as Category] || question.category;
@@ -101,8 +105,8 @@ export default function QuizQuestion({
                     key={opt.value}
                     onClick={() => setReportReason(opt.value)}
                     className={`text-xs font-medium px-3 py-2 rounded-lg border transition-all ${reportReason === opt.value
-                        ? 'border-orange-400 bg-orange-100 text-orange-700'
-                        : 'border-slate-200 bg-white text-slate-600 hover:border-orange-300'
+                      ? 'border-orange-400 bg-orange-100 text-orange-700'
+                      : 'border-slate-200 bg-white text-slate-600 hover:border-orange-300'
                       }`}
                   >
                     {opt.label}
@@ -121,15 +125,35 @@ export default function QuizQuestion({
                 <Button
                   size="sm"
                   className="text-xs bg-orange-500 hover:bg-orange-600 text-white gap-1.5"
-                  disabled={!reportReason}
-                  onClick={() => {
-                    toast.success('Merci pour votre signalement ! Notre \u00e9quipe va v\u00e9rifier cette question.');
-                    setShowReportForm(false);
-                    setReportReason('');
+                  disabled={!reportReason || isSubmittingReport}
+                  onClick={async () => {
+                    setIsSubmittingReport(true);
+                    try {
+                      const { error } = await supabase.functions.invoke('send-email', {
+                        body: {
+                          type: 'report',
+                          data: {
+                            questionId: question.id,
+                            questionText: question.question_text,
+                            reason: reportReason,
+                            userId: user?.id,
+                          }
+                        }
+                      });
+                      if (error) throw error;
+                      toast.success('Merci pour votre signalement ! Notre équipe va vérifier cette question.');
+                      setShowReportForm(false);
+                      setReportReason('');
+                    } catch (err) {
+                      console.error('Error reporting question:', err);
+                      toast.error("Une erreur est survenue lors de l'envoi. Veuillez réessayer.");
+                    } finally {
+                      setIsSubmittingReport(false);
+                    }
                   }}
                 >
                   <Send className="h-3 w-3" />
-                  Envoyer
+                  {isSubmittingReport ? 'Envoi...' : 'Envoyer'}
                 </Button>
               </div>
             </div>

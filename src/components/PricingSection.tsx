@@ -97,17 +97,19 @@ export default function PricingSection() {
               <AnimatedSection key={tier.name} delay={i * 150}>
                 <div
                   className={`glass-card glow-hover relative flex flex-col overflow-hidden p-6 transition-all duration-300 hover:scale-[1.02] ${isCurrent
-                      ? 'border-emerald-400 shadow-[0_0_35px_rgba(16,185,129,0.15)] ring-2 ring-emerald-400/30'
-                      : tier.id === 'standard' && !isBelow
-                        ? 'border-[#f04e42]/40 shadow-[0_0_35px_rgba(240,78,66,0.15)]'
-                        : tier.popular && !isBelow
-                          ? 'border-primary/40 shadow-[0_0_35px_hsl(var(--primary)/0.2)]'
-                          : ''
+                    ? tier.id === 'free'
+                      ? 'border-[#1764ac] shadow-[0_0_35px_rgba(23,100,172,0.15)] ring-2 ring-[#1764ac]/30'
+                      : 'border-emerald-400 shadow-[0_0_35px_rgba(16,185,129,0.15)] ring-2 ring-emerald-400/30'
+                    : tier.id === 'standard' && !isBelow
+                      ? 'border-[#f04e42]/40 shadow-[0_0_35px_rgba(240,78,66,0.15)]'
+                      : tier.popular && !isBelow
+                        ? 'border-primary/40 shadow-[0_0_35px_hsl(var(--primary)/0.2)]'
+                        : ''
                     }`}
                 >
                   {/* Current tier badge */}
                   {isCurrent && (
-                    <Badge className="absolute right-4 top-4 bg-emerald-500 text-white border-0">
+                    <Badge className={`absolute right-4 top-4 text-white border-0 ${tier.id === 'free' ? 'bg-[#1764ac]' : 'bg-emerald-500'}`}>
                       ✓ Votre forfait
                     </Badge>
                   )}
@@ -129,7 +131,7 @@ export default function PricingSection() {
                       {tier.id === 'standard' && <Sparkles className="h-4 w-4 text-[#f04e42]" />}
                     </p>
                     <div className="flex items-baseline gap-1 mt-2">
-                      <span className={`font-serif text-4xl font-bold ${tier.id === 'standard' || tier.id === 'free' ? 'text-[#f04e42]' : 'gradient-text'}`}>{tier.price}</span>
+                      <span className={`font-serif text-4xl font-bold ${tier.id === 'free' ? 'text-[#1764ac]' : tier.id === 'standard' ? 'text-[#f04e42]' : 'gradient-text'}`}>{tier.price}</span>
                       {tier.period && <span className="text-sm font-medium text-muted-foreground">{tier.period}</span>}
                     </div>
                   </div>

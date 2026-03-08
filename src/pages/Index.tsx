@@ -16,7 +16,7 @@ export default function Index() {
         "name": "L'examen civique est-il obligatoire en 2026 ?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Oui, à partir du 1er janvier 2026, l'examen civique devient obligatoire avec un seuil de 80% de bonnes réponses pour toute demande de naturalisation."
+          "text": "Oui, à partir du 1er janvier 2026, l'examen civique devient obligatoire pour toute première demande de carte de séjour pluriannuelle, carte de résident ou naturalisation française. Le seuil de réussite est fixé à 80% (32/40)."
         }
       },
       {
@@ -24,7 +24,15 @@ export default function Index() {
         "name": "Combien de questions comporte l'examen civique ?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "L'examen officiel se compose de 40 questions à choix multiples (QCM). Il faut obtenir au moins 32 bonnes réponses pour le réussir (soit 80%)."
+          "text": "L'examen officiel se compose de 40 questions : 28 questions à choix multiples (QCM) et 12 mises en situation, réparties en 5 thèmes. La durée est de 45 minutes sur ordinateur."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Quels sont les 5 thèmes de l'examen civique ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Les 5 thèmes sont : 1) Principes et valeurs de la République (11 questions), 2) Institutions et système politique (6 questions), 3) Droits et devoirs (11 questions), 4) Histoire, géographie et culture (8 questions), 5) Vivre en société (4 questions)."
         }
       },
       {
@@ -32,7 +40,39 @@ export default function Index() {
         "name": "Où passer l'examen civique pour la naturalisation ?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "L'examen se déroule dans des centres agréés en France, avec une épreuve sur un outil numérique centralisé évaluée par un correcteur certifié."
+          "text": "L'examen se déroule dans des centres agréés par Le français des affaires (CCI Paris Île-de-France), désigné par le Ministère de l'Intérieur, en France métropolitaine et outre-mer."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Le résultat de l'examen civique est-il valable à vie ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Oui, une fois l'examen civique réussi, votre résultat est valable à vie. Vous n'aurez pas besoin de le repasser."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Comment se préparer à l'examen civique 2026 ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Préparez-vous avec GoCivique : quiz interactifs couvrant les 5 thèmes, examens blancs chronométrés dans les conditions réelles (40 questions, 45 minutes), mode entraînement par catégorie et suivi de progression. Commencez 15 minutes par jour pendant une semaine."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "L'examen civique est-il obligatoire pour la carte de séjour temporaire ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Non, l'examen civique n'est pas obligatoire pour la carte de séjour temporaire d'un an. Il est requis uniquement pour la carte de séjour pluriannuelle, la carte de résident et la naturalisation."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Quel est le taux de réussite à l'examen civique ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Le seuil de réussite est de 80%, soit 32 bonnes réponses sur 40. 1 point par bonne réponse, pas de point négatif. Avec GoCivique, nos utilisateurs atteignent un score moyen de 85% après entraînement."
         }
       }
     ]
