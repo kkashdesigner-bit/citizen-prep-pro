@@ -14,7 +14,6 @@ const Quiz = lazy(() => import("./pages/Quiz"));
 const Results = lazy(() => import("./pages/Results"));
 const About = lazy(() => import("./pages/About"));
 const LearningDashboard = lazy(() => import("./pages/LearningDashboard"));
-const ProgressPage = lazy(() => import("./pages/ProgressPage"));
 const LessonPage = lazy(() => import("./pages/LessonPage"));
 const ExamsPage = lazy(() => import("./pages/ExamsPage"));
 const StudyMaterialPage = lazy(() => import("./pages/StudyMaterialPage"));
@@ -47,7 +46,6 @@ const App = () => (
                   <Route path="/auth" element={<Auth />} />
                   <Route path="/learn" element={<LearningDashboard />} />
                   <Route path="/onboarding" element={<Onboarding />} />
-                  <Route path="/progress" element={<ProgressPage />} />
                   <Route path="/lesson/:id" element={<LessonPage />} />
                   <Route path="/exams" element={<ExamsPage />} />
                   <Route path="/study-material" element={<StudyMaterialPage />} />

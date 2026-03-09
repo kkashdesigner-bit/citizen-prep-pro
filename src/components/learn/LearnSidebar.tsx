@@ -4,7 +4,7 @@ import { useUserProfile } from '@/hooks/useUserProfile';
 import { useSubscription } from '@/hooks/useSubscription';
 import Logo from '@/components/Logo';
 import {
-  LayoutDashboard, FileText, Route, BarChart3,
+  LayoutDashboard, FileText, Route,
   Settings, HelpCircle, UserCircle, LogOut
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
@@ -15,7 +15,6 @@ const NAV_ITEMS = [
   { key: 'dashboard', icon: LayoutDashboard, path: '/learn', label: 'Tableau de bord' },
   { key: 'exams', icon: FileText, path: '/exams', label: 'Examens' },
   { key: 'path', icon: Route, path: '/parcours', label: 'Parcours 1→100' },
-  { key: 'progress', icon: BarChart3, path: '/progress', label: 'Progression' },
   { key: 'settings', icon: Settings, path: '/settings', label: 'Paramètres' },
   { key: 'help', icon: HelpCircle, path: '/about', label: 'Aide' },
 ];

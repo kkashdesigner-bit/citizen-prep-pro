@@ -64,7 +64,10 @@ export default function Contact() {
 
         } catch (error) {
             console.error('Error sending message:', error);
-            toast.error('Une erreur est survenue lors de l\'envoi du message. Veuillez réessayer plus tard.');
+            toast.error(
+                'Erreur d\'envoi. Vous pouvez nous contacter directement à gocivique@gmail.com',
+                { duration: 8000 }
+            );
         } finally {
             setIsSubmitting(false);
         }

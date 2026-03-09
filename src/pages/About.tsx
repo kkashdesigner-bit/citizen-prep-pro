@@ -167,18 +167,18 @@ export default function About() {
             <CardContent>
               <ul className="space-y-2 text-sm">
                 <li>
-                  <a href="https://www.ofii.fr" target="_blank" rel="noopener noreferrer" className="text-primary underline hover:text-primary/80">
-                    Office Français de l'Immigration et de l'Intégration (OFII)
-                  </a>
-                </li>
-                <li>
                   <a href="https://www.interieur.gouv.fr" target="_blank" rel="noopener noreferrer" className="text-primary underline hover:text-primary/80">
                     Ministère de l'Intérieur
                   </a>
                 </li>
                 <li>
+                  <a href="https://www.service-public.fr/particuliers/vosdroits/F2213" target="_blank" rel="noopener noreferrer" className="text-primary underline hover:text-primary/80">
+                    Service Public — Naturalisation française
+                  </a>
+                </li>
+                <li>
                   <a href="https://www.service-public.fr/particuliers/vosdroits/F2215" target="_blank" rel="noopener noreferrer" className="text-primary underline hover:text-primary/80">
-                    Service Public — Naturalisation
+                    Service Public — Examen civique
                   </a>
                 </li>
               </ul>

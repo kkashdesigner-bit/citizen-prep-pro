@@ -5,6 +5,7 @@ import { CATEGORY_LABELS, ExamResult } from '@/lib/types';
 import SubscriptionGate from '@/components/SubscriptionGate';
 import Header from '@/components/Header';
 import { useParcours } from '@/hooks/useParcours';
+import { useAuth } from '@/hooks/useAuth';
 import { Trophy, ArrowRight, Scale, Landmark, HeartHandshake, LayoutDashboard, RotateCcw, AlertTriangle, Medal, Sparkles, Check, X, ChevronUp, ChevronDown, ChevronRight } from 'lucide-react';
 
 interface QuizError {
@@ -20,6 +21,7 @@ export default function Results() {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const { t, language } = useLanguage();
+    const { user } = useAuth();
     const [result, setResult] = useState<ExamResult | null>(null);
     const [errors, setErrors] = useState<QuizError[]>([]);
     const [showErrors, setShowErrors] = useState(false);
@@ -106,7 +108,7 @@ export default function Results() {
 
                                     <div className="text-center lg:text-left max-w-md">
                                         <h1 className="text-slate-900 text-3xl sm:text-5xl lg:text-7xl font-black mb-3 sm:mb-6 font-display leading-tight italic transform -rotate-1">
-                                            {result.passed ? 'Félicitations !' : 'Dommage !'}
+                                            {result.passed ? t('results.congratulations') : t('results.tooBad')}
                                         </h1>
                                         <p className="text-slate-600 text-sm sm:text-xl font-medium leading-relaxed">
                                             {result.passed
@@ -119,7 +121,7 @@ export default function Results() {
                                                 onClick={() => { sessionStorage.removeItem('quizResults'); sessionStorage.removeItem('quizErrors'); navigate('/quiz?mode=exam'); }}
                                                 className="bg-[#135bec] text-white py-4 px-10 rounded-2xl font-black flex items-center gap-4 hover:scale-105 transition-all shadow-xl shadow-blue-500/30"
                                             >
-                                                <span>Prochain Examen</span>
+                                                <span>{t('results.nextExam')}</span>
                                                 <ArrowRight size={24} />
                                             </button>
                                         </div>
@@ -172,11 +174,14 @@ export default function Results() {
                         <div className="lg:col-span-4 space-y-4">
                             <h3 className="text-xl font-black px-1 font-display uppercase tracking-widest text-slate-400">Actions</h3>
                             <button
-                                onClick={() => navigate('/learn')}
+                                onClick={() => {
+                                    if (!user) { navigate('/auth'); return; }
+                                    navigate('/learn');
+                                }}
                                 className="w-full bg-slate-100 text-slate-700 py-4 px-6 rounded-2xl font-bold flex items-center gap-4 hover:bg-slate-200 transition-all border-b-4 border-slate-300 active:border-b-0 active:translate-y-1"
                             >
                                 <LayoutDashboard className="text-[#135bec]" />
-                                Tableau de bord
+                                {t('results.dashboard')}
                             </button>
 
                             {classId && (() => {
@@ -194,11 +199,22 @@ export default function Results() {
                             })()}
 
                             <button
-                                onClick={() => { sessionStorage.removeItem('quizResults'); sessionStorage.removeItem('quizErrors'); navigate('/quiz?mode=exam'); }}
+                                onClick={() => {
+                                    const storedIds = sessionStorage.getItem('quizQuestionIds');
+                                    const storedMode = sessionStorage.getItem('quizMode') || 'exam';
+                                    sessionStorage.removeItem('quizResults');
+                                    sessionStorage.removeItem('quizErrors');
+                                    sessionStorage.removeItem('quizQuestionIds');
+                                    sessionStorage.removeItem('quizMode');
+                                    if (storedIds) {
+                                        sessionStorage.setItem('retakeQuestionIds', storedIds);
+                                    }
+                                    navigate(`/quiz?mode=${storedMode}&retake=1`);
+                                }}
                                 className="w-full border-2 border-slate-200 text-slate-600 py-4 px-6 rounded-2xl font-bold flex items-center gap-4 hover:bg-slate-50 transition-all border-b-4 border-slate-200 active:border-b-0 active:translate-y-1"
                             >
                                 <RotateCcw className="text-[#ef4444]" />
-                                Refaire l'examen
+                                {t('results.retakeExam')}
                             </button>
 
                             {errors.length > 0 && (

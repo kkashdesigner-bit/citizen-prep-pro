@@ -311,6 +311,7 @@ export default function LearningDashboard() {
             tier={tier}
             onUpgrade={() => openGate('premium')}
             recentActivity={stats.recentActivity}
+            totalXP={stats.totalXP}
           />
         </div>
       </main>

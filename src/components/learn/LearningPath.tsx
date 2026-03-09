@@ -135,7 +135,7 @@ export default function LearningPath({ nodes, onNodeClick }: LearningPathProps) 
                     <div className="w-24 h-20 rounded-2xl border-4 border-dashed border-[hsl(40,80%,60%)] bg-[hsl(40,80%,60%)]/10 flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform duration-300">
                         <span className="text-3xl">🧰</span>
                     </div>
-                    <p className="text-center font-bold text-[hsl(40,80%,60%)] text-xs uppercase tracking-widest mt-4">Unit Review</p>
+                    <p className="text-center font-bold text-[hsl(40,80%,60%)] text-xs uppercase tracking-widest mt-4">Quiz Récapitulatif</p>
                 </div>
 
             </div>

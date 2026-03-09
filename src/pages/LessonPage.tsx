@@ -43,7 +43,7 @@ function renderContent(content: string) {
       );
     }
     if (trimmed === '') return <div key={i} className="h-2" />;
-    return <p key={i} className="text-sm text-foreground/90 leading-relaxed">{renderInline(trimmed)}</p>;
+    return <p key={i} className="text-sm text-foreground/90 leading-relaxed break-words overflow-wrap-anywhere">{renderInline(trimmed)}</p>;
   });
 }
 
@@ -168,7 +168,7 @@ export default function LessonPage() {
           </CardHeader>
           <CardContent>
             {/* Main content */}
-            <div className="mb-8">
+            <div className="mb-8 overflow-hidden break-words">
               {renderContent(lesson.content)}
             </div>
 

@@ -31,6 +31,8 @@ export interface UseQuizOptions {
   retryKey?: number;
   /** Parcours class ID — fetch class-specific questions */
   classId?: string | null;
+  /** Specific question IDs to load (for "Refaire l'examen") */
+  retakeIds?: number[] | null;
 }
 
 const DEMO_QUESTIONS_PER_EXAM = 20;
@@ -92,6 +94,7 @@ export function useQuiz({
   questionLimit,
   retryKey = 0,
   classId,
+  retakeIds,
 }: UseQuizOptions = {}) {
   const { user } = useAuth();
   const { language } = useLanguage();
@@ -114,6 +117,36 @@ export function useQuiz({
       setError(null);
 
       try {
+        // ─── RETAKE MODE: reload same questions by ID ───
+        if (retakeIds && retakeIds.length > 0) {
+          // Demo questions (IDs >= 9000) came from CSV — re-fetch CSV and filter
+          const csvIds = retakeIds.filter(id => id >= 9000);
+          const dbIds = retakeIds.filter(id => id < 9000);
+
+          let retakeQuestions: Question[] = [];
+
+          if (csvIds.length > 0) {
+            const allDemo = await fetchDemoQuestionsFromCSV();
+            const csvMatches = allDemo.filter(q => csvIds.includes(q.id));
+            retakeQuestions = [...retakeQuestions, ...csvMatches];
+          }
+
+          if (dbIds.length > 0) {
+            const { data: dbRows } = await supabase
+              .from('questions')
+              .select('*')
+              .in('id', dbIds);
+            retakeQuestions = [...retakeQuestions, ...(dbRows || []) as Question[]];
+          }
+
+          // Preserve original order
+          const idOrder = retakeIds;
+          retakeQuestions.sort((a, b) => idOrder.indexOf(a.id) - idOrder.indexOf(b.id));
+          setQuestions(retakeQuestions);
+          setLoading(false);
+          return;
+        }
+
         // ─── CLASS MODE: fetch class-specific questions ───
         if (classId) {
           // Check for manually mapped questions first
@@ -152,7 +185,8 @@ export function useQuiz({
 
             const { data: poolQuestions, error: poolErr } = await query;
             if (poolErr) throw poolErr;
-            classQuestions = shuffle((poolQuestions || []) as Question[]).slice(0, 5);
+            const classLimit = (typeof questionLimit === 'number' && questionLimit > 0) ? questionLimit : 5;
+            classQuestions = shuffle((poolQuestions || []) as Question[]).slice(0, classLimit);
           }
 
           setQuestions(classQuestions);
@@ -254,7 +288,8 @@ export function useQuiz({
     };
 
     fetchQuestions();
-  }, [language, category, user, resolvedLevel, mode, isMiniQuiz, questionLimit, retryKey, classId]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [language, category, user, resolvedLevel, mode, isMiniQuiz, questionLimit, retryKey, classId, retakeIds?.join(',')]);
 
   /** Save a single answer to user_answers table (skipped in demo mode) */
   const saveAnswer = useCallback(

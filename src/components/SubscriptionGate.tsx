@@ -246,28 +246,6 @@ export default function SubscriptionGate({ open, onOpenChange, requiredTier = 's
             })}
           </div>
 
-          {/* Trial progress bar */}
-          <div className="mb-5">
-            <div className="flex justify-between text-xs font-medium text-slate-600 mb-1.5">
-              <span>Essai dès aujourd'hui</span>
-              <span className="font-bold" style={{ color: '#0055A4' }}>7 Jours Gratuits</span>
-            </div>
-            <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
-              <div
-                className="h-2 rounded-full transition-all duration-1000"
-                style={{
-                  width: '15%',
-                  background: 'linear-gradient(90deg, #0055A4, #4D94E0)',
-                  boxShadow: '0 0 8px rgba(0,85,164,0.4)',
-                }}
-              />
-            </div>
-            <div className="flex justify-between text-[10px] text-slate-400 mt-1">
-              <span>Jour 1</span>
-              <span>Jour 7 (Premier prélèvement)</span>
-            </div>
-          </div>
-
           {/* CTA Button */}
           <div className="mt-auto">
             <Button

@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { CheckCircle, Lock, ArrowRight, Globe, Sparkles } from 'lucide-react';
+import { CheckCircle, Lock, ArrowRight, Globe, Sparkles, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import RecentActivityLog from './RecentActivityLog';
 import type { ActivityItem } from '@/hooks/useDashboardStats';
@@ -8,6 +8,7 @@ interface LearningJourneyProps {
     tier: 'free' | 'standard' | 'premium';
     onUpgrade: () => void;
     recentActivity: ActivityItem[];
+    totalXP: number;
 }
 
 const STAGES = [
@@ -45,13 +46,29 @@ function StatusDot({ status }: { status: 'completed' | 'current' | 'locked' }) {
     );
 }
 
-export default function DashboardRightSidebar({ tier, onUpgrade, recentActivity }: LearningJourneyProps) {
+export default function DashboardRightSidebar({ tier, onUpgrade, recentActivity, totalXP }: LearningJourneyProps) {
     return (
         <motion.aside
             initial="hidden" animate="visible"
             variants={{ hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.15 } } }}
             className="w-full xl:w-[340px] flex-shrink-0 flex flex-col gap-6"
         >
+            {/* ── XP Score Card ── */}
+            <motion.div
+                variants={{ hidden: { opacity: 0, x: 20 }, visible: { opacity: 1, x: 0 } }}
+                className="bg-gradient-to-br from-[#0055A4] to-[#3B82F6] rounded-2xl p-5 shadow-md text-white"
+            >
+                <div className="flex items-center justify-between">
+                    <div>
+                        <p className="text-xs font-semibold text-white/70 uppercase tracking-widest mb-1">Score total</p>
+                        <p className="text-3xl font-black text-white">{totalXP.toLocaleString('fr-FR')} <span className="text-lg font-bold text-white/80">XP</span></p>
+                    </div>
+                    <div className="h-12 w-12 rounded-full bg-white/15 flex items-center justify-center">
+                        <Zap className="h-6 w-6 text-amber-300" />
+                    </div>
+                </div>
+            </motion.div>
+
             {/* ── Learning Journey Timeline ── */}
             <motion.div
                 variants={{ hidden: { opacity: 0, x: 20 }, visible: { opacity: 1, x: 0 } }}

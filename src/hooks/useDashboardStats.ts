@@ -61,6 +61,7 @@ export interface DashboardStats {
     recentActivity: ActivityItem[];
     examsToday: number;
     canTakeExamFree: boolean;
+    totalXP: number;
 }
 
 /* ──────────────────────────────────────────────
@@ -326,6 +327,8 @@ export function useDashboardStats(): DashboardStats {
     const weaknessAlerts = computeWeaknessAlerts(domainMastery);
     const recentActivity = buildRecentActivity(examHistory, allAnswers, classCompletions);
 
+    const totalXP = allAnswers.filter(a => a.is_correct).length * 10;
+
     return {
         loading: loading || authLoading,
         displayName,
@@ -341,5 +344,6 @@ export function useDashboardStats(): DashboardStats {
         recentActivity,
         examsToday,
         canTakeExamFree: examsToday < 1,
+        totalXP,
     };
 }

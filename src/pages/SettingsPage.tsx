@@ -20,6 +20,7 @@ import {
     User, Shield, CreditCard, Loader2, Save, Crown, Sparkles, Eye, EyeOff,
     ExternalLink, XCircle, Check, ChevronRight
 } from 'lucide-react';
+import SubscriptionGate from '@/components/SubscriptionGate';
 
 /* ─────────────── tier display config ─────────────── */
 const TIER_CONFIG = {
@@ -55,11 +56,17 @@ export default function SettingsPage() {
     }
 
     /* ── Security state ── */
+    const [currentPw, setCurrentPw] = useState('');
     const [newPw, setNewPw] = useState('');
     const [confirmPw, setConfirmPw] = useState('');
+    const [showCurrent, setShowCurrent] = useState(false);
     const [showNew, setShowNew] = useState(false);
+    const [showConfirm, setShowConfirm] = useState(false);
     const [savingPw, setSavingPw] = useState(false);
     const isGoogleUser = user?.app_metadata?.provider === 'google';
+
+    /* ── Subscription gate state ── */
+    const [showSubGate, setShowSubGate] = useState(false);
 
     /* ── Billing state ── */
     const [billingLoading, setBillingLoading] = useState(false);
@@ -85,19 +92,34 @@ export default function SettingsPage() {
     };
 
     const handleChangePassword = async () => {
+        if (!currentPw) {
+            toast.error('Veuillez entrer votre mot de passe actuel');
+            return;
+        }
         if (newPw.length < 6) {
-            toast.error('Le mot de passe doit contenir au moins 6 caractères');
+            toast.error('Le nouveau mot de passe doit contenir au moins 6 caractères');
             return;
         }
         if (newPw !== confirmPw) {
-            toast.error('Les mots de passe ne correspondent pas');
+            toast.error('Les nouveaux mots de passe ne correspondent pas');
             return;
         }
         setSavingPw(true);
         try {
+            // Verify current password first
+            const { error: signInError } = await supabase.auth.signInWithPassword({
+                email: user?.email || '',
+                password: currentPw,
+            });
+            if (signInError) {
+                toast.error('Mot de passe actuel incorrect');
+                setSavingPw(false);
+                return;
+            }
             const { error } = await supabase.auth.updateUser({ password: newPw });
             if (error) throw error;
             toast.success('Mot de passe modifié avec succès !');
+            setCurrentPw('');
             setNewPw('');
             setConfirmPw('');
         } catch (err: any) {
@@ -288,6 +310,19 @@ export default function SettingsPage() {
                                         <div className="space-y-4 mt-4">
 
                                             <div>
+                                                <Label htmlFor="currentPw" className="text-xs font-bold text-[var(--dash-text-muted)] uppercase tracking-wider">Mot de passe actuel</Label>
+                                                <div className="relative mt-1.5">
+                                                    <Input id="currentPw" type={showCurrent ? 'text' : 'password'} value={currentPw}
+                                                        onChange={(e) => setCurrentPw(e.target.value)} placeholder="Votre mot de passe actuel"
+                                                        className="bg-[var(--dash-surface)] border-[var(--dash-card-border)] text-[var(--dash-text)] focus:border-[#0055A4] focus:ring-[#0055A4]/20 rounded-xl h-11 pr-10" />
+                                                    <button type="button" onClick={() => setShowCurrent(!showCurrent)}
+                                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--dash-text-muted)] hover:text-[var(--dash-text)]">
+                                                        {showCurrent ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            <div>
                                                 <Label htmlFor="newPw" className="text-xs font-bold text-[var(--dash-text-muted)] uppercase tracking-wider">Nouveau mot de passe</Label>
                                                 <div className="relative mt-1.5">
                                                     <Input id="newPw" type={showNew ? 'text' : 'password'} value={newPw}
@@ -301,16 +336,22 @@ export default function SettingsPage() {
                                             </div>
 
                                             <div>
-                                                <Label htmlFor="confirmPw" className="text-xs font-bold text-[var(--dash-text-muted)] uppercase tracking-wider">Confirmer le mot de passe</Label>
-                                                <Input id="confirmPw" type="password" value={confirmPw}
-                                                    onChange={(e) => setConfirmPw(e.target.value)} placeholder="Retapez le mot de passe"
-                                                    className="mt-1.5 bg-[var(--dash-surface)] border-[var(--dash-card-border)] text-[var(--dash-text)] focus:border-[#0055A4] focus:ring-[#0055A4]/20 rounded-xl h-11" />
+                                                <Label htmlFor="confirmPw" className="text-xs font-bold text-[var(--dash-text-muted)] uppercase tracking-wider">Confirmer le nouveau mot de passe</Label>
+                                                <div className="relative mt-1.5">
+                                                    <Input id="confirmPw" type={showConfirm ? 'text' : 'password'} value={confirmPw}
+                                                        onChange={(e) => setConfirmPw(e.target.value)} placeholder="Retapez le nouveau mot de passe"
+                                                        className="bg-[var(--dash-surface)] border-[var(--dash-card-border)] text-[var(--dash-text)] focus:border-[#0055A4] focus:ring-[#0055A4]/20 rounded-xl h-11 pr-10" />
+                                                    <button type="button" onClick={() => setShowConfirm(!showConfirm)}
+                                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--dash-text-muted)] hover:text-[var(--dash-text)]">
+                                                        {showConfirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                                    </button>
+                                                </div>
                                                 {confirmPw && confirmPw !== newPw && (
                                                     <p className="text-xs text-red-500 mt-1">Les mots de passe ne correspondent pas</p>
                                                 )}
                                             </div>
 
-                                            <Button disabled={!newPw || newPw !== confirmPw || savingPw} onClick={handleChangePassword}
+                                            <Button disabled={!currentPw || !newPw || newPw !== confirmPw || savingPw} onClick={handleChangePassword}
                                                 className="w-full sm:w-auto bg-[#0055A4] hover:bg-[#1B6ED6] text-white font-bold rounded-xl h-11 px-8 shadow-[0_4px_14px_rgba(0,85,164,0.25)] hover:-translate-y-0.5 transition-all"
                                             >
                                                 {savingPw ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Shield className="h-4 w-4 mr-2" />}
@@ -360,7 +401,7 @@ export default function SettingsPage() {
                                     <div className="mt-6 flex flex-col sm:flex-row gap-3">
                                         {!isStandardOrAbove ? (
                                             /* Free user → upgrade */
-                                            <Button onClick={() => navigate('/learn')}
+                                            <Button onClick={() => setShowSubGate(true)}
                                                 className="flex-1 bg-gradient-to-r from-[#0055A4] to-[#1B6ED6] hover:from-[#1B6ED6] hover:to-[#0055A4] text-white font-bold rounded-xl h-11 shadow-[0_4px_14px_rgba(0,85,164,0.25)] transition-all gap-2"
                                             >
                                                 <Crown className="h-4 w-4" /> Passer au Premium <ChevronRight className="h-4 w-4" />
@@ -388,6 +429,9 @@ export default function SettingsPage() {
                     </motion.div>
                 </div>
             </main>
+
+            {/* Subscription upgrade gate */}
+            <SubscriptionGate open={showSubGate} onOpenChange={setShowSubGate} requiredTier="standard" />
 
             {/* Cancel Subscription Confirmation Dialog */}
             <AlertDialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>

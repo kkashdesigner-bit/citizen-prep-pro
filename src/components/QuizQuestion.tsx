@@ -19,6 +19,7 @@ interface QuizQuestionProps {
   onAnswer: (answer: string) => void;
   showFeedback: boolean;
   showTranslateButton?: boolean;
+  allowFreeTranslate?: boolean;
 }
 
 export default function QuizQuestion({
@@ -29,6 +30,7 @@ export default function QuizQuestion({
   onAnswer,
   showFeedback,
   showTranslateButton = false,
+  allowFreeTranslate = false,
 }: QuizQuestionProps) {
   const { language } = useLanguage();
   const [translatedData, setTranslatedData] = useState<TranslatedData | null>(null);
@@ -82,6 +84,7 @@ export default function QuizQuestion({
           <TranslateButton
             questionId={question.id}
             onTranslated={setTranslatedData}
+            allowFree={allowFreeTranslate}
           />
         )}
 

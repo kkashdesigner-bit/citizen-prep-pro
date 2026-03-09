@@ -22,10 +22,13 @@ export interface TranslatedData {
 interface Props {
   questionId: number;
   onTranslated: (data: TranslatedData | null) => void;
+  /** When true, bypass the premium gate (e.g. in demo mode) */
+  allowFree?: boolean;
 }
 
-export default function TranslateButton({ questionId, onTranslated }: Props) {
+export default function TranslateButton({ questionId, onTranslated, allowFree = false }: Props) {
   const { isPremium } = useSubscription();
+  const canTranslate = isPremium || allowFree;
   const { user } = useAuth();
   const { language } = useLanguage();
   const navigate = useNavigate();
@@ -35,7 +38,7 @@ export default function TranslateButton({ questionId, onTranslated }: Props) {
   const [isProcessing, setIsProcessing] = useState(false);
 
   async function handleClick() {
-    if (!isPremium) {
+    if (!canTranslate) {
       setShowPopup(true);
       return;
     }
@@ -113,7 +116,7 @@ export default function TranslateButton({ questionId, onTranslated }: Props) {
             <Globe className="h-4 w-4" />
           )}
           {shown ? "Masquer la traduction" : "Traduire"}
-          {!isPremium && (
+          {!canTranslate && (
             <span className="ml-1 rounded bg-amber-500/10 px-1.5 py-0.5 text-[10px] font-bold uppercase text-amber-600">
               Premium
             </span>

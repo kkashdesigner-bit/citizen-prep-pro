@@ -162,10 +162,25 @@ export default function PricingSection() {
                     <Button className="w-full" variant="outline" disabled>
                       Inclus dans votre forfait
                     </Button>
+                  ) : tier.id === 'free' ? (
+                    <Button
+                      className="w-full bg-[#0055A4] hover:bg-[#1B6ED6] text-white border-0 shadow-lg shadow-[#0055A4]/25"
+                      onClick={tier.onClick}
+                    >
+                      {tier.cta}
+                    </Button>
+                  ) : tier.id === 'standard' ? (
+                    <Button
+                      className="w-full bg-white text-[#EF4135] border-2 border-[#EF4135] hover:bg-[#EF4135] hover:text-white shadow-lg shadow-[#EF4135]/20 transition-colors"
+                      variant="outline"
+                      onClick={tier.onClick}
+                    >
+                      {tier.cta}
+                    </Button>
                   ) : (
                     <Button
-                      className={`w-full ${tier.id === 'standard' || tier.id === 'free' ? 'bg-[#f04e42] hover:bg-[#d94337] text-white border-0 shadow-lg shadow-[#f04e42]/25 hover:shadow-[#f04e42]/40' : ''}`}
-                      variant={tier.id === 'standard' || tier.id === 'free' ? 'default' : 'outline'}
+                      className="w-full text-white border-0 shadow-lg font-semibold hover:opacity-90 transition-opacity"
+                      style={{ background: 'linear-gradient(90deg, #0055A4 33%, #EF4135 100%)' }}
                       onClick={tier.onClick}
                     >
                       {tier.cta}

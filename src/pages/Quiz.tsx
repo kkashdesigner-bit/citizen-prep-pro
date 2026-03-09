@@ -3,6 +3,7 @@ import SEOHead from '@/components/SEOHead';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
+
 import { useQuiz, QuizMode } from '@/hooks/useQuiz';
 import { useSubscription } from '@/hooks/useSubscription';
 import { useAuth } from '@/hooks/useAuth';
@@ -40,6 +41,14 @@ export default function Quiz() {
     ? Number(limitParam)
     : undefined;
   const classIdParam = searchParams.get('classId');
+  const isRetake = searchParams.get('retake') === '1';
+  const retakeIds = isRetake
+    ? (() => {
+        const stored = sessionStorage.getItem('retakeQuestionIds');
+        sessionStorage.removeItem('retakeQuestionIds');
+        try { return stored ? (JSON.parse(stored) as number[]) : null; } catch { return null; }
+      })()
+    : null;
 
   const navigate = useNavigate();
   const { t } = useLanguage();
@@ -110,6 +119,7 @@ export default function Quiz() {
     questionLimit,
     retryKey,
     classId: classIdParam || undefined,
+    retakeIds: retakeIds || undefined,
   });
 
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -218,6 +228,9 @@ export default function Quiz() {
     // Also store in sessionStorage as fallback for the /results route
     sessionStorage.setItem('quizResults', JSON.stringify(resultPayload));
     sessionStorage.setItem('quizErrors', JSON.stringify(quizErrors));
+    // Store question IDs + mode so "Refaire l'examen" can reload the same questions
+    sessionStorage.setItem('quizQuestionIds', JSON.stringify(questions.map(q => q.id)));
+    sessionStorage.setItem('quizMode', rawMode);
 
     // If this is a parcours class quiz, update class progress and store classId
     if (classIdParam) {
@@ -310,11 +323,11 @@ export default function Quiz() {
   const timerMinutes = Math.floor(timeRemaining / 60);
   const timerSeconds = timeRemaining % 60;
 
-  const modeLabel = classIdParam ? 'Mode Parcours'
-    : effectiveMode === 'exam' ? 'Mode Examen'
-      : effectiveMode === 'demo' ? 'Mode Démo'
-        : effectiveMode === 'study' ? 'Mode Étude'
-          : 'Mode Entraînement';
+  const modeLabel = classIdParam ? t('quiz.parcours')
+    : effectiveMode === 'exam' ? t('quiz.exam')
+      : effectiveMode === 'demo' ? t('quiz.demo')
+        : effectiveMode === 'study' ? t('quiz.study')
+          : t('quiz.training');
 
   const isFlaggedCurrent = flagged.has(currentQuestion.id);
 
@@ -354,8 +367,8 @@ export default function Quiz() {
             onClick={handleFinish}
             className="gap-1.5 sm:gap-2 rounded-full bg-[#0055A4] text-white font-bold hover:bg-[#1B6ED6] px-3 sm:px-5 text-xs sm:text-sm shrink-0"
           >
-            <span className="hidden sm:inline">Terminer l'examen</span>
-            <span className="sm:hidden">Terminer</span>
+            <span className="hidden sm:inline">{t('quiz.finishExam')}</span>
+            <span className="sm:hidden">{t('quiz.finish')}</span>
             <CheckCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
           </Button>
         </div>
@@ -401,7 +414,8 @@ export default function Quiz() {
                   selectedAnswer={answers[currentQuestion.id]}
                   onAnswer={handleAnswer}
                   showFeedback={showFeedback}
-                  showTranslateButton={isPremium}
+                  showTranslateButton={isPremium || effectiveMode === 'demo'}
+                  allowFreeTranslate={effectiveMode === 'demo'}
                 />
               </div>
             </div>
@@ -444,7 +458,7 @@ export default function Quiz() {
 
               {currentIndex === questions.length - 1 ? (
                 <Button onClick={handleFinish} className="gap-1 sm:gap-2 btn-glow text-xs sm:text-sm px-4 sm:px-6 h-10 sm:h-11 rounded-xl">
-                  Terminer l'examen
+                  {t('quiz.finishExam')}
                   <CheckCircle className="h-4 w-4" />
                 </Button>
               ) : (

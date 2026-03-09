@@ -10,7 +10,7 @@ import {
   Check, ArrowRight, Target, Clock, Zap, ChevronLeft,
   Landmark, CreditCard, ClipboardList,
   Sprout, BookOpen, GraduationCap, ShieldQuestion,
-  PartyPopper, Crosshair, BarChart3, RotateCcw, Timer, Flag, User,
+  PartyPopper, Flag, User,
 } from 'lucide-react';
 import Logo from '@/components/Logo';
 
@@ -485,29 +485,16 @@ function StepTimeline({ selected, onSelect, onContinue }: {
 }
 
 /* ─── Step 6: Completion ─── */
-const GOAL_LABELS_MAP: Record<GoalType, string> = {
-  naturalisation: 'Naturalisation française',
-  carte_resident: 'Carte de Résident (CR)',
-  csp: 'Carte de Séjour Pluriannuelle (CSP)',
-};
-
-const LEVEL_LABELS: Record<LevelType, string> = {
-  beginner: 'Débutant',
-  intermediate: 'Intermédiaire',
-  advanced: 'Avancé',
-};
 
 function StepComplete({ data, onStart, saving }: {
   data: OnboardingData;
   onStart: () => void;
   saving: boolean;
 }) {
-  const examLevel = data.goal_type ? GOAL_TO_LEVEL[data.goal_type] : 'CSP';
-
   return (
     <div className="text-center space-y-8">
       <div className="space-y-4" style={{ animation: 'slideUp 0.6s ease-out' }}>
-        {/* Avatar + Confetti */}
+        {/* Avatar */}
         <div className="relative inline-block">
           {data.avatar_url ? (
             <img
@@ -524,62 +511,10 @@ function StepComplete({ data, onStart, saving }: {
         </div>
 
         <h2 className="text-3xl md:text-4xl font-bold text-[#1A1A1A] leading-tight">
-          {data.first_name ? `Bienvenue, ${data.first_name} !` : 'Votre parcours personnalisé'}
+          {data.first_name ? `Bienvenue, ${data.first_name} !` : 'Bienvenue !'}
           <br />
-          <span className="text-[#0055A4]">est prêt !</span>
+          <span className="text-[#0055A4]">Tout est prêt !</span>
         </h2>
-        <p className="text-[#1A1A1A]/60 text-lg">
-          Voici ce que nous avons préparé pour vous
-        </p>
-      </div>
-
-      {/* Summary card */}
-      <div className="rounded-2xl border border-[#E6EAF0] bg-[#F5F7FA] p-6 text-left space-y-4" style={{ animation: 'slideUp 0.6s ease-out 0.15s both' }}>
-        <h3 className="font-bold text-xs uppercase tracking-widest text-[#1A1A1A]/40">Votre profil</h3>
-        <div className="space-y-3">
-          {data.first_name && (
-            <>
-              <div className="flex items-center justify-between">
-                <span className="text-[#1A1A1A]/60 text-sm">Prénom</span>
-                <span className="font-semibold text-[#1A1A1A] text-sm">{data.first_name}</span>
-              </div>
-              <div className="h-px bg-[#E6EAF0]" />
-            </>
-          )}
-          <div className="flex items-center justify-between">
-            <span className="text-[#1A1A1A]/60 text-sm">Objectif</span>
-            <span className="font-semibold text-[#1A1A1A] text-sm">
-              {data.goal_type ? GOAL_LABELS_MAP[data.goal_type] : '—'}
-            </span>
-          </div>
-          <div className="h-px bg-[#E6EAF0]" />
-          <div className="flex items-center justify-between">
-            <span className="text-[#1A1A1A]/60 text-sm">Niveau</span>
-            <span className="font-semibold text-[#1A1A1A] text-sm">
-              {data.level ? LEVEL_LABELS[data.level] : '—'}
-            </span>
-          </div>
-          <div className="h-px bg-[#E6EAF0]" />
-          <div className="flex items-center justify-between">
-            <span className="text-[#1A1A1A]/60 text-sm">Type d'examen</span>
-            <span className="font-semibold text-[#0055A4] text-sm">{examLevel}</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Features unlocked */}
-      <div className="grid grid-cols-2 gap-3" style={{ animation: 'slideUp 0.6s ease-out 0.3s both' }}>
-        {[
-          { icon: <Crosshair className="h-5 w-5 text-[#0055A4]" />, text: 'Questions adaptées à votre objectif' },
-          { icon: <BarChart3 className="h-5 w-5 text-[#0055A4]" />, text: 'Progression personnalisée' },
-          { icon: <RotateCcw className="h-5 w-5 text-[#0055A4]" />, text: 'Révision des points faibles' },
-          { icon: <Timer className="h-5 w-5 text-[#0055A4]" />, text: "Simulations d'examen" },
-        ].map(item => (
-          <div key={item.text} className="flex items-start gap-2 rounded-xl bg-[#0055A4]/5 border border-[#0055A4]/15 p-3 text-left">
-            <div className="flex-shrink-0 mt-0.5">{item.icon}</div>
-            <p className="text-xs text-[#1A1A1A] font-medium leading-tight">{item.text}</p>
-          </div>
-        ))}
       </div>
 
       <Button
@@ -587,7 +522,7 @@ function StepComplete({ data, onStart, saving }: {
         className="w-full gap-2 h-14 text-base font-bold bg-[#0055A4] hover:bg-[#1B6ED6] rounded-xl transition-all hover:scale-[1.01]"
         onClick={onStart}
         disabled={saving}
-        style={{ animation: 'slideUp 0.6s ease-out 0.45s both' }}
+        style={{ animation: 'slideUp 0.6s ease-out 0.2s both' }}
       >
         {saving ? 'Préparation...' : "Commencer l'entraînement"}
         {!saving && <ArrowRight className="h-5 w-5" />}

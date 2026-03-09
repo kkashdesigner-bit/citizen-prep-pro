@@ -15,11 +15,16 @@ import {
 
 /* ─────────────── Module groupings ─────────────── */
 const MODULES = [
-    { number: 1, label: 'Module 1 : Les Fondements de la République', range: [1, 20], icon: '⚖️', color: '#0055A4' },
-    { number: 2, label: 'Module 2 : L\'Histoire de France', range: [21, 40], icon: '📜', color: '#7C3AED' },
-    { number: 3, label: 'Module 3 : Les Institutions Françaises', range: [41, 60], icon: '🏛️', color: '#0891B2' },
-    { number: 4, label: 'Module 4 : Droits et Devoirs du Citoyen', range: [61, 80], icon: '🛡️', color: '#059669' },
-    { number: 5, label: 'Module 5 : Vivre en France (Culture & Géographie)', range: [81, 100], icon: '🏠', color: '#EF4135' },
+    { number: 1,  label: 'Module 1 : Les Valeurs Fondamentales de la République', range: [1,  10], icon: '⚖️', color: '#0055A4' },
+    { number: 2,  label: 'Module 2 : Les Symboles et Principes Républicains',      range: [11, 20], icon: '🇫🇷', color: '#1B6ED6' },
+    { number: 3,  label: 'Module 3 : Le Pouvoir Exécutif',                         range: [21, 30], icon: '🏛️', color: '#7C3AED' },
+    { number: 4,  label: 'Module 4 : Le Pouvoir Législatif et Judiciaire',         range: [31, 40], icon: '⚖️', color: '#6D28D9' },
+    { number: 5,  label: 'Module 5 : Les Droits Fondamentaux',                     range: [41, 50], icon: '🛡️', color: '#0891B2' },
+    { number: 6,  label: 'Module 6 : Les Devoirs et la Citoyenneté',               range: [51, 60], icon: '🤝', color: '#059669' },
+    { number: 7,  label: 'Module 7 : L\'Histoire de France',                       range: [61, 70], icon: '📜', color: '#D97706' },
+    { number: 8,  label: 'Module 8 : La Géographie et la Culture Française',       range: [71, 80], icon: '🗺️', color: '#B45309' },
+    { number: 9,  label: 'Module 9 : Économie, Travail et Protection Sociale',     range: [81, 90], icon: '💼', color: '#DC2626' },
+    { number: 10, label: 'Module 10 : Vie Quotidienne et Intégration',             range: [91, 100], icon: '🏠', color: '#EF4135' },
 ];
 
 /* ─────────────── Mastery helpers ─────────────── */

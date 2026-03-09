@@ -40,7 +40,8 @@ export default function ExamsPage() {
           <div className="mx-auto max-w-3xl px-4 md:px-8 py-6 md:py-8">
             <div className="rounded-2xl border border-border/40 bg-card p-6 mb-4">
               <h2 className="font-semibold text-foreground mb-2">Examen blanc complet</h2>
-              <p className="text-sm text-muted-foreground mb-4">40 questions · 45 min · 80% pour réussir</p>
+              <p className="text-sm text-muted-foreground mb-2">40 questions · 45 min · 80% pour réussir</p>
+              <p className="text-xs text-muted-foreground mb-4">Les questions d'examen sont tirées d'une banque de plus de 10 000 questions.</p>
               <Button className="gap-2" onClick={handleStartExam}>
                 <GraduationCap className="h-4 w-4" /> Lancer l'examen
               </Button>
