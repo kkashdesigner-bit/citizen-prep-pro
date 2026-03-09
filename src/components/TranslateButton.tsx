@@ -50,7 +50,7 @@ export default function TranslateButton({ questionId, onTranslated, allowFree = 
 
     setLoading(true);
     try {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('question_translations')
         .select('*')
         .eq('question_id', questionId)

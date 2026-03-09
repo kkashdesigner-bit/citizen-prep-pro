@@ -132,6 +132,8 @@ export default function HeroSection() {
                 key={i}
                 src={`https://i.pravatar.cc/100?img=${imgId}`}
                 alt="User avatar"
+                width={28}
+                height={28}
                 className="h-6 w-6 sm:h-7 sm:w-7 rounded-full border-2 border-card object-cover"
               />
             ))}
