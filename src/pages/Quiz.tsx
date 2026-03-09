@@ -414,7 +414,7 @@ export default function Quiz() {
                   selectedAnswer={answers[currentQuestion.id]}
                   onAnswer={handleAnswer}
                   showFeedback={showFeedback}
-                  showTranslateButton={isPremium || effectiveMode === 'demo'}
+                  showTranslateButton={true}
                   allowFreeTranslate={effectiveMode === 'demo'}
                 />
               </div>
