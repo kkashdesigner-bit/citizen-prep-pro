@@ -18,6 +18,9 @@ export default function Logo({ size = 'sm', className }: LogoProps) {
         src="/LOGO.svg"
         alt="Logo Officiel GoCivique - Préparation Examen Civique Français"
         className={cn('object-contain', sizeClasses[size])}
+        width={size === 'lg' ? 500 : size === 'md' ? 200 : 120}
+        height={size === 'lg' ? 192 : size === 'md' ? 80 : 48}
+        fetchPriority={size === 'lg' ? 'high' : undefined}
       />
     </div>
   );
