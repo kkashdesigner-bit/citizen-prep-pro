@@ -78,7 +78,7 @@ export interface ExamResult {
   categoryBreakdown: Record<string, { correct: number; total: number }>;
 }
 
-export type Language = 'fr' | 'en' | 'ar' | 'es' | 'pt' | 'zh';
+export type Language = 'fr' | 'en' | 'ar' | 'es' | 'pt' | 'zh' | 'tr';
 
 export const LANGUAGES: Record<Language, string> = {
   fr: 'Français',
@@ -87,6 +87,7 @@ export const LANGUAGES: Record<Language, string> = {
   es: 'Español',
   pt: 'Português',
   zh: '中文',
+  tr: 'Türkçe',
 };
 
 /** Map app languages to DB language codes */
@@ -97,6 +98,7 @@ export const LANGUAGE_TO_DB: Record<Language, string> = {
   es: 'es',
   pt: 'pt',
   zh: 'zh',
+  tr: 'tr',
 };
 
 export const CATEGORY_LABELS: Record<Language, Record<Category, string>> = {
@@ -114,6 +116,7 @@ export const CATEGORY_LABELS: Record<Language, Record<Category, string>> = {
   es: { 'Principles and values of the Republic': 'Principios', 'Institutional and political system': 'Instituciones', 'Rights and duties': 'Derechos', 'History, geography and culture': 'Historia', 'Living in French society': 'Vida cotidiana', Politics: 'Política', Society: 'Sociedad' },
   pt: { 'Principles and values of the Republic': 'Princípios', 'Institutional and political system': 'Instituições', 'Rights and duties': 'Direitos', 'History, geography and culture': 'História', 'Living in French society': 'Vida quotidiana', Politics: 'Política', Society: 'Sociedade' },
   zh: { 'Principles and values of the Republic': '原则', 'Institutional and political system': '机构', 'Rights and duties': '权利', 'History, geography and culture': '历史', 'Living in French society': '日常生活', Politics: '政治', Society: '社会' },
+  tr: { 'Principles and values of the Republic': 'İlkeler', 'Institutional and political system': 'Kurumlar', 'Rights and duties': 'Haklar', 'History, geography and culture': 'Tarih', 'Living in French society': 'Günlük Yaşam', Politics: 'Siyaset', Society: 'Toplum' },
 };
 
 export const DB_CATEGORIES = [

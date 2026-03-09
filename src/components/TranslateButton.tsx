@@ -8,12 +8,23 @@ import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { useLanguage } from "@/contexts/LanguageContext";
 
-interface Props {
-  text: string;
-  onTranslated: (translated: string) => void;
+import { supabase } from "@/integrations/supabase/client";
+
+export interface TranslatedData {
+  question_text: string | null;
+  option_a: string | null;
+  option_b: string | null;
+  option_c: string | null;
+  option_d: string | null;
+  explanation: string | null;
 }
 
-export default function TranslateButton({ text, onTranslated }: Props) {
+interface Props {
+  questionId: number;
+  onTranslated: (data: TranslatedData | null) => void;
+}
+
+export default function TranslateButton({ questionId, onTranslated }: Props) {
   const { isPremium } = useSubscription();
   const { user } = useAuth();
   const { language } = useLanguage();
@@ -21,13 +32,7 @@ export default function TranslateButton({ text, onTranslated }: Props) {
   const [showPopup, setShowPopup] = useState(false);
   const [shown, setShown] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [translatedText, setTranslatedText] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
-
-  const simulateTranslation = async (originalText: string, targetLang: string) => {
-    await new Promise(resolve => setTimeout(resolve, 800));
-    return `${originalText} [Mock Translation to ${targetLang.toUpperCase()}]`;
-  };
 
   async function handleClick() {
     if (!isPremium) {
@@ -36,17 +41,29 @@ export default function TranslateButton({ text, onTranslated }: Props) {
     }
     if (shown) {
       setShown(false);
+      onTranslated(null);
       return;
     }
 
     setLoading(true);
     try {
-      const result = await simulateTranslation(text, language);
-      setTranslatedText(result);
-      setShown(true);
-      onTranslated(result);
+      const { data, error } = await supabase
+        .from('question_translations')
+        .select('*')
+        .eq('question_id', questionId)
+        .eq('language', language)
+        .single();
+        
+      if (error) {
+        console.error("Translation fetch error", error);
+        toast.error("Traduction indisponible pour le moment.");
+      } else if (data) {
+        setShown(true);
+        onTranslated(data as TranslatedData);
+      }
     } catch (e) {
       console.error(e);
+      toast.error("Une erreur est survenue.");
     } finally {
       setLoading(false);
     }
@@ -102,12 +119,6 @@ export default function TranslateButton({ text, onTranslated }: Props) {
             </span>
           )}
         </Button>
-
-        {shown && translatedText && (
-          <div className="rounded-lg border border-primary/20 bg-primary/5 px-4 py-3 text-sm text-foreground animate-in fade-in zoom-in-95 duration-200">
-            {translatedText}
-          </div>
-        )}
       </div>
 
       {/* ─── Beautiful Translate Upgrade Popup ─── */}

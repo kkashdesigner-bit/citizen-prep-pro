@@ -1,10 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Question, getQuestionOptions, getCorrectAnswerText } from '@/lib/types';
 import { Badge } from '@/components/ui/badge';
 import { CheckCircle, XCircle, Info, Flag, AlertTriangle, Send } from 'lucide-react';
 import { playCorrectSound, playIncorrectSound } from '@/lib/sounds';
-import { useEffect, useRef } from 'react';
-import TranslateButton from '@/components/TranslateButton';
+import TranslateButton, { TranslatedData } from '@/components/TranslateButton';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { CATEGORY_LABELS, Category } from '@/lib/types';
 import { Button } from '@/components/ui/button';
@@ -32,8 +31,15 @@ export default function QuizQuestion({
   showTranslateButton = false,
 }: QuizQuestionProps) {
   const { language } = useLanguage();
-  const options = getQuestionOptions(question);
+  const [translatedData, setTranslatedData] = useState<TranslatedData | null>(null);
+
+  const baseOptions = getQuestionOptions(question);
+  const displayOptions = translatedData 
+      ? ([translatedData.option_a, translatedData.option_b, translatedData.option_c, translatedData.option_d].filter(Boolean) as string[])
+      : baseOptions;
+
   const correctAnswerText = getCorrectAnswerText(question);
+
   const isCorrect = selectedAnswer === correctAnswerText;
   const hasAnswered = selectedAnswer !== undefined;
   const soundPlayed = useRef(false);
@@ -55,6 +61,7 @@ export default function QuizQuestion({
 
   useEffect(() => {
     soundPlayed.current = false;
+    setTranslatedData(null); // Reset translation on new question
   }, [question.id]);
 
   return (
@@ -68,15 +75,15 @@ export default function QuizQuestion({
 
       <div className="mb-8">
         <h2 className="mb-4 text-xl font-bold text-foreground md:text-2xl">
-          {question.question_text}
+          {translatedData?.question_text || question.question_text}
         </h2>
 
-        <TranslateButton
-          text={question.question_text}
-          onTranslated={(translated) => {
-            void translated;
-          }}
-        />
+        {showTranslateButton && (
+          <TranslateButton
+            questionId={question.id}
+            onTranslated={setTranslatedData}
+          />
+        )}
 
         {/* Report Button */}
         <div className="mt-2">
@@ -162,11 +169,13 @@ export default function QuizQuestion({
       </div>
 
       <div className="space-y-3">
-        {options.map((option, index) => {
+        {baseOptions.map((option, index) => {
           const isSelected = selectedAnswer === option;
           const isCorrectOption = option === correctAnswerText;
           const showCorrectHighlight = showFeedback && hasAnswered && isCorrectOption;
           const showIncorrectHighlight = showFeedback && isSelected && !isCorrect;
+          
+          const displayText = displayOptions[index] || option;
 
           return (
             <button
@@ -202,7 +211,7 @@ export default function QuizQuestion({
                 {String.fromCharCode(65 + index)}
               </span>
               <span className={`text-base ${isSelected ? 'font-medium text-foreground' : 'text-foreground'}`}>
-                {option}
+                {displayText}
               </span>
               {showCorrectHighlight && <CheckCircle className="ml-auto h-5 w-5 text-primary" />}
               {showIncorrectHighlight && <XCircle className="ml-auto h-5 w-5 text-destructive" />}
@@ -211,7 +220,7 @@ export default function QuizQuestion({
         })}
       </div>
 
-      {showFeedback && hasAnswered && question.explanation && (
+      {showFeedback && hasAnswered && (translatedData?.explanation || question.explanation) && (
         <div
           className={`mt-6 glass-card p-4 ${isCorrect
             ? 'shadow-[0_0_20px_hsl(var(--success)/0.15)]'
@@ -230,7 +239,7 @@ export default function QuizQuestion({
           </div>
           <div className="flex items-start gap-2">
             <Info className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
-            <p className="text-sm text-foreground">{question.explanation}</p>
+            <p className="text-sm text-foreground">{translatedData?.explanation || question.explanation}</p>
           </div>
         </div>
       )}
