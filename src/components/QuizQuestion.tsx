@@ -5,7 +5,7 @@ import { CheckCircle, XCircle, Info, Flag, AlertTriangle, Send } from 'lucide-re
 import { playCorrectSound, playIncorrectSound } from '@/lib/sounds';
 import TranslateButton, { TranslatedData } from '@/components/TranslateButton';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { CATEGORY_LABELS, Category } from '@/lib/types';
+import { CATEGORY_LABELS, Category, type Language } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
@@ -32,7 +32,7 @@ export default function QuizQuestion({
   showTranslateButton = false,
   allowFreeTranslate = false,
 }: QuizQuestionProps) {
-  const { language } = useLanguage();
+  const { language, setLanguage } = useLanguage();
   const [translatedData, setTranslatedData] = useState<TranslatedData | null>(null);
 
   const baseOptions = getQuestionOptions(question);
@@ -81,11 +81,26 @@ export default function QuizQuestion({
         </h2>
 
         {showTranslateButton && (
-          <TranslateButton
-            questionId={question.id}
-            onTranslated={setTranslatedData}
-            allowFree={allowFreeTranslate}
-          />
+          <div className="flex items-center gap-2 flex-wrap mt-3">
+            <TranslateButton
+              questionId={question.id}
+              onTranslated={setTranslatedData}
+              allowFree={allowFreeTranslate}
+            />
+            <select
+              value={language}
+              onChange={(e) => setLanguage(e.target.value as Language)}
+              className="text-xs font-semibold bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5 text-slate-600 cursor-pointer hover:border-[#0055A4] focus:outline-none focus:ring-1 focus:ring-[#0055A4] transition-colors"
+              aria-label="Langue"
+            >
+              <option value="fr">🇫🇷 Français</option>
+              <option value="en">🇬🇧 English</option>
+              <option value="ar">🇸🇦 العربية</option>
+              <option value="es">🇪🇸 Español</option>
+              <option value="pt">🇧🇷 Português</option>
+              <option value="zh">🇨🇳 中文</option>
+            </select>
+          </div>
         )}
 
         {/* Report Button */}

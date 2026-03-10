@@ -176,12 +176,12 @@ export default function ClassDetailPage() {
 
                         <div className="mt-10 pt-6 border-t border-gray-100 flex flex-col sm:flex-row justify-end gap-3">
                             <Button
-                                onClick={() => navigate(`/quiz?mode=training&classId=${id}`)}
+                                onClick={() => navigate(`/quiz?mode=training&classId=${id}&limit=10`)}
                                 size="lg"
                                 className="bg-[#0055A4] hover:bg-[#1B6ED6] text-white font-bold rounded-xl shadow-sm"
                             >
                                 <BrainCircuit className="w-5 h-5 mr-2" />
-                                Passer au Quiz ({totalQuestions} questions)
+                                Passer au Quiz ({Math.min(totalQuestions, 10)} questions)
                                 <ChevronRight className="w-5 h-5 ml-1" />
                             </Button>
                         </div>

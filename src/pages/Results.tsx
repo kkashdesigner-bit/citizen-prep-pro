@@ -56,6 +56,8 @@ export default function Results() {
     const entries = result.categoryBreakdown ? Object.entries(result.categoryBreakdown) : [];
     const primaryColor = "#135bec";
     const accentRed = "#ef4444";
+    const currentClass = classId ? classes.find(c => c.id === classId) : null;
+    const nextClass = currentClass ? classes.find(c => c.class_number === currentClass.class_number + 1) : null;
 
     return (
         <div className="min-h-screen bg-[#f6f6f8] text-slate-900 font-sans flex flex-col overflow-x-hidden">
@@ -118,10 +120,19 @@ export default function Results() {
                                         </p>
                                         <div className="mt-10 flex flex-wrap gap-4 justify-center lg:justify-start">
                                             <button
-                                                onClick={() => { sessionStorage.removeItem('quizResults'); sessionStorage.removeItem('quizErrors'); navigate('/quiz?mode=exam'); }}
+                                                onClick={() => {
+                                                    sessionStorage.removeItem('quizResults');
+                                                    sessionStorage.removeItem('quizErrors');
+                                                    if (classId && nextClass) {
+                                                        sessionStorage.removeItem('quizClassId');
+                                                        navigate(`/parcours/classe/${nextClass.id}`);
+                                                    } else {
+                                                        navigate('/quiz?mode=exam');
+                                                    }
+                                                }}
                                                 className="bg-[#135bec] text-white py-4 px-10 rounded-2xl font-black flex items-center gap-4 hover:scale-105 transition-all shadow-xl shadow-blue-500/30"
                                             >
-                                                <span>{t('results.nextExam')}</span>
+                                                <span>{classId && nextClass ? 'Classe suivante' : t('results.nextExam')}</span>
                                                 <ArrowRight size={24} />
                                             </button>
                                         </div>
