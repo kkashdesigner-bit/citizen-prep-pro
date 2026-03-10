@@ -3,6 +3,7 @@ import SEOHead from '@/components/SEOHead';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
+import type { Language } from '@/lib/types';
 
 import { useQuiz, QuizMode } from '@/hooks/useQuiz';
 import { useSubscription } from '@/hooks/useSubscription';
@@ -51,7 +52,7 @@ export default function Quiz() {
     : null;
 
   const navigate = useNavigate();
-  const { t } = useLanguage();
+  const { t, language, setLanguage } = useLanguage();
   const { tier, isStandardOrAbove, isPremium, loading: tierLoading } = useSubscription();
 
   const isFreeUser = tier === 'free';
@@ -350,6 +351,21 @@ export default function Quiz() {
               <p className="text-[10px] sm:text-xs text-slate-400 truncate">{modeLabel}</p>
             </div>
           </div>
+
+          {/* ─── Language Selector ─── */}
+          <select
+            value={language}
+            onChange={(e) => setLanguage(e.target.value as Language)}
+            className="hidden sm:block text-xs font-semibold bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5 text-slate-600 cursor-pointer hover:border-[#0055A4] focus:outline-none focus:ring-1 focus:ring-[#0055A4] transition-colors"
+            aria-label="Langue"
+          >
+            <option value="fr">🇫🇷 FR</option>
+            <option value="en">🇬🇧 EN</option>
+            <option value="ar">🇸🇦 AR</option>
+            <option value="es">🇪🇸 ES</option>
+            <option value="pt">🇧🇷 PT</option>
+            <option value="zh">🇨🇳 ZH</option>
+          </select>
 
           {/* Timer — hidden on very small screens in demo mode, always visible in exam mode */}
           {effectiveMode === 'exam' && !isMiniQuiz && (

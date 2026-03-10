@@ -156,6 +156,7 @@ export function useQuiz({
             .eq('class_id', classId);
 
           let classQuestions: Question[] = [];
+          const classLimit = (typeof questionLimit === 'number' && questionLimit > 0) ? questionLimit : 5;
 
           if (qLinks && qLinks.length > 0) {
             const questionIds = qLinks.map((q: any) => q.question_id);
@@ -163,29 +164,35 @@ export function useQuiz({
               .from('questions')
               .select('*')
               .in('id', questionIds);
-            classQuestions = (rawQuestions || []) as Question[];
+            classQuestions = shuffle((rawQuestions || []) as Question[]).slice(0, classLimit);
           } else {
-            // Dynamic: fetch random questions from the full pool
-            let usedIds: number[] = [];
-            if (user) {
-              const { data: profileData } = await supabase
-                .from('profiles')
-                .select('used_questions')
-                .eq('id', user.id)
-                .maybeSingle();
-              if (profileData?.used_questions) {
-                usedIds = (profileData.used_questions as string[]).map(Number).filter(n => !isNaN(n));
-              }
-            }
+            // Dynamic: infer category from class_number for official question mapping
+            const { data: classInfo } = await (supabase as any)
+              .from('classes')
+              .select('class_number')
+              .eq('id', classId)
+              .maybeSingle();
 
-            let query = supabase.from('questions').select('*').limit(50);
-            if (usedIds.length > 0) {
-              query = query.not('id', 'in', `(${usedIds.join(',')})`);
-            }
+            const classNum: number = classInfo?.class_number ?? 0;
 
-            const { data: poolQuestions, error: poolErr } = await query;
+            // Map class_number range to official DB category
+            const getModuleCategory = (n: number): string => {
+              if (n <= 20) return 'Principles and values of the Republic';
+              if (n <= 40) return 'Institutional and political system';
+              if (n <= 60) return 'Rights and duties';
+              if (n <= 80) return 'History, geography and culture';
+              return 'Living in French society';
+            };
+            const moduleCategory = getModuleCategory(classNum);
+
+            const poolSize = Math.min(classLimit * 6, 120);
+            const { data: poolQuestions, error: poolErr } = await supabase
+              .from('questions')
+              .select('*')
+              .eq('category', moduleCategory)
+              .eq('language', 'fr')
+              .limit(poolSize);
             if (poolErr) throw poolErr;
-            const classLimit = (typeof questionLimit === 'number' && questionLimit > 0) ? questionLimit : 5;
             classQuestions = shuffle((poolQuestions || []) as Question[]).slice(0, classLimit);
           }
 
