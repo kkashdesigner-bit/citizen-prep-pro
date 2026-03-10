@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Route, ArrowRight, Lock, Sparkles, Play, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, Lock, Sparkles, Play, CheckCircle2 } from 'lucide-react';
 import { useSubscription } from '@/hooks/useSubscription';
 import { useParcours } from '@/hooks/useParcours';
 import { motion } from 'framer-motion';
@@ -25,9 +25,24 @@ export default function ParcoursCard() {
             whileHover={{ y: -2 }}
             className="mb-6 group bg-[var(--dash-card)] rounded-2xl border-2 border-[#0055A4]/10 p-6 md:p-8 shadow-[0_2px_12px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_20px_rgba(0,85,164,0.08)] transition-all duration-300 relative overflow-hidden"
         >
-            {/* Decorative background */}
-            <div className="absolute top-0 right-0 -mt-10 -mr-10 text-[#0055A4]/5 w-48 h-48 rotate-12 pointer-events-none">
-                <Route className="w-full h-full" />
+            {/* Desktop background illustration */}
+            <div className="absolute inset-y-0 right-0 w-[55%] hidden md:block pointer-events-none overflow-hidden rounded-r-2xl">
+                <img
+                    src="/parcour-GOCIVIQUE-1-TO-100-DESKTOP.jpg"
+                    alt=""
+                    className="h-full w-full object-cover object-left"
+                />
+                <div className="absolute inset-0 bg-gradient-to-r from-white via-white/60 to-transparent" />
+            </div>
+
+            {/* Mobile background illustration */}
+            <div className="absolute bottom-0 right-0 w-40 h-32 md:hidden pointer-events-none overflow-hidden rounded-br-2xl">
+                <img
+                    src="/parcour-GOCIVIQUE-1-TO-100-MOBILE.jpg"
+                    alt=""
+                    className="h-full w-full object-cover object-center"
+                />
+                <div className="absolute inset-0 bg-gradient-to-tl from-transparent via-white/30 to-white" />
             </div>
 
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">

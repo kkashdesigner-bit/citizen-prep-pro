@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "mcp__supabase__execute_sql",
-      "mcp__supabase__apply_migration"
+      "mcp__supabase__apply_migration",
+      "Bash(ls c:/Users/User/Documents/GitHub/citizen-prep-pro/public/*.png c:/Users/User/Documents/GitHub/citizen-prep-pro/public/*.jpg c:/Users/User/Documents/GitHub/citizen-prep-pro/public/*.jpeg c:/Users/User/Documents/GitHub/citizen-prep-pro/public/*.webp c:/Users/User/Documents/GitHub/citizen-prep-pro/public/*.svg)"
     ]
   }
 }
