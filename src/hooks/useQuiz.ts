@@ -201,10 +201,15 @@ export function useQuiz({
           return;
         }
 
-        // ─── DEMO MODE: pull 20 random questions from CSV each time ───
+        // ─── DEMO MODE: fetch 20 random questions from DB so translations work ───
         if (mode === 'demo') {
-          const allDemo = await fetchDemoQuestionsFromCSV();
-          const picked = shuffle(allDemo).slice(0, DEMO_QUESTIONS_PER_EXAM);
+          const { data: demoPool, error: demoErr } = await supabase
+            .from('questions')
+            .select('*')
+            .eq('language', 'fr')
+            .limit(200);
+          if (demoErr) throw demoErr;
+          const picked = shuffle((demoPool || []) as Question[]).slice(0, DEMO_QUESTIONS_PER_EXAM);
           setQuestions(picked);
           setLoading(false);
           return;

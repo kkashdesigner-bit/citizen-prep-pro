@@ -47,14 +47,7 @@ export function useClassDetail(classId?: string) {
                 throw new Error("Classe introuvable.");
             }
 
-            // 2. Fetch markdown content
-            const { data: lessonData, error: lessonErr } = await (supabase as any)
-                .from('class_lessons')
-                .select('content_markdown')
-                .eq('class_id', classId)
-                .maybeSingle();
-
-            if (lessonErr) throw lessonErr;
+            // 2. Content is stored directly on the classes row
 
             // 3. Fetch the user's already-used question IDs to avoid repeats
             let usedIds: number[] = [];
@@ -112,7 +105,7 @@ export function useClassDetail(classId?: string) {
                 title: classInfo.title,
                 description: classInfo.description || '',
                 estimated_minutes: classInfo.estimated_minutes,
-                content_markdown: lessonData?.content_markdown || '# Contenu à venir...',
+                content_markdown: classInfo.content || '## Contenu à venir\n\nCette leçon sera disponible prochainement.',
                 questions: validQuestions,
             });
 
