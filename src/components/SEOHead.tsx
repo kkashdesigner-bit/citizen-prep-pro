@@ -42,15 +42,25 @@ export default function SEOHead({
     const fullTitle = resolvedTitle.includes(SITE_NAME) ? resolvedTitle : `${resolvedTitle} | ${SITE_NAME}`;
     const url = `${BASE_URL}${path}`;
 
-    // Organization Schema — enhanced with sameAs
+    // Organization Schema
     const orgSchema = {
         "@context": "https://schema.org",
-        "@type": "Organization",
+        "@type": ["Organization", "EducationalOrganization"],
+        "@id": `${BASE_URL}/#organization`,
         "name": "GoCivique",
         "url": BASE_URL,
-        "logo": `${BASE_URL}/LOGO.svg`,
+        "logo": { "@type": "ImageObject", "url": `${BASE_URL}/LOGO.svg` },
         "description": "Plateforme de préparation à l'examen civique de naturalisation française 2026",
-        "sameAs": [BASE_URL]
+        "inLanguage": ["fr", "en", "ar", "es", "tr", "pt"],
+        "sameAs": [
+            "https://twitter.com/GoCivique"
+        ],
+        "contactPoint": {
+            "@type": "ContactPoint",
+            "contactType": "customer support",
+            "url": `${BASE_URL}/contact`,
+            "availableLanguage": ["French", "English", "Arabic", "Spanish", "Turkish", "Portuguese"]
+        }
     };
 
     // WebSite Schema — enables Google sitelinks search box
@@ -71,12 +81,13 @@ export default function SEOHead({
     const courseSchema = {
         "@context": "https://schema.org",
         "@type": "Course",
+        "@id": `${BASE_URL}/#course`,
         "name": "Préparation à l'examen civique français 2026",
         "description": "Cours complet de préparation à l'examen civique obligatoire pour la naturalisation française, la carte de séjour pluriannuelle et la carte de résident. Quiz interactifs, examens blancs chronométrés et suivi de progression.",
+        "datePublished": "2025-01-01",
+        "dateModified": "2026-03-08",
         "provider": {
-            "@type": "Organization",
-            "name": "GoCivique",
-            "sameAs": BASE_URL
+            "@id": `${BASE_URL}/#organization`
         },
         "hasCourseInstance": {
             "@type": "CourseInstance",

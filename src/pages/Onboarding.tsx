@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import SEOHead from '@/components/SEOHead';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -94,6 +95,7 @@ export default function Onboarding() {
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
+      <SEOHead noindex />
       {/* Top bar */}
       <div className="flex items-center justify-between px-4 sm:px-6 py-4 border-b border-[#E6EAF0]">
         <Logo size="sm" />

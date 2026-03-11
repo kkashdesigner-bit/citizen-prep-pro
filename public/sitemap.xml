@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
+
   <!-- Homepage -->
   <url>
     <loc>https://gocivique.fr/</loc>
     <lastmod>2026-03-08</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
     <xhtml:link rel="alternate" hreflang="fr" href="https://gocivique.fr/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://gocivique.fr/?lang=en" />
     <xhtml:link rel="alternate" hreflang="ar" href="https://gocivique.fr/?lang=ar" />
@@ -16,83 +15,87 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://gocivique.fr/" />
   </url>
 
-  <!-- About / Exam Info -->
-  <url>
-    <loc>https://gocivique.fr/about</loc>
-    <lastmod>2026-03-08</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-  </url>
-
-  <!-- Login / Sign up -->
-  <url>
-    <loc>https://gocivique.fr/auth</loc>
-    <lastmod>2026-03-08</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-
   <!-- Quiz (Practice) -->
   <url>
     <loc>https://gocivique.fr/quiz</loc>
     <lastmod>2026-03-08</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://gocivique.fr/quiz" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://gocivique.fr/quiz?lang=en" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://gocivique.fr/quiz?lang=ar" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://gocivique.fr/quiz?lang=es" />
+    <xhtml:link rel="alternate" hreflang="tr" href="https://gocivique.fr/quiz?lang=tr" />
+    <xhtml:link rel="alternate" hreflang="pt" href="https://gocivique.fr/quiz?lang=pt" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://gocivique.fr/quiz" />
   </url>
 
   <!-- Mock Exams -->
   <url>
     <loc>https://gocivique.fr/exams</loc>
     <lastmod>2026-03-08</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://gocivique.fr/exams" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://gocivique.fr/exams?lang=en" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://gocivique.fr/exams?lang=ar" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://gocivique.fr/exams?lang=es" />
+    <xhtml:link rel="alternate" hreflang="tr" href="https://gocivique.fr/exams?lang=tr" />
+    <xhtml:link rel="alternate" hreflang="pt" href="https://gocivique.fr/exams?lang=pt" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://gocivique.fr/exams" />
+  </url>
+
+  <!-- Study Material -->
+  <url>
+    <loc>https://gocivique.fr/study-material</loc>
+    <lastmod>2026-03-08</lastmod>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://gocivique.fr/study-material" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://gocivique.fr/study-material?lang=en" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://gocivique.fr/study-material?lang=ar" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://gocivique.fr/study-material?lang=es" />
+    <xhtml:link rel="alternate" hreflang="tr" href="https://gocivique.fr/study-material?lang=tr" />
+    <xhtml:link rel="alternate" hreflang="pt" href="https://gocivique.fr/study-material?lang=pt" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://gocivique.fr/study-material" />
+  </url>
+
+  <!-- About -->
+  <url>
+    <loc>https://gocivique.fr/about</loc>
+    <lastmod>2026-03-08</lastmod>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://gocivique.fr/about" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://gocivique.fr/about?lang=en" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://gocivique.fr/about?lang=ar" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://gocivique.fr/about?lang=es" />
+    <xhtml:link rel="alternate" hreflang="tr" href="https://gocivique.fr/about?lang=tr" />
+    <xhtml:link rel="alternate" hreflang="pt" href="https://gocivique.fr/about?lang=pt" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://gocivique.fr/about" />
   </url>
 
   <!-- Contact -->
   <url>
     <loc>https://gocivique.fr/contact</loc>
-    <lastmod>2026-03-08</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-
-  <!-- Learning Path (Parcours) -->
-  <url>
-    <loc>https://gocivique.fr/parcours</loc>
-    <lastmod>2026-03-08</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <lastmod>2026-02-01</lastmod>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://gocivique.fr/contact" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://gocivique.fr/contact?lang=en" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://gocivique.fr/contact?lang=ar" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://gocivique.fr/contact?lang=es" />
+    <xhtml:link rel="alternate" hreflang="tr" href="https://gocivique.fr/contact?lang=tr" />
+    <xhtml:link rel="alternate" hreflang="pt" href="https://gocivique.fr/contact?lang=pt" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://gocivique.fr/contact" />
   </url>
 
   <!-- Privacy Policy -->
   <url>
     <loc>https://gocivique.fr/privacy</loc>
-    <lastmod>2026-03-08</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
+    <lastmod>2026-01-01</lastmod>
   </url>
 
   <!-- Terms of Service -->
   <url>
     <loc>https://gocivique.fr/terms</loc>
-    <lastmod>2026-03-08</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
+    <lastmod>2026-01-01</lastmod>
   </url>
 
   <!-- Refund Policy -->
   <url>
     <loc>https://gocivique.fr/refunds</loc>
-    <lastmod>2026-03-08</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
+    <lastmod>2026-01-01</lastmod>
   </url>
 
-  <!-- Dashboard (for authenticated users, still indexable) -->
-  <url>
-    <loc>https://gocivique.fr/dashboard</loc>
-    <lastmod>2026-03-08</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
 </urlset>

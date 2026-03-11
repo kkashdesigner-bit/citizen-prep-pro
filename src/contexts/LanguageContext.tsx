@@ -1677,8 +1677,14 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 
   const isBilingual = language !== 'fr';
 
+  const handleSetLanguage = (lang: Language) => {
+    setLanguage(lang);
+    document.documentElement.lang = lang;
+    document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+  };
+
   return (
-    <LanguageContext.Provider value={{ language, setLanguage, t, isBilingual }}>
+    <LanguageContext.Provider value={{ language, setLanguage: handleSetLanguage, t, isBilingual }}>
       {children}
     </LanguageContext.Provider>
   );

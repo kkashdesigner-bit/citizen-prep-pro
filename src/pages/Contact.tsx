@@ -84,8 +84,8 @@ export default function Contact() {
         <div className="min-h-screen bg-background flex flex-col">
             <SEOHead
                 path="/contact"
-                titleKey="Contact — GoCivique"
-                descriptionKey="Contactez l'équipe GoCivique pour toute question, remarque ou demande d'assistance concernant votre préparation à l'évaluation civique."
+                title="Contact — GoCivique"
+                description="Contactez l'équipe GoCivique pour toute question, remarque ou demande d'assistance concernant votre préparation à l'évaluation civique."
             />
 
             <Header />

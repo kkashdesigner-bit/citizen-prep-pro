@@ -18,7 +18,7 @@ export default function Terms() {
                         Conditions Générales d’Utilisation et de Vente
                     </h1>
                     <p className="mb-8 text-sm text-muted-foreground">
-                        Dernière mise à jour : {new Date().toLocaleDateString('fr-FR')}
+                        Dernière mise à jour : 8 mars 2026
                     </p>
 
                     <Card className="mb-8">

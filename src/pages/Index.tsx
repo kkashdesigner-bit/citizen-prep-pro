@@ -56,7 +56,7 @@ export default function Index() {
         "name": "Comment se préparer à l'examen civique 2026 ?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Préparez-vous avec GoCivique : quiz interactifs couvrant les 5 thèmes, examens blancs chronométrés dans les conditions réelles (40 questions, 45 minutes), mode entraînement par catégorie et suivi de progression. Commencez 15 minutes par jour pendant une semaine."
+          "text": "Pour préparer l'examen civique 2026, révisez les 5 thèmes officiels (principes républicains, institutions, droits et devoirs, histoire-géographie, vie en société) couvrant 40 questions en 45 minutes avec un seuil de réussite de 80%. Entraînez-vous avec des quiz par catégorie et des examens blancs chronométrés qui reproduisent les conditions réelles. 15 minutes par jour pendant une semaine suffisent généralement pour atteindre le niveau requis. GoCivique propose cette préparation complète avec un essai gratuit."
         }
       },
       {

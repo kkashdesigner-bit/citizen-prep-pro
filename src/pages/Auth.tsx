@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import SEOHead from '@/components/SEOHead';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -108,6 +109,7 @@ export default function Auth() {
 
   return (
     <div className="min-h-screen flex flex-col lg:flex-row bg-white">
+      <SEOHead noindex />
       {/* ─── Left Column: Hero Illustration ─── */}
       <div className="relative hidden lg:flex lg:w-[48%] bg-gradient-to-br from-[#0055A4] via-[#1B6ED6] to-[#4D94E0] p-12 flex-col justify-between overflow-hidden">
         {/* Animated background shapes */}

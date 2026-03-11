@@ -1,5 +1,6 @@
 import { useState, useMemo, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import SEOHead from '@/components/SEOHead';
 import { useAuth } from '@/hooks/useAuth';
 import { useUserProfile, GOAL_LABELS } from '@/hooks/useUserProfile';
 import { useSubscription } from '@/hooks/useSubscription';
@@ -115,6 +116,7 @@ export default function ParcoursPage() {
 
     return (
         <div className="flex min-h-screen bg-white overflow-x-hidden">
+            <SEOHead noindex />
             <LearnSidebar />
 
             <main className="flex-1 md:ml-[260px] pb-24 md:pb-8 flex justify-center overflow-x-hidden">

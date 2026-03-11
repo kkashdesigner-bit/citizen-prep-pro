@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import SEOHead from '@/components/SEOHead';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { CATEGORY_LABELS, ExamResult } from '@/lib/types';
 import SubscriptionGate from '@/components/SubscriptionGate';
@@ -61,6 +62,7 @@ export default function Results() {
 
     return (
         <div className="min-h-screen bg-[#f6f6f8] text-slate-900 font-sans flex flex-col overflow-x-hidden">
+            <SEOHead noindex />
             <style>{`
  .font-display { font-family: 'Lexend', sans-serif; }
  .confetti-bg {

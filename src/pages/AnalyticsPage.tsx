@@ -2,12 +2,14 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { BarChart3, ArrowLeft } from 'lucide-react';
 import LearnSidebar from '@/components/learn/LearnSidebar';
+import SEOHead from '@/components/SEOHead';
 
 export default function AnalyticsPage() {
   const navigate = useNavigate();
 
   return (
     <div className="flex min-h-screen bg-background">
+      <SEOHead noindex />
       <LearnSidebar />
       <main className="flex-1 md:ml-64 pb-20 md:pb-8">
         <div className="mx-auto max-w-3xl px-4 md:px-8 py-6 md:py-8">

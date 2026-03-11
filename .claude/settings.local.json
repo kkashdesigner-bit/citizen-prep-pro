@@ -3,7 +3,34 @@
     "allow": [
       "mcp__supabase__execute_sql",
       "mcp__supabase__apply_migration",
-      "Bash(ls c:/Users/User/Documents/GitHub/citizen-prep-pro/public/*.png c:/Users/User/Documents/GitHub/citizen-prep-pro/public/*.jpg c:/Users/User/Documents/GitHub/citizen-prep-pro/public/*.jpeg c:/Users/User/Documents/GitHub/citizen-prep-pro/public/*.webp c:/Users/User/Documents/GitHub/citizen-prep-pro/public/*.svg)"
+      "Bash(ls c:/Users/User/Documents/GitHub/citizen-prep-pro/public/*.png c:/Users/User/Documents/GitHub/citizen-prep-pro/public/*.jpg c:/Users/User/Documents/GitHub/citizen-prep-pro/public/*.jpeg c:/Users/User/Documents/GitHub/citizen-prep-pro/public/*.webp c:/Users/User/Documents/GitHub/citizen-prep-pro/public/*.svg)",
+      "Bash(mkdir -p ~/.claude/skills ~/.claude/agents)",
+      "Bash(cp -r /tmp/claude-seo-install/skills/* ~/.claude/skills/)",
+      "Bash(cp -r /tmp/claude-seo-install/agents/* ~/.claude/agents/)",
+      "Bash(cp -r /tmp/claude-seo-install/seo ~/.claude/skills/)",
+      "WebFetch(domain:gocivique.fr)",
+      "Bash(for f in a716bc0d4bf2cfad2 aef1dd6aa4b384fb0 a3f82e45476c7aacd a0a819f1965479536 a698d39e2e7af5204)",
+      "Bash(do echo \"=== $f ===\")",
+      "Read(//c/Users/User/AppData/Local/Temp/claude/c--Users-User-Documents-GitHub-citizen-prep-pro/tasks/**)",
+      "Bash(done)",
+      "Bash(curl -s -o /dev/null -w \"HTTP Status: %{http_code}\\\\nFinal URL: %{url_effective}\\\\nRedirect Count: %{num_redirects}\\\\nSSL Verify: %{ssl_verify_result}\\\\nTime Total: %{time_total}s\\\\nTime Connect: %{time_connect}s\\\\nTime TTFB: %{time_starttransfer}s\\\\nSize Download: %{size_download} bytes\\\\n\" https://gocivique.fr)",
+      "Bash(curl -s -L -o /tmp/gocivique_home.html -w \"Final Status: %{http_code}\\\\nFinal URL: %{url_effective}\\\\nRedirects: %{num_redirects}\\\\nTTFB: %{time_starttransfer}s\\\\nTotal Time: %{time_total}s\\\\nSize: %{size_download} bytes\\\\n\" https://gocivique.fr)",
+      "Bash(curl -sI https://gocivique.fr)",
+      "Bash(curl -s -L https://gocivique.fr/robots.txt)",
+      "Bash(curl -s -L https://gocivique.fr/sitemap.xml)",
+      "Bash(curl -s -L -o C:/Users/User/AppData/Local/Temp/gocivique_home.html -w \"Final Status: %{http_code}\\\\nFinal URL: %{url_effective}\\\\nRedirects: %{num_redirects}\\\\nTTFB: %{time_starttransfer}s\\\\nTotal: %{time_total}s\\\\nSize: %{size_download} bytes\\\\n\" https://gocivique.fr)",
+      "Bash(curl -sI https://www.gocivique.fr/)",
+      "Bash(curl -s -o /dev/null -w \"HTTP→HTTPS redirect: %{http_code} -> Final: \" http://gocivique.fr)",
+      "Bash(curl -sL -o /dev/null -w \"%{http_code} \\(url: %{url_effective}\\)\\\\n\" http://gocivique.fr)",
+      "Bash(curl -s -L https://gocivique.fr/llms.txt -o /dev/null -w \"llms.txt: %{http_code}\\\\n\")",
+      "Bash(curl -s -L https://gocivique.fr/llms-full.txt -o /dev/null -w \"llms-full.txt: %{http_code}\\\\n\")",
+      "Bash(curl -s -L https://gocivique.fr)",
+      "Bash(curl -s -L https://gocivique.fr/quiz -o /dev/null -w \"quiz status: %{http_code}, url: %{url_effective}\\\\n\")",
+      "Bash(curl -s -L https://gocivique.fr/parcours -o /dev/null -w \"parcours status: %{http_code}, url: %{url_effective}\\\\n\")",
+      "Bash(curl -s -L https://gocivique.fr/dashboard -o /dev/null -w \"dashboard status: %{http_code}, url: %{url_effective}\\\\n\")",
+      "Bash(curl -s -L https://gocivique.fr/about -o /dev/null -w \"about status: %{http_code}, url: %{url_effective}\\\\n\")",
+      "Bash(curl -s -L https://gocivique.fr/exams -o /dev/null -w \"exams status: %{http_code}, url: %{url_effective}\\\\n\")",
+      "Bash(xargs grep -l \"t\\\\\\(''about\\\\.\")"
     ]
   }
 }
