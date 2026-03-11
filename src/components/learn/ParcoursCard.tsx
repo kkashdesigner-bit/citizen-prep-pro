@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Lock, Sparkles, Play, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, Lock, Sparkles, Play, CheckCircle2, MapPin } from 'lucide-react';
 import { useSubscription } from '@/hooks/useSubscription';
 import { useParcours } from '@/hooks/useParcours';
 import { motion } from 'framer-motion';
@@ -49,7 +49,7 @@ export default function ParcoursCard() {
                 <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
                         <div className="h-8 w-8 rounded-lg bg-[#0055A4] flex items-center justify-center">
-                            <Route className="h-4 w-4 text-white" />
+                            <MapPin className="h-4 w-4 text-white" />
                         </div>
                         <h2 className="text-xl font-bold text-[var(--dash-text)] tracking-tight">Parcours Citoyen</h2>
                         {isFree && (
