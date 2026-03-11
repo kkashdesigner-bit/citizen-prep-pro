@@ -36,13 +36,13 @@ export default function ParcoursCard() {
             </div>
 
             {/* Mobile background illustration */}
-            <div className="absolute bottom-0 right-0 w-40 h-32 md:hidden pointer-events-none overflow-hidden rounded-br-2xl">
+            <div className="absolute top-0 right-0 w-28 h-28 md:hidden pointer-events-none overflow-hidden rounded-tr-2xl">
                 <img
                     src="/parcour-GOCIVIQUE-1-TO-100-MOBILE.jpg"
                     alt=""
                     className="h-full w-full object-cover object-center"
                 />
-                <div className="absolute inset-0 bg-gradient-to-tl from-transparent via-white/30 to-white" />
+                <div className="absolute inset-0 bg-gradient-to-r from-white via-white/50 to-transparent" />
             </div>
 
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
