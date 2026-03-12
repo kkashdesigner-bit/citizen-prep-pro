@@ -87,18 +87,18 @@ export default function Results() {
                 <div className="flex flex-col max-w-[1000px] flex-1 gap-8 w-full mt-4">
                     <section className="relative overflow-hidden rounded-2xl sm:rounded-[2.5rem] shadow-2xl">
                         {/* Background image – desktop vs mobile */}
-                        <picture>
-                            <source
-                                media="(min-width: 640px)"
-                                srcSet={result.passed ? '/images/result-pass-desktop.jpg' : '/images/result-fail-desktop.jpg'}
-                            />
-                            <img
-                                src={result.passed ? '/images/result-pass-mobile.jpg' : '/images/result-fail-mobile.jpg'}
-                                alt=""
-                                aria-hidden="true"
-                                className="absolute inset-0 w-full h-full object-cover"
-                            />
-                        </picture>
+                        <img
+                            src={result.passed ? '/images/result-pass-desktop.jpg' : '/images/result-fail-desktop.jpg'}
+                            alt=""
+                            aria-hidden="true"
+                            className="absolute inset-0 w-full h-full object-cover hidden sm:block"
+                        />
+                        <img
+                            src={result.passed ? '/images/result-pass-mobile.jpg' : '/images/result-fail-mobile.jpg'}
+                            alt=""
+                            aria-hidden="true"
+                            className="absolute inset-0 w-full h-full object-cover sm:hidden"
+                        />
 
                         {/* Dark overlay for text legibility */}
                         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-black/20" />
