@@ -16,7 +16,7 @@ import WeaknessAlerts from '@/components/learn/WeaknessAlerts';
 import ExamReadinessCard from '@/components/learn/ExamReadinessCard';
 import ParcoursCard from '@/components/learn/ParcoursCard';
 import MiniatureIcon from '@/components/MiniatureIcon';
-import { Target, FileText, Clock, X, Check, Lock, Crown, Sparkles, Flame } from 'lucide-react';
+import { Target, FileText, Clock, X, Check, Lock, Crown, Sparkles, Flame, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { motion } from 'framer-motion';
@@ -40,6 +40,7 @@ export default function LearningDashboard() {
   const [gateTier, setGateTier] = useState<'standard' | 'premium'>('standard');
   const [showGoalModal, setShowGoalModal] = useState(false);
   const [savingGoal, setSavingGoal] = useState(false);
+  const [catOffset, setCatOffset] = useState(0);
 
   const openGate = (required: 'standard' | 'premium') => { setGateTier(required); setShowGate(true); };
 
@@ -196,9 +197,28 @@ export default function LearningDashboard() {
             {/* Category Grid — Real mastery % */}
             <motion.div variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0 } }}>
               <div className="mb-6">
-                <h3 className="text-lg font-bold text-[var(--dash-text)] mb-4">Entraînement par catégorie</h3>
-                {/* Mobile: horizontal swipe | Desktop: 3-col grid */}
-                <div className="flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 overflow-x-auto sm:overflow-visible snap-x snap-mandatory pb-2 sm:pb-0 scrollbar-hide">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-bold text-[var(--dash-text)]">Entraînement par catégorie</h3>
+                  {/* Desktop nav arrows */}
+                  <div className="hidden sm:flex gap-2">
+                    <button
+                      onClick={() => setCatOffset(o => Math.max(0, o - 1))}
+                      disabled={catOffset === 0}
+                      className="w-8 h-8 rounded-full border border-[var(--dash-card-border)] flex items-center justify-center disabled:opacity-30 hover:border-[#0055A4] hover:text-[#0055A4] transition-all"
+                    >
+                      <ChevronLeft className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => setCatOffset(o => Math.min(Object.keys(CATEGORY_MAP).length - 3, o + 1))}
+                      disabled={catOffset >= Object.keys(CATEGORY_MAP).length - 3}
+                      className="w-8 h-8 rounded-full border border-[var(--dash-card-border)] flex items-center justify-center disabled:opacity-30 hover:border-[#0055A4] hover:text-[#0055A4] transition-all"
+                    >
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+                {/* Mobile: horizontal swipe */}
+                <div className="flex sm:hidden gap-3 overflow-x-auto snap-x snap-mandatory pb-2 scrollbar-hide">
                   {Object.entries(CATEGORY_MAP).map(([cat, info], idx) => {
                     const masteryPercent = getMasteryForCategory(info.dbCategory);
                     return (
@@ -207,8 +227,46 @@ export default function LearningDashboard() {
                         initial={{ opacity: 0, scale: 0.96 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ delay: idx * 0.05 }}
+                        className="bg-[var(--dash-card)] rounded-2xl border border-[var(--dash-card-border)] shadow-[0_2px_10px_rgba(0,0,0,0.03)] flex flex-col overflow-hidden snap-center shrink-0 w-[72vw] max-w-[280px]"
+                      >
+                        <div className="relative w-full h-[150px] overflow-hidden">
+                          <img src={info.image} alt={info.label} className="w-full h-full object-cover" loading="lazy" />
+                          {tier !== 'premium' && (
+                            <span className="absolute top-2.5 right-2.5 bg-amber-500/90 backdrop-blur-sm text-white text-[9px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow-lg">Premium</span>
+                          )}
+                        </div>
+                        <div className="p-4 flex flex-col flex-1">
+                          <p className="text-xs text-[var(--dash-text-muted)] font-medium mb-4 flex-1 line-clamp-2">{info.desc}</p>
+                          <div className="space-y-2.5 mt-auto">
+                            <div className="flex justify-between items-center text-[10px] font-bold text-[var(--dash-text-muted)] uppercase tracking-widest">
+                              <span>Progression</span>
+                              <span className="text-[#0055A4]">{masteryPercent}%</span>
+                            </div>
+                            <div className="h-1.5 w-full bg-[var(--dash-surface)] rounded-full overflow-hidden">
+                              <motion.div initial={{ width: 0 }} animate={{ width: `${masteryPercent}%` }} transition={{ duration: 0.8, delay: 0.2 + idx * 0.1, ease: "easeOut" }} className="h-full bg-[#0055A4] rounded-full" />
+                            </div>
+                            <Button onClick={() => handleStartExam(cat)} variant="outline" className="w-full border-[var(--dash-card-border)] hover:border-[#0055A4] text-[var(--dash-text)] hover:text-[#0055A4] hover:bg-blue-500/5 font-bold rounded-xl h-9 text-sm transition-all gap-1.5">
+                              {tier !== 'premium' && <Lock className="h-3.5 w-3.5 text-slate-400" />}
+                              S'entraîner
+                            </Button>
+                          </div>
+                        </div>
+                      </motion.div>
+                    );
+                  })}
+                </div>
+                {/* Desktop: 3-col carousel */}
+                <div className="hidden sm:grid sm:grid-cols-3 gap-4">
+                  {Object.entries(CATEGORY_MAP).slice(catOffset, catOffset + 3).map(([cat, info], idx) => {
+                    const masteryPercent = getMasteryForCategory(info.dbCategory);
+                    return (
+                      <motion.div
+                        key={cat}
+                        initial={{ opacity: 0, scale: 0.96 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: idx * 0.05 }}
                         whileHover={{ y: -3, boxShadow: "0 10px 28px rgba(0,0,0,0.08)" }}
-                        className="bg-[var(--dash-card)] rounded-2xl border border-[var(--dash-card-border)] shadow-[0_2px_10px_rgba(0,0,0,0.03)] flex flex-col overflow-hidden snap-center shrink-0 w-[72vw] max-w-[280px] sm:w-auto sm:max-w-none"
+                        className="bg-[var(--dash-card)] rounded-2xl border border-[var(--dash-card-border)] shadow-[0_2px_10px_rgba(0,0,0,0.03)] flex flex-col overflow-hidden"
                       >
                         {/* Category Image Banner */}
                         <div className="relative w-full h-[150px] overflow-hidden">
@@ -254,7 +312,6 @@ export default function LearningDashboard() {
                 </div>
               </div>
             </motion.div>
-
             {/* Tabs */}
             <motion.div variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0 } }}>
               <DashboardTabs>

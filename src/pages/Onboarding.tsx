@@ -11,7 +11,7 @@ import {
   Check, ArrowRight, Target, Clock, Zap, ChevronLeft,
   Landmark, CreditCard, ClipboardList,
   Sprout, BookOpen, GraduationCap, ShieldQuestion,
-  PartyPopper, Flag, User,
+  PartyPopper, Flag, User, Crosshair, BarChart3,
 } from 'lucide-react';
 import Logo from '@/components/Logo';
 

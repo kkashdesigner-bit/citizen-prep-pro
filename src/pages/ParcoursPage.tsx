@@ -148,22 +148,28 @@ export default function ParcoursPage() {
                     <motion.div
                         initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.1 }}
-                        className="rounded-2xl p-6 md:p-8 mb-10 shadow-lg text-white relative overflow-hidden"
-                        style={{
-                            backgroundImage: 'url(/parcour-GOCIVIQUE-1-TO-100-DESKTOP-progression.jpg)',
-                            backgroundSize: 'cover',
-                            backgroundPosition: 'center',
-                        }}
+                        className="bg-gradient-to-r from-[#0055A4] to-[#1B6ED6] rounded-2xl p-6 md:p-8 mb-10 shadow-lg text-white relative overflow-hidden"
                     >
-                        <picture className="absolute inset-0 w-full h-full -z-0">
-                            <source media="(max-width: 767px)" srcSet="/parcour-GOCIVIQUE-1-TO-100-MOBILE-progression.jpg" />
+                        {/* Desktop background illustration */}
+                        <div className="absolute inset-y-0 right-0 w-[55%] hidden md:block pointer-events-none overflow-hidden rounded-r-2xl">
                             <img
                                 src="/parcour-GOCIVIQUE-1-TO-100-DESKTOP-progression.jpg"
                                 alt=""
                                 aria-hidden="true"
-                                className="absolute inset-0 w-full h-full object-cover"
+                                className="h-full w-full object-cover object-left"
                             />
-                        </picture>
+                            <div className="absolute inset-0 bg-gradient-to-r from-[#0055A4] via-[#0055A4]/60 to-transparent" />
+                        </div>
+                        {/* Mobile background illustration */}
+                        <div className="absolute top-0 right-0 w-28 h-28 md:hidden pointer-events-none overflow-hidden rounded-tr-2xl">
+                            <img
+                                src="/parcour-GOCIVIQUE-1-TO-100-MOBILE-progression.jpg"
+                                alt=""
+                                aria-hidden="true"
+                                className="h-full w-full object-cover object-center"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-r from-[#0055A4] via-[#0055A4]/50 to-transparent" />
+                        </div>
 
                         <div className="relative z-10">
                             <h2 className="text-lg font-bold mb-1 flex items-center gap-2">
