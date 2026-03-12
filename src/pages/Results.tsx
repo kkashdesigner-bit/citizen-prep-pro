@@ -85,59 +85,72 @@ export default function Results() {
 
             <main className="flex flex-1 justify-center py-6 px-4 lg:px-0">
                 <div className="flex flex-col max-w-[1000px] flex-1 gap-8 w-full mt-4">
-                    <section className="relative overflow-hidden bg-[#135bec] rounded-2xl sm:rounded-[2.5rem] p-0.5 sm:p-1 shadow-2xl">
-                        <div className="bg-white rounded-[1.2rem] sm:rounded-[2.3rem] p-5 sm:p-10 lg:p-16 confetti-bg relative overflow-hidden">
-                            <div className="absolute inset-0 opacity-5 pointer-events-none flex items-center justify-center">
-                                <Sparkles size={400} />
-                            </div>
-                            <div className="relative z-10 flex flex-col items-center">
-                                <span className={`px-6 py-2 ${result.passed ? 'bg-green-500' : 'bg-red-500'} text-white rounded-full text-sm font-black uppercase tracking-[0.2em] mb-8 shadow-lg`}>
-                                    {result.passed ? 'Examen Réussi' : 'Examen Échoué'}
-                                </span>
+                    <section className="relative overflow-hidden rounded-2xl sm:rounded-[2.5rem] shadow-2xl">
+                        {/* Background image – desktop vs mobile */}
+                        <picture>
+                            <source
+                                media="(min-width: 640px)"
+                                srcSet={result.passed ? '/images/result-pass-desktop.jpg' : '/images/result-fail-desktop.jpg'}
+                            />
+                            <img
+                                src={result.passed ? '/images/result-pass-mobile.jpg' : '/images/result-fail-mobile.jpg'}
+                                alt=""
+                                aria-hidden="true"
+                                className="absolute inset-0 w-full h-full object-cover"
+                            />
+                        </picture>
 
-                                <div className="flex flex-col items-center gap-6 sm:gap-12 lg:flex-row lg:gap-24 w-full justify-center">
-                                    <div className="relative group">
-                                        <div className="absolute inset-0 bg-yellow-400 blur-3xl opacity-20 group-hover:opacity-40 transition-opacity"></div>
-                                        <div className="relative bg-gradient-to-b from-yellow-300 to-yellow-600 p-4 sm:p-8 rounded-2xl sm:rounded-[3rem] shadow-[0_20px_50px_rgba(234,179,8,0.3)] transform hover:scale-105 transition-transform duration-500">
-                                            <div className="bg-white/10 p-3 sm:p-6 rounded-xl sm:rounded-[2rem] border border-white/20 backdrop-blur-sm flex flex-col items-center">
-                                                <Trophy size={48} className="sm:hidden text-white drop-shadow-lg mb-1 fill-white" />
-                                                <Trophy size={100} className="hidden sm:block text-white drop-shadow-lg mb-2 fill-white" />
-                                                <div className="text-white text-center">
-                                                    <span className="block text-3xl sm:text-6xl font-black font-display tracking-tighter">{scorePercent}%</span>
-                                                    <span className="block text-[10px] sm:text-xs font-bold uppercase tracking-widest opacity-80">Score Total</span>
-                                                </div>
+                        {/* Dark overlay for text legibility */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-black/20" />
+
+                        <div className="relative z-10 flex flex-col items-center px-5 py-10 sm:px-10 sm:py-16 lg:px-16 lg:py-20 min-h-[340px] sm:min-h-[400px]">
+                            <span className={`px-6 py-2 ${result.passed ? 'bg-green-500' : 'bg-red-500'} text-white rounded-full text-sm font-black uppercase tracking-[0.2em] mb-6 sm:mb-8 shadow-lg backdrop-blur-sm`}>
+                                {result.passed ? 'Examen Réussi' : 'Examen Échoué'}
+                            </span>
+
+                            <div className="flex flex-col items-center gap-6 sm:gap-10 lg:flex-row lg:gap-20 w-full justify-center">
+                                {/* Score card */}
+                                <div className="relative group shrink-0">
+                                    <div className="relative bg-gradient-to-b from-yellow-300 to-yellow-600 p-4 sm:p-8 rounded-2xl sm:rounded-[3rem] shadow-[0_20px_50px_rgba(234,179,8,0.4)] transform hover:scale-105 transition-transform duration-500">
+                                        <div className="bg-white/10 p-3 sm:p-6 rounded-xl sm:rounded-[2rem] border border-white/20 backdrop-blur-sm flex flex-col items-center">
+                                            <Trophy size={48} className="sm:hidden text-white drop-shadow-lg mb-1 fill-white" />
+                                            <Trophy size={100} className="hidden sm:block text-white drop-shadow-lg mb-2 fill-white" />
+                                            <div className="text-white text-center">
+                                                <span className="block text-3xl sm:text-6xl font-black font-display tracking-tighter">{scorePercent}%</span>
+                                                <span className="block text-[10px] sm:text-xs font-bold uppercase tracking-widest opacity-80">Score Total</span>
                                             </div>
                                         </div>
                                     </div>
+                                </div>
 
-                                    <div className="text-center lg:text-left max-w-md">
-                                        <h1 className="text-slate-900 text-3xl sm:text-5xl lg:text-7xl font-black mb-3 sm:mb-6 font-display leading-tight italic transform -rotate-1">
-                                            {result.passed ? t('results.congratulations') : t('results.tooBad')}
-                                        </h1>
-                                        <p className="text-slate-600 text-sm sm:text-xl font-medium leading-relaxed">
-                                            {result.passed
-                                                ? "Bravo ! Continuez comme ça, vous progressez bien vers votre objectif."
-                                                : "Vous n'avez pas atteint le score nécessaire. Continuez à vous entraîner !"
-                                            }
-                                        </p>
-                                        <div className="mt-10 flex flex-wrap gap-4 justify-center lg:justify-start">
-                                            <button
-                                                onClick={() => {
-                                                    sessionStorage.removeItem('quizResults');
-                                                    sessionStorage.removeItem('quizErrors');
-                                                    if (classId && nextClass) {
-                                                        sessionStorage.removeItem('quizClassId');
-                                                        navigate(`/parcours/classe/${nextClass.id}`);
-                                                    } else {
-                                                        navigate('/quiz?mode=exam');
-                                                    }
-                                                }}
-                                                className="bg-[#135bec] text-white py-4 px-10 rounded-2xl font-black flex items-center gap-4 hover:scale-105 transition-all shadow-xl shadow-blue-500/30"
-                                            >
-                                                <span>{classId && nextClass ? 'Classe suivante' : t('results.nextExam')}</span>
-                                                <ArrowRight size={24} />
-                                            </button>
-                                        </div>
+                                {/* Text content */}
+                                <div className="text-center lg:text-left max-w-md">
+                                    <h1 className="text-white text-3xl sm:text-5xl lg:text-7xl font-black mb-3 sm:mb-6 font-display leading-tight italic transform -rotate-1 drop-shadow-[0_4px_12px_rgba(0,0,0,0.5)]">
+                                        {result.passed ? t('results.congratulations') : t('results.tooBad')}
+                                    </h1>
+                                    <p className="text-white/90 text-sm sm:text-xl font-medium leading-relaxed drop-shadow-md">
+                                        {result.passed
+                                            ? "Bravo ! Continuez comme ça, vous progressez bien vers votre objectif."
+                                            : "Vous n'avez pas atteint le score nécessaire. Continuez à vous entraîner !"
+                                        }
+                                    </p>
+                                    <div className="mt-8 sm:mt-10 flex flex-wrap gap-4 justify-center lg:justify-start">
+                                        <button
+                                            onClick={() => {
+                                                sessionStorage.removeItem('quizResults');
+                                                sessionStorage.removeItem('quizErrors');
+                                                if (classId && nextClass) {
+                                                    sessionStorage.removeItem('quizClassId');
+                                                    navigate(`/parcours/classe/${nextClass.id}`);
+                                                } else {
+                                                    navigate('/quiz?mode=exam');
+                                                }
+                                            }}
+                                            className="bg-white text-[#135bec] py-4 px-10 rounded-2xl font-black flex items-center gap-4 hover:scale-105 transition-all shadow-xl"
+                                        >
+                                            <span>{classId && nextClass ? 'Classe suivante' : t('results.nextExam')}</span>
+                                            <ArrowRight size={24} />
+                                        </button>
                                     </div>
                                 </div>
                             </div>
