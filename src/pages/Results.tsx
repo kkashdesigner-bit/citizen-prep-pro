@@ -8,7 +8,10 @@ import Header from '@/components/Header';
 import { useParcours } from '@/hooks/useParcours';
 import { useAuth } from '@/hooks/useAuth';
 import { Trophy, ArrowRight, Scale, Landmark, HeartHandshake, LayoutDashboard, RotateCcw, AlertTriangle, Medal, Check, X, ChevronUp, ChevronDown, ChevronRight } from 'lucide-react';
-
+import passDesktopImage from '@/assets/result-pass-desktop.jpg';
+import passMobileImage from '@/assets/result-pass-mobile.jpg';
+import failDesktopImage from '@/assets/result-fail-desktop.jpg';
+import failMobileImage from '@/assets/result-fail-mobile.jpg';
 interface QuizError {
     questionText: string;
     options: string[];
@@ -88,13 +91,13 @@ export default function Results() {
                     <section className="relative overflow-hidden rounded-2xl sm:rounded-[2.5rem] shadow-2xl">
                         {/* Background image – desktop vs mobile */}
                         <img
-                            src={result.passed ? '/images/result-pass-desktop.jpg' : '/images/result-fail-desktop.jpg'}
+                            src={result.passed ? passDesktopImage : failDesktopImage}
                             alt=""
                             aria-hidden="true"
                             className="absolute inset-0 w-full h-full object-cover hidden sm:block"
                         />
                         <img
-                            src={result.passed ? '/images/result-pass-mobile.jpg' : '/images/result-fail-mobile.jpg'}
+                            src={result.passed ? passMobileImage : failMobileImage}
                             alt=""
                             aria-hidden="true"
                             className="absolute inset-0 w-full h-full object-cover sm:hidden"
