@@ -58,6 +58,10 @@ export default function Results() {
     const accentRed = "#ef4444";
     const currentClass = classId ? classes.find(c => c.id === classId) : null;
     const nextClass = currentClass ? classes.find(c => c.class_number === currentClass.class_number + 1) : null;
+    const passDesktopImage = `${import.meta.env.BASE_URL}images/result-pass-desktop.jpg`;
+    const passMobileImage = `${import.meta.env.BASE_URL}images/result-pass-mobile.jpg`;
+    const failDesktopImage = `${import.meta.env.BASE_URL}images/result-fail-desktop.jpg`;
+    const failMobileImage = `${import.meta.env.BASE_URL}images/result-fail-mobile.jpg`;
 
     return (
         <div className="min-h-screen bg-[#f6f6f8] text-slate-900 font-sans flex flex-col overflow-x-hidden">
