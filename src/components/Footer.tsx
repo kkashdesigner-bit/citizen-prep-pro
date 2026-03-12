@@ -16,7 +16,7 @@ const Footer = forwardRef<HTMLElement>(function Footer(_, ref) {
   };
 
   return (
-    <footer className="border-t border-border/50 bg-white pt-16 pb-8">
+    <footer ref={ref} className="border-t border-border/50 bg-white pt-16 pb-8">
       <div className="container">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
           {/* Brand & Trust */}
