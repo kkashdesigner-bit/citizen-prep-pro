@@ -7,10 +7,10 @@ import SubscriptionGate from '@/components/SubscriptionGate';
 import Header from '@/components/Header';
 import { useParcours } from '@/hooks/useParcours';
 import { useAuth } from '@/hooks/useAuth';
-import passDesktopImage from '@/assets/result-pass-desktop.jpg';
-import passMobileImage from '@/assets/result-pass-mobile.jpg';
-import failDesktopImage from '@/assets/result-fail-desktop.jpg';
-import failMobileImage from '@/assets/result-fail-mobile.jpg';
+const passDesktopImage = '/images/result-pass-desktop.jpg';
+const passMobileImage = '/images/result-pass-mobile.jpg';
+const failDesktopImage = '/images/result-fail-desktop.jpg';
+const failMobileImage = '/images/result-fail-mobile.jpg';
 import { Trophy, ArrowRight, Scale, Landmark, HeartHandshake, LayoutDashboard, RotateCcw, AlertTriangle, Medal, Check, X, ChevronUp, ChevronDown, ChevronRight } from 'lucide-react';
 interface QuizError {
     questionText: string;
