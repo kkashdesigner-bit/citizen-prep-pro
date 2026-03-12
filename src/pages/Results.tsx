@@ -8,7 +8,10 @@ import Header from '@/components/Header';
 import { useParcours } from '@/hooks/useParcours';
 import { useAuth } from '@/hooks/useAuth';
 import { Trophy, ArrowRight, Scale, Landmark, HeartHandshake, LayoutDashboard, RotateCcw, AlertTriangle, Medal, Check, X, ChevronUp, ChevronDown, ChevronRight } from 'lucide-react';
-
+import passDesktopImage from '@/assets/result-pass-desktop.jpg';
+import passMobileImage from '@/assets/result-pass-mobile.jpg';
+import failDesktopImage from '@/assets/result-fail-desktop.jpg';
+import failMobileImage from '@/assets/result-fail-mobile.jpg';
 interface QuizError {
     questionText: string;
     options: string[];
