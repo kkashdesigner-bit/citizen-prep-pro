@@ -148,12 +148,22 @@ export default function ParcoursPage() {
                     <motion.div
                         initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.1 }}
-                        className="bg-gradient-to-r from-[#0055A4] to-[#1B6ED6] rounded-2xl p-6 md:p-8 mb-10 shadow-lg text-white relative overflow-hidden"
+                        className="rounded-2xl p-6 md:p-8 mb-10 shadow-lg text-white relative overflow-hidden"
+                        style={{
+                            backgroundImage: 'url(/parcour-GOCIVIQUE-1-TO-100-DESKTOP-progression.jpg)',
+                            backgroundSize: 'cover',
+                            backgroundPosition: 'center',
+                        }}
                     >
-                        <div className="absolute right-0 top-0 w-48 h-48 bg-white/5 rounded-bl-full pointer-events-none" />
-                        <div className="absolute right-4 bottom-4 opacity-10">
-                            <Trophy className="w-24 h-24" />
-                        </div>
+                        <picture className="absolute inset-0 w-full h-full -z-0">
+                            <source media="(max-width: 767px)" srcSet="/parcour-GOCIVIQUE-1-TO-100-MOBILE-progression.jpg" />
+                            <img
+                                src="/parcour-GOCIVIQUE-1-TO-100-DESKTOP-progression.jpg"
+                                alt=""
+                                aria-hidden="true"
+                                className="absolute inset-0 w-full h-full object-cover"
+                            />
+                        </picture>
 
                         <div className="relative z-10">
                             <h2 className="text-lg font-bold mb-1 flex items-center gap-2">

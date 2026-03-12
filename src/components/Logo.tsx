@@ -15,7 +15,7 @@ export default function Logo({ size = 'sm', className }: LogoProps) {
   return (
     <div className={cn('flex items-center justify-center', className)}>
       <img
-        src="/LOGO.svg"
+        src="/gocivique-logo.png"
         alt="Logo Officiel GoCivique - Préparation Examen Civique Français"
         className={cn('object-contain', sizeClasses[size])}
         width={size === 'lg' ? 500 : size === 'md' ? 200 : 120}
