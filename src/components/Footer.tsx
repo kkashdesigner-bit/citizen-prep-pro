@@ -1,9 +1,10 @@
+import { forwardRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { AlertTriangle, ShieldCheck, Mail, MapPin } from 'lucide-react';
 import Logo from '@/components/Logo';
 
-export default function Footer() {
+const Footer = forwardRef<HTMLElement>(function Footer(_, ref) {
   const { t } = useLanguage();
   const location = useLocation();
 
