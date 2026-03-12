@@ -161,7 +161,7 @@ export default function ParcoursPage() {
                             <div className="absolute inset-0 bg-gradient-to-r from-[#0055A4] via-[#0055A4]/60 to-transparent" />
                         </div>
                         {/* Mobile background illustration */}
-                        <div className="absolute top-0 right-0 w-28 h-28 md:hidden pointer-events-none overflow-hidden rounded-tr-2xl">
+                        <div className="absolute inset-y-0 right-0 w-[50%] md:hidden pointer-events-none overflow-hidden rounded-r-2xl">
                             <img
                                 src="/parcour-GOCIVIQUE-1-TO-100-MOBILE-progression.jpg"
                                 alt=""
