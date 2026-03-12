@@ -1,3 +1,4 @@
+import { forwardRef } from 'react';
 import { cn } from '@/lib/utils';
 
 interface LogoProps {
@@ -11,9 +12,9 @@ const sizeClasses = {
   lg: 'h-32 md:h-48 w-auto',
 };
 
-export default function Logo({ size = 'sm', className }: LogoProps) {
+const Logo = forwardRef<HTMLDivElement, LogoProps>(({ size = 'sm', className }, ref) => {
   return (
-    <div className={cn('flex items-center justify-center', className)}>
+    <div ref={ref} className={cn('flex items-center justify-center', className)}>
       <img
         src="/gocivique-logo.png"
         alt="Logo Officiel GoCivique - Préparation Examen Civique Français"
@@ -24,4 +25,7 @@ export default function Logo({ size = 'sm', className }: LogoProps) {
       />
     </div>
   );
-}
+});
+
+Logo.displayName = 'Logo';
+export default Logo;
