@@ -114,7 +114,7 @@ export default function ActionCards({ nextLesson, isStandardOrAbove, onGate, per
               onGate('standard');
               return;
             }
-            navigate(`/quiz?mode=exam&level=${personaLevel}`);
+            navigate(`/quiz?mode=exam&level=${personaLevel}&limit=40`);
           }}
         >
           <GraduationCap className="h-4 w-4" />

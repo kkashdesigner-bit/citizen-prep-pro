@@ -18,7 +18,7 @@ export default function ExamsPage() {
       setShowGate(true);
       return;
     }
-    navigate('/quiz?mode=exam');
+    navigate('/quiz?mode=exam&limit=40');
   };
 
   return (

@@ -56,33 +56,56 @@ export default function ClassDetailPage() {
     };
 
     const renderMarkdown = (md: string) => {
-        return md.split('\n\n').map((paragraph, idx) => {
-            if (paragraph.startsWith('# '))
-                return <h2 key={idx} className="text-2xl font-black text-gray-900 mb-4 mt-8 pb-3 border-b border-gray-100 tracking-tight">{renderInline(paragraph.slice(2))}</h2>;
-            if (paragraph.startsWith('## '))
+        return md.replace(/\r\n/g, '\n').split('\n\n').map((block, idx) => {
+            const p = block.trim();
+            if (!p) return null;
+            if (p.startsWith('# '))
+                return <h2 key={idx} className="text-2xl font-black text-gray-900 mb-4 mt-8 pb-3 border-b border-gray-100 tracking-tight">{renderInline(p.slice(2))}</h2>;
+            if (p.startsWith('### '))
+                return (
+                    <h4 key={idx} className="text-base font-bold text-gray-700 mb-3 mt-6">
+                        {renderInline(p.slice(4))}
+                    </h4>
+                );
+            if (p.startsWith('## '))
                 return (
                     <h3 key={idx} className="text-lg font-bold text-gray-800 mb-4 mt-8 flex items-center gap-2">
                         <div className="w-1.5 h-1.5 rounded-full bg-[#0055A4]" />
-                        {renderInline(paragraph.slice(3))}
+                        {renderInline(p.slice(3))}
                     </h3>
                 );
-            if (paragraph.startsWith('- ')) {
-                const items = paragraph.split('\n').filter(l => l.startsWith('- '));
+            if (p.includes('\n') && p.split('\n').some(l => l.trim().startsWith('- '))) {
+                const items = p.split('\n').filter(l => l.trim().startsWith('- '));
                 return (
                     <div key={idx} className="bg-[#F8FAFC] rounded-2xl p-5 mb-6 border border-gray-100">
                         <ul className="list-none space-y-3 m-0 p-0">
                             {items.map((item, i) => (
                                 <li key={i} className="text-gray-700 leading-relaxed text-[15px] flex items-start gap-3">
                                     <div className="mt-2 w-1.5 h-1.5 shrink-0 rounded-full bg-blue-300" />
-                                    <span>{renderInline(item.slice(2))}</span>
+                                    <span>{renderInline(item.trim().slice(2))}</span>
                                 </li>
                             ))}
                         </ul>
                     </div>
                 );
             }
-            return <p key={idx} className="mb-6 text-gray-700 text-[15px] leading-relaxed break-words">{renderInline(paragraph)}</p>;
-        });
+            if (p.startsWith('- ')) {
+                const items = p.split('\n').filter(l => l.trim().startsWith('- '));
+                return (
+                    <div key={idx} className="bg-[#F8FAFC] rounded-2xl p-5 mb-6 border border-gray-100">
+                        <ul className="list-none space-y-3 m-0 p-0">
+                            {items.map((item, i) => (
+                                <li key={i} className="text-gray-700 leading-relaxed text-[15px] flex items-start gap-3">
+                                    <div className="mt-2 w-1.5 h-1.5 shrink-0 rounded-full bg-blue-300" />
+                                    <span>{renderInline(item.trim().slice(2))}</span>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                );
+            }
+            return <p key={idx} className="mb-6 text-gray-700 text-[15px] leading-relaxed break-words">{renderInline(p)}</p>;
+        }).filter(Boolean);
     };
 
     if (detailLoading || tierLoading) {
@@ -104,7 +127,9 @@ export default function ClassDetailPage() {
     }
 
     const totalQuestions = classData.questions.length;
-    const isRecapQuiz = classData.class_number % 10 === 0;
+    const isRecapQuiz = (classData.class_number % 10 === 0 && classData.class_number !== 100) || classData.class_number === 95;
+    const isExamenBlanc = classData.class_number >= 97 && classData.class_number <= 99;
+    const isConseilsJourJ = classData.class_number === 100;
 
     return (
         <div className="min-h-screen bg-white flex flex-col">
@@ -137,7 +162,36 @@ export default function ClassDetailPage() {
 
             {/* ─── Main Content ─── */}
             <div className="flex-1 w-full max-w-3xl mx-auto px-4 md:px-8 py-6 pb-32 md:pb-8">
-                {isRecapQuiz ? (
+                {isExamenBlanc ? (
+                    /* ── Examen Blanc UI (classes 97-99) ── */
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+                        className="bg-gradient-to-br from-slate-900 to-[#0055A4] rounded-2xl p-8 md:p-12 text-white text-center shadow-lg"
+                    >
+                        <div className="mx-auto mb-6 w-20 h-20 rounded-full bg-white/10 flex items-center justify-center">
+                            <Trophy className="w-10 h-10 text-yellow-300" />
+                        </div>
+                        <p className="text-xs font-bold uppercase tracking-widest text-white/50 mb-2">Entraînement Final</p>
+                        <h2 className="text-2xl md:text-3xl font-black mb-3">{classData.title}</h2>
+                        <p className="text-white/70 text-sm mb-3 max-w-md mx-auto leading-relaxed">
+                            Entraînez-vous dans les conditions réelles de l'examen officiel.
+                        </p>
+                        <div className="flex items-center justify-center gap-6 mb-8 text-sm font-bold text-white/80">
+                            <span>📋 40 questions</span>
+                            <span>⏱️ 45 minutes</span>
+                            <span>🎯 80% pour réussir</span>
+                        </div>
+                        <Button
+                            onClick={() => navigate(`/quiz?mode=exam&limit=40`)}
+                            size="lg"
+                            className="bg-white text-[#0055A4] hover:bg-white/90 font-black rounded-xl shadow-sm px-10 text-base"
+                        >
+                            <Trophy className="w-5 h-5 mr-2 text-yellow-500" />
+                            Lancer l'examen blanc
+                            <ChevronRight className="w-5 h-5 ml-1" />
+                        </Button>
+                    </motion.div>
+                ) : isRecapQuiz ? (
                     /* ── Quiz Récapitulatif UI ── */
                     <motion.div
                         initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
@@ -149,11 +203,11 @@ export default function ClassDetailPage() {
                         <p className="text-xs font-bold uppercase tracking-widest text-white/60 mb-2">Quiz Récapitulatif</p>
                         <h2 className="text-2xl md:text-3xl font-black mb-3">{classData.title}</h2>
                         <p className="text-white/75 text-sm mb-8 max-w-md mx-auto leading-relaxed">
-                            Testez vos connaissances sur l'ensemble du module avec 20 questions aléatoires.
+                            Testez vos connaissances sur l'ensemble du module avec 40 questions aléatoires.
                             Obtenez au moins 80% pour valider le module.
                         </p>
                         <Button
-                            onClick={() => navigate(`/quiz?mode=exam&classId=${id}&limit=20`)}
+                            onClick={() => navigate(`/quiz?mode=exam&classId=${id}&limit=40`)}
                             size="lg"
                             className="bg-white text-[#0055A4] hover:bg-white/90 font-bold rounded-xl shadow-sm px-8"
                         >
@@ -163,28 +217,32 @@ export default function ClassDetailPage() {
                         </Button>
                     </motion.div>
                 ) : (
-                    /* ── Regular Lesson UI ── */
+                    /* ── Regular Lesson UI (+ Conseils jour J with no quiz button) ── */
                     <motion.div
                         initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}
                         className="bg-white rounded-2xl p-6 md:p-10 border border-gray-100 shadow-sm"
                     >
                         <div className="flex items-center gap-2 mb-6 text-[#0055A4]">
                             <BookOpen className="w-5 h-5" />
-                            <span className="text-sm font-bold uppercase tracking-widest">Leçon</span>
+                            <span className="text-sm font-bold uppercase tracking-widest">
+                                {isConseilsJourJ ? 'Conseils' : 'Leçon'}
+                            </span>
                         </div>
                         <div className="max-w-none prose-sm overflow-hidden break-words">{renderMarkdown(classData.content_markdown)}</div>
 
-                        <div className="mt-10 pt-6 border-t border-gray-100 flex flex-col sm:flex-row justify-end gap-3">
-                            <Button
-                                onClick={() => navigate(`/quiz?mode=training&classId=${id}&limit=10`)}
-                                size="lg"
-                                className="bg-[#0055A4] hover:bg-[#1B6ED6] text-white font-bold rounded-xl shadow-sm"
-                            >
-                                <BrainCircuit className="w-5 h-5 mr-2" />
-                                Passer au Quiz ({Math.min(totalQuestions, 10)} questions)
-                                <ChevronRight className="w-5 h-5 ml-1" />
-                            </Button>
-                        </div>
+                        {!isConseilsJourJ && (
+                            <div className="mt-10 pt-6 border-t border-gray-100 flex flex-col sm:flex-row justify-end gap-3">
+                                <Button
+                                    onClick={() => navigate(`/quiz?mode=training&classId=${id}&limit=10`)}
+                                    size="lg"
+                                    className="bg-[#0055A4] hover:bg-[#1B6ED6] text-white font-bold rounded-xl shadow-sm"
+                                >
+                                    <BrainCircuit className="w-5 h-5 mr-2" />
+                                    Passer au Quiz ({Math.min(totalQuestions, 10)} questions)
+                                    <ChevronRight className="w-5 h-5 ml-1" />
+                                </Button>
+                            </div>
+                        )}
                     </motion.div>
                 )}
             </div>
