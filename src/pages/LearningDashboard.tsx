@@ -72,7 +72,7 @@ export default function LearningDashboard() {
     if (category) {
       navigate(`/quiz?category=${encodeURIComponent(CATEGORY_MAP[category]?.dbCategory || category)}`);
     } else {
-      navigate('/quiz');
+      navigate('/quiz?mode=exam&limit=40');
     }
   };
 
@@ -337,13 +337,13 @@ export default function LearningDashboard() {
                   </div>
                   <h2 className="text-lg sm:text-xl font-bold text-[var(--dash-text)] mb-1.5 mt-3">Examen Blanc</h2>
                   <p className="text-xs sm:text-sm text-[var(--dash-text-muted)] font-medium mb-4 sm:mb-5 max-w-lg">
-                    20 questions aléatoires couvrant tous les domaines — évaluez votre niveau global.
+                    40 questions aléatoires couvrant tous les domaines — évaluez votre niveau global.
                   </p>
                   <div className="flex flex-wrap items-center gap-5 mb-6">
                     {[
-                      { icon: FileText, text: '20 Questions' },
-                      { icon: Clock, text: '~ 15 min' },
-                      { icon: Target, text: 'Seuil : 60%' },
+                      { icon: FileText, text: '40 Questions' },
+                      { icon: Clock, text: '~ 45 min' },
+                      { icon: Target, text: 'Seuil : 80%' },
                     ].map(({ icon: Icon, text }) => (
                       <div key={text} className="flex items-center gap-1.5">
                         <Icon className="h-4 w-4 text-[var(--dash-text-muted)]" />

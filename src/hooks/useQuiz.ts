@@ -301,7 +301,7 @@ export function useQuiz({
 
     fetchQuestions();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [language, category, user, resolvedLevel, mode, isMiniQuiz, questionLimit, retryKey, classId, retakeIds?.join(',')]);
+  }, [category, user, resolvedLevel, mode, isMiniQuiz, questionLimit, retryKey, classId, retakeIds?.join(',')]);
 
   /** Save a single answer to user_answers table (skipped in demo mode) */
   const saveAnswer = useCallback(
