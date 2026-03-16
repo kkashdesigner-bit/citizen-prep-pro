@@ -104,8 +104,8 @@ export default function Quiz() {
     }
   }, [tierLoading, isFreeUser, isStandardOrAbove, isPremium, rawMode, examsTakenToday]);
 
-  // Free users are downgraded to demo mode
-  const effectiveMode: QuizMode = isFreeUser ? 'demo' : rawMode;
+  // Free users are downgraded to demo mode (wait for tier to load to avoid 20→40 flicker)
+  const effectiveMode: QuizMode = tierLoading ? rawMode : (isFreeUser ? 'demo' : rawMode);
 
   // Retry counter — incrementing forces useQuiz to re-fetch fresh questions
   const [retryKey, setRetryKey] = useState(0);
@@ -126,6 +126,22 @@ export default function Quiz() {
   const [flagged, setFlagged] = useState<Set<number>>(new Set());
   const [timeRemaining, setTimeRemaining] = useState(QUIZ_TIME);
   const [startTime, setStartTime] = useState(Date.now());
+
+  // Safety net: reset quiz state if the question set is replaced mid-session (e.g. mode flicker)
+  const prevQuestionSetKey = useRef<string>('');
+  const questionSetKey = questions.map(q => q.id).join(',');
+  useEffect(() => {
+    if (questionSetKey === '' || questionSetKey === prevQuestionSetKey.current) return;
+    if (prevQuestionSetKey.current !== '') {
+      // Questions changed after initial load — reset quiz state
+      setAnswers({});
+      setCurrentIndex(0);
+      setFlagged(new Set());
+      setTimeRemaining(QUIZ_TIME);
+      setStartTime(Date.now());
+    }
+    prevQuestionSetKey.current = questionSetKey;
+  }, [questionSetKey]);
   const [warpState, setWarpState] = useState<'idle' | 'exit' | 'enter'>('idle');
   const pendingIndex = useRef<number | null>(null);
 
@@ -190,6 +206,8 @@ export default function Quiz() {
     }));
 
     const score = results.filter((r) => r.correct).length;
+    const answeredTotal = results.filter(r => r.selectedAnswer !== undefined).length;
+    const unansweredCount = questions.length - answeredTotal;
     const categoryBreakdown: Record<string, { correct: number; total: number }> = {};
     results.forEach((r) => {
       if (!categoryBreakdown[r.category]) {
@@ -204,14 +222,16 @@ export default function Quiz() {
       date: new Date().toISOString(),
       score,
       totalQuestions: questions.length,
+      answeredCount: answeredTotal,
+      unansweredCount,
       passed: score / questions.length >= 0.8,
       timeSpent,
       categoryBreakdown,
     };
 
-    // Build the errors list for the review section
+    // Build the errors list for the review section (only questions the user actually answered wrong)
     const quizErrors: QuizError[] = results
-      .filter(r => !r.correct)
+      .filter(r => !r.correct && r.selectedAnswer !== undefined)
       .map(r => {
         const q = questions.find(qq => qq.id === r.questionId)!;
         return {
@@ -296,7 +316,7 @@ export default function Quiz() {
   }, [navigate]);
 
   // ─── Loading State ───
-  if (loading) {
+  if (loading || tierLoading) {
     return (
       <div className="min-h-screen bg-background">
         <div className="sticky top-0 z-50 bg-white border-b border-slate-200 h-14 flex items-center px-4">

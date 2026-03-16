@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
@@ -36,6 +36,55 @@ export default function TranslateButton({ questionId, onTranslated, allowFree = 
   const [shown, setShown] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  const prevLangRef = useRef(language);
+
+  // Reset shown state when navigating to a different question
+  useEffect(() => {
+    setShown(false);
+  }, [questionId]);
+
+  // Auto-refetch translation when language changes while translation is visible
+  useEffect(() => {
+    if (language === prevLangRef.current) return;
+    prevLangRef.current = language;
+
+    if (!shown || !canTranslate) return;
+
+    let cancelled = false;
+    setLoading(true);
+
+    (async () => {
+      try {
+        const { data, error } = await (supabase as any)
+          .from('question_translations')
+          .select('*')
+          .eq('question_id', questionId)
+          .eq('language', language)
+          .single();
+
+        if (cancelled) return;
+
+        if (error) {
+          console.error("Translation fetch error", error);
+          toast.error("Traduction indisponible pour cette langue.");
+          setShown(false);
+          onTranslated(null);
+        } else if (data) {
+          onTranslated(data as TranslatedData);
+        }
+      } catch (e) {
+        if (!cancelled) {
+          console.error(e);
+          setShown(false);
+          onTranslated(null);
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+
+    return () => { cancelled = true; };
+  }, [language, shown, canTranslate, questionId, onTranslated]);
 
   async function handleClick() {
     if (!canTranslate) {
