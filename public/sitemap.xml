@@ -80,65 +80,30 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://gocivique.fr/contact" />
   </url>
 
-  <!-- SEO Content Pages -->
+  <!-- SEO Content Pages (French-only content — no hreflang variants to avoid duplicate signals) -->
   <url>
     <loc>https://gocivique.fr/guide-examen-civique</loc>
     <lastmod>2026-03-16</lastmod>
-    <xhtml:link rel="alternate" hreflang="fr" href="https://gocivique.fr/guide-examen-civique" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://gocivique.fr/guide-examen-civique?lang=en" />
-    <xhtml:link rel="alternate" hreflang="ar" href="https://gocivique.fr/guide-examen-civique?lang=ar" />
-    <xhtml:link rel="alternate" hreflang="es" href="https://gocivique.fr/guide-examen-civique?lang=es" />
-    <xhtml:link rel="alternate" hreflang="tr" href="https://gocivique.fr/guide-examen-civique?lang=tr" />
-    <xhtml:link rel="alternate" hreflang="pt" href="https://gocivique.fr/guide-examen-civique?lang=pt" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://gocivique.fr/guide-examen-civique" />
   </url>
 
   <url>
     <loc>https://gocivique.fr/themes/valeurs-republique</loc>
     <lastmod>2026-03-16</lastmod>
-    <xhtml:link rel="alternate" hreflang="fr" href="https://gocivique.fr/themes/valeurs-republique" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://gocivique.fr/themes/valeurs-republique?lang=en" />
-    <xhtml:link rel="alternate" hreflang="ar" href="https://gocivique.fr/themes/valeurs-republique?lang=ar" />
-    <xhtml:link rel="alternate" hreflang="es" href="https://gocivique.fr/themes/valeurs-republique?lang=es" />
-    <xhtml:link rel="alternate" hreflang="tr" href="https://gocivique.fr/themes/valeurs-republique?lang=tr" />
-    <xhtml:link rel="alternate" hreflang="pt" href="https://gocivique.fr/themes/valeurs-republique?lang=pt" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://gocivique.fr/themes/valeurs-republique" />
   </url>
 
   <url>
     <loc>https://gocivique.fr/themes/histoire-geographie</loc>
     <lastmod>2026-03-16</lastmod>
-    <xhtml:link rel="alternate" hreflang="fr" href="https://gocivique.fr/themes/histoire-geographie" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://gocivique.fr/themes/histoire-geographie?lang=en" />
-    <xhtml:link rel="alternate" hreflang="ar" href="https://gocivique.fr/themes/histoire-geographie?lang=ar" />
-    <xhtml:link rel="alternate" hreflang="es" href="https://gocivique.fr/themes/histoire-geographie?lang=es" />
-    <xhtml:link rel="alternate" hreflang="tr" href="https://gocivique.fr/themes/histoire-geographie?lang=tr" />
-    <xhtml:link rel="alternate" hreflang="pt" href="https://gocivique.fr/themes/histoire-geographie?lang=pt" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://gocivique.fr/themes/histoire-geographie" />
   </url>
 
   <url>
     <loc>https://gocivique.fr/themes/institutions</loc>
     <lastmod>2026-03-16</lastmod>
-    <xhtml:link rel="alternate" hreflang="fr" href="https://gocivique.fr/themes/institutions" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://gocivique.fr/themes/institutions?lang=en" />
-    <xhtml:link rel="alternate" hreflang="ar" href="https://gocivique.fr/themes/institutions?lang=ar" />
-    <xhtml:link rel="alternate" hreflang="es" href="https://gocivique.fr/themes/institutions?lang=es" />
-    <xhtml:link rel="alternate" hreflang="tr" href="https://gocivique.fr/themes/institutions?lang=tr" />
-    <xhtml:link rel="alternate" hreflang="pt" href="https://gocivique.fr/themes/institutions?lang=pt" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://gocivique.fr/themes/institutions" />
   </url>
 
   <url>
     <loc>https://gocivique.fr/themes/droits-devoirs</loc>
     <lastmod>2026-03-16</lastmod>
-    <xhtml:link rel="alternate" hreflang="fr" href="https://gocivique.fr/themes/droits-devoirs" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://gocivique.fr/themes/droits-devoirs?lang=en" />
-    <xhtml:link rel="alternate" hreflang="ar" href="https://gocivique.fr/themes/droits-devoirs?lang=ar" />
-    <xhtml:link rel="alternate" hreflang="es" href="https://gocivique.fr/themes/droits-devoirs?lang=es" />
-    <xhtml:link rel="alternate" hreflang="tr" href="https://gocivique.fr/themes/droits-devoirs?lang=tr" />
-    <xhtml:link rel="alternate" hreflang="pt" href="https://gocivique.fr/themes/droits-devoirs?lang=pt" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://gocivique.fr/themes/droits-devoirs" />
   </url>
 
   <!-- Privacy Policy -->

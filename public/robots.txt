@@ -1,8 +1,20 @@
 User-agent: Googlebot
 Allow: /
+Disallow: /settings
+Disallow: /analytics
+Disallow: /onboarding
+Disallow: /results
+Disallow: /success
+Disallow: /lesson/
 
 User-agent: Bingbot
 Allow: /
+Disallow: /settings
+Disallow: /analytics
+Disallow: /onboarding
+Disallow: /results
+Disallow: /success
+Disallow: /lesson/
 
 User-agent: Twitterbot
 Allow: /
@@ -41,5 +53,11 @@ Disallow: /
 
 User-agent: *
 Allow: /
+Disallow: /settings
+Disallow: /analytics
+Disallow: /onboarding
+Disallow: /results
+Disallow: /success
+Disallow: /lesson/
 
 Sitemap: https://gocivique.fr/sitemap.xml
