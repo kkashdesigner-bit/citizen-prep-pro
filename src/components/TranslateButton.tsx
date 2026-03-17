@@ -132,7 +132,7 @@ export default function TranslateButton({ questionId, onTranslated, allowFree = 
     try {
       localStorage.setItem('pending_subscription_tier', 'premium');
 
-      const premiumLink = 'https://buy.stripe.com/test_7sYfZ96hz9tI3t12A69AA01';
+      const premiumLink = import.meta.env.VITE_STRIPE_PREMIUM_LINK || 'https://buy.stripe.com/cNiaEZ9QRcHz44i1gR6EU01';
       const url = new URL(premiumLink);
       url.searchParams.set('client_reference_id', user.id);
       if (user.email) {

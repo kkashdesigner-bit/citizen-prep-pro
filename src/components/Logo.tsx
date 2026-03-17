@@ -16,7 +16,7 @@ const Logo = forwardRef<HTMLDivElement, LogoProps>(({ size = 'sm', className }, 
   return (
     <div ref={ref} className={cn('flex items-center justify-center', className)}>
       <img
-        src="/gocivique-logo.png"
+        src="/gocivique-logo-examen-civique.png"
         alt="Logo Officiel GoCivique - Préparation Examen Civique Français"
         className={cn('object-contain', sizeClasses[size])}
         width={size === 'lg' ? 500 : size === 'md' ? 200 : 120}

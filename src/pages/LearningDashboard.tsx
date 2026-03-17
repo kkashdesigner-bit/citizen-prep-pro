@@ -22,12 +22,12 @@ import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { motion } from 'framer-motion';
 import type { GoalType } from '@/hooks/useUserProfile';
 
-const CATEGORY_MAP: Record<string, { emoji: string; gradient: string; shadow: string; label: string; desc: string; dbCategory: string; image: string }> = {
-  Principles: { emoji: '⚖️', gradient: 'from-blue-600 via-blue-500 to-indigo-600', shadow: 'shadow-blue-500/30', label: 'Fondamentaux', desc: 'Valeurs et principes de la République', dbCategory: 'Principles and values of the Republic', image: '/go-civique-examen-fondamentaux-category-image.jpg' },
-  Institutions: { emoji: '🏛️', gradient: 'from-indigo-600 via-purple-500 to-violet-600', shadow: 'shadow-indigo-500/30', label: 'Institutions', desc: "Fonctionnement de l'État et des institutions", dbCategory: 'Institutional and political system', image: '/go-civique-examen-institutions-category-image.jpg' },
-  Rights: { emoji: '🛡️', gradient: 'from-emerald-600 via-green-500 to-teal-600', shadow: 'shadow-emerald-500/30', label: 'Droits & Devoirs', desc: 'Droits et devoirs du citoyen', dbCategory: 'Rights and duties', image: '/go-civique-examen-droits-&-devoirs-category-image.jpg' },
-  History: { emoji: '📜', gradient: 'from-amber-600 via-orange-500 to-yellow-600', shadow: 'shadow-amber-500/30', label: 'Histoire & Culture', desc: 'Histoire de France et repères clés', dbCategory: 'History, geography and culture', image: '/go-civique-examen-histoire-&-culture-category-image.jpg' },
-  Living: { emoji: '🏠', gradient: 'from-sky-600 via-cyan-500 to-blue-600', shadow: 'shadow-sky-500/30', label: 'Vivre en société', desc: 'Vie quotidienne, éducation, santé, emploi', dbCategory: 'Living in French society', image: '/go-civique-examen-vivre-en-societe-category-image.jpg' },
+const CATEGORY_MAP: Record<string, { emoji: string; gradient: string; shadow: string; label: string; desc: string; dbCategory: string; image: string; imageAlt: string }> = {
+  Principles: { emoji: '⚖️', gradient: 'from-blue-600 via-blue-500 to-indigo-600', shadow: 'shadow-blue-500/30', label: 'Fondamentaux', desc: 'Valeurs et principes de la République', dbCategory: 'Principles and values of the Republic', image: '/examen-civique-qcm-valeurs-republique-francaise.jpg', imageAlt: 'QCM examen civique — Valeurs et principes de la République française' },
+  Institutions: { emoji: '🏛️', gradient: 'from-indigo-600 via-purple-500 to-violet-600', shadow: 'shadow-indigo-500/30', label: 'Institutions', desc: "Fonctionnement de l'État et des institutions", dbCategory: 'Institutional and political system', image: '/examen-civique-qcm-institutions-systeme-politique.jpg', imageAlt: 'QCM examen civique — Institutions et système politique français' },
+  Rights: { emoji: '🛡️', gradient: 'from-emerald-600 via-green-500 to-teal-600', shadow: 'shadow-emerald-500/30', label: 'Droits & Devoirs', desc: 'Droits et devoirs du citoyen', dbCategory: 'Rights and duties', image: '/examen-civique-qcm-droits-devoirs-citoyen.jpg', imageAlt: 'QCM examen civique — Droits et devoirs du citoyen français' },
+  History: { emoji: '📜', gradient: 'from-amber-600 via-orange-500 to-yellow-600', shadow: 'shadow-amber-500/30', label: 'Histoire & Culture', desc: 'Histoire de France et repères clés', dbCategory: 'History, geography and culture', image: '/examen-civique-qcm-histoire-geographie-culture.jpg', imageAlt: 'QCM examen civique — Histoire géographie culture de France' },
+  Living: { emoji: '🏠', gradient: 'from-sky-600 via-cyan-500 to-blue-600', shadow: 'shadow-sky-500/30', label: 'Vivre en société', desc: 'Vie quotidienne, éducation, santé, emploi', dbCategory: 'Living in French society', image: '/examen-civique-qcm-vivre-societe-integration.jpg', imageAlt: 'QCM examen civique — Vivre en société et intégration en France' },
 };
 
 export default function LearningDashboard() {
@@ -230,7 +230,7 @@ export default function LearningDashboard() {
                         className="bg-[var(--dash-card)] rounded-2xl border border-[var(--dash-card-border)] shadow-[0_2px_10px_rgba(0,0,0,0.03)] flex flex-col overflow-hidden snap-center shrink-0 w-[72vw] max-w-[280px]"
                       >
                         <div className="relative w-full h-[150px] overflow-hidden">
-                          <img src={info.image} alt={info.label} className="w-full h-full object-cover" loading="lazy" />
+                          <img src={info.image} alt={info.imageAlt} className="w-full h-full object-cover" loading="lazy" />
                           {tier !== 'premium' && (
                             <span className="absolute top-2.5 right-2.5 bg-amber-500/90 backdrop-blur-sm text-white text-[9px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow-lg">Premium</span>
                           )}
@@ -272,7 +272,7 @@ export default function LearningDashboard() {
                         <div className="relative w-full h-[150px] overflow-hidden">
                           <img
                             src={info.image}
-                            alt={info.label}
+                            alt={info.imageAlt}
                             className="w-full h-full object-cover"
                             loading="lazy"
                           />

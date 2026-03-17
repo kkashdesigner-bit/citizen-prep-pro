@@ -16,7 +16,7 @@ import {
 import Logo from '@/components/Logo';
 
 const TOTAL_STEPS = 6;
-const AVATARS = Array.from({ length: 8 }, (_, i) => `/avatar-${i + 1}.webp`);
+const AVATARS = Array.from({ length: 8 }, (_, i) => `/examen-civique-avatar-${i + 1}.webp`);
 
 type OnboardingData = {
   first_name: string;

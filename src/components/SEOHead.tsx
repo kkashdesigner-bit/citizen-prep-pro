@@ -49,7 +49,7 @@ export default function SEOHead({
         "@id": `${BASE_URL}/#organization`,
         "name": "GoCivique",
         "url": BASE_URL,
-        "logo": { "@type": "ImageObject", "url": `${BASE_URL}/gocivique-logo.png` },
+        "logo": { "@type": "ImageObject", "url": `${BASE_URL}/gocivique-logo-examen-civique.png` },
         "description": "Plateforme de préparation à l'examen civique de naturalisation française 2026",
         "inLanguage": ["fr", "en", "ar", "es", "tr", "pt"],
         "sameAs": [

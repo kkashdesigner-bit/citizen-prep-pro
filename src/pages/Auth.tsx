@@ -12,7 +12,7 @@ import { useUserProfile } from '@/hooks/useUserProfile';
 import Logo from '@/components/Logo';
 import { ArrowRight, Eye, EyeOff, Mail, Lock, User, ChevronLeft, Sparkles, Shield, BarChart3 } from 'lucide-react';
 
-const AVATARS = Array.from({ length: 8 }, (_, i) => `/avatar-${i + 1}.webp`);
+const AVATARS = Array.from({ length: 8 }, (_, i) => `/examen-civique-avatar-${i + 1}.webp`);
 
 export default function Auth() {
   const [isLogin, setIsLogin] = useState(true);

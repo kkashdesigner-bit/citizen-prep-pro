@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npm install vite-react-ssg --save)"
+      "Bash(npm install vite-react-ssg --save)",
+      "mcp__supabase__list_edge_functions",
+      "mcp__supabase__deploy_edge_function"
     ]
   }
 }

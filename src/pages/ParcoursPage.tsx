@@ -66,9 +66,9 @@ export default function ParcoursPage() {
         // Premium: can jump anywhere
         if (tier === 'premium') return true;
 
-        // Free: only Classes 1, 2, and 3 are accessible (sequentially)
+        // Free: only Classes 1–10 are accessible (sequentially)
         if (tier === 'free') {
-            if (clazz.class_number > 3) return false;
+            if (clazz.class_number > 10) return false;
         }
 
         // Sequential: Class 1 always open, others need previous class completed WITH passing score
@@ -153,7 +153,7 @@ export default function ParcoursPage() {
                         {/* Desktop background illustration */}
                         <div className="absolute inset-y-0 right-0 w-[55%] hidden md:block pointer-events-none overflow-hidden rounded-r-2xl">
                             <img
-                                src="/parcour-GOCIVIQUE-1-TO-100-DESKTOP-progression.jpg"
+                                src="/examen-civique-parcours-progression-desktop.jpg"
                                 alt=""
                                 aria-hidden="true"
                                 className="h-full w-full object-cover object-left"
@@ -163,7 +163,7 @@ export default function ParcoursPage() {
                         {/* Mobile background illustration */}
                         <div className="absolute inset-y-0 right-0 w-[50%] md:hidden pointer-events-none overflow-hidden rounded-r-2xl">
                             <img
-                                src="/parcour-GOCIVIQUE-1-TO-100-MOBILE-progression.jpg"
+                                src="/examen-civique-parcours-progression-mobile.jpg"
                                 alt=""
                                 aria-hidden="true"
                                 className="h-full w-full object-cover object-center"
@@ -203,7 +203,7 @@ export default function ParcoursPage() {
                             )}
                             {tier === 'free' && (
                                 <div className="mt-3 inline-flex items-center gap-1.5 text-xs font-bold text-white/70 bg-white/10 px-3 py-1 rounded-full">
-                                    <Lock className="w-3.5 h-3.5" /> Accès gratuit : Classes 1 à 3
+                                    <Lock className="w-3.5 h-3.5" /> Accès gratuit : Classes 1 à 10
                                 </div>
                             )}
                         </div>
@@ -388,7 +388,7 @@ export default function ParcoursPage() {
                 </div>
             </main >
 
-            <SubscriptionGate open={showGate} onOpenChange={setShowGate} requiredTier={gateTier} featureLabel="Accès aux classes avancées du parcours" />
+            <SubscriptionGate open={showGate} onOpenChange={setShowGate} requiredTier={gateTier} featureLabel="90 niveaux supplémentaires, 1 500+ questions, examens blancs, entraînement par catégories et suivi de progression" />
         </div >
     );
 }

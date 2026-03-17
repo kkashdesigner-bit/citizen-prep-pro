@@ -75,8 +75,8 @@ export default function SubscriptionGate({ open, onOpenChange, requiredTier = 's
     try {
       localStorage.setItem('pending_subscription_tier', selectedPlan);
 
-      const premiumLink = import.meta.env.VITE_STRIPE_PREMIUM_LINK || 'https://buy.stripe.com/test_7sYfZ96hz9tI3t12A69AA01';
-      const standardLink = import.meta.env.VITE_STRIPE_STANDARD_LINK || 'https://buy.stripe.com/test_28EcMXbBT6hw3t1a2y9AA00';
+      const premiumLink = import.meta.env.VITE_STRIPE_PREMIUM_LINK || 'https://buy.stripe.com/cNiaEZ9QRcHz44i1gR6EU01';
+      const standardLink = import.meta.env.VITE_STRIPE_STANDARD_LINK || 'https://buy.stripe.com/8x2dRb4wxfTLfN02kV6EU00';
       const baseUrl = selectedPlan === 'premium' ? premiumLink : standardLink;
 
       const url = new URL(baseUrl);

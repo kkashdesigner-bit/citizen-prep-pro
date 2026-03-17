@@ -9,10 +9,10 @@ import { useParcours } from '@/hooks/useParcours';
 import { useAuth } from '@/hooks/useAuth';
 import { Trophy, ArrowRight, Scale, Landmark, HeartHandshake, LayoutDashboard, RotateCcw, AlertTriangle, Medal, Check, X, ChevronUp, ChevronDown, ChevronRight } from 'lucide-react';
 
-const passDesktopImage = '/images/result-pass-desktop.jpg';
-const passMobileImage = '/images/result-pass-mobile.jpg';
-const failDesktopImage = '/images/result-fail-desktop.jpg';
-const failMobileImage = '/images/result-fail-mobile.jpg';
+const passDesktopImage = '/images/examen-civique-resultat-reussi-desktop.jpg';
+const passMobileImage = '/images/examen-civique-resultat-reussi-mobile.jpg';
+const failDesktopImage = '/images/examen-civique-resultat-echec-desktop.jpg';
+const failMobileImage = '/images/examen-civique-resultat-echec-mobile.jpg';
 interface QuizError {
     questionText: string;
     options: string[];

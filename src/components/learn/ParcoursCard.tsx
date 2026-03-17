@@ -28,7 +28,7 @@ export default function ParcoursCard() {
             {/* Desktop background illustration */}
             <div className="absolute inset-y-0 right-0 w-[55%] hidden md:block pointer-events-none overflow-hidden rounded-r-2xl">
                 <img
-                    src="/parcour-GOCIVIQUE-1-TO-100-DESKTOP.jpg"
+                    src="/examen-civique-parcours-100-niveaux-desktop.jpg"
                     alt=""
                     className="h-full w-full object-cover object-left"
                 />
@@ -38,7 +38,7 @@ export default function ParcoursCard() {
             {/* Mobile background illustration */}
             <div className="absolute top-0 right-0 w-28 h-28 md:hidden pointer-events-none overflow-hidden rounded-tr-2xl">
                 <img
-                    src="/parcour-GOCIVIQUE-1-TO-100-MOBILE.jpg"
+                    src="/examen-civique-parcours-100-niveaux-mobile.jpg"
                     alt=""
                     className="h-full w-full object-cover object-center"
                 />
@@ -54,14 +54,14 @@ export default function ParcoursCard() {
                         <h2 className="text-xl font-bold text-[var(--dash-text)] tracking-tight">Parcours Citoyen</h2>
                         {isFree && (
                             <span className="ml-1 bg-amber-500/10 text-amber-500 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase flex items-center gap-1">
-                                <Lock className="w-3 h-3" /> 3 Classes
+                                <Lock className="w-3 h-3" /> 10 Classes
                             </span>
                         )}
                     </div>
 
                     <p className="text-[var(--dash-text-muted)] font-medium mb-4 max-w-lg text-sm">
                         {isFree
-                            ? "Découvrez la méthode étape par étape. Essayez les 3 premières classes gratuitement !"
+                            ? "Découvrez la méthode étape par étape. Essayez les 10 premières classes gratuitement !"
                             : "Avancez étape par étape avec des leçons courtes et des quiz de 5 questions."}
                     </p>
 

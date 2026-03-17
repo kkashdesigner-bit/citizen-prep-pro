@@ -43,21 +43,21 @@ serve(async (req) => {
       const customerId = session.customer as string;
 
       if (userId) {
-        // Determine tier from the price/product
-        let tier = 'standard';
-        if (session.amount_total && session.amount_total >= 1000) {
-          tier = 'premium'; // €10.99 = 1099 cents
-        }
+        const standardProductId = Deno.env.get('STRIPE_STANDARD_PRODUCT_ID');
+        const premiumProductId = Deno.env.get('STRIPE_PREMIUM_PRODUCT_ID');
 
-        // Also check line items for more precise detection
+        // Determine tier from product ID (default to standard)
+        let tier = 'standard';
+
+        // Retrieve subscription to get the product ID
         if (session.subscription) {
           try {
             const subscription = await stripe.subscriptions.retrieve(session.subscription as string);
-            const priceId = subscription.items.data[0]?.price?.id;
-            const amount = subscription.items.data[0]?.price?.unit_amount || 0;
-            // Premium is €10.99 (1099 cents), Standard is €6.99 (699 cents)
-            if (amount >= 1000) {
+            const productId = subscription.items.data[0]?.price?.product as string;
+            if (premiumProductId && productId === premiumProductId) {
               tier = 'premium';
+            } else if (standardProductId && productId === standardProductId) {
+              tier = 'standard';
             }
 
             // Save subscription ID
