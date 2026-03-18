@@ -1,5 +1,6 @@
 import { lazy, Suspense } from "react";
 import { Outlet, Navigate } from "react-router-dom";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { HelmetProvider } from "react-helmet-async";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -65,20 +66,20 @@ export const routes = [
     children: [
       { index: true, element: <Index /> },
       { path: "auth", element: <Auth /> },
-      { path: "learn", element: <LearningDashboard /> },
+      { path: "learn", element: <ProtectedRoute><LearningDashboard /></ProtectedRoute> },
       { path: "onboarding", element: <Onboarding /> },
-      { path: "lesson/:id", element: <LessonPage /> },
-      { path: "exams", element: <ExamsPage /> },
-      { path: "study-material", element: <StudyMaterialPage /> },
-      { path: "analytics", element: <AnalyticsPage /> },
+      { path: "lesson/:id", element: <ProtectedRoute><LessonPage /></ProtectedRoute> },
+      { path: "exams", element: <ProtectedRoute><ExamsPage /></ProtectedRoute> },
+      { path: "study-material", element: <ProtectedRoute><StudyMaterialPage /></ProtectedRoute> },
+      { path: "analytics", element: <ProtectedRoute><AnalyticsPage /></ProtectedRoute> },
       { path: "quiz", element: <Quiz /> },
       { path: "results", element: <Results /> },
       { path: "success", element: <SubscriptionSuccess /> },
       { path: "dashboard", element: <Navigate to="/learn" replace /> },
       { path: "about", element: <About /> },
-      { path: "parcours", element: <ParcoursPage /> },
-      { path: "parcours/classe/:id", element: <ClassDetailPage /> },
-      { path: "settings", element: <SettingsPage /> },
+      { path: "parcours", element: <ProtectedRoute><ParcoursPage /></ProtectedRoute> },
+      { path: "parcours/classe/:id", element: <ProtectedRoute><ClassDetailPage /></ProtectedRoute> },
+      { path: "settings", element: <ProtectedRoute><SettingsPage /></ProtectedRoute> },
       { path: "contact", element: <Contact /> },
       { path: "terms", element: <Terms /> },
       { path: "privacy", element: <Privacy /> },

@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import * as XLSX from 'xlsx';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -37,35 +38,75 @@ export interface UseQuizOptions {
 
 const DEMO_QUESTIONS_PER_EXAM = 20;
 
+/** Map UI language codes to XLSX filenames in /public/ */
+const LANG_TO_XLSX: Record<string, string> = {
+  ar: '/demo_questions ar.xlsx',
+  en: '/demo_questions en-US.xlsx',
+  es: '/demo_questions es-ES.xlsx',
+  pt: '/demo_questions pt-PT.xlsx',
+  tr: '/demo_questions tr.xlsx',
+  zh: '/demo_questions zh-Hans.xlsx',
+};
+
+/** Map a row array (from CSV or XLSX) to a Question object */
+function rowToQuestion(cols: string[], idx: number): Question {
+  return {
+    id: idx + 9000,
+    question_text: cols[0]?.trim() || '',
+    option_a: cols[1]?.trim() || '',
+    option_b: cols[2]?.trim() || '',
+    option_c: cols[3]?.trim() || '',
+    option_d: cols[4]?.trim() || '',
+    correct_answer: cols[5]?.trim() || '',
+    explanation: cols[6]?.trim() || '',
+    language: cols[7]?.trim() || 'fr',
+    category: cols[8]?.trim() || 'Principles and values of the Republic',
+    subcategory: null,
+    level: 'CSP' as ExamLevel,
+    question_translated: null,
+    option_a_translated: null,
+    option_b_translated: null,
+    option_c_translated: null,
+    option_d_translated: null,
+  } satisfies Question;
+}
+
 /** Parse the semicolon-delimited demo_questions.csv into Question objects */
-async function fetchDemoQuestionsFromCSV(): Promise<Question[]> {
+async function parseDemoCSV(): Promise<Question[]> {
   const res = await fetch('/demo_questions.csv');
   const text = await res.text();
   const lines = text.trim().split('\n');
-  // Skip header row
-  const rows = lines.slice(1);
-  return rows.map((line, idx) => {
-    const cols = line.split(';');
-    return {
-      id: idx + 9000, // Use a high offset to avoid conflicts with DB ids
-      question_text: cols[0]?.trim() || '',
-      option_a: cols[1]?.trim() || '',
-      option_b: cols[2]?.trim() || '',
-      option_c: cols[3]?.trim() || '',
-      option_d: cols[4]?.trim() || '',
-      correct_answer: cols[5]?.trim() || '',
-      explanation: cols[6]?.trim() || '',
-      language: cols[7]?.trim() || 'fr',
-      category: cols[8]?.trim() || 'Principles and values of the Republic',
-      subcategory: null,
-      level: 'CSP' as ExamLevel,
-      question_translated: null,
-      option_a_translated: null,
-      option_b_translated: null,
-      option_c_translated: null,
-      option_d_translated: null,
-    } satisfies Question;
-  });
+  return lines.slice(1).map((line, idx) => rowToQuestion(line.split(';'), idx));
+}
+
+/** Parse a language-specific XLSX file into Question objects */
+async function parseDemoXLSX(url: string): Promise<Question[]> {
+  const res = await fetch(url);
+  const buffer = await res.arrayBuffer();
+  const workbook = XLSX.read(buffer, { type: 'array' });
+  const sheet = workbook.Sheets[workbook.SheetNames[0]];
+  // sheet_to_json with header:1 returns rows as string arrays, skipping header
+  const rows = XLSX.utils.sheet_to_json<string[]>(sheet, { header: 1 });
+  // First row is header — skip it
+  return (rows as string[][]).slice(1).map((row, idx) => rowToQuestion(row.map(String), idx));
+}
+
+/**
+ * Load demo questions for the given UI language.
+ * French → CSV; all others → matching XLSX with CSV fallback.
+ */
+async function fetchDemoQuestionsFromCSV(lang = 'fr'): Promise<Question[]> {
+  // Normalize: LANGUAGE_TO_DB returns 'fr','ar','en','es','pt','tr','zh' etc.
+  const xlsxUrl = LANG_TO_XLSX[lang];
+  if (!xlsxUrl) return parseDemoCSV();
+
+  try {
+    const questions = await parseDemoXLSX(xlsxUrl);
+    if (questions.length > 0) return questions;
+  } catch {
+    // fall through to CSV
+  }
+  return parseDemoCSV();
 }
 
 /**
@@ -126,7 +167,7 @@ export function useQuiz({
           let retakeQuestions: Question[] = [];
 
           if (csvIds.length > 0) {
-            const allDemo = await fetchDemoQuestionsFromCSV();
+            const allDemo = await fetchDemoQuestionsFromCSV('fr');
             const csvMatches = allDemo.filter(q => csvIds.includes(q.id));
             retakeQuestions = [...retakeQuestions, ...csvMatches];
           }
@@ -201,15 +242,11 @@ export function useQuiz({
           return;
         }
 
-        // ─── DEMO MODE: fetch 20 random questions from DB so translations work ───
+        // ─── DEMO MODE: load from bundled CSV/XLSX (no Supabase needed) ───
         if (mode === 'demo') {
-          const { data: demoPool, error: demoErr } = await supabase
-            .from('questions')
-            .select('*')
-            .eq('language', 'fr')
-            .limit(200);
-          if (demoErr) throw demoErr;
-          const picked = shuffle((demoPool || []) as Question[]).slice(0, DEMO_QUESTIONS_PER_EXAM);
+          const dbLang = LANGUAGE_TO_DB[language] || 'fr';
+          const allDemo = await fetchDemoQuestionsFromCSV(dbLang);
+          const picked = shuffle(allDemo).slice(0, DEMO_QUESTIONS_PER_EXAM);
           setQuestions(picked);
           setLoading(false);
           return;
