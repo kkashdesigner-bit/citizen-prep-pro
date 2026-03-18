@@ -26,7 +26,7 @@ const plans = [
     periodLabel: '',
     popular: false,
     colorClass: 'blue',
-    features: ['10 classes gratuites', '1 examen/jour'],
+    features: ['1 examen complet/jour', '10 premières classes', 'Progression séquentielle'],
   },
   {
     id: 'standard' as const,
@@ -38,19 +38,19 @@ const plans = [
     periodLabel: 'Facturé mensuellement',
     popular: true,
     colorClass: 'blue',
-    features: ['Examens illimités', 'Mode entraînement', 'Suivi progression', 'Parcours structuré'],
+    features: ['Examens illimités', 'Parcours complet 1→100', 'Mode entraînement', 'Accès aux leçons', 'Suivi de progression'],
   },
   {
     id: 'premium' as const,
     name: 'Premium',
-    iconSymbol: '👥',
+    iconSymbol: '👑',
     price: '10,99',
     currency: '€',
     period: '/mo',
     periodLabel: 'Facturé mensuellement',
     popular: false,
     colorClass: 'red',
-    features: ['Tout dans Standard', 'Accès libre entre classes', 'Traduction', 'Catégories ciblées'],
+    features: ['Tout dans Standard', 'Accès libre entre classes', 'Traduction instantanée (5 langues)', 'Entraînement ciblé par catégorie'],
   },
 ];
 
