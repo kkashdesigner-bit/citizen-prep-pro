@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback } from 'react';
-import * as XLSX from 'xlsx';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -40,12 +39,12 @@ const DEMO_QUESTIONS_PER_EXAM = 20;
 
 /** Map UI language codes to XLSX filenames in /public/ */
 const LANG_TO_XLSX: Record<string, string> = {
-  ar: '/demo_questions ar.xlsx',
-  en: '/demo_questions en-US.xlsx',
-  es: '/demo_questions es-ES.xlsx',
-  pt: '/demo_questions pt-PT.xlsx',
-  tr: '/demo_questions tr.xlsx',
-  zh: '/demo_questions zh-Hans.xlsx',
+  ar: '/demo_questions%20ar.xlsx',
+  en: '/demo_questions%20en-US.xlsx',
+  es: '/demo_questions%20es-ES.xlsx',
+  pt: '/demo_questions%20pt-PT.xlsx',
+  tr: '/demo_questions%20tr.xlsx',
+  zh: '/demo_questions%20zh-Hans.xlsx',
 };
 
 /** Map a row array (from CSV or XLSX) to a Question object */
@@ -79,15 +78,14 @@ async function parseDemoCSV(): Promise<Question[]> {
   return lines.slice(1).map((line, idx) => rowToQuestion(line.split(';'), idx));
 }
 
-/** Parse a language-specific XLSX file into Question objects */
+/** Parse a language-specific XLSX file into Question objects (dynamic import for SSG safety) */
 async function parseDemoXLSX(url: string): Promise<Question[]> {
+  const XLSX = await import('xlsx');
   const res = await fetch(url);
   const buffer = await res.arrayBuffer();
   const workbook = XLSX.read(buffer, { type: 'array' });
   const sheet = workbook.Sheets[workbook.SheetNames[0]];
-  // sheet_to_json with header:1 returns rows as string arrays, skipping header
   const rows = XLSX.utils.sheet_to_json<string[]>(sheet, { header: 1 });
-  // First row is header — skip it
   return (rows as string[][]).slice(1).map((row, idx) => rowToQuestion(row.map(String), idx));
 }
 
