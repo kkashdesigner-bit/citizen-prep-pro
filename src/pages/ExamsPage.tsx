@@ -135,7 +135,7 @@ export default function ExamsPage() {
                       Objectif : <strong className="text-[var(--dash-text)]">{goalLabel}</strong> — {levelInfo.tagline}
                     </p>
                     <p className="text-[11px] text-[var(--dash-text-muted)] leading-relaxed">
-                      {levelInfo.detail}
+                      {levelInfo.detail} Chaque examen est unique : 40 questions tirées aléatoirement d'une banque de plus de 7 000 questions.
                     </p>
                   </div>
 
