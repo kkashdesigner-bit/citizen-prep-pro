@@ -41,16 +41,24 @@ const ThemeDroitsDevoits = lazy(() => import("./pages/seo/ThemeDroitsDevoits"));
 const queryClient = new QueryClient();
 
 function Root() {
+  const isServer = import.meta.env.SSR;
+
   return (
     <HelmetProvider>
       <QueryClientProvider client={queryClient}>
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
           <LanguageProvider>
             <TooltipProvider>
-              <Toaster />
-              <Sonner />
+              {!isServer && (
+                <>
+                  <Toaster />
+                  <Sonner />
+                </>
+              )}
               <Suspense fallback={null}>
-                <Outlet />
+                <ClientOnlyRoute>
+                  <Outlet />
+                </ClientOnlyRoute>
               </Suspense>
             </TooltipProvider>
           </LanguageProvider>
@@ -73,9 +81,9 @@ export const routes = [
       { path: "exams", element: <ProtectedRoute><ExamsPage /></ProtectedRoute> },
       { path: "study-material", element: <ProtectedRoute><StudyMaterialPage /></ProtectedRoute> },
       { path: "analytics", element: <ProtectedRoute><AnalyticsPage /></ProtectedRoute> },
-      { path: "quiz", element: <ClientOnlyRoute><Quiz /></ClientOnlyRoute> },
-      { path: "results", element: <ClientOnlyRoute><Results /></ClientOnlyRoute> },
-      { path: "success", element: <ClientOnlyRoute><SubscriptionSuccess /></ClientOnlyRoute> },
+      { path: "quiz", element: <Quiz /> },
+      { path: "results", element: <Results /> },
+      { path: "success", element: <SubscriptionSuccess /> },
       { path: "dashboard", element: <Navigate to="/learn" replace /> },
       { path: "about", element: <About /> },
       { path: "parcours", element: <ProtectedRoute><ParcoursPage /></ProtectedRoute> },
