@@ -1,6 +1,13 @@
-import type { ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 
 export function ClientOnlyRoute({ children }: { children: ReactNode }) {
-  if (typeof window === 'undefined') return null;
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
+
   return <>{children}</>;
 }
