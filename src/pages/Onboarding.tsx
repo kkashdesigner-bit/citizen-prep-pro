@@ -12,10 +12,11 @@ import {
   Landmark, CreditCard, ClipboardList,
   Sprout, BookOpen, GraduationCap, ShieldQuestion,
   PartyPopper, Flag, User, Crosshair, BarChart3,
+  CalendarDays, HelpCircle,
 } from 'lucide-react';
 import Logo from '@/components/Logo';
 
-const TOTAL_STEPS = 6;
+const TOTAL_STEPS = 7;
 const AVATARS = Array.from({ length: 8 }, (_, i) => `/examen-civique-avatar-${i + 1}.webp`);
 
 type OnboardingData = {
@@ -24,6 +25,7 @@ type OnboardingData = {
   goal_type: GoalType | null;
   level: LevelType | null;
   timeline: TimelineType | null;
+  exam_date: string | null;
 };
 
 export default function Onboarding() {
@@ -37,6 +39,7 @@ export default function Onboarding() {
     goal_type: null,
     level: null,
     timeline: null,
+    exam_date: null,
   });
   const [saving, setSaving] = useState(false);
   const [animating, setAnimating] = useState(false);
@@ -72,6 +75,7 @@ export default function Onboarding() {
       goal_type: data.goal_type,
       level: data.level,
       timeline: data.timeline,
+      exam_date: data.exam_date,
       onboarding_completed: true,
     });
     // Also sync avatar + display name to profiles table
@@ -161,7 +165,14 @@ export default function Onboarding() {
               onContinue={() => goToStep(6)}
             />
           )}
-          {step === 6 && <StepComplete data={data} onStart={handleComplete} saving={saving} />}
+          {step === 6 && (
+            <StepExamDate
+              selected={data.exam_date}
+              onSelect={(d) => setData(prev => ({ ...prev, exam_date: d }))}
+              onContinue={() => goToStep(7)}
+            />
+          )}
+          {step === 7 && <StepComplete data={data} onStart={handleComplete} saving={saving} />}
         </div>
       </div>
 
@@ -486,7 +497,87 @@ function StepTimeline({ selected, onSelect, onContinue }: {
   );
 }
 
-/* ─── Step 6: Completion ─── */
+/* ─── Step 6: Exam Date ─── */
+function StepExamDate({ selected, onSelect, onContinue }: {
+  selected: string | null;
+  onSelect: (d: string | null) => void;
+  onContinue: () => void;
+}) {
+  const isUnknown = selected === 'unknown';
+  const dateValue = selected && selected !== 'unknown' ? selected : '';
+
+  // Minimum date = today
+  const today = new Date().toISOString().split('T')[0];
+
+  return (
+    <div className="space-y-6">
+      <div className="text-center space-y-2" style={{ animation: 'slideUp 0.5s ease-out' }}>
+        <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-[#0055A4]/10 mx-auto">
+          <CalendarDays className="h-8 w-8 text-[#0055A4]" />
+        </div>
+        <h2 className="text-2xl md:text-3xl font-bold text-[#1A1A1A]">Quelle est la date de votre examen ?</h2>
+        <p className="text-[#1A1A1A]/60">Cela nous aide à planifier vos révisions</p>
+      </div>
+
+      {/* Date picker */}
+      <div style={{ animation: 'slideUp 0.5s ease-out 0.1s both' }}>
+        <label htmlFor="exam-date" className="text-sm font-medium text-[#1A1A1A] mb-2 block">Date de l'examen</label>
+        <input
+          id="exam-date"
+          type="date"
+          min={today}
+          value={dateValue}
+          disabled={isUnknown}
+          onChange={(e) => onSelect(e.target.value || null)}
+          className={`w-full h-12 rounded-xl border-2 px-4 text-base transition-all ${
+            dateValue && !isUnknown
+              ? 'border-[#0055A4] bg-[#0055A4]/5'
+              : 'border-[#E6EAF0] bg-[#F5F7FA]'
+          } ${isUnknown ? 'opacity-40 cursor-not-allowed' : 'hover:border-[#0055A4]/30 focus:border-[#0055A4] focus:bg-white focus:shadow-[0_0_0_3px_rgba(0,85,164,0.1)]'}`}
+        />
+      </div>
+
+      {/* "I don't know" option */}
+      <button
+        onClick={() => onSelect(isUnknown ? null : 'unknown')}
+        className={`w-full flex items-center gap-4 rounded-2xl border-2 p-4 text-left transition-all duration-200 hover:-translate-y-0.5 ${
+          isUnknown
+            ? 'border-[#0055A4] bg-[#0055A4]/5 shadow-[0_4px_16px_rgba(0,85,164,0.15)]'
+            : 'border-[#E6EAF0] bg-white hover:border-[#0055A4]/30'
+        }`}
+        style={{ animation: 'slideUp 0.5s ease-out 0.2s both' }}
+      >
+        <div className={`flex-shrink-0 h-10 w-10 rounded-xl flex items-center justify-center transition-colors ${
+          isUnknown ? 'bg-[#0055A4] text-white' : 'bg-[#0055A4]/10 text-[#0055A4]'
+        }`}>
+          <HelpCircle className="h-5 w-5" />
+        </div>
+        <div className="flex-1">
+          <p className="font-semibold text-[#1A1A1A]">Je ne sais pas encore</p>
+          <p className="text-sm text-[#1A1A1A]/60">Pas encore inscrit ou date non confirmée</p>
+        </div>
+        {isUnknown && (
+          <div className="flex-shrink-0 h-6 w-6 rounded-full bg-[#0055A4] flex items-center justify-center">
+            <Check className="h-3.5 w-3.5 text-white" />
+          </div>
+        )}
+      </button>
+
+      <Button
+        size="lg"
+        className="w-full gap-2 h-14 text-base font-bold bg-[#0055A4] hover:bg-[#1B6ED6] rounded-xl transition-all hover:scale-[1.01]"
+        disabled={!selected}
+        onClick={onContinue}
+        style={{ animation: 'slideUp 0.5s ease-out 0.3s both' }}
+      >
+        Continuer
+        <ArrowRight className="h-5 w-5" />
+      </Button>
+    </div>
+  );
+}
+
+/* ─── Step 7: Completion ─── */
 
 function StepComplete({ data, onStart, saving }: {
   data: OnboardingData;

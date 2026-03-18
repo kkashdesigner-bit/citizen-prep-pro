@@ -24,11 +24,11 @@ export default function ClassDetailPage() {
     const [gateTier, setGateTier] = useState<'standard' | 'premium'>('standard');
     const [gateLabel, setGateLabel] = useState('');
 
-    // ── Tier enforcement: free users blocked from class 4+ ──
+    // ── Tier enforcement: free users blocked from class 11+ ──
     useEffect(() => {
         if (tierLoading || !classData) return;
 
-        if (tier === 'free' && classData.class_number > 3) {
+        if (tier === 'free' && classData.class_number > 10) {
             setGateLabel(`Classe ${classData.class_number} — ${classData.title}`);
             setGateTier('standard');
             setShowGate(true);

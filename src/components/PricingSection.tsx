@@ -20,12 +20,14 @@ export default function PricingSection() {
 
   const features = [
     { key: 'pricing.feat.browse', free: true, standard: true, premium: true },
-    { key: 'pricing.feat.demo', free: true, standard: true, premium: true },
+    { key: 'pricing.feat.exam1', free: true, standard: true, premium: true },
+    { key: 'pricing.feat.classes10', free: true, standard: true, premium: true },
     { key: 'pricing.feat.unlimited', free: false, standard: true, premium: true },
     { key: 'pricing.feat.training', free: false, standard: true, premium: true },
     { key: 'pricing.feat.progress', free: false, standard: true, premium: true },
     { key: 'pricing.feat.lessons', free: false, standard: true, premium: true },
     { key: 'pricing.feat.path', free: false, standard: true, premium: true },
+    { key: 'pricing.feat.jumpClasses', free: false, standard: false, premium: true },
     { key: 'pricing.feat.translation', free: false, standard: false, premium: true },
     { key: 'pricing.feat.catTraining', free: false, standard: false, premium: true },
   ];

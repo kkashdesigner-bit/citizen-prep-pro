@@ -14,6 +14,7 @@ export interface UserProfile {
   goal_type: GoalType | null;
   level: LevelType | null;
   timeline: TimelineType | null;
+  exam_date: string | null;
   onboarding_completed: boolean;
 }
 

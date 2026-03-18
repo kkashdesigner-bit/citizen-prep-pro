@@ -84,7 +84,7 @@ export default function ParcoursPage() {
         if (isUnlocked(clazz)) {
             navigate(`/parcours/classe/${clazz.id}`);
         } else {
-            // Free user hitting the wall at class 4 or above
+            // Free user hitting the wall at class 11 or above, or sequential lock
             setGateTier(tier === 'free' ? 'standard' : 'premium');
             setShowGate(true);
         }

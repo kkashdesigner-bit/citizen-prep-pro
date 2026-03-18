@@ -30,9 +30,9 @@ const TIER_CONFIG = {
 } as const;
 
 const TIER_FEATURES: Record<string, string[]> = {
-    free: ['3 classes gratuites', 'Mode Démo (20 questions)', 'Quiz limité'],
-    standard: ['Parcours complet 1→100', 'Toutes les catégories', 'Examens blancs illimités'],
-    premium: ['Tout dans Standard', 'Traduction instantanée', 'Catégories ciblées', 'Support prioritaire'],
+    free: ['10 classes gratuites', '1 examen complet/jour', 'Progression séquentielle'],
+    standard: ['Parcours complet 1→100', 'Examens blancs illimités', 'Mode entraînement'],
+    premium: ['Tout dans Standard', 'Accès libre entre classes', 'Traduction instantanée', 'Catégories ciblées'],
 };
 
 export default function SettingsPage() {

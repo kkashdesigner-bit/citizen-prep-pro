@@ -26,7 +26,7 @@ const plans = [
     periodLabel: '',
     popular: false,
     colorClass: 'blue',
-    features: ['Histoire basique', '2 Quiz/jour'],
+    features: ['10 classes gratuites', '1 examen/jour'],
   },
   {
     id: 'standard' as const,
@@ -50,7 +50,7 @@ const plans = [
     periodLabel: 'Facturé mensuellement',
     popular: false,
     colorClass: 'red',
-    features: ['Tout dans Standard', 'Traduction', 'Catégories ciblées'],
+    features: ['Tout dans Standard', 'Accès libre entre classes', 'Traduction', 'Catégories ciblées'],
   },
 ];
 

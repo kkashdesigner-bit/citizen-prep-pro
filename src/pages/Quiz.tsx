@@ -93,15 +93,12 @@ export default function Quiz() {
     // Premium users never see gates
     if (isPremium) return;
 
-    if (isFreeUser && rawMode !== 'demo' && !classIdParam) {
-      if (rawMode === 'exam' && examsTakenToday < 2) {
-        // Free users get 2 demo exams
-      } else {
-        setGateTier('standard');
-        setShowGate(true);
-      }
-    } else if (isFreeUser && rawMode === 'demo' && examsTakenToday >= 2) {
-      // Block free users after 2 demo exams
+    if (isFreeUser && rawMode !== 'demo' && rawMode !== 'exam' && !classIdParam) {
+      // Free users can't access study/training modes
+      setGateTier('standard');
+      setShowGate(true);
+    } else if (isFreeUser && (rawMode === 'exam' || rawMode === 'demo') && examsTakenToday >= 1) {
+      // Free users get 1 full exam per day
       setGateTier('standard');
       setShowGate(true);
     } else if (isStandardOrAbove && !isPremium && rawMode === 'study') {
@@ -110,8 +107,8 @@ export default function Quiz() {
     }
   }, [tierLoading, isFreeUser, isStandardOrAbove, isPremium, rawMode, examsTakenToday]);
 
-  // Free users are downgraded to demo mode (wait for tier to load to avoid 20→40 flicker)
-  const effectiveMode: QuizMode = tierLoading ? rawMode : (isFreeUser ? 'demo' : rawMode);
+  // Free users can take full exams (1/day) — no longer forced to demo mode
+  const effectiveMode: QuizMode = rawMode;
 
   // Retry counter — incrementing forces useQuiz to re-fetch fresh questions
   const [retryKey, setRetryKey] = useState(0);
