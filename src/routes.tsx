@@ -1,6 +1,7 @@
 import { lazy, Suspense } from "react";
 import { Outlet, Navigate } from "react-router-dom";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { ClientOnlyRoute } from "@/components/ClientOnlyRoute";
 import { HelmetProvider } from "react-helmet-async";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -72,9 +73,9 @@ export const routes = [
       { path: "exams", element: <ProtectedRoute><ExamsPage /></ProtectedRoute> },
       { path: "study-material", element: <ProtectedRoute><StudyMaterialPage /></ProtectedRoute> },
       { path: "analytics", element: <ProtectedRoute><AnalyticsPage /></ProtectedRoute> },
-      { path: "quiz", element: <Quiz /> },
-      { path: "results", element: <Results /> },
-      { path: "success", element: <SubscriptionSuccess /> },
+      { path: "quiz", element: <ClientOnlyRoute><Quiz /></ClientOnlyRoute> },
+      { path: "results", element: <ClientOnlyRoute><Results /></ClientOnlyRoute> },
+      { path: "success", element: <ClientOnlyRoute><SubscriptionSuccess /></ClientOnlyRoute> },
       { path: "dashboard", element: <Navigate to="/learn" replace /> },
       { path: "about", element: <About /> },
       { path: "parcours", element: <ProtectedRoute><ParcoursPage /></ProtectedRoute> },
