@@ -253,8 +253,9 @@ export default function Quiz() {
 
     // Persist exam result to profiles.exam_history for dashboard stats
     if (user) {
-      supabase.from('profiles').select('exam_history').eq('id', user.id).maybeSingle()
-        .then(({ data: profileData }) => {
+      (async () => {
+        try {
+          const { data: profileData } = await supabase.from('profiles').select('exam_history').eq('id', user.id).maybeSingle();
           const existingHistory: any[] = Array.isArray(profileData?.exam_history) ? profileData.exam_history : [];
           const newEntry = {
             date: new Date().toISOString(),
@@ -263,11 +264,13 @@ export default function Quiz() {
             passed: score / questions.length >= 0.8,
             category: categoryParam || undefined,
           };
-          return supabase.from('profiles').update({
+          await supabase.from('profiles').update({
             exam_history: [...existingHistory, newEntry],
           }).eq('id', user.id);
-        })
-        .catch(console.error);
+        } catch (e) {
+          console.error(e);
+        }
+      })();
     }
 
     // If this is a parcours class quiz, update class progress and store classId

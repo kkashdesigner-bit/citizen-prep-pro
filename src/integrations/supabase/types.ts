@@ -249,6 +249,8 @@ export type Database = {
           id: string
           is_subscribed: boolean
           preferred_language: string | null
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
           subscription_tier: string | null
           total_questions_seen: number
           updated_at: string
@@ -265,6 +267,8 @@ export type Database = {
           id: string
           is_subscribed?: boolean
           preferred_language?: string | null
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
           subscription_tier?: string | null
           total_questions_seen?: number
           updated_at?: string
@@ -281,6 +285,8 @@ export type Database = {
           id?: string
           is_subscribed?: boolean
           preferred_language?: string | null
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
           subscription_tier?: string | null
           total_questions_seen?: number
           updated_at?: string
