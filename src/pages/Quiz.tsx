@@ -269,6 +269,8 @@ export default function Quiz() {
             totalQuestions: questions.length,
             passed: score / questions.length >= 0.8,
             category: categoryParam || undefined,
+            mode: rawMode,
+            classId: classIdParam || undefined,
           };
           await supabase.from('profiles').update({
             exam_history: [...existingHistory, newEntry],

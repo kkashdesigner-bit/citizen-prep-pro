@@ -12,6 +12,8 @@ export interface ExamHistoryEntry {
     totalQuestions: number;
     passed: boolean;
     category?: string;
+    mode?: string;
+    classId?: string;
 }
 
 interface UserAnswer {
@@ -188,9 +190,22 @@ function buildRecentActivity(examHistory: ExamHistoryEntry[], answers: UserAnswe
         const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
         const relativeDate = date === today ? 'Aujourd\'hui' : date === yesterday ? 'Hier' : date;
 
+        let title = 'Examen Blanc';
+        if (exam.category) {
+            title = `Quiz : ${CATEGORY_LABELS[exam.category]?.label || exam.category}`;
+        } else if (exam.mode === 'demo') {
+            title = 'Examen Démo';
+        } else if (exam.classId) {
+            title = 'Quiz Parcours';
+        } else if (exam.mode === 'training') {
+            title = 'Entraînement';
+        } else if (exam.mode === 'study') {
+            title = 'Étude';
+        }
+
         items.push({
             type: 'exam',
-            title: exam.category ? `Quiz : ${CATEGORY_LABELS[exam.category]?.label || exam.category}` : 'Examen Blanc',
+            title,
             date: relativeDate,
             detail: `${exam.score}/${exam.totalQuestions} — ${Math.round((exam.score / exam.totalQuestions) * 100)}%`,
         });

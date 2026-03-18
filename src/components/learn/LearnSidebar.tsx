@@ -2,6 +2,7 @@ import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useUserProfile } from '@/hooks/useUserProfile';
 import { useSubscription } from '@/hooks/useSubscription';
+import { useDashboardStats } from '@/hooks/useDashboardStats';
 import Logo from '@/components/Logo';
 import {
   LayoutDashboard, FileText, Route,
@@ -40,9 +41,19 @@ export default function LearnSidebar() {
     return location.pathname === item.path;
   };
 
+  const { domainMastery, successRate } = useDashboardStats();
+
   const displayName = profile?.first_name || user?.email?.split('@')[0] || 'Étudiant';
   const tierLabels: Record<string, string> = { free: 'Gratuit', standard: 'Standard', premium: 'Premium' };
-  const progressPercent = 35;
+
+  // Combined progression: average of category mastery (weighted 70%) + exam pass rate (30%)
+  const activeDomains = domainMastery.filter(d => d.total > 0);
+  const avgMastery = activeDomains.length > 0
+    ? Math.round(activeDomains.reduce((sum, d) => sum + d.percent, 0) / activeDomains.length)
+    : 0;
+  const progressPercent = activeDomains.length > 0
+    ? Math.round(avgMastery * 0.7 + successRate * 0.3)
+    : 0;
 
   return (
     <>
