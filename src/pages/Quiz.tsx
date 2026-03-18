@@ -43,10 +43,16 @@ export default function Quiz() {
   const classIdParam = searchParams.get('classId');
   const isRetake = searchParams.get('retake') === '1';
   const [retakeIds] = useState<number[] | null>(() => {
-    if (!isRetake) return null;
-    const stored = sessionStorage.getItem('retakeQuestionIds');
-    sessionStorage.removeItem('retakeQuestionIds');
-    try { return stored ? (JSON.parse(stored) as number[]) : null; } catch { return null; }
+    if (!isRetake || typeof window === 'undefined') return null;
+
+    const stored = window.sessionStorage.getItem('retakeQuestionIds');
+    window.sessionStorage.removeItem('retakeQuestionIds');
+
+    try {
+      return stored ? (JSON.parse(stored) as number[]) : null;
+    } catch {
+      return null;
+    }
   });
 
   const navigate = useNavigate();
