@@ -68,7 +68,7 @@ export default function ExamNavigator({
 
                         return (
                             <button
-                                key={qId}
+                                key={idx}
                                 onClick={() => onJump(idx)}
                                 className={`relative h-10 w-full rounded-lg border-2 text-xs font-bold transition-all duration-200 hover:scale-105 ${bgClass}`}
                             >

@@ -312,7 +312,13 @@ export function useQuiz({
           });
 
           const results = await Promise.all(fetches);
-          allQuestions = shuffle(results.flat());
+          // Deduplicate by question ID (can occur across category overlaps)
+          const seen = new Set<number>();
+          allQuestions = shuffle(results.flat()).filter(q => {
+            if (seen.has(q.id)) return false;
+            seen.add(q.id);
+            return true;
+          });
         } else {
           // Single category or unfiltered fetch (training, study)
           const fetchSize = Math.min(resolvedLimit * 4, 500);
