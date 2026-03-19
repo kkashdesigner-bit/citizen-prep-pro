@@ -1,7 +1,7 @@
 import { lazy, Suspense } from "react";
 import { Outlet, Navigate } from "react-router-dom";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
-import { ClientOnlyRoute } from "@/components/ClientOnlyRoute";
+
 import { HelmetProvider } from "react-helmet-async";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -43,24 +43,16 @@ const ThemeDroitsDevoits = lazy(() => import("./pages/seo/ThemeDroitsDevoits"));
 const queryClient = new QueryClient();
 
 function Root() {
-  const isServer = import.meta.env.SSR;
-
   return (
     <HelmetProvider>
       <QueryClientProvider client={queryClient}>
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
           <LanguageProvider>
             <TooltipProvider>
-              {!isServer && (
-                <>
-                  <Toaster />
-                  <Sonner />
-                </>
-              )}
+              <Toaster />
+              <Sonner />
               <Suspense fallback={null}>
-                <ClientOnlyRoute>
-                  <Outlet />
-                </ClientOnlyRoute>
+                <Outlet />
               </Suspense>
             </TooltipProvider>
           </LanguageProvider>
