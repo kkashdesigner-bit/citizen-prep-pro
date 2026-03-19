@@ -43,24 +43,16 @@ const ThemeDroitsDevoits = lazy(() => import("./pages/seo/ThemeDroitsDevoits"));
 const queryClient = new QueryClient();
 
 function Root() {
-  const isServer = import.meta.env.SSR;
-
   return (
     <HelmetProvider>
       <QueryClientProvider client={queryClient}>
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
           <LanguageProvider>
             <TooltipProvider>
-              {!isServer && (
-                <>
-                  <Toaster />
-                  <Sonner />
-                </>
-              )}
+              <Toaster />
+              <Sonner />
               <Suspense fallback={null}>
-                <ClientOnlyRoute>
-                  <Outlet />
-                </ClientOnlyRoute>
+                <Outlet />
               </Suspense>
             </TooltipProvider>
           </LanguageProvider>
