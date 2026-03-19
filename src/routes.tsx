@@ -1,7 +1,7 @@
 import { lazy, Suspense } from "react";
 import { Outlet, Navigate } from "react-router-dom";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
-import { ClientOnlyRoute } from "@/components/ClientOnlyRoute";
+
 import { HelmetProvider } from "react-helmet-async";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
