@@ -24,6 +24,8 @@ const Onboarding = lazy(() => import("./pages/Onboarding"));
 const SubscriptionSuccess = lazy(() => import("./pages/SubscriptionSuccess"));
 const ParcoursPage = lazy(() => import("./pages/ParcoursPage"));
 const ClassDetailPage = lazy(() => import("./pages/ClassDetailPage"));
+const CoursesPage = lazy(() => import("./pages/CoursesPage"));
+const CoursPreview = lazy(() => import("./pages/seo/CoursPreview"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const SettingsPage = lazy(() => import("./pages/SettingsPage"));
 const Contact = lazy(() => import("./pages/Contact"));
