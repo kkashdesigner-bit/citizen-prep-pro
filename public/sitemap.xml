@@ -106,6 +106,53 @@
     <lastmod>2026-03-16</lastmod>
   </url>
 
+  <!-- Course Preview Pages (Module 1 — Les Valeurs Fondamentales) -->
+  <url>
+    <loc>https://gocivique.fr/cours/examen-civique-symboles-republique</loc>
+    <lastmod>2026-03-19</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://gocivique.fr/cours/examen-civique-devise-francaise</loc>
+    <lastmod>2026-03-19</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://gocivique.fr/cours/examen-civique-ddhc-1789</loc>
+    <lastmod>2026-03-19</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://gocivique.fr/cours/examen-civique-laicite-neutralite</loc>
+    <lastmod>2026-03-19</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://gocivique.fr/cours/examen-civique-republique-indivisible</loc>
+    <lastmod>2026-03-19</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://gocivique.fr/cours/examen-civique-democratie-souverainete</loc>
+    <lastmod>2026-03-19</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://gocivique.fr/cours/examen-civique-etat-de-droit</loc>
+    <lastmod>2026-03-19</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://gocivique.fr/cours/examen-civique-egalite-femmes-hommes</loc>
+    <lastmod>2026-03-19</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://gocivique.fr/cours/examen-civique-non-discrimination</loc>
+    <lastmod>2026-03-19</lastmod>
+    <priority>0.8</priority>
+  </url>
+
   <!-- Privacy Policy -->
   <url>
     <loc>https://gocivique.fr/privacy</loc>

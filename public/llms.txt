@@ -42,6 +42,18 @@
 - Standard (6,99 €/mois) : examens illimités, mode entraînement
 - Premium (10,99 €/trimestre) : tout inclus + traductions et outils avancés
 
+## Cours de préparation (Module 1 — Les Valeurs Fondamentales)
+
+- Les Symboles de la République : https://gocivique.fr/cours/examen-civique-symboles-republique
+- La Devise Française : https://gocivique.fr/cours/examen-civique-devise-francaise
+- La DDHC de 1789 : https://gocivique.fr/cours/examen-civique-ddhc-1789
+- La Laïcité et la Neutralité : https://gocivique.fr/cours/examen-civique-laicite-neutralite
+- La République Indivisible : https://gocivique.fr/cours/examen-civique-republique-indivisible
+- Démocratie et Souveraineté : https://gocivique.fr/cours/examen-civique-democratie-souverainete
+- L'État de Droit : https://gocivique.fr/cours/examen-civique-etat-de-droit
+- Égalité Femmes-Hommes : https://gocivique.fr/cours/examen-civique-egalite-femmes-hommes
+- Non-Discrimination : https://gocivique.fr/cours/examen-civique-non-discrimination
+
 ## Liens
 
 - Site : https://gocivique.fr

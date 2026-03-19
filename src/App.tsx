@@ -23,6 +23,7 @@ const SubscriptionSuccess = lazy(() => import("./pages/SubscriptionSuccess"));
 const ParcoursPage = lazy(() => import("./pages/ParcoursPage"));
 const ClassDetailPage = lazy(() => import("./pages/ClassDetailPage"));
 const CoursesPage = lazy(() => import("./pages/CoursesPage"));
+const CoursPreview = lazy(() => import("./pages/seo/CoursPreview"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const SettingsPage = lazy(() => import("./pages/SettingsPage"));
 const Contact = lazy(() => import('./pages/Contact'));
@@ -64,6 +65,7 @@ const App = () => (
                   <Route path="/terms" element={<Terms />} />
                   <Route path="/privacy" element={<Privacy />} />
                   <Route path="/refunds" element={<Refunds />} />
+                  <Route path="/cours/:slug" element={<CoursPreview />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </Suspense>

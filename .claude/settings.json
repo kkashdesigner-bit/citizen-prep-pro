@@ -4,7 +4,9 @@
       "Bash(npm install vite-react-ssg --save)",
       "mcp__supabase__list_edge_functions",
       "mcp__supabase__deploy_edge_function",
-      "mcp__supabase__get_logs"
+      "mcp__supabase__get_logs",
+      "Bash(python3 -c \":*)",
+      "Bash(PYTHONIOENCODING=utf-8 python3 -c \":*)"
     ]
   }
 }
