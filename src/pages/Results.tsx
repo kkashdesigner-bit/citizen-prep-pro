@@ -309,7 +309,7 @@ export default function Results() {
                 </div>
             </main>
 
-            <SubscriptionGate open={showGate} onOpenChange={setShowGate} requiredTier="premium" />
+            {showGate && <SubscriptionGate open={showGate} onOpenChange={setShowGate} requiredTier="premium" />}
         </div>
     );
 }

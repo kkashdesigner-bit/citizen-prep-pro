@@ -10,6 +10,13 @@
         "--project-ref",
         "jblhxpzqbbarpqstcbvq"
       ]
+    },
+    "magic": {
+      "command": "npx",
+      "args": ["-y", "@21st-dev/magic@latest"],
+      "env": {
+        "API_KEY": "9da0775a5d4e7c07dd1c55b2d0051a227959a5d39d3f2d5724c418089ced9f4b"
+      }
     }
   }
 }

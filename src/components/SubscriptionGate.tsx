@@ -272,22 +272,6 @@ export default function SubscriptionGate({ open, onOpenChange, requiredTier = 's
           </div>
         </div>
 
-        {/* Scoped animations */}
-        <style>{`
-          @keyframes subFloat {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-          }
-          @keyframes subPulse {
-            0%, 100% { opacity: 0.7; }
-            50% { opacity: 1; }
-          }
-          @keyframes subBtnPulse {
-            0% { box-shadow: 0 0 0 0 rgba(0,85,164,0.5); }
-            70% { box-shadow: 0 0 0 10px rgba(0,85,164,0); }
-            100% { box-shadow: 0 0 0 0 rgba(0,85,164,0); }
-          }
-        `}</style>
       </DialogContent>
     </Dialog>
   );

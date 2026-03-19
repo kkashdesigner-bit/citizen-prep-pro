@@ -22,6 +22,7 @@ const Onboarding = lazy(() => import("./pages/Onboarding"));
 const SubscriptionSuccess = lazy(() => import("./pages/SubscriptionSuccess"));
 const ParcoursPage = lazy(() => import("./pages/ParcoursPage"));
 const ClassDetailPage = lazy(() => import("./pages/ClassDetailPage"));
+const CoursesPage = lazy(() => import("./pages/CoursesPage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const SettingsPage = lazy(() => import("./pages/SettingsPage"));
 const Contact = lazy(() => import('./pages/Contact'));
@@ -56,6 +57,7 @@ const App = () => (
                   <Route path="/dashboard" element={<Navigate to="/learn" replace />} />
                   <Route path="/about" element={<About />} />
                   <Route path="/parcours" element={<ParcoursPage />} />
+                  <Route path="/courses" element={<CoursesPage />} />
                   <Route path="/parcours/classe/:id" element={<ClassDetailPage />} />
                   <Route path="/settings" element={<SettingsPage />} />
                   <Route path="/contact" element={<Contact />} />

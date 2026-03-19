@@ -113,6 +113,16 @@ export default function Quiz() {
   // Retry counter — incrementing forces useQuiz to re-fetch fresh questions
   const [retryKey, setRetryKey] = useState(0);
 
+  // Clear stale quiz sessionStorage on mount to prevent mode leakage between sessions
+  useEffect(() => {
+    if (!isRetake) {
+      sessionStorage.removeItem('quizResults');
+      sessionStorage.removeItem('quizErrors');
+      sessionStorage.removeItem('quizQuestionIds');
+      sessionStorage.removeItem('quizMode');
+    }
+  }, []);
+
   const { questions, loading, saveAnswer } = useQuiz({
     category: categoryParam || undefined,
     level: levelParam,
@@ -301,7 +311,7 @@ export default function Quiz() {
 
     // Navigate to the results page
     navigate('/results');
-  }, [answers, questions, startTime, classIdParam, updateClassProgress, user]);
+  }, [answers, questions, startTime, classIdParam, updateClassProgress, user, rawMode, navigate]);
 
   const handleRetry = useCallback(() => {
     sessionStorage.removeItem('quizResults');
