@@ -1,0 +1,64 @@
+# GoCivique — Préparation à l'Examen Civique Français
+
+> GoCivique est une plateforme d'entraînement à l'examen civique obligatoire pour les candidats
+> à la naturalisation française, à la carte de séjour pluriannuelle (CSP), et à la carte de résident (CR).
+> Disponible en français, anglais, arabe, espagnol, turc et portugais.
+
+## Fonctionnalités
+
+- Quiz interactifs : entraînement par thème sur le contenu officiel du programme civique
+- Examens blancs chronométrés : simulation des conditions réelles (40 questions, 45 minutes)
+- Parcours d'apprentissage structuré : 100 classes couvrant les 5 thèmes officiels
+- Suivi de progression : tableau de bord personnalisé avec historique des résultats
+- Multilingue : interface disponible en FR, EN, AR, ES, TR, PT
+
+## Format de l'examen officiel (2026)
+
+- 40 questions à choix multiples (4 options par question)
+- Durée : 45 minutes
+- Seuil de réussite : 32/40 (80%)
+- Administré par : Le Français des Affaires / CCI Paris Île-de-France
+- Résultat valable sans limite de durée
+- Obligatoire depuis le 1er janvier 2026 pour CSP, CR et naturalisation
+
+## 5 Thèmes couverts
+
+1. Principes et valeurs de la République (11 questions)
+2. Institutions et système politique (6 questions)
+3. Droits et devoirs (11 questions)
+4. Histoire, géographie et culture (8 questions)
+5. Vivre en société (4 questions)
+
+## Populations concernées
+
+- Naturalisation française (première demande)
+- Carte de séjour pluriannuelle (CSP) — première demande
+- Carte de résident (CR) — première demande
+- Non obligatoire pour la carte de séjour temporaire d'un an
+
+## Tarifs
+
+- Essai gratuit : 1 examen démo
+- Standard (6,99 €/mois) : examens illimités, mode entraînement
+- Premium (10,99 €/trimestre) : tout inclus + traductions et outils avancés
+
+## Cours de préparation (Module 1 — Les Valeurs Fondamentales)
+
+- Les Symboles de la République : https://gocivique.fr/cours/examen-civique-symboles-republique
+- La Devise Française : https://gocivique.fr/cours/examen-civique-devise-francaise
+- La DDHC de 1789 : https://gocivique.fr/cours/examen-civique-ddhc-1789
+- La Laïcité et la Neutralité : https://gocivique.fr/cours/examen-civique-laicite-neutralite
+- La République Indivisible : https://gocivique.fr/cours/examen-civique-republique-indivisible
+- Démocratie et Souveraineté : https://gocivique.fr/cours/examen-civique-democratie-souverainete
+- L'État de Droit : https://gocivique.fr/cours/examen-civique-etat-de-droit
+- Égalité Femmes-Hommes : https://gocivique.fr/cours/examen-civique-egalite-femmes-hommes
+- Non-Discrimination : https://gocivique.fr/cours/examen-civique-non-discrimination
+
+## Liens
+
+- Site : https://gocivique.fr
+- Quiz : https://gocivique.fr/quiz
+- Examens blancs : https://gocivique.fr/exams
+- Matériel d'étude : https://gocivique.fr/study-material
+- À propos de l'examen : https://gocivique.fr/about
+- Contact : https://gocivique.fr/contact

@@ -1,7 +1,6 @@
 import MarketingHeader from '@/components/MarketingHeader';
 import HeroSection from '@/components/HeroSection';
-import LandingCategoryTabs from '@/components/LandingCategoryTabs';
-import LandingPassProbability from '@/components/LandingPassProbability';
+import LandingFeatures from '@/components/LandingFeatures';
 import PricingSection from '@/components/PricingSection';
 import Footer from '@/components/Footer';
 import SEOHead from '@/components/SEOHead';
@@ -88,8 +87,7 @@ export default function Index() {
       <MarketingHeader />
       <main className="pt-16">
         <HeroSection />
-        <LandingCategoryTabs />
-        <LandingPassProbability />
+        <LandingFeatures />
         <PricingSection />
       </main>
       <Footer />

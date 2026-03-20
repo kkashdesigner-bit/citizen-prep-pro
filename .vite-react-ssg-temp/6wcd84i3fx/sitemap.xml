@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+
+  <!-- Homepage -->
+  <url>
+    <loc>https://gocivique.fr/</loc>
+    <lastmod>2026-03-16</lastmod>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://gocivique.fr/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://gocivique.fr/?lang=en" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://gocivique.fr/?lang=ar" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://gocivique.fr/?lang=es" />
+    <xhtml:link rel="alternate" hreflang="tr" href="https://gocivique.fr/?lang=tr" />
+    <xhtml:link rel="alternate" hreflang="pt" href="https://gocivique.fr/?lang=pt" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://gocivique.fr/" />
+  </url>
+
+  <!-- Quiz (Practice) -->
+  <url>
+    <loc>https://gocivique.fr/quiz</loc>
+    <lastmod>2026-03-08</lastmod>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://gocivique.fr/quiz" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://gocivique.fr/quiz?lang=en" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://gocivique.fr/quiz?lang=ar" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://gocivique.fr/quiz?lang=es" />
+    <xhtml:link rel="alternate" hreflang="tr" href="https://gocivique.fr/quiz?lang=tr" />
+    <xhtml:link rel="alternate" hreflang="pt" href="https://gocivique.fr/quiz?lang=pt" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://gocivique.fr/quiz" />
+  </url>
+
+  <!-- Mock Exams -->
+  <url>
+    <loc>https://gocivique.fr/exams</loc>
+    <lastmod>2026-03-08</lastmod>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://gocivique.fr/exams" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://gocivique.fr/exams?lang=en" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://gocivique.fr/exams?lang=ar" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://gocivique.fr/exams?lang=es" />
+    <xhtml:link rel="alternate" hreflang="tr" href="https://gocivique.fr/exams?lang=tr" />
+    <xhtml:link rel="alternate" hreflang="pt" href="https://gocivique.fr/exams?lang=pt" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://gocivique.fr/exams" />
+  </url>
+
+  <!-- Study Material -->
+  <url>
+    <loc>https://gocivique.fr/study-material</loc>
+    <lastmod>2026-03-08</lastmod>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://gocivique.fr/study-material" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://gocivique.fr/study-material?lang=en" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://gocivique.fr/study-material?lang=ar" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://gocivique.fr/study-material?lang=es" />
+    <xhtml:link rel="alternate" hreflang="tr" href="https://gocivique.fr/study-material?lang=tr" />
+    <xhtml:link rel="alternate" hreflang="pt" href="https://gocivique.fr/study-material?lang=pt" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://gocivique.fr/study-material" />
+  </url>
+
+  <!-- About -->
+  <url>
+    <loc>https://gocivique.fr/about</loc>
+    <lastmod>2026-03-08</lastmod>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://gocivique.fr/about" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://gocivique.fr/about?lang=en" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://gocivique.fr/about?lang=ar" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://gocivique.fr/about?lang=es" />
+    <xhtml:link rel="alternate" hreflang="tr" href="https://gocivique.fr/about?lang=tr" />
+    <xhtml:link rel="alternate" hreflang="pt" href="https://gocivique.fr/about?lang=pt" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://gocivique.fr/about" />
+  </url>
+
+  <!-- Contact -->
+  <url>
+    <loc>https://gocivique.fr/contact</loc>
+    <lastmod>2026-02-01</lastmod>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://gocivique.fr/contact" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://gocivique.fr/contact?lang=en" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://gocivique.fr/contact?lang=ar" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://gocivique.fr/contact?lang=es" />
+    <xhtml:link rel="alternate" hreflang="tr" href="https://gocivique.fr/contact?lang=tr" />
+    <xhtml:link rel="alternate" hreflang="pt" href="https://gocivique.fr/contact?lang=pt" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://gocivique.fr/contact" />
+  </url>
+
+  <!-- SEO Content Pages (French-only content — no hreflang variants to avoid duplicate signals) -->
+  <url>
+    <loc>https://gocivique.fr/guide-examen-civique</loc>
+    <lastmod>2026-03-16</lastmod>
+  </url>
+
+  <url>
+    <loc>https://gocivique.fr/themes/valeurs-republique</loc>
+    <lastmod>2026-03-16</lastmod>
+  </url>
+
+  <url>
+    <loc>https://gocivique.fr/themes/histoire-geographie</loc>
+    <lastmod>2026-03-16</lastmod>
+  </url>
+
+  <url>
+    <loc>https://gocivique.fr/themes/institutions</loc>
+    <lastmod>2026-03-16</lastmod>
+  </url>
+
+  <url>
+    <loc>https://gocivique.fr/themes/droits-devoirs</loc>
+    <lastmod>2026-03-16</lastmod>
+  </url>
+
+  <!-- Course Preview Pages (Module 1 — Les Valeurs Fondamentales) -->
+  <url>
+    <loc>https://gocivique.fr/cours/examen-civique-symboles-republique</loc>
+    <lastmod>2026-03-19</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://gocivique.fr/cours/examen-civique-devise-francaise</loc>
+    <lastmod>2026-03-19</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://gocivique.fr/cours/examen-civique-ddhc-1789</loc>
+    <lastmod>2026-03-19</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://gocivique.fr/cours/examen-civique-laicite-neutralite</loc>
+    <lastmod>2026-03-19</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://gocivique.fr/cours/examen-civique-republique-indivisible</loc>
+    <lastmod>2026-03-19</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://gocivique.fr/cours/examen-civique-democratie-souverainete</loc>
+    <lastmod>2026-03-19</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://gocivique.fr/cours/examen-civique-etat-de-droit</loc>
+    <lastmod>2026-03-19</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://gocivique.fr/cours/examen-civique-egalite-femmes-hommes</loc>
+    <lastmod>2026-03-19</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://gocivique.fr/cours/examen-civique-non-discrimination</loc>
+    <lastmod>2026-03-19</lastmod>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Privacy Policy -->
+  <url>
+    <loc>https://gocivique.fr/privacy</loc>
+    <lastmod>2026-01-01</lastmod>
+  </url>
+
+  <!-- Terms of Service -->
+  <url>
+    <loc>https://gocivique.fr/terms</loc>
+    <lastmod>2026-01-01</lastmod>
+  </url>
+
+  <!-- Refund Policy -->
+  <url>
+    <loc>https://gocivique.fr/refunds</loc>
+    <lastmod>2026-01-01</lastmod>
+  </url>
+
+</urlset>
