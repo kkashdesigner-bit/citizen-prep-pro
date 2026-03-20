@@ -1,5 +1,6 @@
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { CircleCheckBig } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
 import AnimatedSection from '@/components/AnimatedSection';
 
 /* ──────────────────────────────────────────────
@@ -167,6 +168,9 @@ const SECTIONS = [
    Main component
    ────────────────────────────────────────────── */
 export default function LandingFeatures() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
   return (
     <>
       {SECTIONS.map((section, i) => {
@@ -200,12 +204,12 @@ export default function LandingFeatures() {
                   {/* CTA for the first section */}
                   {i === 0 && (
                     <div className="mt-8">
-                      <Link
-                        to="/quiz"
+                      <button
+                        onClick={() => navigate(user ? '/learn' : '/auth')}
                         className="inline-flex items-center gap-2 rounded-xl bg-[#0055A4] px-6 py-3 text-sm font-bold text-white shadow-lg shadow-[#0055A4]/25 transition-all hover:bg-[#1B6ED6] hover:-translate-y-0.5"
                       >
                         Commencer gratuitement
-                      </Link>
+                      </button>
                     </div>
                   )}
                 </AnimatedSection>
