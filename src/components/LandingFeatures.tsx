@@ -1,20 +1,39 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CircleCheckBig } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import AnimatedSection from '@/components/AnimatedSection';
 
 /* ──────────────────────────────────────────────
-   Static mockup: exam-mode selector card
-   (Section 2 — built inline, not a screenshot)
+   Interactive exam-mode selector card
    ────────────────────────────────────────────── */
 function ExamModeMockup() {
+  const [selected, setSelected] = useState<'exam' | 'training'>('exam');
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const handleStart = () => {
+    if (!user) {
+      navigate('/auth');
+      return;
+    }
+    if (selected === 'exam') {
+      navigate('/quiz?mode=exam&limit=40');
+    } else {
+      navigate('/quiz?mode=training&limit=40');
+    }
+  };
+
   return (
     <div className="w-full max-w-md mx-auto rounded-2xl border border-border bg-card shadow-xl p-6 space-y-5">
       <h3 className="text-lg font-bold text-foreground">Mode d'examen</h3>
 
-      {/* Option 1 — selected */}
-      <label className="flex items-start gap-3 cursor-default">
-        <span className="mt-0.5 h-5 w-5 rounded-full border-[5px] border-[#0055A4] bg-white shrink-0" />
+      {/* Option 1 — Mode Examen */}
+      <label
+        className="flex items-start gap-3 cursor-pointer"
+        onClick={() => setSelected('exam')}
+      >
+        <span className={`mt-0.5 h-5 w-5 rounded-full shrink-0 transition-all ${selected === 'exam' ? 'border-[5px] border-[#0055A4] bg-white' : 'border-2 border-border bg-white'}`} />
         <div>
           <p className="font-semibold text-foreground text-sm">Mode Examen</p>
           <p className="text-xs text-muted-foreground">
@@ -23,9 +42,12 @@ function ExamModeMockup() {
         </div>
       </label>
 
-      {/* Option 2 — unselected */}
-      <label className="flex items-start gap-3 cursor-default">
-        <span className="mt-0.5 h-5 w-5 rounded-full border-2 border-border bg-white shrink-0" />
+      {/* Option 2 — Mode Préparation */}
+      <label
+        className="flex items-start gap-3 cursor-pointer"
+        onClick={() => setSelected('training')}
+      >
+        <span className={`mt-0.5 h-5 w-5 rounded-full shrink-0 transition-all ${selected === 'training' ? 'border-[5px] border-[#0055A4] bg-white' : 'border-2 border-border bg-white'}`} />
         <div>
           <p className="font-semibold text-foreground text-sm">Mode Préparation</p>
           <p className="text-xs text-muted-foreground">
@@ -36,12 +58,18 @@ function ExamModeMockup() {
 
       {/* Buttons */}
       <div className="flex gap-3 pt-2">
-        <div className="flex-1 rounded-xl border border-border py-2.5 text-center text-sm font-medium text-muted-foreground">
+        <button
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          className="flex-1 rounded-xl border border-border py-2.5 text-center text-sm font-medium text-muted-foreground hover:bg-secondary/50 transition-colors cursor-pointer"
+        >
           Annuler
-        </div>
-        <div className="flex-1 rounded-xl bg-[#0055A4] py-2.5 text-center text-sm font-bold text-white">
+        </button>
+        <button
+          onClick={handleStart}
+          className="flex-1 rounded-xl bg-[#0055A4] py-2.5 text-center text-sm font-bold text-white hover:bg-[#1B6ED6] transition-colors cursor-pointer"
+        >
           Commencer l'examen
-        </div>
+        </button>
       </div>
     </div>
   );
