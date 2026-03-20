@@ -99,11 +99,28 @@ function extractTerms(md: string): { term: string; context: string }[] {
   const results: { term: string; context: string }[] = [];
   const seen = new Set<string>();
   for (const line of md.split('\n')) {
+    // Skip headings — they don't make good flashcard context
+    if (line.trimStart().startsWith('#')) continue;
+    const cleanLine = line.replace(/[#_]/g, '').trim();
+    if (!cleanLine) continue;
+
     for (const m of line.matchAll(/\*\*([^*]+)\*\*/g)) {
       const t = m[1].trim();
       if (t.length > 1 && t.length < 80 && !seen.has(t.toLowerCase())) {
         seen.add(t.toLowerCase());
-        results.push({ term: t, context: line.replace(/[#*_]/g, '').trim() });
+
+        // Build context: remove the current term's bold markers so it reads as a definition
+        // Replace **current term** with "___" so the card back is a fill-in-the-blank
+        const ctx = cleanLine
+          .replace(new RegExp(t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i'), '___')
+          .replace(/\*\*/g, '')
+          .trim();
+
+        // Truncate long contexts
+        const maxLen = 150;
+        const context = ctx.length > maxLen ? ctx.slice(0, maxLen).replace(/\s\S*$/, '') + '…' : ctx;
+
+        results.push({ term: t, context });
       }
     }
   }
@@ -265,6 +282,38 @@ function InlineQuiz({ questions }: { questions: Question[] }) {
 function Flashcards({ terms }: { terms: { term: string; context: string }[] }) {
   const [idx, setIdx] = useState(0);
   const [flipped, setFlipped] = useState(false);
+  const [exitX, setExitX] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragX, setDragX] = useState(0);
+
+  const SWIPE_THRESHOLD = 80;
+
+  const goNext = useCallback(() => {
+    if (idx < terms.length - 1) {
+      setFlipped(false);
+      setIdx(i => i + 1);
+    }
+  }, [idx, terms.length]);
+
+  const goPrev = useCallback(() => {
+    if (idx > 0) {
+      setFlipped(false);
+      setIdx(i => i - 1);
+    }
+  }, [idx]);
+
+  const handleDragEnd = useCallback((_: any, info: { offset: { x: number }; velocity: { x: number } }) => {
+    const swipePower = Math.abs(info.offset.x) * Math.abs(info.velocity.x);
+    if (info.offset.x > SWIPE_THRESHOLD || swipePower > 8000) {
+      setExitX(300);
+      goPrev();
+    } else if (info.offset.x < -SWIPE_THRESHOLD || swipePower > 8000) {
+      setExitX(-300);
+      goNext();
+    }
+    setIsDragging(false);
+    setDragX(0);
+  }, [goNext, goPrev]);
 
   if (!terms.length) return (
     <div className="text-center py-16">
@@ -274,36 +323,184 @@ function Flashcards({ terms }: { terms: { term: string; context: string }[] }) {
     </div>
   );
 
+  const progress = ((idx + 1) / terms.length) * 100;
+
   return (
-    <div className="flex flex-col items-center py-6">
-      <span className="text-xs font-bold text-slate-400 mb-6">{idx + 1} / {terms.length}</span>
-      <div className="relative w-full max-w-md cursor-pointer" style={{ perspective: 1000 }} onClick={() => setFlipped(f => !f)}>
-        <motion.div animate={{ rotateY: flipped ? 180 : 0 }} transition={{ duration: 0.5, type: 'spring', stiffness: 200, damping: 25 }} style={{ transformStyle: 'preserve-3d' }} className="relative w-full h-56">
-          <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#0055A4] to-[#1B6ED6] shadow-xl flex items-center justify-center p-8 text-center" style={{ backfaceVisibility: 'hidden' }}>
-            <div>
-              <span className="text-xs font-bold uppercase tracking-wider text-white/50 mb-3 block">Terme clé</span>
-              <h3 className="text-2xl font-bold text-white">{terms[idx].term}</h3>
-              <span className="text-xs text-white/40 mt-4 block">Cliquez pour retourner</span>
-            </div>
-          </div>
-          <div className="absolute inset-0 rounded-2xl bg-white border-2 border-slate-200 shadow-xl flex items-center justify-center p-8 text-center" style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}>
-            <div>
-              <span className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 block">Contexte</span>
-              <p className="text-sm text-slate-700 leading-relaxed">{terms[idx].context}</p>
-            </div>
-          </div>
-        </motion.div>
+    <div className="flex flex-col items-center py-6 select-none">
+      {/* Progress bar */}
+      <div className="w-full max-w-md mb-6">
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-xs font-semibold text-slate-500">Carte {idx + 1} sur {terms.length}</span>
+          <span className="text-xs font-bold text-[#0055A4]">{Math.round(progress)}%</span>
+        </div>
+        <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
+          <motion.div
+            className="h-full bg-gradient-to-r from-[#0055A4] to-[#1B6ED6] rounded-full"
+            initial={{ width: 0 }}
+            animate={{ width: `${progress}%` }}
+            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+          />
+        </div>
       </div>
-      <div className="flex items-center gap-4 mt-8">
-        <button onClick={() => { setFlipped(false); setIdx(i => Math.max(0, i - 1)); }} disabled={idx === 0}
-          className="h-10 w-10 rounded-full border border-slate-200 flex items-center justify-center text-slate-400 hover:text-[#0055A4] hover:border-[#0055A4]/30 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
+
+      {/* Card stack area */}
+      <div className="relative w-full max-w-md h-64" style={{ perspective: 1200 }}>
+        {/* Background cards (stack effect) */}
+        {idx + 2 < terms.length && (
+          <motion.div
+            className="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#0055A4]/20 to-[#1B6ED6]/20 border border-slate-200/50"
+            style={{ top: 12, scale: 0.92 }}
+          />
+        )}
+        {idx + 1 < terms.length && (
+          <motion.div
+            className="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#0055A4]/40 to-[#1B6ED6]/40 border border-slate-200/60"
+            style={{ top: 6, scale: 0.96 }}
+          />
+        )}
+
+        {/* Active card */}
+        <AnimatePresence mode="popLayout">
+          <motion.div
+            key={idx}
+            initial={{ scale: 0.9, opacity: 0, x: exitX > 0 ? -100 : 100 }}
+            animate={{
+              scale: 1, opacity: 1, x: 0,
+              rotate: isDragging ? dragX * 0.05 : 0,
+            }}
+            exit={{ x: exitX, opacity: 0, rotate: exitX * 0.05, scale: 0.9 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 28 }}
+            drag="x"
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={0.6}
+            onDrag={(_, info) => { setIsDragging(true); setDragX(info.offset.x); }}
+            onDragEnd={handleDragEnd}
+            className="absolute inset-0 cursor-grab active:cursor-grabbing"
+            style={{ zIndex: 10 }}
+            onClick={() => { if (!isDragging) setFlipped(f => !f); }}
+          >
+            {/* Swipe direction indicator */}
+            <motion.div
+              className="absolute inset-0 rounded-2xl pointer-events-none z-20"
+              animate={{
+                boxShadow: dragX > 40
+                  ? 'inset 0 0 40px rgba(16, 185, 129, 0.3)'
+                  : dragX < -40
+                    ? 'inset 0 0 40px rgba(239, 68, 68, 0.3)'
+                    : 'inset 0 0 0px transparent',
+              }}
+              transition={{ duration: 0.15 }}
+            />
+
+            {/* Flip container */}
+            <motion.div
+              animate={{ rotateY: flipped ? 180 : 0 }}
+              transition={{ type: 'spring', stiffness: 250, damping: 25 }}
+              style={{ transformStyle: 'preserve-3d' }}
+              className="relative w-full h-full"
+            >
+              {/* Front face */}
+              <div
+                className="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#0055A4] via-[#1764ac] to-[#1B6ED6] shadow-[0_8px_32px_rgba(0,85,164,0.25)] flex items-center justify-center p-8 text-center"
+                style={{ backfaceVisibility: 'hidden' }}
+              >
+                <div>
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ type: 'spring', stiffness: 400, damping: 15, delay: 0.15 }}
+                    className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center mx-auto mb-4"
+                  >
+                    <BrainCircuit className="w-5 h-5 text-white/70" />
+                  </motion.div>
+                  <motion.h3
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1 }}
+                    className="text-2xl font-bold text-white leading-tight"
+                  >
+                    {terms[idx].term}
+                  </motion.h3>
+                  <motion.p
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.3 }}
+                    className="text-xs text-white/40 mt-5 flex items-center justify-center gap-1.5"
+                  >
+                    <RotateCcw className="w-3 h-3" /> Touchez pour retourner
+                  </motion.p>
+                </div>
+              </div>
+
+              {/* Back face */}
+              <div
+                className="absolute inset-0 rounded-2xl bg-white border border-slate-200 shadow-[0_8px_32px_rgba(0,0,0,0.08)] flex items-center justify-center p-8 text-center"
+                style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
+              >
+                <div className="max-w-[85%]">
+                  <div className="w-10 h-10 rounded-full bg-[#0055A4]/5 flex items-center justify-center mx-auto mb-4">
+                    <BookOpen className="w-5 h-5 text-[#0055A4]/60" />
+                  </div>
+                  <p className="text-sm text-slate-700 leading-relaxed font-medium">{terms[idx].context}</p>
+                  <p className="text-xs text-slate-300 mt-5 flex items-center justify-center gap-1.5">
+                    <RotateCcw className="w-3 h-3" /> Touchez pour retourner
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
+      {/* Navigation controls */}
+      <div className="flex items-center gap-3 mt-8">
+        <motion.button
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          onClick={goPrev}
+          disabled={idx === 0}
+          className="h-11 w-11 rounded-full border-2 border-slate-200 flex items-center justify-center text-slate-400 hover:text-[#0055A4] hover:border-[#0055A4]/40 hover:bg-blue-50/50 disabled:opacity-20 disabled:cursor-not-allowed transition-colors"
+        >
           <ChevronLeft className="w-5 h-5" />
-        </button>
-        <button onClick={() => { setFlipped(false); setIdx(i => Math.min(terms.length - 1, i + 1)); }} disabled={idx === terms.length - 1}
-          className="h-10 w-10 rounded-full border border-slate-200 flex items-center justify-center text-slate-400 hover:text-[#0055A4] hover:border-[#0055A4]/30 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
+        </motion.button>
+
+        {/* Dots */}
+        <div className="flex items-center gap-1.5 px-2">
+          {terms.map((_, i) => (
+            <motion.button
+              key={i}
+              onClick={() => { setFlipped(false); setIdx(i); }}
+              className="rounded-full transition-colors"
+              animate={{
+                width: i === idx ? 20 : 6,
+                height: 6,
+                backgroundColor: i === idx ? '#0055A4' : i < idx ? '#93c5fd' : '#e2e8f0',
+              }}
+              transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+            />
+          ))}
+        </div>
+
+        <motion.button
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          onClick={goNext}
+          disabled={idx === terms.length - 1}
+          className="h-11 w-11 rounded-full border-2 border-slate-200 flex items-center justify-center text-slate-400 hover:text-[#0055A4] hover:border-[#0055A4]/40 hover:bg-blue-50/50 disabled:opacity-20 disabled:cursor-not-allowed transition-colors"
+        >
           <ChevronRight className="w-5 h-5" />
-        </button>
+        </motion.button>
       </div>
+
+      {/* Swipe hint */}
+      <motion.p
+        initial={{ opacity: 0, y: 5 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.5 }}
+        className="text-xs text-slate-300 mt-4"
+      >
+        Glissez pour naviguer
+      </motion.p>
     </div>
   );
 }
