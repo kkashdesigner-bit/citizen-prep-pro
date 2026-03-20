@@ -97,22 +97,66 @@ serve(async (req) => {
     }
 
     // ─── customer.subscription.updated ───
-    // Fires when a subscription is modified (e.g., cancel_at_period_end set)
+    // Fires when a subscription is modified (plan change, cancel_at_period_end, etc.)
     if (event.type === 'customer.subscription.updated') {
       const subscription = event.data.object as Stripe.Subscription;
       const customerId = subscription.customer as string;
 
-      // Find user by stripe_customer_id
-      const { data: profile } = await supabase
+      // Find user by stripe_customer_id, fall back to email lookup
+      let profile: { id: string } | null = null;
+      const { data: profileByCustomer } = await supabase
         .from('profiles')
         .select('id')
         .eq('stripe_customer_id', customerId)
         .maybeSingle();
+      profile = profileByCustomer;
+
+      if (!profile) {
+        // Fallback: look up customer email in Stripe, then find user by email
+        try {
+          const customer = await stripe.customers.retrieve(customerId);
+          if (customer && !customer.deleted && customer.email) {
+            const { data: profileByEmail } = await supabase
+              .from('profiles')
+              .select('id')
+              .eq('email', customer.email)
+              .maybeSingle();
+            if (profileByEmail) {
+              profile = profileByEmail;
+              // Backfill stripe_customer_id
+              await supabase.from('profiles').update({ stripe_customer_id: customerId }).eq('id', profile.id);
+            }
+          }
+        } catch (e) {
+          console.error('Email fallback lookup failed:', e);
+        }
+      }
 
       if (profile) {
+        const standardProductId = Deno.env.get('STRIPE_STANDARD_PRODUCT_ID');
+        const premiumProductId = Deno.env.get('STRIPE_PREMIUM_PRODUCT_ID');
+        const productId = subscription.items.data[0]?.price?.product as string;
+
+        let tier = 'standard';
+        if (premiumProductId && productId === premiumProductId) {
+          tier = 'premium';
+        } else if (standardProductId && productId === standardProductId) {
+          tier = 'standard';
+        }
+
+        // Update tier + subscription ID in case of plan change
+        await supabase
+          .from('profiles')
+          .update({
+            subscription_tier: tier,
+            stripe_subscription_id: subscription.id,
+          })
+          .eq('id', profile.id);
+
         if (subscription.cancel_at_period_end) {
-          console.log(`User ${profile.id} subscription marked for cancellation`);
-          // Subscription still active until period end — no DB change needed yet
+          console.log(`User ${profile.id} subscription (${tier}) marked for cancellation`);
+        } else {
+          console.log(`User ${profile.id} subscription updated to ${tier}`);
         }
       }
     }
@@ -123,12 +167,33 @@ serve(async (req) => {
       const subscription = event.data.object as Stripe.Subscription;
       const customerId = subscription.customer as string;
 
-      // Find user by stripe_customer_id
-      const { data: profile } = await supabase
+      // Find user by stripe_customer_id, fall back to email lookup
+      let profile: { id: string } | null = null;
+      const { data: profileByCustomer } = await supabase
         .from('profiles')
         .select('id')
         .eq('stripe_customer_id', customerId)
         .maybeSingle();
+      profile = profileByCustomer;
+
+      if (!profile) {
+        try {
+          const customer = await stripe.customers.retrieve(customerId);
+          if (customer && !customer.deleted && customer.email) {
+            const { data: profileByEmail } = await supabase
+              .from('profiles')
+              .select('id')
+              .eq('email', customer.email)
+              .maybeSingle();
+            if (profileByEmail) {
+              profile = profileByEmail;
+              await supabase.from('profiles').update({ stripe_customer_id: customerId }).eq('id', profile.id);
+            }
+          }
+        } catch (e) {
+          console.error('Email fallback lookup failed:', e);
+        }
+      }
 
       if (profile) {
         await supabase
@@ -150,11 +215,33 @@ serve(async (req) => {
       const invoice = event.data.object as Stripe.Invoice;
       const customerId = invoice.customer as string;
 
-      const { data: profile } = await supabase
+      // Find user by stripe_customer_id, fall back to email lookup
+      let profile: { id: string } | null = null;
+      const { data: profileByCustomer } = await supabase
         .from('profiles')
         .select('id')
         .eq('stripe_customer_id', customerId)
         .maybeSingle();
+      profile = profileByCustomer;
+
+      if (!profile) {
+        try {
+          const customer = await stripe.customers.retrieve(customerId);
+          if (customer && !customer.deleted && customer.email) {
+            const { data: profileByEmail } = await supabase
+              .from('profiles')
+              .select('id')
+              .eq('email', customer.email)
+              .maybeSingle();
+            if (profileByEmail) {
+              profile = profileByEmail;
+              await supabase.from('profiles').update({ stripe_customer_id: customerId }).eq('id', profile.id);
+            }
+          }
+        } catch (e) {
+          console.error('Email fallback lookup failed:', e);
+        }
+      }
 
       if (profile) {
         console.log(`Payment failed for user ${profile.id}`);

@@ -77,10 +77,29 @@ serve(async (req) => {
         customerId = customer.id;
       }
 
-      // Save customer ID to profile
+      // Look up active subscription for this customer and save both IDs
+      let subscriptionId: string | null = null;
+      try {
+        const subs = await stripe.subscriptions.list({
+          customer: customerId,
+          status: 'active',
+          limit: 1,
+        });
+        if (subs.data.length > 0) {
+          subscriptionId = subs.data[0].id;
+        }
+      } catch (e) {
+        console.error('Failed to look up subscriptions:', e);
+      }
+
+      // Save customer ID (and subscription ID if found) to profile
+      const updateData: Record<string, string | null> = { stripe_customer_id: customerId };
+      if (subscriptionId) {
+        updateData.stripe_subscription_id = subscriptionId;
+      }
       await supabase
         .from('profiles')
-        .update({ stripe_customer_id: customerId })
+        .update(updateData)
         .eq('id', user.id);
     }
 
