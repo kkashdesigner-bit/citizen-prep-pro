@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useUserProfile } from '@/hooks/useUserProfile';
 import { useSubscription } from '@/hooks/useSubscription';
+import { useStreak } from '@/hooks/useStreak';
 import {
     LogOut, User, BarChart3, Settings, Crown, Sparkles, ChevronLeft, Flame,
 } from 'lucide-react';
@@ -24,6 +25,7 @@ export default function AppHeader({ pageTitle, pageIcon, backTo = '/learn', back
     const { user, displayName, avatarUrl, signOut } = useAuth();
     const { profile: userProfile } = useUserProfile();
     const { tier, isPremium, isStandardOrAbove } = useSubscription();
+    const streak = useStreak();
     const navigate = useNavigate();
 
     const handleSignOut = async () => {
@@ -80,7 +82,7 @@ export default function AppHeader({ pageTitle, pageIcon, backTo = '/learn', back
                     {/* Streak counter */}
                     <div className="hidden sm:flex items-center gap-1 text-sm font-bold text-orange-500">
                         <Flame className="h-4 w-4 fill-orange-500" />
-                        <span>0</span>
+                        <span>{streak}</span>
                     </div>
 
                     {/* Tier badge */}
