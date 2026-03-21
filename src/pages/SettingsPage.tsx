@@ -133,24 +133,30 @@ export default function SettingsPage() {
         setBillingLoading(true);
         try {
             const { data: { session } } = await supabase.auth.getSession();
+            if (!session?.access_token) {
+                toast.error('Session expirée — veuillez vous reconnecter');
+                return;
+            }
             const resp = await fetch(
                 `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/stripe-portal`,
                 {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        Authorization: `Bearer ${session?.access_token}`,
+                        Authorization: `Bearer ${session.access_token}`,
                     },
                     body: JSON.stringify({ action: 'portal', return_url: window.location.href }),
                 }
             );
             const data = await resp.json();
+            console.error('[Billing Portal]', resp.status, data);
             if (data.url) {
                 window.location.href = data.url;
             } else {
                 toast.error(data.error || 'Impossible d\'ouvrir le portail de facturation');
             }
-        } catch {
+        } catch (err) {
+            console.error('[Billing Portal] Network error:', err);
             toast.error('Erreur de connexion au service de paiement');
         } finally {
             setBillingLoading(false);
@@ -161,25 +167,31 @@ export default function SettingsPage() {
         setCancelling(true);
         try {
             const { data: { session } } = await supabase.auth.getSession();
+            if (!session?.access_token) {
+                toast.error('Session expirée — veuillez vous reconnecter');
+                return;
+            }
             const resp = await fetch(
                 `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/stripe-portal`,
                 {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        Authorization: `Bearer ${session?.access_token}`,
+                        Authorization: `Bearer ${session.access_token}`,
                     },
                     body: JSON.stringify({ action: 'cancel' }),
                 }
             );
             const data = await resp.json();
+            console.error('[Cancel Sub]', resp.status, data);
             if (data.success) {
                 toast.success('Votre abonnement sera annulé à la fin de la période de facturation');
                 setShowCancelDialog(false);
             } else {
                 toast.error(data.error || 'Erreur lors de l\'annulation');
             }
-        } catch {
+        } catch (err) {
+            console.error('[Cancel Sub] Network error:', err);
             toast.error('Erreur de connexion');
         } finally {
             setCancelling(false);

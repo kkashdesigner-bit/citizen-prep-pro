@@ -105,42 +105,62 @@ serve(async (req) => {
 
     // ─── Portal: open Stripe Billing Portal ───
     if (action === 'portal') {
-      const session = await stripe.billingPortal.sessions.create({
-        customer: customerId,
-        return_url: return_url || `${req.headers.get('origin')}/settings`,
-      });
+      try {
+        const session = await stripe.billingPortal.sessions.create({
+          customer: customerId,
+          return_url: return_url || `${req.headers.get('origin')}/settings`,
+        });
 
-      return new Response(
-        JSON.stringify({ url: session.url }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+        return new Response(
+          JSON.stringify({ url: session.url }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      } catch (portalErr: any) {
+        console.error('Billing portal session error:', portalErr);
+        const msg = String(portalErr?.message || portalErr);
+        const userMsg = msg.includes('configuration')
+          ? 'Le portail Stripe n\'est pas configuré. Activez-le dans Stripe Dashboard → Settings → Billing → Customer portal.'
+          : `Erreur portail : ${msg}`;
+        return new Response(
+          JSON.stringify({ error: userMsg }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
     }
 
     // ─── Cancel: cancel the active subscription ───
     if (action === 'cancel') {
-      // Find active subscriptions for this customer
-      const subscriptions = await stripe.subscriptions.list({
-        customer: customerId,
-        status: 'active',
-        limit: 1,
-      });
+      try {
+        // Find active subscriptions for this customer
+        const subscriptions = await stripe.subscriptions.list({
+          customer: customerId,
+          status: 'active',
+          limit: 1,
+        });
 
-      if (subscriptions.data.length === 0) {
+        if (subscriptions.data.length === 0) {
+          return new Response(
+            JSON.stringify({ error: 'Aucun abonnement actif trouvé' }),
+            { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+
+        // Cancel at end of billing period
+        await stripe.subscriptions.update(subscriptions.data[0].id, {
+          cancel_at_period_end: true,
+        });
+
         return new Response(
-          JSON.stringify({ error: 'Aucun abonnement actif trouvé' }),
-          { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          JSON.stringify({ success: true }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      } catch (cancelErr: any) {
+        console.error('Cancel subscription error:', cancelErr);
+        return new Response(
+          JSON.stringify({ error: `Erreur annulation : ${cancelErr?.message || String(cancelErr)}` }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
-
-      // Cancel at end of billing period
-      await stripe.subscriptions.update(subscriptions.data[0].id, {
-        cancel_at_period_end: true,
-      });
-
-      return new Response(
-        JSON.stringify({ success: true }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
     }
 
     return new Response(
