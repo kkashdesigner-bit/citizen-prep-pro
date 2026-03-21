@@ -25,6 +25,7 @@ const MOBILE_NAV = [
   { key: 'dashboard', icon: LayoutDashboard, path: '/learn', label: 'Accueil' },
   { key: 'exams', icon: FileText, path: '/exams', label: 'Examens' },
   { key: 'path', icon: Route, path: '/parcours', label: 'Parcours' },
+  { key: 'courses', icon: GraduationCap, path: '/courses', label: 'Cours' },
   { key: 'profile', icon: UserCircle, path: '/settings', label: 'Profil' },
 ];
 
