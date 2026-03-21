@@ -63,7 +63,7 @@ export default function ProgressPage() {
 
   if (authLoading || loading || tierLoading) {
     return (
-      <div className="flex min-h-screen bg-background">
+      <div className="flex min-h-screen bg-background overflow-x-hidden">
         <LearnSidebar />
         <div className="flex-1 md:ml-64 flex items-center justify-center">
           <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent" />
@@ -116,9 +116,9 @@ export default function ProgressPage() {
   }));
 
   return (
-    <div className="flex min-h-screen bg-background">
+    <div className="flex min-h-screen bg-background overflow-x-hidden">
       <LearnSidebar />
-      <main className="flex-1 md:ml-64 pb-20 md:pb-8">
+      <main className="flex-1 md:ml-64 pb-20 md:pb-8 overflow-x-hidden">
         <div className="mx-auto max-w-4xl px-4 md:px-8 py-6 md:py-8">
           <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-6">Votre progression</h1>
 

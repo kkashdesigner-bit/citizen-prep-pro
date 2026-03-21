@@ -708,7 +708,7 @@ export default function CoursesPage() {
   const getCat = (n: number) => CATEGORIES.find(c => 'range' in c && n >= c.range![0] && n <= c.range![1]);
 
   if (isLoading) return (
-    <div className="flex min-h-screen bg-[var(--dash-bg)]">
+    <div className="flex min-h-screen bg-[var(--dash-bg)] overflow-x-hidden">
       <LearnSidebar />
       <div className="flex-1 md:ml-[260px] flex items-center justify-center">
         <div className="h-12 w-12 animate-spin rounded-full border-4 border-[#0055A4] border-t-transparent" />
@@ -717,14 +717,14 @@ export default function CoursesPage() {
   );
 
   return (
-    <div className="flex min-h-screen bg-[var(--dash-bg)]">
+    <div className="flex min-h-screen bg-[var(--dash-bg)] overflow-x-hidden">
       <SEOHead noindex />
       <LearnSidebar />
 
-      <div className="flex-1 md:ml-[260px] flex flex-col">
+      <div className="flex-1 md:ml-[260px] flex flex-col overflow-x-hidden">
         <AppHeader pageTitle="Cours" pageIcon={<GraduationCap className="w-5 h-5" />} backTo="/learn" backLabel="Tableau de bord" />
 
-        <main className="flex-1 pb-24 md:pb-8">
+        <main className="flex-1 pb-24 md:pb-8 overflow-x-hidden">
           <div className="mx-auto max-w-6xl px-4 md:px-8 py-6 md:py-8">
 
             {selectedClassId ? (

@@ -84,17 +84,17 @@ export default function ExamsPage() {
   };
 
   return (
-    <div className="flex min-h-screen bg-[var(--dash-bg)]">
+    <div className="flex min-h-screen bg-[var(--dash-bg)] overflow-x-hidden">
       <SEOHead titleKey="seo.examsTitle" descriptionKey="seo.examsDesc" path="/exams" />
       <LearnSidebar />
-      <div className="flex-1 md:ml-[260px] flex flex-col">
+      <div className="flex-1 md:ml-[260px] flex flex-col overflow-x-hidden">
         <AppHeader
           pageTitle="Examens Blancs"
           pageIcon={<GraduationCap className="h-5 w-5" />}
           backTo="/learn"
           backLabel="Tableau de bord"
         />
-        <main className="flex-1 pb-20 md:pb-8">
+        <main className="flex-1 pb-20 md:pb-8 overflow-x-hidden">
           <motion.div
             initial="hidden" animate="visible" variants={stagger}
             className="mx-auto max-w-3xl px-4 md:px-8 py-6 md:py-8 space-y-5"

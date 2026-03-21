@@ -7,9 +7,9 @@ export default function StudyMaterialPage() {
   const navigate = useNavigate();
 
   return (
-    <div className="flex min-h-screen bg-background">
+    <div className="flex min-h-screen bg-background overflow-x-hidden">
       <LearnSidebar />
-      <main className="flex-1 md:ml-64 pb-20 md:pb-8">
+      <main className="flex-1 md:ml-64 pb-20 md:pb-8 overflow-x-hidden">
         <div className="mx-auto max-w-3xl px-4 md:px-8 py-6 md:py-8">
           <Button variant="ghost" size="sm" className="mb-4 gap-2" onClick={() => navigate('/learn')}>
             <ArrowLeft className="h-4 w-4" /> Tableau de bord
