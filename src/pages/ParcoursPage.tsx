@@ -116,7 +116,11 @@ export default function ParcoursPage() {
 
     return (
         <div className="flex min-h-screen bg-white overflow-x-hidden">
-            <SEOHead noindex />
+            <SEOHead
+                title="Parcours 100 Niveaux — Examen Civique 2026 | GoCivique"
+                description="Progressez niveau par niveau dans votre pr&#233;paration &#224; l'examen civique. 100 niveaux couvrant les 5 th&#232;mes officiels : valeurs, institutions, histoire, droits et vie en soci&#233;t&#233;."
+                path="/parcours"
+            />
             <LearnSidebar />
 
             <main className="flex-1 md:ml-[260px] pb-24 md:pb-8 flex justify-center overflow-x-hidden">

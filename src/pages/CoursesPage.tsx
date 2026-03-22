@@ -718,7 +718,11 @@ export default function CoursesPage() {
 
   return (
     <div className="flex min-h-screen bg-[var(--dash-bg)] overflow-x-hidden">
-      <SEOHead noindex />
+      <SEOHead
+        title="Cours de Pr&#233;paration &#224; l'Examen Civique 2026 | GoCivique"
+        description="Cours structur&#233;s par th&#232;me pour pr&#233;parer l'examen civique de naturalisation fran&#231;aise. Flashcards interactives sur les valeurs, symboles, institutions et droits de la R&#233;publique."
+        path="/courses"
+      />
       <LearnSidebar />
 
       <div className="flex-1 md:ml-[260px] flex flex-col overflow-x-hidden">

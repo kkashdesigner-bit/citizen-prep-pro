@@ -45,6 +45,13 @@
   [headers.values]
     Cache-Control = "public, max-age=3600"
 
+# www → non-www redirect (301 permanent)
+[[redirects]]
+  from = "https://www.gocivique.fr/*"
+  to = "https://gocivique.fr/:splat"
+  status = 301
+  force = true
+
 # SPA fallback — must be LAST
 [[redirects]]
   from = "/*"
