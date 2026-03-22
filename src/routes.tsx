@@ -39,6 +39,8 @@ const ThemeValeurs = lazy(() => import("./pages/seo/ThemeValeurs"));
 const ThemeHistoire = lazy(() => import("./pages/seo/ThemeHistoire"));
 const ThemeInstitutions = lazy(() => import("./pages/seo/ThemeInstitutions"));
 const ThemeDroitsDevoits = lazy(() => import("./pages/seo/ThemeDroitsDevoits"));
+const TestBlanc = lazy(() => import("./pages/seo/TestBlanc"));
+const Naturalisation = lazy(() => import("./pages/seo/Naturalisation"));
 
 const queryClient = new QueryClient();
 
@@ -95,6 +97,8 @@ export const routes = [
       { path: "themes/histoire-geographie", element: <ThemeHistoire /> },
       { path: "themes/institutions", element: <ThemeInstitutions /> },
       { path: "themes/droits-devoirs", element: <ThemeDroitsDevoits /> },
+      { path: "test-blanc-examen-civique", element: <TestBlanc /> },
+      { path: "naturalisation-examen-civique", element: <Naturalisation /> },
       { path: "*", element: <NotFound /> },
     ],
   },
