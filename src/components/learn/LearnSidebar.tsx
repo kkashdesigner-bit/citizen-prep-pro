@@ -8,6 +8,7 @@ import {
   LayoutDashboard, FileText, Route, GraduationCap,
   Settings, HelpCircle, UserCircle, LogOut
 } from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { supabase } from '@/integrations/supabase/client';
 import { motion } from 'framer-motion';
 
@@ -32,7 +33,7 @@ const MOBILE_NAV = [
 export default function LearnSidebar() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, avatarUrl } = useAuth();
   const { profile } = useUserProfile();
   const { tier } = useSubscription();
 
@@ -46,6 +47,7 @@ export default function LearnSidebar() {
   const { domainMastery, successRate } = useDashboardStats();
 
   const displayName = profile?.first_name || user?.email?.split('@')[0] || 'Étudiant';
+  const finalAvatarUrl = profile?.avatar_url || avatarUrl;
   const tierLabels: Record<string, string> = { free: 'Gratuit', standard: 'Standard', premium: 'Premium' };
 
   // Combined progression: average of category mastery (weighted 70%) + exam pass rate (30%)
@@ -114,9 +116,12 @@ export default function LearnSidebar() {
         >
           <div className="bg-[var(--dash-surface)] rounded-2xl p-4 flex flex-col gap-3 border border-[var(--dash-card-border)] shadow-sm">
             <div className="flex items-center gap-3">
-              <div className="h-9 w-9 rounded-full bg-[#0055A4] text-white flex items-center justify-center font-bold text-sm">
-                {displayName.charAt(0).toUpperCase()}
-              </div>
+              <Avatar className="h-9 w-9">
+                {finalAvatarUrl && <AvatarImage src={finalAvatarUrl} alt={displayName} />}
+                <AvatarFallback className="bg-[#0055A4] text-white font-bold text-sm">
+                  {displayName.charAt(0).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
               <div className="flex flex-col text-left">
                 <span className="text-sm font-bold text-[var(--dash-text)] truncate max-w-[120px]">{displayName}</span>
                 <span className="text-[10px] font-semibold text-[#EF4135] uppercase tracking-wider">{tierLabels[tier] || 'Gratuit'}</span>
