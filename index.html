@@ -2,6 +2,10 @@
 <html lang="fr">
 
 <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Fonts (deferred load) -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet"
@@ -21,76 +25,334 @@
     <link rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" />
   </noscript>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Preload critical assets -->
   <link rel="preload" href="/gocivique-logo-examen-civique.png" as="image" type="image/png" fetchpriority="high" />
-  <link rel="preconnect" href="https://i.pravatar.cc" />
-  <title>Examen Civique 2026  Préparation,  Examens Blancs. GoCivique</title>
-  <meta name="description" content="Préparez l&#39;examen civique obligatoire 2026 pour la naturalisation française, la carte de séjour pluriannuelle ou la carte de résident. Essai gratuit !">
+
+  <!-- Primary Meta Tags -->
+  <title>Examen Civique 2026 — Pr&#233;paration et Examens Blancs | GoCivique</title>
+  <meta name="description" content="Pr&#233;parez l'examen civique obligatoire 2026 pour la naturalisation fran&#231;aise, la carte de s&#233;jour pluriannuelle ou la carte de r&#233;sident. +300 questions, examens blancs chronom&#233;tr&#233;s, cours structur&#233;s. Essai gratuit !" />
   <meta name="author" content="GoCivique" />
-
-
-
-  <meta property="og:type" content="website" />
-  <meta property="og:image" content="https://storage.googleapis.com/gpt-engineer-file-uploads/bjCgeL0Q4cWbujtztoGFfTxZZyh1/social-images/social-1772670439357-GoCivique-Examen-Nationalite.webp">
-  <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="630" />
-  <meta property="og:image:alt" content="GoCivique — Préparation Examen Civique Naturalisation Française 2026" />
-
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:site" content="@GoCivique" />
-  <meta name="twitter:image" content="https://storage.googleapis.com/gpt-engineer-file-uploads/bjCgeL0Q4cWbujtztoGFfTxZZyh1/social-images/social-1772670439357-GoCivique-Examen-Nationalite.webp">
-  <meta name="twitter:image:alt" content="GoCivique — Préparation Examen Civique Naturalisation Française 2026" />
-  <!-- ✅ SEO Improvements for GoCivique -->
-
-  <link rel="canonical" href="https://gocivique.fr/" />
-
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
-
-  <!-- hreflang managed per-route by SEOHead component -->
-
-  <!-- Open Graph -->
-  <meta property="og:url" content="https://gocivique.fr/" />
-  <meta property="og:site_name" content="GoCivique" />
-  <meta property="og:locale" content="fr_FR" />
-
-  <!-- Twitter -->
-
-
-
-  <!-- Theme color -->
+  <link rel="canonical" href="https://gocivique.fr/" />
   <meta name="theme-color" content="#0055A4" />
 
-  <!-- Structured Data injected via react-helmet-async -->
+  <!-- hreflang — static for homepage, per-route overridden by SEOHead -->
+  <link rel="alternate" hreflang="fr" href="https://gocivique.fr/" />
+  <link rel="alternate" hreflang="en" href="https://gocivique.fr/?lang=en" />
+  <link rel="alternate" hreflang="ar" href="https://gocivique.fr/?lang=ar" />
+  <link rel="alternate" hreflang="es" href="https://gocivique.fr/?lang=es" />
+  <link rel="alternate" hreflang="tr" href="https://gocivique.fr/?lang=tr" />
+  <link rel="alternate" hreflang="pt" href="https://gocivique.fr/?lang=pt" />
+  <link rel="alternate" hreflang="x-default" href="https://gocivique.fr/" />
 
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://gocivique.fr/" />
+  <meta property="og:title" content="Examen Civique 2026 — Pr&#233;paration et Examens Blancs | GoCivique" />
+  <meta property="og:description" content="Pr&#233;parez l'examen civique obligatoire 2026 pour la naturalisation fran&#231;aise. +300 questions, examens blancs, cours structur&#233;s. Essai gratuit !" />
+  <meta property="og:site_name" content="GoCivique" />
+  <meta property="og:locale" content="fr_FR" />
+  <meta property="og:image" content="https://storage.googleapis.com/gpt-engineer-file-uploads/bjCgeL0Q4cWbujtztoGFfTxZZyh1/social-images/social-1772670439357-GoCivique-Examen-Nationalite.webp" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="GoCivique — Pr&#233;paration Examen Civique Naturalisation Fran&#231;aise 2026" />
 
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@GoCivique" />
+  <meta name="twitter:title" content="Examen Civique 2026 — Pr&#233;paration et Examens Blancs | GoCivique" />
+  <meta name="twitter:description" content="Pr&#233;parez l'examen civique obligatoire 2026 pour la naturalisation fran&#231;aise. +300 questions, examens blancs, cours structur&#233;s. Essai gratuit !" />
+  <meta name="twitter:image" content="https://storage.googleapis.com/gpt-engineer-file-uploads/bjCgeL0Q4cWbujtztoGFfTxZZyh1/social-images/social-1772670439357-GoCivique-Examen-Nationalite.webp" />
+  <meta name="twitter:image:alt" content="GoCivique — Pr&#233;paration Examen Civique Naturalisation Fran&#231;aise 2026" />
 
-
-
-  
-  
-  
-  
-  <meta property="og:title" content="Examen Civique 2026  Préparation,  Examens Blancs. GoCivique">
-  <meta name="twitter:title" content="Examen Civique 2026  Préparation,  Examens Blancs. GoCivique">
-  <meta property="og:description" content="Préparez l&#39;examen civique obligatoire 2026 pour la naturalisation française, la carte de séjour pluriannuelle ou la carte de résident. Essai gratuit !">
-  <meta name="twitter:description" content="Préparez l&#39;examen civique obligatoire 2026 pour la naturalisation française, la carte de séjour pluriannuelle ou la carte de résident. Essai gratuit !">
+  <!-- JSON-LD Structured Data (static — always present for crawlers) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": ["Organization", "EducationalOrganization"],
+    "@id": "https://gocivique.fr/#organization",
+    "name": "GoCivique",
+    "url": "https://gocivique.fr",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://gocivique.fr/gocivique-logo-examen-civique.png"
+    },
+    "description": "Plateforme de pr\u00e9paration \u00e0 l'examen civique de naturalisation fran\u00e7aise 2026",
+    "inLanguage": ["fr", "en", "ar", "es", "tr", "pt"],
+    "sameAs": ["https://twitter.com/GoCivique"],
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "contactType": "customer support",
+      "url": "https://gocivique.fr/contact",
+      "availableLanguage": ["French", "English", "Arabic", "Spanish", "Turkish", "Portuguese"]
+    }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "GoCivique",
+    "url": "https://gocivique.fr",
+    "inLanguage": ["fr", "en", "ar", "es", "tr", "pt"],
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://gocivique.fr/quiz?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Course",
+    "@id": "https://gocivique.fr/#course",
+    "name": "Pr\u00e9paration \u00e0 l'examen civique fran\u00e7ais 2026",
+    "description": "Cours complet de pr\u00e9paration \u00e0 l'examen civique obligatoire pour la naturalisation fran\u00e7aise, la carte de s\u00e9jour pluriannuelle et la carte de r\u00e9sident. Quiz interactifs, examens blancs chronom\u00e9tr\u00e9s et suivi de progression.",
+    "provider": { "@id": "https://gocivique.fr/#organization" },
+    "hasCourseInstance": {
+      "@type": "CourseInstance",
+      "courseMode": "online",
+      "inLanguage": ["fr", "en", "ar", "es", "tr", "pt"]
+    },
+    "offers": [
+      { "@type": "Offer", "price": "0", "priceCurrency": "EUR", "description": "Essai gratuit", "availability": "https://schema.org/InStock" },
+      { "@type": "Offer", "price": "6.99", "priceCurrency": "EUR", "description": "Standard \u2014 Examens illimit\u00e9s", "availability": "https://schema.org/InStock" },
+      { "@type": "Offer", "price": "10.99", "priceCurrency": "EUR", "description": "Premium \u2014 Traductions et outils avanc\u00e9s", "availability": "https://schema.org/InStock" }
+    ],
+    "educationalLevel": "Beginner",
+    "about": ["Examen civique", "Naturalisation fran\u00e7aise", "Carte de s\u00e9jour", "Valeurs de la R\u00e9publique"]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Qu'est-ce que l'examen civique pour la naturalisation fran\u00e7aise ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "L'examen civique est un test obligatoire depuis 2026 pour toute demande de naturalisation fran\u00e7aise, de carte de s\u00e9jour pluriannuelle ou de carte de r\u00e9sident. Il \u00e9value vos connaissances sur les valeurs, l'histoire et les institutions de la R\u00e9publique fran\u00e7aise."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Comment se pr\u00e9parer \u00e0 l'examen civique 2026 ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "GoCivique propose plus de 300 questions d'entra\u00eenement, des examens blancs chronom\u00e9tr\u00e9s dans les conditions r\u00e9elles, des cours structur\u00e9s par th\u00e8me et un parcours progressif de 100 niveaux. La plateforme est disponible en 6 langues."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Quels sont les th\u00e8mes de l'examen civique ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "L'examen civique couvre 5 grands th\u00e8mes : les Valeurs de la R\u00e9publique (devise, la\u00efcit\u00e9, \u00e9galit\u00e9), l'Histoire et la G\u00e9ographie de la France, les Institutions et le syst\u00e8me politique, les Droits et Devoirs du citoyen, et Vivre en soci\u00e9t\u00e9."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "L'examen civique est-il gratuit sur GoCivique ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "GoCivique offre un essai gratuit incluant un examen d\u00e9mo complet. Les abonnements Standard (\u00e0 partir de 6,99\u20ac/mois) et Premium (\u00e0 partir de 10,99\u20ac/trimestre) d\u00e9bloquent les examens illimit\u00e9s, le mode entra\u00eenement et les traductions multilingues."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "En combien de langues l'examen civique est-il disponible ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "GoCivique est disponible en 6 langues : fran\u00e7ais, anglais, arabe, espagnol, turc et portugais. Les questions sont traduites pour aider les candidats non francophones \u00e0 comprendre les concepts."
+        }
+      }
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Accueil", "item": "https://gocivique.fr/" },
+      { "@type": "ListItem", "position": 2, "name": "Quiz de pratique", "item": "https://gocivique.fr/quiz" },
+      { "@type": "ListItem", "position": 3, "name": "Examens blancs", "item": "https://gocivique.fr/exams" },
+      { "@type": "ListItem", "position": 4, "name": "Cours", "item": "https://gocivique.fr/courses" },
+      { "@type": "ListItem", "position": 5, "name": "Guide examen civique", "item": "https://gocivique.fr/guide-examen-civique" }
+    ]
+  }
+  </script>
 </head>
 
 <body>
   <div id="root">
-    <div style="display:flex;align-items:center;justify-content:center;min-height:100vh;background:#f0f4f8">
-      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#0055A4" stroke-width="2"
-        stroke-linecap="round" stroke-linejoin="round" style="animation:spin 1s linear infinite">
-        <style>
-          @keyframes spin {
-            to {
-              transform: rotate(360deg)
-            }
-          }
-        </style>
-        <path d="M21 12a9 9 0 1 1-6.219-8.56" />
-      </svg>
+    <!--
+      PRE-RENDER CONTENT — visible to search engine crawlers before React hydrates.
+      React replaces everything inside #root on mount.
+    -->
+    <div style="font-family:Inter,system-ui,-apple-system,sans-serif;color:#1e293b;background:#f8fafc;min-height:100vh">
+
+      <!-- Header -->
+      <header style="background:#fff;border-bottom:1px solid #e2e8f0;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;max-width:1200px;margin:0 auto">
+        <a href="/" style="display:flex;align-items:center;gap:8px;text-decoration:none">
+          <img src="/gocivique-logo-examen-civique.png" alt="GoCivique logo examen civique naturalisation" width="40" height="40" />
+          <span style="font-weight:800;font-size:20px;color:#0055A4">GoCivique</span>
+        </a>
+        <nav style="display:flex;gap:24px;font-size:14px;font-weight:500">
+          <a href="/quiz" style="color:#475569;text-decoration:none">Quiz</a>
+          <a href="/exams" style="color:#475569;text-decoration:none">Examens</a>
+          <a href="/courses" style="color:#475569;text-decoration:none">Cours</a>
+          <a href="/about" style="color:#475569;text-decoration:none">&#192; propos</a>
+          <a href="/contact" style="color:#475569;text-decoration:none">Contact</a>
+        </nav>
+      </header>
+
+      <main style="max-width:1200px;margin:0 auto;padding:40px 24px">
+
+        <!-- Hero Section -->
+        <section style="text-align:center;padding:48px 16px;margin-bottom:48px">
+          <h1 style="font-size:36px;font-weight:900;line-height:1.2;margin:0 0 16px;color:#0f172a">
+            Pr&#233;paration &#224; l'Examen Civique 2026 pour la Naturalisation Fran&#231;aise
+          </h1>
+          <p style="font-size:18px;color:#475569;max-width:700px;margin:0 auto 24px;line-height:1.6">
+            Pr&#233;parez l'examen civique obligatoire pour la naturalisation fran&#231;aise, la carte de s&#233;jour pluriannuelle ou la carte de r&#233;sident. Plus de 300 questions d'entra&#238;nement, des examens blancs chronom&#233;tr&#233;s et des cours structur&#233;s.
+          </p>
+          <a href="/quiz" style="display:inline-block;background:#0055A4;color:#fff;padding:14px 32px;border-radius:12px;font-weight:700;text-decoration:none;font-size:16px">
+            Commencer l'essai gratuit
+          </a>
+        </section>
+
+        <!-- Features -->
+        <section style="margin-bottom:48px">
+          <h2 style="font-size:24px;font-weight:800;text-align:center;margin:0 0 32px;color:#0f172a">
+            Pourquoi choisir GoCivique pour pr&#233;parer l'examen civique ?
+          </h2>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:24px">
+            <div style="background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:24px">
+              <h3 style="font-size:16px;font-weight:700;margin:0 0 8px;color:#0055A4">+300 questions d'examen civique</h3>
+              <p style="font-size:14px;color:#64748b;margin:0;line-height:1.5">Questions couvrant tous les th&#232;mes officiels : valeurs de la R&#233;publique, histoire, institutions, droits et devoirs.</p>
+            </div>
+            <div style="background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:24px">
+              <h3 style="font-size:16px;font-weight:700;margin:0 0 8px;color:#0055A4">Examens blancs chronom&#233;tr&#233;s</h3>
+              <p style="font-size:14px;color:#64748b;margin:0;line-height:1.5">Simulez l'examen civique dans les conditions r&#233;elles avec un chronom&#232;tre et un score d&#233;taill&#233;.</p>
+            </div>
+            <div style="background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:24px">
+              <h3 style="font-size:16px;font-weight:700;margin:0 0 8px;color:#0055A4">Cours structur&#233;s par th&#232;me</h3>
+              <p style="font-size:14px;color:#64748b;margin:0;line-height:1.5">Apprenez avec des flashcards interactives sur les symboles, la devise, la la&#239;cit&#233;, la d&#233;mocratie et plus encore.</p>
+            </div>
+            <div style="background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:24px">
+              <h3 style="font-size:16px;font-weight:700;margin:0 0 8px;color:#0055A4">Disponible en 6 langues</h3>
+              <p style="font-size:14px;color:#64748b;margin:0;line-height:1.5">Fran&#231;ais, anglais, arabe, espagnol, turc et portugais. Id&#233;al pour les candidats non francophones.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Themes -->
+        <section style="margin-bottom:48px">
+          <h2 style="font-size:24px;font-weight:800;text-align:center;margin:0 0 32px;color:#0f172a">
+            Th&#232;mes de l'examen civique 2026
+          </h2>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px">
+            <a href="/themes/valeurs-republique" style="display:block;background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:20px;text-decoration:none">
+              <h3 style="font-size:15px;font-weight:700;color:#0055A4;margin:0 0 4px">Valeurs de la R&#233;publique</h3>
+              <p style="font-size:13px;color:#64748b;margin:0">Libert&#233;, &#233;galit&#233;, fraternit&#233;, la&#239;cit&#233;, devise et symboles</p>
+            </a>
+            <a href="/themes/histoire-geographie" style="display:block;background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:20px;text-decoration:none">
+              <h3 style="font-size:15px;font-weight:700;color:#0055A4;margin:0 0 4px">Histoire et G&#233;ographie</h3>
+              <p style="font-size:13px;color:#64748b;margin:0">R&#233;volution, R&#233;publiques, Union europ&#233;enne, r&#233;gions de France</p>
+            </a>
+            <a href="/themes/institutions" style="display:block;background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:20px;text-decoration:none">
+              <h3 style="font-size:15px;font-weight:700;color:#0055A4;margin:0 0 4px">Institutions fran&#231;aises</h3>
+              <p style="font-size:13px;color:#64748b;margin:0">Pr&#233;sident, Assembl&#233;e nationale, S&#233;nat, Conseil constitutionnel</p>
+            </a>
+            <a href="/themes/droits-devoirs" style="display:block;background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:20px;text-decoration:none">
+              <h3 style="font-size:15px;font-weight:700;color:#0055A4;margin:0 0 4px">Droits et Devoirs</h3>
+              <p style="font-size:13px;color:#64748b;margin:0">DDHC 1789, droits fondamentaux, devoirs civiques, &#233;galit&#233;</p>
+            </a>
+          </div>
+        </section>
+
+        <!-- Courses preview -->
+        <section style="margin-bottom:48px">
+          <h2 style="font-size:24px;font-weight:800;text-align:center;margin:0 0 32px;color:#0f172a">
+            Cours de pr&#233;paration &#224; l'examen civique
+          </h2>
+          <ul style="list-style:none;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px">
+            <li><a href="/cours/examen-civique-symboles-republique" style="display:block;padding:16px;background:#fff;border:1px solid #e2e8f0;border-radius:10px;text-decoration:none;color:#1e293b;font-weight:600;font-size:14px">Les symboles de la R&#233;publique fran&#231;aise</a></li>
+            <li><a href="/cours/examen-civique-devise-francaise" style="display:block;padding:16px;background:#fff;border:1px solid #e2e8f0;border-radius:10px;text-decoration:none;color:#1e293b;font-weight:600;font-size:14px">La devise fran&#231;aise : Libert&#233;, &#201;galit&#233;, Fraternit&#233;</a></li>
+            <li><a href="/cours/examen-civique-ddhc-1789" style="display:block;padding:16px;background:#fff;border:1px solid #e2e8f0;border-radius:10px;text-decoration:none;color:#1e293b;font-weight:600;font-size:14px">La D&#233;claration des Droits de l'Homme 1789</a></li>
+            <li><a href="/cours/examen-civique-laicite-neutralite" style="display:block;padding:16px;background:#fff;border:1px solid #e2e8f0;border-radius:10px;text-decoration:none;color:#1e293b;font-weight:600;font-size:14px">La la&#239;cit&#233; et la neutralit&#233; de l'&#201;tat</a></li>
+            <li><a href="/cours/examen-civique-republique-indivisible" style="display:block;padding:16px;background:#fff;border:1px solid #e2e8f0;border-radius:10px;text-decoration:none;color:#1e293b;font-weight:600;font-size:14px">La R&#233;publique indivisible</a></li>
+            <li><a href="/cours/examen-civique-democratie-souverainete" style="display:block;padding:16px;background:#fff;border:1px solid #e2e8f0;border-radius:10px;text-decoration:none;color:#1e293b;font-weight:600;font-size:14px">D&#233;mocratie et souverainet&#233; nationale</a></li>
+            <li><a href="/cours/examen-civique-etat-de-droit" style="display:block;padding:16px;background:#fff;border:1px solid #e2e8f0;border-radius:10px;text-decoration:none;color:#1e293b;font-weight:600;font-size:14px">L'&#201;tat de droit en France</a></li>
+            <li><a href="/cours/examen-civique-egalite-femmes-hommes" style="display:block;padding:16px;background:#fff;border:1px solid #e2e8f0;border-radius:10px;text-decoration:none;color:#1e293b;font-weight:600;font-size:14px">&#201;galit&#233; femmes-hommes</a></li>
+            <li><a href="/cours/examen-civique-non-discrimination" style="display:block;padding:16px;background:#fff;border:1px solid #e2e8f0;border-radius:10px;text-decoration:none;color:#1e293b;font-weight:600;font-size:14px">Le principe de non-discrimination</a></li>
+          </ul>
+        </section>
+
+        <!-- FAQ Section (matches JSON-LD) -->
+        <section style="margin-bottom:48px">
+          <h2 style="font-size:24px;font-weight:800;text-align:center;margin:0 0 32px;color:#0f172a">
+            Questions fr&#233;quentes sur l'examen civique
+          </h2>
+          <div style="max-width:800px;margin:0 auto">
+            <details style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:16px 20px;margin-bottom:12px">
+              <summary style="font-weight:700;font-size:15px;color:#0f172a;cursor:pointer">Qu'est-ce que l'examen civique pour la naturalisation fran&#231;aise ?</summary>
+              <p style="font-size:14px;color:#475569;line-height:1.6;margin:12px 0 0">L'examen civique est un test obligatoire depuis 2026 pour toute demande de naturalisation fran&#231;aise, de carte de s&#233;jour pluriannuelle ou de carte de r&#233;sident. Il &#233;value vos connaissances sur les valeurs, l'histoire et les institutions de la R&#233;publique fran&#231;aise.</p>
+            </details>
+            <details style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:16px 20px;margin-bottom:12px">
+              <summary style="font-weight:700;font-size:15px;color:#0f172a;cursor:pointer">Comment se pr&#233;parer &#224; l'examen civique 2026 ?</summary>
+              <p style="font-size:14px;color:#475569;line-height:1.6;margin:12px 0 0">GoCivique propose plus de 300 questions d'entra&#238;nement, des examens blancs chronom&#233;tr&#233;s dans les conditions r&#233;elles, des cours structur&#233;s par th&#232;me et un parcours progressif de 100 niveaux. La plateforme est disponible en 6 langues.</p>
+            </details>
+            <details style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:16px 20px;margin-bottom:12px">
+              <summary style="font-weight:700;font-size:15px;color:#0f172a;cursor:pointer">Quels sont les th&#232;mes de l'examen civique ?</summary>
+              <p style="font-size:14px;color:#475569;line-height:1.6;margin:12px 0 0">L'examen civique couvre 5 grands th&#232;mes : les Valeurs de la R&#233;publique (devise, la&#239;cit&#233;, &#233;galit&#233;), l'Histoire et la G&#233;ographie de la France, les Institutions et le syst&#232;me politique, les Droits et Devoirs du citoyen, et Vivre en soci&#233;t&#233;.</p>
+            </details>
+            <details style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:16px 20px;margin-bottom:12px">
+              <summary style="font-weight:700;font-size:15px;color:#0f172a;cursor:pointer">L'examen civique est-il gratuit sur GoCivique ?</summary>
+              <p style="font-size:14px;color:#475569;line-height:1.6;margin:12px 0 0">GoCivique offre un essai gratuit incluant un examen d&#233;mo complet. Les abonnements Standard (&#224; partir de 6,99&#8364;/mois) et Premium (&#224; partir de 10,99&#8364;/trimestre) d&#233;bloquent les examens illimit&#233;s, le mode entra&#238;nement et les traductions multilingues.</p>
+            </details>
+            <details style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:16px 20px;margin-bottom:12px">
+              <summary style="font-weight:700;font-size:15px;color:#0f172a;cursor:pointer">En combien de langues l'examen civique est-il disponible ?</summary>
+              <p style="font-size:14px;color:#475569;line-height:1.6;margin:12px 0 0">GoCivique est disponible en 6 langues : fran&#231;ais, anglais, arabe, espagnol, turc et portugais. Les questions sont traduites pour aider les candidats non francophones &#224; comprendre les concepts.</p>
+            </details>
+          </div>
+        </section>
+
+        <!-- Guide link -->
+        <section style="text-align:center;margin-bottom:48px">
+          <h2 style="font-size:24px;font-weight:800;margin:0 0 16px;color:#0f172a">Guide complet de l'examen civique</h2>
+          <p style="font-size:16px;color:#475569;margin:0 0 20px;max-width:600px;margin-left:auto;margin-right:auto">
+            Tout ce que vous devez savoir pour r&#233;ussir l'examen civique de naturalisation fran&#231;aise en 2026.
+          </p>
+          <a href="/guide-examen-civique" style="display:inline-block;background:#0055A4;color:#fff;padding:12px 28px;border-radius:10px;font-weight:700;text-decoration:none;font-size:15px">
+            Lire le guide complet
+          </a>
+        </section>
+      </main>
+
+      <!-- Footer -->
+      <footer style="background:#fff;border-top:1px solid #e2e8f0;padding:32px 24px;max-width:1200px;margin:0 auto">
+        <nav style="display:flex;flex-wrap:wrap;justify-content:center;gap:24px;font-size:13px;margin-bottom:16px">
+          <a href="/quiz" style="color:#64748b;text-decoration:none">Quiz de pratique</a>
+          <a href="/exams" style="color:#64748b;text-decoration:none">Examens blancs</a>
+          <a href="/courses" style="color:#64748b;text-decoration:none">Cours</a>
+          <a href="/parcours" style="color:#64748b;text-decoration:none">Parcours 100 niveaux</a>
+          <a href="/guide-examen-civique" style="color:#64748b;text-decoration:none">Guide examen civique</a>
+          <a href="/about" style="color:#64748b;text-decoration:none">&#192; propos</a>
+          <a href="/contact" style="color:#64748b;text-decoration:none">Contact</a>
+          <a href="/privacy" style="color:#64748b;text-decoration:none">Confidentialit&#233;</a>
+          <a href="/terms" style="color:#64748b;text-decoration:none">CGV</a>
+        </nav>
+        <p style="text-align:center;font-size:12px;color:#94a3b8;margin:0">
+          &#169; 2026 GoCivique. Pr&#233;paration &#224; l'examen civique de naturalisation fran&#231;aise.
+        </p>
+      </footer>
+
     </div>
   </div>
   <script type="module" src="/src/main.tsx"></script>
