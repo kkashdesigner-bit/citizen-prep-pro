@@ -18,7 +18,7 @@ import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 import {
     User, Shield, CreditCard, Loader2, Save, Crown, Sparkles, Eye, EyeOff,
-    ExternalLink, XCircle, Check, ChevronRight
+    ExternalLink, XCircle, Check, ChevronRight, Clock
 } from 'lucide-react';
 import SubscriptionGate from '@/components/SubscriptionGate';
 
@@ -72,6 +72,7 @@ export default function SettingsPage() {
     const [billingLoading, setBillingLoading] = useState(false);
     const [showCancelDialog, setShowCancelDialog] = useState(false);
     const [cancelling, setCancelling] = useState(false);
+    const [cancelPending, setCancelPending] = useState(false);
 
     /* ═══════ Handlers ═══════ */
 
@@ -164,6 +165,7 @@ export default function SettingsPage() {
             } else if (data?.success) {
                 toast.success('Votre abonnement sera annulé à la fin de la période de facturation');
                 setShowCancelDialog(false);
+                setCancelPending(true);
             } else {
                 console.error('[Cancel Sub] Response:', data);
                 toast.error(data?.error || 'Erreur lors de l\'annulation');
@@ -371,11 +373,29 @@ export default function SettingsPage() {
                                                     <p className="text-sm text-[var(--dash-text-muted)]">{tierConf.price}</p>
                                                 </div>
                                             </div>
-                                            <span className={`text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full ${tier === 'premium' ? 'bg-amber-100 text-amber-700' :
-                                                tier === 'standard' ? 'bg-blue-100 text-blue-700' :
-                                                    'bg-[#1764ac]/10 text-[#1764ac]'
-                                                }`}>Actif</span>
+                                            <span className={`text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full ${
+                                                cancelPending
+                                                    ? 'bg-orange-100 text-orange-700'
+                                                    : tier === 'premium' ? 'bg-amber-100 text-amber-700'
+                                                    : tier === 'standard' ? 'bg-blue-100 text-blue-700'
+                                                    : 'bg-[#1764ac]/10 text-[#1764ac]'
+                                                }`}>{cancelPending ? 'Annulation prévue' : 'Actif'}</span>
                                         </div>
+
+                                        {/* Cancellation pending banner */}
+                                        {cancelPending && (
+                                            <div className="mt-4 flex items-start gap-3 rounded-xl border border-orange-200 bg-orange-50 p-4">
+                                                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-orange-100">
+                                                    <Clock className="h-4 w-4 text-orange-600" />
+                                                </div>
+                                                <div>
+                                                    <p className="text-sm font-bold text-orange-800">Annulation programmée</p>
+                                                    <p className="text-xs text-orange-600 mt-0.5">
+                                                        Votre abonnement reste actif jusqu'à la fin de votre période de facturation. Après cette date, vous passerez au forfait Gratuit.
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        )}
 
                                         {/* Features */}
                                         <ul className="mt-4 space-y-2">
@@ -395,6 +415,14 @@ export default function SettingsPage() {
                                                 className="flex-1 bg-gradient-to-r from-[#0055A4] to-[#1B6ED6] hover:from-[#1B6ED6] hover:to-[#0055A4] text-white font-bold rounded-xl h-11 shadow-[0_4px_14px_rgba(0,85,164,0.25)] transition-all gap-2"
                                             >
                                                 <Crown className="h-4 w-4" /> Passer au Premium <ChevronRight className="h-4 w-4" />
+                                            </Button>
+                                        ) : cancelPending ? (
+                                            /* Cancellation pending → manage billing only */
+                                            <Button onClick={handleManageBilling} disabled={billingLoading}
+                                                className="flex-1 bg-[#0055A4] hover:bg-[#1B6ED6] text-white font-bold rounded-xl h-11 shadow-[0_4px_14px_rgba(0,85,164,0.25)] transition-all gap-2"
+                                            >
+                                                {billingLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ExternalLink className="h-4 w-4" />}
+                                                Gérer la facturation
                                             </Button>
                                         ) : (
                                             /* Paying user → manage + cancel */
