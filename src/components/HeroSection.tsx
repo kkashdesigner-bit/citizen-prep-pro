@@ -7,6 +7,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useUserProfile } from '@/hooks/useUserProfile';
 import ParticleMesh from '@/components/ParticleMesh';
 import Logo from '@/components/Logo';
+import DemoExamPopup from '@/components/DemoExamPopup';
 
 export default function HeroSection() {
   const { t } = useLanguage();
@@ -14,6 +15,7 @@ export default function HeroSection() {
   const { user } = useAuth();
   const { profile, loading: profileLoading } = useUserProfile();
   const [loaded, setLoaded] = useState(false);
+  const [showDemoPopup, setShowDemoPopup] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => setLoaded(true), 100);
@@ -161,11 +163,14 @@ export default function HeroSection() {
             size="lg"
             variant="outline"
             className="gap-2 px-6 sm:px-8 text-sm sm:text-base font-medium border-[#0055A4]/20 text-[#0055A4] hover:bg-[#0055A4]/5"
-            onClick={() => navigate('/quiz?mode=demo')}
+            onClick={() => setShowDemoPopup(true)}
           >
             {t('hero.demoExam')}
           </Button>
         </div>
+
+        {/* Demo Exam Info Popup */}
+        <DemoExamPopup open={showDemoPopup} onOpenChange={setShowDemoPopup} />
       </div>
 
       {/* Bottom fade */}
