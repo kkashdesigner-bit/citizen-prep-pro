@@ -132,28 +132,17 @@ export default function SettingsPage() {
     const handleManageBilling = async () => {
         setBillingLoading(true);
         try {
-            const { data: { session } } = await supabase.auth.getSession();
-            if (!session?.access_token) {
-                toast.error('Session expirée — veuillez vous reconnecter');
-                return;
-            }
-            const resp = await fetch(
-                `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/stripe-portal`,
-                {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${session.access_token}`,
-                    },
-                    body: JSON.stringify({ action: 'portal', return_url: window.location.href }),
-                }
-            );
-            const data = await resp.json();
-            console.error('[Billing Portal]', resp.status, data);
-            if (data.url) {
+            const { data, error } = await supabase.functions.invoke('stripe-portal', {
+                body: { action: 'portal', return_url: window.location.href },
+            });
+            if (error) {
+                console.error('[Billing Portal] Error:', error);
+                toast.error('Erreur du service de paiement');
+            } else if (data?.url) {
                 window.location.href = data.url;
             } else {
-                toast.error(data.error || 'Impossible d\'ouvrir le portail de facturation');
+                console.error('[Billing Portal] Response:', data);
+                toast.error(data?.error || 'Impossible d\'ouvrir le portail de facturation');
             }
         } catch (err) {
             console.error('[Billing Portal] Network error:', err);
@@ -166,29 +155,18 @@ export default function SettingsPage() {
     const handleCancelSubscription = async () => {
         setCancelling(true);
         try {
-            const { data: { session } } = await supabase.auth.getSession();
-            if (!session?.access_token) {
-                toast.error('Session expirée — veuillez vous reconnecter');
-                return;
-            }
-            const resp = await fetch(
-                `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/stripe-portal`,
-                {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${session.access_token}`,
-                    },
-                    body: JSON.stringify({ action: 'cancel' }),
-                }
-            );
-            const data = await resp.json();
-            console.error('[Cancel Sub]', resp.status, data);
-            if (data.success) {
+            const { data, error } = await supabase.functions.invoke('stripe-portal', {
+                body: { action: 'cancel' },
+            });
+            if (error) {
+                console.error('[Cancel Sub] Error:', error);
+                toast.error('Erreur lors de l\'annulation');
+            } else if (data?.success) {
                 toast.success('Votre abonnement sera annulé à la fin de la période de facturation');
                 setShowCancelDialog(false);
             } else {
-                toast.error(data.error || 'Erreur lors de l\'annulation');
+                console.error('[Cancel Sub] Response:', data);
+                toast.error(data?.error || 'Erreur lors de l\'annulation');
             }
         } catch (err) {
             console.error('[Cancel Sub] Network error:', err);
