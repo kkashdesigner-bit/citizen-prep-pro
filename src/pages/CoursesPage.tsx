@@ -9,6 +9,8 @@ import { Question, getCorrectAnswerText } from '@/lib/types';
 import LearnSidebar from '@/components/learn/LearnSidebar';
 import AppHeader from '@/components/AppHeader';
 import SubscriptionGate from '@/components/SubscriptionGate';
+import TierInfoPopup from '@/components/TierInfoPopup';
+import TierMismatchPopup from '@/components/TierMismatchPopup';
 import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -646,6 +648,7 @@ export default function CoursesPage() {
   const [activeCategory, setActiveCategory] = useState('all');
   const [selectedClassId, setSelectedClassId] = useState<string | null>(null);
   const [showGate, setShowGate] = useState(false);
+  const [showMismatch, setShowMismatch] = useState(false);
   const [bookmarks, setBookmarks] = useState(getBookmarks);
 
   const isLoading = authLoading || tierLoading || parcoursLoading;
@@ -702,6 +705,7 @@ export default function CoursesPage() {
 
   const handleCardClick = (clazz: ParcoursClass) => {
     if (isUnlocked(clazz)) setSelectedClassId(clazz.id);
+    else if (tier === 'standard') setShowMismatch(true);
     else setShowGate(true);
   };
 
@@ -952,8 +956,10 @@ export default function CoursesPage() {
 
       {showGate && (
         <SubscriptionGate open={showGate} onOpenChange={setShowGate}
-          requiredTier={tier === 'free' ? 'standard' : 'premium'} featureLabel="Accès à tous les cours" />
+          requiredTier="standard" featureLabel="Accès à tous les cours" />
       )}
+      <TierMismatchPopup open={showMismatch} onOpenChange={setShowMismatch} userTier={tier} requiredTier="premium" featureLabel="Accès libre entre les cours" />
+      <TierInfoPopup context="courses" onUpgrade={() => { tier === 'free' ? setShowGate(true) : setShowMismatch(true); }} />
     </div>
   );
 }

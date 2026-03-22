@@ -7,6 +7,8 @@ import { useSubscription } from '@/hooks/useSubscription';
 import { useParcours } from '@/hooks/useParcours';
 import LearnSidebar from '@/components/learn/LearnSidebar';
 import SubscriptionGate from '@/components/SubscriptionGate';
+import TierInfoPopup from '@/components/TierInfoPopup';
+import TierMismatchPopup from '@/components/TierMismatchPopup';
 import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -44,6 +46,8 @@ export default function ParcoursPage() {
 
     const [showGate, setShowGate] = useState(false);
     const [gateTier, setGateTier] = useState<'standard' | 'premium'>('standard');
+    const [showMismatch, setShowMismatch] = useState(false);
+    const [mismatchFeature, setMismatchFeature] = useState('');
     const nextClassRef = useRef<HTMLDivElement | null>(null);
 
     const isLoading = authLoading || profileLoading || tierLoading || parcoursLoading;
@@ -83,9 +87,13 @@ export default function ParcoursPage() {
     const handleClassClick = (clazz: any) => {
         if (isUnlocked(clazz)) {
             navigate(`/parcours/classe/${clazz.id}`);
+        } else if (tier === 'standard') {
+            // Standard user can't skip courses — show friendly mismatch popup
+            setMismatchFeature('Accès libre entre les classes');
+            setShowMismatch(true);
         } else {
-            // Free user hitting the wall at class 11 or above, or sequential lock
-            setGateTier(tier === 'free' ? 'standard' : 'premium');
+            // Free user hitting the wall at class 11+
+            setGateTier('standard');
             setShowGate(true);
         }
     };
@@ -393,6 +401,8 @@ export default function ParcoursPage() {
             </main >
 
             <SubscriptionGate open={showGate} onOpenChange={setShowGate} requiredTier={gateTier} featureLabel="90 niveaux supplémentaires, 1 500+ questions, examens blancs, entraînement par catégories et suivi de progression" />
+            <TierMismatchPopup open={showMismatch} onOpenChange={setShowMismatch} userTier={tier} requiredTier="premium" featureLabel={mismatchFeature} />
+            <TierInfoPopup context="parcours" onUpgrade={() => { tier === 'free' ? setShowGate(true) : setShowMismatch(true); }} />
         </div >
     );
 }

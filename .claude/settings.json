@@ -6,7 +6,13 @@
       "mcp__supabase__deploy_edge_function",
       "mcp__supabase__get_logs",
       "Bash(python3 -c \":*)",
-      "Bash(PYTHONIOENCODING=utf-8 python3 -c \":*)"
+      "Bash(PYTHONIOENCODING=utf-8 python3 -c \":*)",
+      "Bash(npm run build)",
+      "mcp__magic__21st_magic_component_inspiration",
+      "Bash(python3 \"c:/Users/User/Documents/GitHub/citizen-prep-pro/.claude/skills/ui-ux-pro-max/scripts/search.py\" \"education exam preparation civic modern glassmorphism\" --design-system -p \"GoCivique\")",
+      "Bash(powershell -Command \"\\(Get-Content ''C:\\\\Users\\\\User\\\\Documents\\\\GitHub\\\\citizen-prep-pro\\\\src\\\\pages\\\\seo\\\\GuideExamen.tsx'' | Measure-Object -Word\\).Words\")",
+      "Bash(powershell -Command \"\\(Get-Content ''C:\\\\Users\\\\User\\\\Documents\\\\GitHub\\\\citizen-prep-pro\\\\src\\\\pages\\\\seo\\\\GuideExamen.tsx'' | Measure-Object -Line\\).Lines\")",
+      "Bash(npx tsc --noEmit --pretty)"
     ]
   }
 }

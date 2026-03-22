@@ -9,6 +9,7 @@ import { useSubscription } from '@/hooks/useSubscription';
 import { useUserProfile, GoalType, GOAL_TO_LEVEL, GOAL_LABELS } from '@/hooks/useUserProfile';
 import { useDashboardStats } from '@/hooks/useDashboardStats';
 import SubscriptionGate from '@/components/SubscriptionGate';
+import TierInfoPopup from '@/components/TierInfoPopup';
 import LearnSidebar from '@/components/learn/LearnSidebar';
 import AppHeader from '@/components/AppHeader';
 import { useState } from 'react';
@@ -251,6 +252,7 @@ export default function ExamsPage() {
         </main>
       </div>
       <SubscriptionGate open={showGate} onOpenChange={setShowGate} requiredTier="standard" featureLabel="Examens blancs illimités" />
+      <TierInfoPopup context="exams" onUpgrade={() => setShowGate(true)} />
     </div>
   );
 }
