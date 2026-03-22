@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useUserProfile, GOAL_LABELS, type GoalType } from '@/hooks/useUserProfile';
@@ -73,6 +73,22 @@ export default function SettingsPage() {
     const [showCancelDialog, setShowCancelDialog] = useState(false);
     const [cancelling, setCancelling] = useState(false);
     const [cancelPending, setCancelPending] = useState(false);
+    const [periodEnd, setPeriodEnd] = useState<string | null>(null);
+
+    /* ── Fetch subscription cancel status on mount ── */
+    useEffect(() => {
+        if (!isStandardOrAbove) return;
+        supabase.functions.invoke('stripe-portal', { body: { action: 'status' } })
+            .then(({ data }) => {
+                if (data?.cancel_at_period_end) {
+                    setCancelPending(true);
+                    if (data.current_period_end) {
+                        setPeriodEnd(new Date(data.current_period_end * 1000).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }));
+                    }
+                }
+            })
+            .catch(() => {});
+    }, [isStandardOrAbove]);
 
     /* ═══════ Handlers ═══════ */
 
@@ -391,7 +407,7 @@ export default function SettingsPage() {
                                                 <div>
                                                     <p className="text-sm font-bold text-orange-800">Annulation programmée</p>
                                                     <p className="text-xs text-orange-600 mt-0.5">
-                                                        Votre abonnement reste actif jusqu'à la fin de votre période de facturation. Après cette date, vous passerez au forfait Gratuit.
+                                                        Votre abonnement reste actif jusqu'au {periodEnd || 'la fin de votre période de facturation'}. Après cette date, vous passerez au forfait Gratuit.
                                                     </p>
                                                 </div>
                                             </div>

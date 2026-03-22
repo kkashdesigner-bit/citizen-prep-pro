@@ -163,6 +163,40 @@ serve(async (req) => {
       }
     }
 
+    // ─── Status: check subscription cancel state ───
+    if (action === 'status') {
+      try {
+        const subscriptions = await stripe.subscriptions.list({
+          customer: customerId,
+          status: 'active',
+          limit: 1,
+        });
+
+        if (subscriptions.data.length === 0) {
+          return new Response(
+            JSON.stringify({ cancel_at_period_end: false, active: false }),
+            { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+
+        const sub = subscriptions.data[0];
+        return new Response(
+          JSON.stringify({
+            active: true,
+            cancel_at_period_end: sub.cancel_at_period_end,
+            current_period_end: sub.current_period_end,
+          }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      } catch (statusErr: any) {
+        console.error('Status check error:', statusErr);
+        return new Response(
+          JSON.stringify({ error: String(statusErr?.message || statusErr) }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+    }
+
     return new Response(
       JSON.stringify({ error: 'Action inconnue' }),
       { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
