@@ -35,7 +35,7 @@ import {
 /* ------------------------------------------------------------------ */
 const sectionVariants = {
   hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" as const } },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" as const as const } },
 };
 
 const containerVariants = {
@@ -193,7 +193,7 @@ export default function GuideExamen() {
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease: "easeOut" }}
+            transition={{ duration: 0.7, ease: "easeOut" as const }}
             className="max-w-3xl"
           >
             <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-sm font-medium mb-6 backdrop-blur-sm border border-white/20">

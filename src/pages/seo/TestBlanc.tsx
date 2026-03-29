@@ -390,7 +390,7 @@ const staggerContainer = {
 
 const cardVariant = {
   hidden: { opacity: 0, y: 24 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" as const } },
 };
 
 /* ------------------------------------------------------------------ */
@@ -729,7 +729,7 @@ export default function TestBlanc() {
                         <motion.div
                           initial={{ opacity: 0, height: 0 }}
                           animate={{ opacity: 1, height: "auto" }}
-                          transition={{ duration: 0.4, ease: "easeOut" }}
+                          transition={{ duration: 0.4, ease: "easeOut" as const }}
                         >
                           <div className="mt-2 rounded-xl border border-green-200 bg-green-50/60 p-4">
                             <div className="flex items-center gap-2 mb-2">
@@ -801,7 +801,7 @@ export default function TestBlanc() {
                 className="h-full rounded-full bg-gradient-to-r from-[#0055A4] to-[#1B6ED6]"
                 initial={{ width: 0 }}
                 animate={{ width: `${(score / 15) * 100}%` }}
-                transition={{ duration: 0.6, ease: "easeOut" }}
+                transition={{ duration: 0.6, ease: "easeOut" as const }}
               />
             </div>
 
