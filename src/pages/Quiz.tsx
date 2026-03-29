@@ -15,9 +15,10 @@ import { useParcours } from '@/hooks/useParcours';
 import QuizQuestion from '@/components/QuizQuestion';
 import ExamNavigator from '@/components/ExamNavigator';
 import SubscriptionGate from '@/components/SubscriptionGate';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 
 import { Progress } from '@/components/ui/progress';
-import { ChevronLeft, ChevronRight, Flag, CheckCircle, SkipForward, BookmarkCheck, X } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Flag, CheckCircle, SkipForward, BookmarkCheck, X, AlertTriangle } from 'lucide-react';
 import Logo from '@/components/Logo';
 
 export interface QuizError {
@@ -171,6 +172,57 @@ export default function Quiz() {
   }, [questionSetKey]);
   const [warpState, setWarpState] = useState<'idle' | 'exit' | 'enter'>('idle');
   const pendingIndex = useRef<number | null>(null);
+
+  // ─── Exit warning ───
+  const [showExitWarning, setShowExitWarning] = useState(false);
+  const pendingNavRef = useRef<(() => void) | null>(null);
+  const examInProgress = questions.length > 0 && !showResults && effectiveMode === 'exam';
+
+  // Block browser refresh / tab close
+  useEffect(() => {
+    if (!examInProgress) return;
+    const handler = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = '';
+    };
+    window.addEventListener('beforeunload', handler);
+    return () => window.removeEventListener('beforeunload', handler);
+  }, [examInProgress]);
+
+  // Warn when switching tabs / minimizing window
+  useEffect(() => {
+    if (!examInProgress) return;
+    const handler = () => {
+      if (document.hidden) setShowExitWarning(true);
+    };
+    document.addEventListener('visibilitychange', handler);
+    return () => document.removeEventListener('visibilitychange', handler);
+  }, [examInProgress]);
+
+  // Intercept in-app navigation (back button, sidebar links, etc.)
+  useEffect(() => {
+    if (!examInProgress) return;
+    const handlePopState = (e: PopStateEvent) => {
+      e.preventDefault();
+      // Push state back so the URL doesn't change
+      window.history.pushState(null, '', window.location.href);
+      setShowExitWarning(true);
+      pendingNavRef.current = () => navigate(-1);
+    };
+    window.history.pushState(null, '', window.location.href);
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [examInProgress, navigate]);
+
+  const handleExitConfirm = () => {
+    setShowExitWarning(false);
+    if (pendingNavRef.current) {
+      pendingNavRef.current();
+      pendingNavRef.current = null;
+    } else {
+      navigate('/learn');
+    }
+  };
 
   // Inline results overlay state
   const [showResults, setShowResults] = useState(false);
@@ -640,6 +692,43 @@ export default function Quiz() {
         featureLabel={gateTier === 'premium' ? 'Entraînement par catégorie' : 'Examens illimités'}
       />
 
+      {/* ─── Exit Warning Modal ─── */}
+      <Dialog open={showExitWarning} onOpenChange={setShowExitWarning}>
+        <DialogContent className="p-0 sm:max-w-[420px] bg-white border-0 rounded-3xl shadow-2xl overflow-hidden [&>button]:hidden">
+          {/* Top banner */}
+          <div className="bg-gradient-to-br from-amber-500 to-orange-500 px-8 pt-8 pb-6 text-center relative overflow-hidden">
+            <div className="absolute -top-6 -right-6 w-24 h-24 bg-white/10 rounded-full blur-xl pointer-events-none" />
+            <div className="mx-auto mb-4 w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center border border-white/30">
+              <AlertTriangle className="w-8 h-8 text-white" />
+            </div>
+            <h2 className="text-xl font-bold text-white mb-1">Ne partez pas encore !</h2>
+            <p className="text-white/80 text-sm leading-relaxed">
+              Votre examen est en cours. Si vous quittez maintenant, votre progression sera perdue et l'examen sera annulé.
+            </p>
+          </div>
+
+          {/* Body */}
+          <div className="px-8 py-6 space-y-3">
+            <div className="rounded-xl bg-amber-50 border border-amber-100 px-4 py-3 text-sm text-amber-800 leading-relaxed">
+              💡 <span className="font-semibold">Conseil :</span> Terminez l'examen pour voir votre score et identifier vos points faibles.
+            </div>
+
+            <Button
+              onClick={() => setShowExitWarning(false)}
+              className="w-full rounded-xl font-bold h-12 text-white bg-gradient-to-r from-[#0055A4] to-[#3a7cc7] hover:from-[#003d7a] hover:to-[#2f6aad] shadow-lg transition-all hover:scale-[1.02]"
+            >
+              Continuer l'examen
+            </Button>
+            <Button
+              variant="ghost"
+              onClick={handleExitConfirm}
+              className="w-full rounded-xl font-medium h-11 text-slate-500 hover:text-slate-700 hover:bg-slate-100"
+            >
+              Quitter quand même
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
     </div>
   );
