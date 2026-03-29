@@ -42,7 +42,7 @@ export default function DemoExamPopup({ open, onOpenChange }: DemoExamPopupProps
 
   const handleContinueDemo = () => {
     onOpenChange(false);
-    navigate('/quiz?mode=demo');
+    navigate('/auth?redirect=/quiz?mode=demo');
   };
 
   const handleSubscribe = () => {
