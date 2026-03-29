@@ -97,7 +97,7 @@ export default function Quiz() {
       // Free users can't access study/training modes
       setGateTier('standard');
       setShowGate(true);
-    } else if (isFreeUser && (rawMode === 'exam' || rawMode === 'demo') && examsTakenToday >= 1) {
+    } else if (isFreeUser && rawMode === 'exam' && examsTakenToday >= 1) {
       // Free users get 1 full exam per day
       setGateTier('standard');
       setShowGate(true);
