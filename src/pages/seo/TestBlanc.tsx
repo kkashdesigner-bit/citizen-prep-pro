@@ -786,7 +786,7 @@ export default function TestBlanc() {
                 key={score}
                 initial={{ scale: 0.5, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
-                transition={{ type: "spring", stiffness: 260, damping: 20 }}
+                transition={{ type: "spring" as const, stiffness: 260, damping: 20 }}
                 className="text-5xl font-extrabold text-[#0055A4]"
               >
                 {score}
