@@ -25,7 +25,7 @@ const childVariants = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: { type: 'spring', stiffness: 300, damping: 25 },
+    transition: { type: 'spring' as const, stiffness: 300, damping: 25 },
   },
 };
 
@@ -33,7 +33,7 @@ const progressVariants = {
   hidden: { width: 0 },
   visible: {
     width: '4%', // 300/7500 = 4%
-    transition: { duration: 1, ease: 'easeOut', delay: 0.5 },
+    transition: { duration: 1, ease: 'easeOut' as const, delay: 0.5 },
   },
 };
 
