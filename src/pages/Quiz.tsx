@@ -7,6 +7,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useQuiz, QuizMode } from '@/hooks/useQuiz';
 import { useSubscription } from '@/hooks/useSubscription';
 import { useAuth } from '@/hooks/useAuth';
+import { useUserProfile } from '@/hooks/useUserProfile';
 import { supabase } from '@/integrations/supabase/client';
 import { ExamLevel, getCorrectAnswerText } from '@/lib/types';
 import { useParcours } from '@/hooks/useParcours';
@@ -60,7 +61,20 @@ export default function Quiz() {
   const { tier, isStandardOrAbove, isPremium, loading: tierLoading } = useSubscription();
 
   const isFreeUser = tier === 'free';
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
+  const { profile, loading: profileLoading } = useUserProfile();
+
+  // Non-authenticated users must sign up first
+  useEffect(() => {
+    if (authLoading || profileLoading) return;
+    if (!user) {
+      navigate('/auth', { replace: true });
+      return;
+    }
+    if (profile && !profile.onboarding_completed) {
+      navigate('/onboarding', { replace: true });
+    }
+  }, [user, profile, authLoading, profileLoading, navigate]);
   const { updateProgress: updateClassProgress } = useParcours();
   const [examsTakenToday, setExamsTakenToday] = useState<number | null>(null);
 
@@ -471,7 +485,7 @@ export default function Quiz() {
                   onAnswer={handleAnswer}
                   showFeedback={showFeedback}
                   showTranslateButton={true}
-                  allowFreeTranslate={effectiveMode === 'demo'}
+                  allowFreeTranslate={false}
                 />
               </div>
             </div>
