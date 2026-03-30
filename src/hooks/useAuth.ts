@@ -2,6 +2,20 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import type { User, Session } from '@supabase/supabase-js';
 
+// Declare Clarity on window so TypeScript doesn't complain
+declare global {
+  interface Window {
+    clarity?: (...args: unknown[]) => void;
+  }
+}
+
+/** Tell Microsoft Clarity who the current user is */
+function identifyForClarity(user: User) {
+  if (typeof window.clarity === 'function') {
+    window.clarity('identify', user.id, null, null, user.email);
+  }
+}
+
 export function useAuth() {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
@@ -17,6 +31,9 @@ export function useAuth() {
         setLoading(false);
 
         if (newSession?.user) {
+          // Link this browser session to the real user in Clarity
+          identifyForClarity(newSession.user);
+
           // Sync display name & avatar from Google metadata to profiles
           const meta = newSession.user.user_metadata;
           const fullName = meta?.full_name || meta?.name || null;
@@ -46,6 +63,9 @@ export function useAuth() {
       setSession(initialSession);
       setUser(initialSession?.user ?? null);
       if (initialSession?.user) {
+        // Identify returning user in Clarity on page load
+        identifyForClarity(initialSession.user);
+
         const meta = initialSession.user.user_metadata;
         const fullName = meta?.full_name || meta?.name || null;
         const avatar = meta?.avatar_url || meta?.picture || null;
