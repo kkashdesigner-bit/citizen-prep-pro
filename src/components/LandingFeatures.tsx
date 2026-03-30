@@ -208,6 +208,7 @@ export default function LandingFeatures() {
         return (
           <section
             key={section.id}
+            id={section.id}
             className={`${bgClass} py-16 md:py-24 overflow-hidden`}
           >
             <div className="container mx-auto max-w-6xl px-4">

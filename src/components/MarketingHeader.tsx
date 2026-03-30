@@ -64,8 +64,8 @@ export default function MarketingHeader() {
             : null;
 
     const navLinks = [
-        { label: 'Comment ça marche', id: 'how-it-works' },
-        { label: 'Fonctionnalités', id: 'features' },
+        { label: 'Comment ça marche', id: 'practice' },
+        { label: 'Fonctionnalités', id: 'modes' },
         { label: 'Tarifs', id: 'pricing' },
     ];
 
