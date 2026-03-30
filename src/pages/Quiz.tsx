@@ -120,7 +120,7 @@ export default function Quiz() {
       setGateTier('premium');
       setShowGate(true);
     }
-  }, [tierLoading, isFreeUser, isStandardOrAbove, isPremium, rawMode, examsTakenToday]);
+  }, [tierLoading, isFreeUser, isStandardOrAbove, isPremium, rawMode, examsTakenToday, classIdParam]);
 
   // Free users can take full exams (1/day) — no longer forced to demo mode
   const effectiveMode: QuizMode = rawMode;
@@ -312,7 +312,8 @@ export default function Quiz() {
     const quizErrors: QuizError[] = results
       .filter(r => !r.correct && r.selectedAnswer !== undefined)
       .map(r => {
-        const q = questions.find(qq => qq.id === r.questionId)!;
+        const q = questions.find(qq => qq.id === r.questionId);
+        if (!q) return null;
         return {
           questionText: q.question_text,
           options: [q.option_a, q.option_b, q.option_c, q.option_d],
@@ -321,7 +322,8 @@ export default function Quiz() {
           category: r.category,
           explanation: q.explanation || '',
         };
-      });
+      })
+      .filter((e): e is QuizError => e !== null);
 
     // Also store in sessionStorage as fallback for the /results route
     sessionStorage.setItem('quizResults', JSON.stringify(resultPayload));
@@ -368,8 +370,9 @@ export default function Quiz() {
           .then(({ data: profileData }) => {
             const existing: string[] = (profileData?.used_questions as string[]) || [];
             const merged = [...new Set([...existing, ...newIds])];
-            supabase.from('profiles').update({ used_questions: merged }).eq('id', user.id);
-          });
+            return supabase.from('profiles').update({ used_questions: merged }).eq('id', user.id);
+          })
+          .catch((err: unknown) => console.error('Failed to save used questions:', err));
       }
     } else {
       sessionStorage.removeItem('quizClassId');
@@ -437,6 +440,7 @@ export default function Quiz() {
   }
 
   const currentQuestion = questions[currentIndex];
+  if (!currentQuestion) return null;
   const answeredCount = Object.keys(answers).length;
   const showFeedback = effectiveMode === 'study' || effectiveMode === 'training' || !!classIdParam;
   const progressPercent = ((currentIndex + 1) / questions.length) * 100;

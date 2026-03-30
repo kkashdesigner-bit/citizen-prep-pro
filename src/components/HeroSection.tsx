@@ -24,8 +24,8 @@ export default function HeroSection() {
 
   const handleStart = () => {
     if (!user) { navigate('/auth'); return; }
-    // If profile is still loading or onboarding not done, send to onboarding
-    if (profileLoading || !profile?.onboarding_completed) { navigate('/onboarding'); return; }
+    if (profileLoading) { navigate('/learn'); return; }
+    if (!profile?.onboarding_completed) { navigate('/onboarding'); return; }
     navigate('/learn');
   };
 
