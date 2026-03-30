@@ -173,6 +173,11 @@ export default function Quiz() {
   const [warpState, setWarpState] = useState<'idle' | 'exit' | 'enter'>('idle');
   const pendingIndex = useRef<number | null>(null);
 
+  // Inline results overlay state
+  const [showResults, setShowResults] = useState(false);
+  const [resultData, setResultData] = useState<import('@/lib/types').ExamResult | null>(null);
+  const [resultErrors, setResultErrors] = useState<QuizError[]>([]);
+
   // ─── Exit warning ───
   const [showExitWarning, setShowExitWarning] = useState(false);
   const pendingNavRef = useRef<(() => void) | null>(null);
@@ -223,11 +228,6 @@ export default function Quiz() {
       navigate('/learn');
     }
   };
-
-  // Inline results overlay state
-  const [showResults, setShowResults] = useState(false);
-  const [resultData, setResultData] = useState<import('@/lib/types').ExamResult | null>(null);
-  const [resultErrors, setResultErrors] = useState<QuizError[]>([]);
 
   // Timer for exam mode
   useEffect(() => {
