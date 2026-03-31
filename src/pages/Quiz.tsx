@@ -372,7 +372,7 @@ export default function Quiz() {
             const merged = [...new Set([...existing, ...newIds])];
             return supabase.from('profiles').update({ used_questions: merged }).eq('id', user.id);
           })
-          .catch((err: unknown) => console.error('Failed to save used questions:', err));
+          .then(undefined, (err: unknown) => console.error('Failed to save used questions:', err));
       }
     } else {
       sessionStorage.removeItem('quizClassId');
