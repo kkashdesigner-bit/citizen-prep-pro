@@ -26,6 +26,7 @@ const ParcoursPage = lazy(() => import("./pages/ParcoursPage"));
 const ClassDetailPage = lazy(() => import("./pages/ClassDetailPage"));
 const CoursesPage = lazy(() => import("./pages/CoursesPage"));
 const CoursPreview = lazy(() => import("./pages/seo/CoursPreview"));
+const ProgressPage = lazy(() => import("./pages/ProgressPage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const SettingsPage = lazy(() => import("./pages/SettingsPage"));
 const Contact = lazy(() => import("./pages/Contact"));
@@ -86,6 +87,7 @@ export const routes = [
       { path: "parcours/classe/:id", element: <ProtectedRoute><ClassDetailPage /></ProtectedRoute> },
       { path: "settings", element: <ProtectedRoute><SettingsPage /></ProtectedRoute> },
       { path: "courses", element: <ProtectedRoute><CoursesPage /></ProtectedRoute> },
+      { path: "progress", element: <ProtectedRoute><ProgressPage /></ProtectedRoute> },
       { path: "cours/:slug", element: <CoursPreview /> },
       { path: "contact", element: <Contact /> },
       { path: "terms", element: <Terms /> },
