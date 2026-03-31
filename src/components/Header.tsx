@@ -4,7 +4,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/hooks/useAuth';
 import { useSubscription } from '@/hooks/useSubscription';
 import { LANGUAGES, Language } from '@/lib/types';
-import { Globe, LogOut, User, LayoutDashboard, Menu, X, BarChart3, Settings } from 'lucide-react';
+import { Globe, LogOut, User, LayoutDashboard, Menu, X, Settings } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -139,10 +139,6 @@ export default function Header({ animate = false }: HeaderProps) {
                     <User className="mr-2 h-4 w-4" />
                     Profil
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate('/progress')}>
-                    <BarChart3 className="mr-2 h-4 w-4" />
-                    Progression
-                  </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => navigate('/learn')}>
                     <Settings className="mr-2 h-4 w-4" />
                     Paramètres
@@ -190,10 +186,6 @@ export default function Header({ animate = false }: HeaderProps) {
                 <DropdownMenuItem onClick={() => navigate('/learn')}>
                   <User className="mr-2 h-4 w-4" />
                   Profil
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate('/progress')}>
-                  <BarChart3 className="mr-2 h-4 w-4" />
-                  Progression
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleSignOut} className="text-destructive focus:text-destructive">
