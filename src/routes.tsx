@@ -87,6 +87,7 @@ export const routes = [
       { path: "parcours/classe/:id", element: <ProtectedRoute><ClassDetailPage /></ProtectedRoute> },
       { path: "settings", element: <ProtectedRoute><SettingsPage /></ProtectedRoute> },
       { path: "courses", element: <ProtectedRoute><CoursesPage /></ProtectedRoute> },
+      { path: "progress", element: <ProtectedRoute><ProgressPage /></ProtectedRoute> },
       { path: "cours/:slug", element: <CoursPreview /> },
       { path: "contact", element: <Contact /> },
       { path: "terms", element: <Terms /> },

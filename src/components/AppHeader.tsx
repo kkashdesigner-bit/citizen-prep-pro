@@ -119,7 +119,7 @@ export default function AppHeader({ pageTitle, pageIcon, backTo = '/learn', back
                             <DropdownMenuItem onClick={() => navigate('/learn')}>
                                 <User className="mr-2 h-4 w-4" /> Profil
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => navigate('/learn')}>
+                            <DropdownMenuItem onClick={() => navigate('/settings')}>
                                 <Settings className="mr-2 h-4 w-4" /> Paramètres
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />

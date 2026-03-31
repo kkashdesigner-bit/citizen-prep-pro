@@ -47,7 +47,7 @@ const Footer = forwardRef<HTMLElement>(function Footer(_, ref) {
             <Link to="/exams" className="text-sm text-muted-foreground hover:text-primary transition-colors">{t('footer.exams')}</Link>
             <Link to="/quiz" className="text-sm text-muted-foreground hover:text-primary transition-colors">{t('footer.quiz')}</Link>
             <Link to="/about" className="text-sm text-muted-foreground hover:text-primary transition-colors">{t('footer.understand')}</Link>
-            <a href="#" className="text-sm text-muted-foreground hover:text-primary transition-colors">{t('footer.booklet')}</a>
+            <a href="/Nationalité.pdf" target="_blank" rel="noopener noreferrer" className="text-sm text-muted-foreground hover:text-primary transition-colors">{t('footer.booklet')}</a>
           </div>
 
           {/* Navigation / GoCivique */}
