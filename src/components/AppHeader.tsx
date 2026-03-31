@@ -13,6 +13,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ReactNode } from 'react';
 import Logo from '@/components/Logo';
+import NotificationBell from '@/components/notifications/NotificationBell';
 
 interface AppHeaderProps {
     pageTitle: string;
@@ -84,6 +85,9 @@ export default function AppHeader({ pageTitle, pageIcon, backTo = '/learn', back
                         <Flame className="h-4 w-4 fill-orange-500" />
                         <span>{streak}</span>
                     </div>
+
+                    {/* Notification bell */}
+                    <NotificationBell />
 
                     {/* Tier badge */}
                     <span className={`hidden sm:inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold border ${tierConfig.color}`}>

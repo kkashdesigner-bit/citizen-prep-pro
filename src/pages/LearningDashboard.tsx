@@ -13,6 +13,8 @@ import ResumeStudyCard from '@/components/learn/ResumeStudyCard';
 import WeeklyActivityChart from '@/components/learn/WeeklyActivityChart';
 import DomainMasteryBars from '@/components/learn/DomainMasteryBars';
 import WeaknessAlerts from '@/components/learn/WeaknessAlerts';
+import DailyQuestionCard from '@/components/daily-question/DailyQuestionCard';
+import WeaknessDrillCard from '@/components/weakness-drill/WeaknessDrillCard';
 import ExamReadinessCard from '@/components/learn/ExamReadinessCard';
 import ParcoursCard from '@/components/learn/ParcoursCard';
 import MiniatureIcon from '@/components/MiniatureIcon';
@@ -189,6 +191,11 @@ export default function LearningDashboard() {
               </div>
             </motion.div>
 
+            {/* Daily Question */}
+            <motion.div variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0 } }} className="mb-6">
+              <DailyQuestionCard />
+            </motion.div>
+
             {/* Parcours Card — Real progress */}
             <motion.div variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0 } }}>
               <ParcoursCard />
@@ -324,8 +331,8 @@ export default function LearningDashboard() {
                   <DomainMasteryBars domains={stats.domainMastery} />
                 </div>
 
-                {/* Weakness alerts — Real data */}
-                <WeaknessAlerts alerts={stats.weaknessAlerts} />
+                {/* Weakness drill — Real data */}
+                <WeaknessDrillCard alerts={stats.weaknessAlerts} />
 
                 {/* Recommended Exam */}
                 <motion.div

@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { CheckCircle, Lock, ArrowRight, Globe, Sparkles, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import RecentActivityLog from './RecentActivityLog';
+import FlashQuizCard from '@/components/flash-quiz/FlashQuizCard';
 import type { ActivityItem } from '@/hooks/useDashboardStats';
 
 interface LearningJourneyProps {
@@ -67,6 +68,11 @@ export default function DashboardRightSidebar({ tier, onUpgrade, recentActivity,
                         <Zap className="h-6 w-6 text-amber-300" />
                     </div>
                 </div>
+            </motion.div>
+
+            {/* ── Flash Quiz Card ── */}
+            <motion.div variants={{ hidden: { opacity: 0, x: 20 }, visible: { opacity: 1, x: 0 } }}>
+              <FlashQuizCard />
             </motion.div>
 
             {/* ── Learning Journey Timeline ── */}
