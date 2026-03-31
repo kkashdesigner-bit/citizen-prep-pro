@@ -113,6 +113,65 @@ export type Database = {
           },
         ]
       }
+      daily_question_answers: {
+        Row: {
+          answered_at: string
+          daily_question_id: string
+          id: string
+          is_correct: boolean
+          selected_answer: string
+          user_id: string
+        }
+        Insert: {
+          answered_at?: string
+          daily_question_id: string
+          id?: string
+          is_correct: boolean
+          selected_answer: string
+          user_id: string
+        }
+        Update: {
+          answered_at?: string
+          daily_question_id?: string
+          id?: string
+          is_correct?: boolean
+          selected_answer?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "daily_question_answers_daily_question_id_fkey"
+            columns: ["daily_question_id"]
+            isOneToOne: false
+            referencedRelation: "daily_questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      daily_questions: {
+        Row: {
+          active_date: string
+          category: string
+          created_at: string
+          id: string
+          question_id: number
+        }
+        Insert: {
+          active_date: string
+          category: string
+          created_at?: string
+          id?: string
+          question_id: number
+        }
+        Update: {
+          active_date?: string
+          category?: string
+          created_at?: string
+          id?: string
+          question_id?: number
+        }
+        Relationships: []
+      }
       learning_paths: {
         Row: {
           created_at: string
@@ -235,6 +294,39 @@ export type Database = {
           level?: string
           order_index?: number
           title?: string
+        }
+        Relationships: []
+      }
+      notifications: {
+        Row: {
+          body: string
+          created_at: string
+          id: string
+          is_read: boolean
+          metadata: Json | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          metadata?: Json | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          metadata?: Json | null
+          title?: string
+          type?: string
+          user_id?: string
         }
         Relationships: []
       }
