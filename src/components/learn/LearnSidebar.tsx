@@ -11,6 +11,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { supabase } from '@/integrations/supabase/client';
 import { motion } from 'framer-motion';
+import NotificationBell from '@/components/notifications/NotificationBell';
 
 
 const NAV_ITEMS = [
@@ -73,7 +74,7 @@ export default function LearnSidebar() {
           <Link to="/" className="flex items-center gap-2">
             <Logo size="sm" />
           </Link>
-
+          <NotificationBell />
         </div>
 
         {/* Nav */}

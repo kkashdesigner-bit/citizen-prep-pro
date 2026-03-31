@@ -18,6 +18,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useEffect, useState } from 'react';
 import Logo from '@/components/Logo';
 import { useIsMobile } from '@/hooks/use-mobile';
+import NotificationBell from '@/components/notifications/NotificationBell';
 
 interface HeaderProps {
   animate?: boolean;
@@ -117,6 +118,9 @@ export default function Header({ animate = false }: HeaderProps) {
                 </Button>
               )}
 
+              {/* Notification bell */}
+              <NotificationBell />
+
               {/* Avatar dropdown */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -165,6 +169,8 @@ export default function Header({ animate = false }: HeaderProps) {
 
         {/* Mobile nav controls */}
         <div className="flex sm:hidden items-center gap-1">
+
+          {user && <NotificationBell />}
 
           {user && (
             <DropdownMenu>
