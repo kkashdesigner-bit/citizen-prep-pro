@@ -5,7 +5,7 @@ import { useNotifications } from '@/hooks/useNotifications';
 import NotificationPanel from './NotificationPanel';
 import { useIsMobile } from '@/hooks/use-mobile';
 
-export default function NotificationBell() {
+export default function NotificationBell({ align = 'right' }: { align?: 'left' | 'right' }) {
   const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications();
   const [open, setOpen] = useState(false);
   const isMobile = useIsMobile();
@@ -69,7 +69,7 @@ export default function NotificationBell() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -8, scale: 0.95 }}
               transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-              className="absolute right-0 top-full mt-2 z-50 w-[380px]"
+              className={`absolute top-full mt-2 z-50 w-[380px] ${align === 'left' ? 'left-0' : 'right-0'}`}
             >
               <NotificationPanel
                 notifications={notifications}

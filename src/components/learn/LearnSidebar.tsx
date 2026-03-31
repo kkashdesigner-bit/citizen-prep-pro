@@ -74,7 +74,7 @@ export default function LearnSidebar() {
           <Link to="/" className="flex items-center gap-2">
             <Logo size="sm" />
           </Link>
-          <NotificationBell />
+          <NotificationBell align="left" />
         </div>
 
         {/* Nav */}

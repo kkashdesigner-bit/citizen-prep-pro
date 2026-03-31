@@ -23,6 +23,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { motion } from 'framer-motion';
 import type { GoalType } from '@/hooks/useUserProfile';
+import NotificationBell from '@/components/notifications/NotificationBell';
 
 const CATEGORY_MAP: Record<string, { emoji: string; gradient: string; shadow: string; label: string; desc: string; dbCategory: string; image: string; imageAlt: string }> = {
   Principles: { emoji: '⚖️', gradient: 'from-blue-600 via-blue-500 to-indigo-600', shadow: 'shadow-blue-500/30', label: 'Fondamentaux', desc: 'Valeurs et principes de la République', dbCategory: 'Principles and values of the Republic', image: '/examen-civique-qcm-valeurs-republique-francaise.jpg', imageAlt: 'QCM examen civique — Valeurs et principes de la République française' },
@@ -116,9 +117,14 @@ export default function LearningDashboard() {
                 </div>
 
                 <div className="flex-1 min-w-0 z-10">
-                  <h1 className="text-base sm:text-2xl md:text-3xl font-bold text-[var(--dash-text)] tracking-tight truncate">
-                    Bonjour, {firstName} <span className="inline-block animate-wave origin-bottom-right">👋</span>
-                  </h1>
+                  <div className="flex items-start justify-between gap-2">
+                    <h1 className="text-base sm:text-2xl md:text-3xl font-bold text-[var(--dash-text)] tracking-tight truncate">
+                      Bonjour, {firstName} <span className="inline-block animate-wave origin-bottom-right">👋</span>
+                    </h1>
+                    <div className="sm:hidden shrink-0 mt-0.5">
+                      <NotificationBell align="right" />
+                    </div>
+                  </div>
 
                   <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mt-1.5 sm:mt-3">
                     {/* Tier Badge */}
