@@ -39,7 +39,7 @@ export default function DashboardLeftColumn({ xp, streak, dailyGoalProgress }: L
             <div className="rounded-2xl border border-border/60 bg-card p-5 shadow-sm">
                 <div className="flex justify-between items-center mb-4">
                     <h3 className="font-bold text-foreground">Silver League</h3>
-                    <button onClick={() => navigate('/progress')} className="text-xs font-bold text-[hsl(var(--success))] hover:underline tracking-wider uppercase">View all</button>
+                    <button onClick={() => navigate('/learn')} className="text-xs font-bold text-[hsl(var(--success))] hover:underline tracking-wider uppercase">View all</button>
                 </div>
 
                 <div className="space-y-2">
