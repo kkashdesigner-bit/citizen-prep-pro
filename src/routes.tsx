@@ -29,6 +29,7 @@ const CoursPreview = lazy(() => import("./pages/seo/CoursPreview"));
 const ProgressPage = lazy(() => import("./pages/ProgressPage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const SettingsPage = lazy(() => import("./pages/SettingsPage"));
+const UpdatePassword = lazy(() => import("./pages/UpdatePassword"));
 const Contact = lazy(() => import("./pages/Contact"));
 const Terms = lazy(() => import("./pages/Terms"));
 const Privacy = lazy(() => import("./pages/Privacy"));
@@ -72,6 +73,7 @@ export const routes = [
     children: [
       { index: true, element: <Index /> },
       { path: "auth", element: <Auth /> },
+      { path: "auth/update-password", element: <UpdatePassword /> },
       { path: "learn", element: <ProtectedRoute><LearningDashboard /></ProtectedRoute> },
       { path: "onboarding", element: <Onboarding /> },
       { path: "lesson/:id", element: <ProtectedRoute><LessonPage /></ProtectedRoute> },

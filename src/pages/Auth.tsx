@@ -10,13 +10,16 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useUserProfile } from '@/hooks/useUserProfile';
 import Logo from '@/components/Logo';
-import { ArrowRight, Eye, EyeOff, Mail, Lock, User, ChevronLeft, Sparkles, Shield, BarChart3 } from 'lucide-react';
+import { ArrowRight, Eye, EyeOff, Mail, Lock, User, ChevronLeft, Sparkles, Shield, BarChart3, CheckCircle2, RefreshCw } from 'lucide-react';
+import { useEffect, useRef } from 'react';
 
 const AVATARS = Array.from({ length: 8 }, (_, i) => `/examen-civique-avatar-${i + 1}.webp`);
 
 export default function Auth() {
   const [isLogin, setIsLogin] = useState(true);
   const [isForgot, setIsForgot] = useState(false);
+  const [resetSent, setResetSent] = useState(false);
+  const [resetCooldown, setResetCooldown] = useState(0);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [displayName, setDisplayName] = useState('');
@@ -29,14 +32,33 @@ export default function Auth() {
   const navigate = useNavigate();
   const { profile } = useUserProfile();
 
+  const cooldownRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
   const switchMode = (toLogin: boolean) => {
     setFormState('switching');
     setTimeout(() => {
       setIsLogin(toLogin);
       setIsForgot(false);
+      setResetSent(false);
+      setResetCooldown(0);
       setFormState('idle');
     }, 200);
   };
+
+  // Cooldown countdown for resend button
+  useEffect(() => {
+    if (resetCooldown <= 0) return;
+    cooldownRef.current = setInterval(() => {
+      setResetCooldown(prev => {
+        if (prev <= 1) {
+          clearInterval(cooldownRef.current!);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => clearInterval(cooldownRef.current!);
+  }, [resetCooldown > 0]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -71,16 +93,16 @@ export default function Auth() {
     }
   };
 
-  const handleResetPassword = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleResetPassword = async (e?: React.FormEvent) => {
+    e?.preventDefault();
     setLoading(true);
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: window.location.origin,
+        redirectTo: window.location.origin + '/auth/update-password',
       });
       if (error) throw error;
-      toast({ title: 'Email envoyé ! Vérifiez votre boîte de réception.' });
-      setIsForgot(false);
+      setResetSent(true);
+      setResetCooldown(60);
     } catch (error: any) {
       toast({
         title: 'Erreur',
@@ -222,15 +244,19 @@ export default function Auth() {
             <div className="mb-8">
               {isForgot ? (
                 <>
-                  <button
-                    onClick={() => setIsForgot(false)}
-                    className="flex items-center gap-1 text-sm text-[#0055A4] font-medium mb-4 hover:gap-2 transition-all"
-                  >
-                    <ChevronLeft className="w-4 h-4" />
-                    Retour
-                  </button>
-                  <h1 className="text-2xl sm:text-3xl font-bold text-[#1A1A1A] tracking-tight">Mot de passe oublié ?</h1>
-                  <p className="text-[#1A1A1A]/60 mt-2">Entrez votre email pour réinitialiser votre mot de passe.</p>
+                  {!resetSent && (
+                    <button
+                      onClick={() => setIsForgot(false)}
+                      className="flex items-center gap-1 text-sm text-[#0055A4] font-medium mb-4 hover:gap-2 transition-all"
+                    >
+                      <ChevronLeft className="w-4 h-4" />
+                      Retour
+                    </button>
+                  )}
+                  <h1 className="text-2xl sm:text-3xl font-bold text-[#1A1A1A] tracking-tight">
+                    {resetSent ? 'Email envoyé !' : 'Mot de passe oublié ?'}
+                  </h1>
+                  {!resetSent && <p className="text-[#1A1A1A]/60 mt-2">Entrez votre email pour recevoir un lien de réinitialisation.</p>}
                 </>
               ) : (
                 <>
@@ -246,28 +272,69 @@ export default function Auth() {
               )}
             </div>
 
-            {/* ─── Reset Password Form ─── */}
+            {/* ─── Reset Password Form / Confirmation ─── */}
             {isForgot ? (
-              <form onSubmit={handleResetPassword} className="space-y-5">
-                <div className="space-y-2">
-                  <Label htmlFor="reset-email" className="text-sm font-medium text-[#1A1A1A]">Email</Label>
-                  <div className="relative">
-                    <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#1A1A1A]/30" />
-                    <Input
-                      id="reset-email"
-                      type="email"
-                      placeholder="votre@email.com"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      required
-                      className="pl-10 h-12 rounded-xl border-[#E6EAF0] bg-[#F5F7FA] hover:border-[#0055A4]/30 focus:border-[#0055A4] focus:bg-white focus:shadow-[0_0_0_3px_rgba(0,85,164,0.1)] transition-all"
-                    />
+              resetSent ? (
+                /* ── Email sent confirmation state ── */
+                <div className="space-y-6">
+                  <div className="flex flex-col items-center text-center p-6 rounded-2xl bg-emerald-50 border border-emerald-100">
+                    <div className="w-14 h-14 rounded-2xl bg-emerald-100 flex items-center justify-center mb-4">
+                      <CheckCircle2 className="w-7 h-7 text-emerald-600" />
+                    </div>
+                    <h2 className="text-lg font-bold text-[#1A1A1A] mb-1">Vérifiez votre boîte mail</h2>
+                    <p className="text-sm text-[#1A1A1A]/60 leading-relaxed">
+                      Nous avons envoyé un lien à <span className="font-semibold text-[#1A1A1A]">{email}</span>.<br />
+                      Cliquez sur ce lien pour créer votre nouveau mot de passe.
+                    </p>
+                  </div>
+
+                  <div className="rounded-xl bg-amber-50 border border-amber-100 p-4 text-sm text-amber-800">
+                    <p className="font-semibold mb-1">⏱ Le lien expire dans 1 heure</p>
+                    <p className="text-amber-700/80 text-xs">Vérifiez aussi vos spams si vous ne trouvez pas l'email.</p>
+                  </div>
+
+                  <div className="flex flex-col gap-3">
+                    <button
+                      type="button"
+                      disabled={resetCooldown > 0 || loading}
+                      onClick={() => handleResetPassword()}
+                      className="flex items-center justify-center gap-2 text-sm font-semibold text-[#0055A4] hover:underline underline-offset-2 disabled:opacity-40 disabled:cursor-not-allowed disabled:no-underline"
+                    >
+                      <RefreshCw className="w-3.5 h-3.5" />
+                      {resetCooldown > 0 ? `Renvoyer l'email (${resetCooldown}s)` : "Renvoyer l'email"}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => { setIsForgot(false); setResetSent(false); setResetCooldown(0); }}
+                      className="text-sm text-[#1A1A1A]/50 hover:text-[#1A1A1A] transition-colors"
+                    >
+                      ← Retour à la connexion
+                    </button>
                   </div>
                 </div>
-                <Button type="submit" disabled={loading} className="w-full h-12 rounded-xl bg-[#0055A4] hover:bg-[#1B6ED6] text-white font-bold text-base transition-all hover:scale-[1.01] active:scale-[0.99]">
-                  {loading ? <span className="animate-pulse">Envoi en cours...</span> : 'Réinitialiser le mot de passe'}
-                </Button>
-              </form>
+              ) : (
+                /* ── Enter email form ── */
+                <form onSubmit={handleResetPassword} className="space-y-5">
+                  <div className="space-y-2">
+                    <Label htmlFor="reset-email" className="text-sm font-medium text-[#1A1A1A]">Email</Label>
+                    <div className="relative">
+                      <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#1A1A1A]/30" />
+                      <Input
+                        id="reset-email"
+                        type="email"
+                        placeholder="votre@email.com"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                        className="pl-10 h-12 rounded-xl border-[#E6EAF0] bg-[#F5F7FA] hover:border-[#0055A4]/30 focus:border-[#0055A4] focus:bg-white focus:shadow-[0_0_0_3px_rgba(0,85,164,0.1)] transition-all"
+                      />
+                    </div>
+                  </div>
+                  <Button type="submit" disabled={loading} className="w-full h-12 rounded-xl bg-[#0055A4] hover:bg-[#1B6ED6] text-white font-bold text-base transition-all hover:scale-[1.01] active:scale-[0.99]">
+                    {loading ? <span className="animate-pulse">Envoi en cours...</span> : 'Envoyer le lien de réinitialisation'}
+                  </Button>
+                </form>
+              )
             ) : (
               <>
                 {/* ─── Google Button ─── */}
