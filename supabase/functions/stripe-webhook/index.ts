@@ -196,6 +196,15 @@ serve(async (req) => {
       }
 
       if (profile) {
+        // Fetch profile details before reverting to free
+        const { data: fullProfile } = await supabase
+          .from('profiles')
+          .select('email, display_name, subscription_tier')
+          .eq('id', profile.id)
+          .maybeSingle();
+
+        const previousTier = fullProfile?.subscription_tier || 'standard';
+
         await supabase
           .from('profiles')
           .update({
@@ -206,6 +215,30 @@ serve(async (req) => {
           .eq('id', profile.id);
 
         console.log(`User ${profile.id} subscription cancelled — reverted to free`);
+
+        // Send subscription cancelled email
+        if (fullProfile?.email) {
+          try {
+            await fetch(`${supabaseUrl}/functions/v1/send-email`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${supabaseServiceKey}`,
+              },
+              body: JSON.stringify({
+                type: 'subscription_cancelled',
+                data: {
+                  email: fullProfile.email,
+                  firstName: fullProfile.display_name || '',
+                  tier: previousTier,
+                },
+              }),
+            });
+            console.log(`Subscription cancelled email sent to ${fullProfile.email}`);
+          } catch (emailErr) {
+            console.error('Failed to send subscription_cancelled email:', emailErr);
+          }
+        }
       }
     }
 
@@ -245,8 +278,36 @@ serve(async (req) => {
 
       if (profile) {
         console.log(`Payment failed for user ${profile.id}`);
-        // Stripe handles retry logic — we just log for now
-        // After all retries fail, subscription.deleted will fire
+
+        // Send payment failed email
+        const { data: fullProfile } = await supabase
+          .from('profiles')
+          .select('email, display_name, subscription_tier')
+          .eq('id', profile.id)
+          .maybeSingle();
+
+        if (fullProfile?.email) {
+          try {
+            await fetch(`${supabaseUrl}/functions/v1/send-email`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${supabaseServiceKey}`,
+              },
+              body: JSON.stringify({
+                type: 'payment_failed',
+                data: {
+                  email: fullProfile.email,
+                  firstName: fullProfile.display_name || '',
+                  tier: fullProfile.subscription_tier || 'standard',
+                },
+              }),
+            });
+            console.log(`Payment failed email sent to ${fullProfile.email}`);
+          } catch (emailErr) {
+            console.error('Failed to send payment_failed email:', emailErr);
+          }
+        }
       }
     }
 

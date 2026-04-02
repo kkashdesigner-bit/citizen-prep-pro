@@ -80,6 +80,13 @@ export default function UpdatePassword() {
       if (error) throw error;
       setPageState('success');
       toast({ title: 'Mot de passe mis à jour !', description: 'Vous allez être redirigé vers votre tableau de bord.' });
+      // Send password changed confirmation email (fire-and-forget)
+      const { data: { user: currentUser } } = await supabase.auth.getUser();
+      if (currentUser?.email) {
+        supabase.functions.invoke('send-email', {
+          body: { type: 'password_changed', data: { email: currentUser.email, firstName: '' } }
+        }).catch(console.error);
+      }
       setTimeout(() => navigate('/learn'), 2000);
     } catch (err: any) {
       toast({ title: 'Erreur', description: err.message, variant: 'destructive' });

@@ -44,6 +44,7 @@ export default function SettingsPage() {
     /* ── Profile state ── */
     const [firstName, setFirstName] = useState('');
     const [goal, setGoal] = useState<GoalType | ''>('');
+    const [emailOptOut, setEmailOptOut] = useState(false);
     const [profileDirty, setProfileDirty] = useState(false);
     const [savingProfile, setSavingProfile] = useState(false);
     const [profileInitialized, setProfileInitialized] = useState(false);
@@ -52,6 +53,11 @@ export default function SettingsPage() {
     if (profile && !profileInitialized) {
         setFirstName(profile.first_name || '');
         setGoal(profile.goal_type || '');
+        // Fetch email_opt_out from profiles table
+        if (user) {
+            supabase.from('profiles').select('email_opt_out').eq('id', user.id).maybeSingle()
+                .then(({ data }) => { if (data) setEmailOptOut(data.email_opt_out ?? false); });
+        }
         setProfileInitialized(true);
     }
 
@@ -99,6 +105,10 @@ export default function SettingsPage() {
                 first_name: firstName || null,
                 goal_type: (goal as GoalType) || null,
             });
+            // Also update email_opt_out on profiles table
+            if (user) {
+                await supabase.from('profiles').update({ email_opt_out: emailOptOut }).eq('id', user.id);
+            }
             setProfileDirty(false);
             toast.success('Profil mis à jour !');
         } catch {
@@ -136,6 +146,12 @@ export default function SettingsPage() {
             const { error } = await supabase.auth.updateUser({ password: newPw });
             if (error) throw error;
             toast.success('Mot de passe modifié avec succès !');
+            // Send password changed confirmation email (fire-and-forget)
+            if (user?.email) {
+              supabase.functions.invoke('send-email', {
+                body: { type: 'password_changed', data: { email: user.email, firstName: '' } }
+              }).catch(console.error);
+            }
             setCurrentPw('');
             setNewPw('');
             setConfirmPw('');
@@ -291,6 +307,20 @@ export default function SettingsPage() {
                                                 ))}
                                             </div>
                                         </div>
+                                    </div>
+
+                                    {/* Email notifications opt-out */}
+                                    <div className="flex items-center justify-between pt-4 mt-4 border-t border-[var(--dash-card-border)]">
+                                        <div>
+                                            <p className="text-sm font-medium text-[var(--dash-text)]">Emails de suivi</p>
+                                            <p className="text-xs text-[var(--dash-text-muted)]">Bilan hebdomadaire, rappels d'examen, relance</p>
+                                        </div>
+                                        <button
+                                            onClick={() => { setEmailOptOut(!emailOptOut); setProfileDirty(true); }}
+                                            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${!emailOptOut ? 'bg-[#0055A4]' : 'bg-slate-300'}`}
+                                        >
+                                            <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${!emailOptOut ? 'translate-x-6' : 'translate-x-1'}`} />
+                                        </button>
                                     </div>
 
                                     {/* Save Button */}

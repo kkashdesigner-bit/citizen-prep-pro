@@ -80,6 +80,10 @@ export default function Auth() {
           title: 'Compte créé !',
           description: 'Vérifiez votre email pour confirmer votre compte.',
         });
+        // Send signup welcome email (fire-and-forget)
+        supabase.functions.invoke('send-email', {
+          body: { type: 'signup_welcome', data: { email, firstName: displayName.trim() || '' } }
+        }).catch(console.error);
         navigate('/onboarding');
       }
     } catch (error: any) {

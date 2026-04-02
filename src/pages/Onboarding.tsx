@@ -85,6 +85,12 @@ export default function Onboarding() {
         avatar_url: data.avatar_url,
       }).eq('id', user.id);
     }
+    // Send onboarding complete email (fire-and-forget)
+    if (user?.email) {
+      supabase.functions.invoke('send-email', {
+        body: { type: 'onboarding_complete', data: { email: user.email, firstName: data.first_name || '', goalType: data.goal_type || '' } }
+      }).catch(console.error);
+    }
     setSaving(false);
     navigate('/learn');
   };
