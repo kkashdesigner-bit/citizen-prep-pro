@@ -20,6 +20,7 @@ interface UserAnswer {
     answered_at: string;
     category: string | null;
     is_correct: boolean;
+    question_id: number | null;
 }
 
 export interface DomainMastery {
@@ -64,6 +65,7 @@ export interface DashboardStats {
     examsToday: number;
     canTakeExamFree: boolean;
     totalXP: number;
+    wrongQuestionsCount: number;
 }
 
 /* ──────────────────────────────────────────────
@@ -270,10 +272,10 @@ export function useDashboardStats(): DashboardStats {
                     .maybeSingle(),
                 supabase
                     .from('user_answers')
-                    .select('answered_at, category, is_correct')
+                    .select('answered_at, category, is_correct, question_id')
                     .eq('user_id', user.id)
                     .order('answered_at', { ascending: false })
-                    .limit(500),
+                    .limit(1000),
             ]);
 
             // Profile data
@@ -344,6 +346,16 @@ export function useDashboardStats(): DashboardStats {
 
     const totalXP = allAnswers.filter(a => a.is_correct).length * 10;
 
+    // Wrong questions: answered incorrectly at least once, never correctly
+    const correctQuestionIds = new Set(
+        allAnswers.filter(a => a.is_correct && a.question_id != null).map(a => a.question_id!)
+    );
+    const wrongQuestionsCount = new Set(
+        allAnswers
+            .filter(a => !a.is_correct && a.question_id != null && !correctQuestionIds.has(a.question_id!))
+            .map(a => a.question_id!)
+    ).size;
+
     return {
         loading: loading || authLoading,
         displayName,
@@ -360,5 +372,6 @@ export function useDashboardStats(): DashboardStats {
         examsToday,
         canTakeExamFree: examsToday < 1,
         totalXP,
+        wrongQuestionsCount,
     };
 }

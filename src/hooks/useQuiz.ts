@@ -19,7 +19,9 @@ export type QuizMode = 'exam' | 'study' | 'training' | 'demo';
 export interface UseQuizOptions {
   /** Single category for category training */
   category?: string | null;
-  /** Exam level filter */
+  /** Subcategory filter (granular drill — Premium) */
+  subcategory?: string | null;
+  /** Exam level filter — uses exam_category field */
   level?: ExamLevel;
   /** Quiz mode — determines question count, saving, feedback */
   mode?: QuizMode;
@@ -31,8 +33,14 @@ export interface UseQuizOptions {
   retryKey?: number;
   /** Parcours class ID — fetch class-specific questions */
   classId?: string | null;
-  /** Specific question IDs to load (for "Refaire l'examen") */
+  /** Specific question IDs to load (for "Refaire l'examen" / "Révision des erreurs") */
   retakeIds?: number[] | null;
+  /** Only show questions the user has never answered before */
+  freshOnly?: boolean;
+  /** Hard mode — serve statistically hardest questions (lowest global correct rate) */
+  hardMode?: boolean;
+  /** Adaptive mode — interleave hard questions proportionally to session accuracy */
+  adaptive?: boolean;
 }
 
 const DEMO_QUESTIONS_PER_EXAM = 20;
@@ -127,6 +135,7 @@ function getQuestionLimit(mode: QuizMode, isMiniQuiz: boolean): number {
 
 export function useQuiz({
   category,
+  subcategory,
   level,
   mode = 'exam',
   isMiniQuiz = false,
@@ -134,6 +143,9 @@ export function useQuiz({
   retryKey = 0,
   classId,
   retakeIds,
+  freshOnly = false,
+  hardMode = false,
+  adaptive = false,
 }: UseQuizOptions = {}) {
   const { user } = useAuth();
   const { language } = useLanguage();
@@ -195,7 +207,8 @@ export function useQuiz({
             .eq('class_id', classId);
 
           let classQuestions: Question[] = [];
-          const classLimit = (typeof questionLimit === 'number' && questionLimit > 0) ? questionLimit : 5;
+          // No cap when classId is provided — load all mapped questions (or questionLimit if explicitly set)
+          const classLimit = (typeof questionLimit === 'number' && questionLimit > 0) ? questionLimit : 9999;
 
           if (qLinks && qLinks.length > 0) {
             const questionIds = qLinks.map((q: any) => q.question_id);
@@ -203,7 +216,7 @@ export function useQuiz({
               .from('questions')
               .select('*')
               .in('id', questionIds);
-            classQuestions = shuffle((rawQuestions || []) as Question[]).slice(0, classLimit);
+            classQuestions = (rawQuestions || []) as Question[];
           } else {
             // Dynamic: infer category from class_number for official question mapping
             const { data: classInfo } = await (supabase as any)
@@ -224,16 +237,23 @@ export function useQuiz({
             };
             const moduleCategory = getModuleCategory(classNum);
 
-            const poolSize = Math.min(classLimit * 6, 120);
             const { data: poolQuestions, error: poolErr } = await supabase
               .from('questions')
               .select('*')
               .eq('category', moduleCategory)
               .eq('language', 'fr')
-              .limit(poolSize);
+              .limit(classLimit);
             if (poolErr) throw poolErr;
-            classQuestions = shuffle((poolQuestions || []) as Question[]).slice(0, classLimit);
+            classQuestions = (poolQuestions || []) as Question[];
           }
+
+          // Deduplicate by question_text — keep one random variant per unique question
+          const seenTexts = new Set<string>();
+          classQuestions = shuffle(classQuestions).filter(q => {
+            if (seenTexts.has(q.question_text)) return false;
+            seenTexts.add(q.question_text);
+            return true;
+          }).slice(0, classLimit);
 
           setQuestions(classQuestions);
           setLoading(false);
@@ -246,6 +266,32 @@ export function useQuiz({
           const allDemo = await fetchDemoQuestionsFromCSV(dbLang);
           const picked = shuffle(allDemo).slice(0, DEMO_QUESTIONS_PER_EXAM);
           setQuestions(picked);
+          setLoading(false);
+          return;
+        }
+
+        // ─── HARD MODE: fetch from question_difficulty table ───
+        if (hardMode) {
+          const modeLimit = getQuestionLimit(mode, isMiniQuiz);
+          const resolvedLimit = typeof questionLimit === 'number' && questionLimit > 0 ? questionLimit : modeLimit;
+
+          // Get IDs of hardest questions (lowest correct_pct, min 3 attempts)
+          const { data: diffData } = await (supabase as any)
+            .from('question_difficulty')
+            .select('question_id')
+            .order('correct_pct', { ascending: true })
+            .limit(300);
+
+          const hardIds = (diffData || []).map((r: any) => r.question_id).filter(Boolean);
+
+          if (hardIds.length > 0) {
+            let q = supabase.from('questions').select('*').in('id', hardIds);
+            if (freshOnly && answeredIds.length > 0) {
+              // answered IDs will be fetched below — skip for hard mode since we fetch first
+            }
+            const { data: hardQs } = await q;
+            setQuestions(shuffle((hardQs || []) as Question[]).slice(0, resolvedLimit));
+          }
           setLoading(false);
           return;
         }
@@ -271,26 +317,45 @@ export function useQuiz({
             ? questionLimit
             : modeLimit;
 
-        // Resolve the levels to fetch based on hierarchy
+        // Resolve the exam_category levels to fetch based on hierarchy
         const resolveLevelsToFetch = (targetLevel: ExamLevel): ExamLevel[] => {
           if (targetLevel === 'Naturalisation') return ['Naturalisation', 'CR', 'CSP'];
           if (targetLevel === 'CR') return ['CR', 'CSP'];
-          return ['CSP']; // targetLevel === 'CSP'
+          return ['CSP'];
         };
 
-        // Helper: try fetching with a level filter, fallback to no level filter
+        // Fetch already-answered question IDs for freshOnly mode
+        let answeredIds: number[] = [];
+        if (freshOnly && user) {
+          const { data: answeredData } = await supabase
+            .from('user_answers' as any)
+            .select('question_id')
+            .eq('user_id', user.id);
+          answeredIds = [...new Set((answeredData || []).map((r: any) => r.question_id).filter(Boolean))];
+        }
+
+        // Helper: apply freshOnly exclusion to a query
+        const applyFreshFilter = (q: any) => {
+          if (!freshOnly || answeredIds.length === 0) return q;
+          // Supabase .not('id', 'in', `(${ids})`) syntax
+          return q.not('id', 'in', `(${answeredIds.slice(0, 1500).join(',')})`);
+        };
+
+        // Helper: try fetching with exam_category filter, fallback to no level filter
         const fetchWithLevelFallback = async (
           baseQuery: () => ReturnType<ReturnType<typeof supabase.from>['select']>,
           levelVal: string,
           limit: number
         ) => {
           const allowedLevels = resolveLevelsToFetch(levelVal as ExamLevel);
-          const { data, error: err } = await baseQuery().in('level', allowedLevels).limit(limit);
+          const { data, error: err } = await applyFreshFilter(
+            baseQuery().in('exam_category', allowedLevels)
+          ).limit(limit);
           if (err) throw err;
           if (data && data.length > 0) return data as Question[];
 
-          // Fallback: fetch without level filter
-          const { data: fallback, error: err2 } = await baseQuery().limit(limit);
+          // Fallback: fetch without level filter (still respect freshOnly)
+          const { data: fallback, error: err2 } = await applyFreshFilter(baseQuery()).limit(limit);
           if (err2) throw err2;
           return (fallback || []) as Question[];
         };
@@ -320,15 +385,44 @@ export function useQuiz({
             return true;
           });
         } else {
-          // Single category or unfiltered fetch (training, study)
+          // Single category / subcategory / unfiltered fetch (training, study)
           const fetchSize = Math.min(resolvedLimit * 4, 500);
           const baseQ = () => {
             let q = supabase.from('questions').select('*').eq('language', dbLang);
             if (category) q = q.eq('category', category);
+            if (subcategory) q = q.eq('subcategory', subcategory);
             return q;
           };
           const data = await fetchWithLevelFallback(baseQ, resolvedLevel, fetchSize);
           allQuestions = shuffle(data).slice(0, resolvedLimit);
+        }
+
+        // ─── ADAPTIVE: interleave 30% hard questions ───
+        if (adaptive && allQuestions.length > 0) {
+          const { data: diffData } = await (supabase as any)
+            .from('question_difficulty')
+            .select('question_id')
+            .lt('correct_pct', 50)
+            .order('correct_pct', { ascending: true })
+            .limit(100);
+
+          const hardIds = new Set((diffData || []).map((r: any) => r.question_id));
+          const hardQ = allQuestions.filter(q => hardIds.has(q.id));
+          const normalQ = allQuestions.filter(q => !hardIds.has(q.id));
+
+          // Interleave: every 3rd question is a hard question
+          const finalQ: Question[] = [];
+          let hi = 0, ni = 0;
+          for (let i = 0; i < allQuestions.length; i++) {
+            if ((i + 1) % 3 === 0 && hi < hardQ.length) {
+              finalQ.push(hardQ[hi++]);
+            } else if (ni < normalQ.length) {
+              finalQ.push(normalQ[ni++]);
+            } else if (hi < hardQ.length) {
+              finalQ.push(hardQ[hi++]);
+            }
+          }
+          allQuestions = finalQ;
         }
 
         setQuestions(allQuestions);
@@ -342,7 +436,7 @@ export function useQuiz({
 
     fetchQuestions();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [category, user, resolvedLevel, mode, isMiniQuiz, questionLimit, retryKey, classId, retakeIds?.join(',')]);
+  }, [category, subcategory, user, resolvedLevel, mode, isMiniQuiz, questionLimit, retryKey, classId, retakeIds?.join(','), freshOnly, hardMode, adaptive]);
 
   /** Save a single answer to user_answers table (skipped in demo mode) */
   const saveAnswer = useCallback(

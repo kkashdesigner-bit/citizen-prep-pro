@@ -73,31 +73,41 @@ export function useClassDetail(classId?: string) {
                 .eq('class_id', classId);
 
             if (qLinks && qLinks.length > 0) {
-                // Use manually mapped questions (legacy behavior)
+                // Use manually mapped questions
                 const questionIds = qLinks.map(q => q.question_id);
                 const { data: rawQuestions } = await supabase
                     .from('questions')
                     .select('*')
                     .in('id', questionIds);
-                validQuestions = (rawQuestions || []) as Question[];
+                // Deduplicate by question_text — keep one per unique question
+                const seenTexts = new Set<string>();
+                validQuestions = shuffle((rawQuestions || []) as Question[]).filter(q => {
+                    if (seenTexts.has(q.question_text)) return false;
+                    seenTexts.add(q.question_text);
+                    return true;
+                });
             } else {
                 // Dynamic: fetch random unseen questions from the full pool
                 let query = supabase
                     .from('questions')
                     .select('*')
-                    .limit(50); // Fetch a larger pool to randomize from
+                    .limit(200);
 
                 // Exclude already-used questions if any
                 if (usedIds.length > 0) {
-                    // Supabase .not().in() filter
                     query = query.not('id', 'in', `(${usedIds.join(',')})`);
                 }
 
                 const { data: poolQuestions, error: poolErr } = await query;
                 if (poolErr) throw poolErr;
 
-                // Shuffle and pick QUESTIONS_PER_CLASS
-                validQuestions = shuffle((poolQuestions || []) as Question[]).slice(0, QUESTIONS_PER_CLASS);
+                // Deduplicate and shuffle
+                const seen = new Set<string>();
+                validQuestions = shuffle((poolQuestions || []) as Question[]).filter(q => {
+                    if (seen.has(q.question_text)) return false;
+                    seen.add(q.question_text);
+                    return true;
+                });
             }
 
             setData({

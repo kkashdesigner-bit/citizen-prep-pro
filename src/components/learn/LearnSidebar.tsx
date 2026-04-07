@@ -6,7 +6,7 @@ import { useDashboardStats } from '@/hooks/useDashboardStats';
 import Logo from '@/components/Logo';
 import {
   LayoutDashboard, FileText, Route, GraduationCap,
-  Settings, HelpCircle, UserCircle, LogOut
+  Settings, HelpCircle, UserCircle, LogOut, TrendingUp
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { supabase } from '@/integrations/supabase/client';
@@ -18,6 +18,7 @@ const NAV_ITEMS = [
   { key: 'dashboard', icon: LayoutDashboard, path: '/learn', label: 'Tableau de bord' },
   { key: 'exams', icon: FileText, path: '/exams', label: 'Examens' },
   { key: 'path', icon: Route, path: '/parcours', label: 'Parcours 1→100' },
+  { key: 'mastery', icon: TrendingUp, path: '/mastery', label: 'Maîtrise' },
   { key: 'courses', icon: GraduationCap, path: '/courses', label: 'Cours' },
   { key: 'settings', icon: Settings, path: '/settings', label: 'Paramètres' },
   { key: 'help', icon: HelpCircle, path: '/about', label: 'Aide' },

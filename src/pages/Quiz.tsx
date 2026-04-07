@@ -36,6 +36,7 @@ export default function Quiz() {
   const [searchParams] = useSearchParams();
   const rawMode = (searchParams.get('mode') as QuizMode) || 'exam';
   const categoryParam = searchParams.get('category');
+  const subcategoryParam = searchParams.get('subcategory');
   const levelParam = (searchParams.get('level') as ExamLevel) || 'CSP';
   const isMiniQuiz = searchParams.get('mini') === '1';
   const limitParam = searchParams.get('limit');
@@ -43,6 +44,9 @@ export default function Quiz() {
     ? Number(limitParam)
     : undefined;
   const classIdParam = searchParams.get('classId');
+  const freshOnlyParam = searchParams.get('fresh') === '1';
+  const hardModeParam = searchParams.get('hard') === '1';
+  const adaptiveParam = searchParams.get('adaptive') === '1';
   const isRetake = searchParams.get('retake') === '1';
   const [retakeIds] = useState<number[] | null>(() => {
     if (!isRetake || typeof window === 'undefined') return null;
@@ -140,6 +144,7 @@ export default function Quiz() {
 
   const { questions, loading, saveAnswer } = useQuiz({
     category: categoryParam || undefined,
+    subcategory: subcategoryParam || undefined,
     level: levelParam,
     isMiniQuiz,
     mode: effectiveMode,
@@ -147,6 +152,9 @@ export default function Quiz() {
     retryKey,
     classId: classIdParam || undefined,
     retakeIds: retakeIds || undefined,
+    freshOnly: freshOnlyParam,
+    hardMode: hardModeParam,
+    adaptive: adaptiveParam,
   });
 
   const [currentIndex, setCurrentIndex] = useState(0);

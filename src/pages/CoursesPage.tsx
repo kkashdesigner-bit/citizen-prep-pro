@@ -626,7 +626,7 @@ function CourseDetail({ classId, onBack }: { classId: string; onBack: () => void
 
       {/* Bottom CTA */}
       <div className="mt-8">
-        <Button onClick={() => navigate(`/quiz?mode=training&classId=${classId}&limit=10`)}
+        <Button onClick={() => navigate(`/quiz?mode=training&classId=${classId}`)}
           className="w-full bg-[#0055A4] hover:bg-[#1B6ED6] text-white font-bold py-6 rounded-xl text-base shadow-lg transition-all hover:scale-[1.01] active:scale-[0.99] gap-2">
           Passer au Quiz complet ({data.questions.length} questions) <ArrowRight className="w-5 h-5" />
         </Button>

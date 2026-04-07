@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import {
   GraduationCap, PlayCircle, Trophy, Target, Clock,
   CheckCircle, XCircle, TrendingUp, Shield, Sparkles,
+  Zap, Crown, Lock, Star,
 } from 'lucide-react';
 import { useSubscription } from '@/hooks/useSubscription';
 import { useUserProfile, GoalType, GOAL_TO_LEVEL, GOAL_LABELS } from '@/hooks/useUserProfile';
@@ -14,6 +15,65 @@ import LearnSidebar from '@/components/learn/LearnSidebar';
 import AppHeader from '@/components/AppHeader';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+
+const EXAM_LEVELS = [
+  {
+    key: 'CSP',
+    label: 'CSP',
+    fullLabel: 'Carte de Séjour Pluriannuelle',
+    color: '#3B82F6',
+    bg: '#3B82F615',
+    count: 2422,
+    desc: 'Questions fondamentales sur les valeurs républicaines.',
+  },
+  {
+    key: 'CR',
+    label: 'CR',
+    fullLabel: 'Carte de Résident',
+    color: '#8B5CF6',
+    bg: '#8B5CF615',
+    count: 2377,
+    desc: 'Niveau intermédiaire — inclut les questions CSP.',
+  },
+  {
+    key: 'Naturalisation',
+    label: 'Naturalisation',
+    fullLabel: 'Naturalisation française',
+    color: '#0055A4',
+    bg: '#0055A415',
+    count: 2337,
+    desc: 'Niveau complet — toutes les connaissances requises.',
+  },
+] as const;
+
+const SUBCATEGORIES = [
+  { label: "La devise française", count: 49 },
+  { label: "La liberté", count: 59 },
+  { label: "L'égalité", count: 129 },
+  { label: "La fraternité", count: 49 },
+  { label: "La discrimination", count: 53 },
+  { label: "Limites des libertés", count: 80 },
+  { label: "DDHC", count: 45 },
+  { label: "Droits fondamentaux", count: 42 },
+  { label: "Droits liés à la personne", count: 38 },
+  { label: "Droits économiques et sociaux", count: 22 },
+  { label: "Droits de 3ème génération", count: 20 },
+  { label: "Citoyenneté", count: 36 },
+  { label: "Dignité humaine", count: 30 },
+  { label: "Droit de disposer de son corps", count: 21 },
+  { label: "Libertés au couple", count: 28 },
+  { label: "Protection des victimes", count: 46 },
+  { label: "Traite et prostitution", count: 34 },
+  { label: "Infractions", count: 40 },
+  { label: "Interdiction des violences", count: 40 },
+  { label: "Obligations des résidents", count: 37 },
+  { label: "Charte de l'environnement", count: 27 },
+  { label: "Acteurs institutionnels", count: 40 },
+  { label: "Découpage administratif", count: 69 },
+  { label: "Fonctionnement européen", count: 35 },
+  { label: "Institutions européennes", count: 20 },
+  { label: "Élections européennes", count: 30 },
+];
 
 const EXAM_CATEGORIES = [
   { label: 'Fondamentaux', color: '#3B82F6', icon: Shield },
@@ -44,6 +104,8 @@ export default function ExamsPage() {
   const { profile } = useUserProfile();
   const { examHistory, successRate, examsToday, domainMastery } = useDashboardStats();
   const [showGate, setShowGate] = useState(false);
+  const [gateFeature, setGateFeature] = useState<'standard' | 'premium'>('standard');
+  const [freshOnly, setFreshOnly] = useState(false);
 
   const isFree = tier === 'free';
 
@@ -223,6 +285,140 @@ export default function ExamsPage() {
               </motion.div>
             )}
 
+            {/* ── Mode Difficile (Premium) ── */}
+            <motion.div variants={fadeUp} className="rounded-2xl border border-[#EF4444]/20 bg-[#EF4444]/5 p-5 shadow-[0_2px_12px_rgba(0,0,0,0.04)]">
+              <div className="flex items-center justify-between mb-1">
+                <h3 className="text-sm font-bold text-[var(--dash-text)] flex items-center gap-2">
+                  🔥 Mode Difficile
+                </h3>
+                {!isPremium && (
+                  <span className="text-[10px] font-bold bg-amber-500/15 text-amber-600 px-2 py-0.5 rounded-full flex items-center gap-1">
+                    <Crown className="h-3 w-3" /> Premium
+                  </span>
+                )}
+              </div>
+              <p className="text-xs text-[var(--dash-text-muted)] mb-4">
+                Les questions avec le taux de réussite le plus bas parmi tous les utilisateurs. Un vrai défi.
+              </p>
+              <Button
+                className="gap-2 font-bold rounded-xl text-white"
+                style={{ background: isPremium ? '#EF4444' : undefined }}
+                variant={isPremium ? 'default' : 'outline'}
+                onClick={() => {
+                  if (!isPremium) { setGateFeature('premium'); setShowGate(true); return; }
+                  navigate('/quiz?mode=training&hard=1&limit=20');
+                }}
+              >
+                {!isPremium && <Lock className="h-4 w-4" />}
+                🔥 Lancer le Mode Difficile
+              </Button>
+            </motion.div>
+
+            {/* ── Entraînement par Niveau (Standard+) ── */}
+            <motion.div variants={fadeUp} className="rounded-2xl border border-[var(--dash-card-border)] bg-[var(--dash-card)] p-5 shadow-[0_2px_12px_rgba(0,0,0,0.04)]">
+              <div className="flex items-center justify-between mb-1">
+                <h3 className="text-sm font-bold text-[var(--dash-text)] flex items-center gap-2">
+                  <Zap className="h-4 w-4 text-[#0055A4]" />
+                  Entraînement par niveau d'examen
+                </h3>
+                {!isStandardOrAbove && (
+                  <span className="text-[10px] font-bold bg-[#0055A4]/10 text-[#0055A4] px-2 py-0.5 rounded-full">Standard+</span>
+                )}
+              </div>
+              <p className="text-xs text-[var(--dash-text-muted)] mb-3">
+                Ciblez exactement le niveau de votre examen pour maximiser vos révisions.
+              </p>
+
+              {/* Adaptive mode entry */}
+              {isPremium && (
+                <button
+                  onClick={() => navigate('/quiz?mode=training&adaptive=1&limit=20')}
+                  className="mb-3 w-full text-left rounded-xl border border-amber-200 bg-amber-50 p-3 flex items-center gap-3 hover:border-amber-400 transition-all"
+                >
+                  <span className="text-lg">🧠</span>
+                  <div>
+                    <p className="text-xs font-bold text-amber-800">Difficulté Adaptative</p>
+                    <p className="text-[11px] text-amber-700">Le niveau s'ajuste automatiquement à vos réponses — toutes les 3 questions.</p>
+                  </div>
+                  <Sparkles className="h-4 w-4 text-amber-500 ml-auto flex-shrink-0" />
+                </button>
+              )}
+
+              {/* freshOnly toggle */}
+              <label className="flex items-center gap-2 mb-4 cursor-pointer w-fit">
+                <div
+                  onClick={() => setFreshOnly(f => !f)}
+                  className={`relative h-5 w-9 rounded-full transition-colors ${freshOnly ? 'bg-[#0055A4]' : 'bg-slate-200'}`}
+                >
+                  <span className={`absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${freshOnly ? 'translate-x-4' : ''}`} />
+                </div>
+                <span className="text-xs font-medium text-[var(--dash-text-muted)]">Questions inédites uniquement</span>
+              </label>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                {EXAM_LEVELS.map((lvl) => (
+                  <button
+                    key={lvl.key}
+                    onClick={() => {
+                      if (!isStandardOrAbove) { setGateFeature('standard'); setShowGate(true); return; }
+                      const params = new URLSearchParams({ mode: 'training', level: lvl.key, limit: '20' });
+                      if (freshOnly) params.set('fresh', '1');
+                      navigate(`/quiz?${params.toString()}`);
+                    }}
+                    className="text-left rounded-xl border border-[var(--dash-card-border)] bg-[var(--dash-surface)] p-4 hover:border-[#0055A4]/40 hover:-translate-y-0.5 transition-all group"
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs font-bold px-2 py-0.5 rounded-full" style={{ background: lvl.bg, color: lvl.color }}>
+                        {lvl.label}
+                      </span>
+                      <span className="text-[10px] text-[var(--dash-text-muted)]">{lvl.count.toLocaleString()} Q</span>
+                    </div>
+                    <p className="text-xs font-semibold text-[var(--dash-text)] mb-1">{lvl.fullLabel}</p>
+                    <p className="text-[11px] text-[var(--dash-text-muted)] leading-relaxed">{lvl.desc}</p>
+                    {!isStandardOrAbove && <Lock className="h-3.5 w-3.5 text-slate-400 mt-2" />}
+                  </button>
+                ))}
+              </div>
+            </motion.div>
+
+            {/* ── Entraînement par Sous-thème (Premium) ── */}
+            <motion.div variants={fadeUp} className="rounded-2xl border border-[var(--dash-card-border)] bg-[var(--dash-card)] p-5 shadow-[0_2px_12px_rgba(0,0,0,0.04)]">
+              <div className="flex items-center justify-between mb-1">
+                <h3 className="text-sm font-bold text-[var(--dash-text)] flex items-center gap-2">
+                  <Star className="h-4 w-4 text-amber-500" />
+                  Entraînement par sous-thème
+                </h3>
+                {!isPremium && (
+                  <span className="text-[10px] font-bold bg-amber-500/15 text-amber-600 px-2 py-0.5 rounded-full flex items-center gap-1">
+                    <Crown className="h-3 w-3" /> Premium
+                  </span>
+                )}
+              </div>
+              <p className="text-xs text-[var(--dash-text-muted)] mb-4">
+                26 sous-thèmes ciblés — entraînez-vous sur "La devise française", "Droits fondamentaux", etc.
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {SUBCATEGORIES.map((sub) => (
+                  <button
+                    key={sub.label}
+                    onClick={() => {
+                      if (!isPremium) { setGateFeature('premium'); setShowGate(true); return; }
+                      navigate(`/quiz?mode=training&subcategory=${encodeURIComponent(sub.label)}&limit=20`);
+                    }}
+                    className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all hover:-translate-y-0.5 ${
+                      isPremium
+                        ? 'border-[var(--dash-card-border)] bg-[var(--dash-surface)] text-[var(--dash-text)] hover:border-[#0055A4]/40 hover:text-[#0055A4]'
+                        : 'border-dashed border-slate-200 bg-slate-50 text-slate-400 cursor-pointer'
+                    }`}
+                  >
+                    {!isPremium && <Lock className="h-3 w-3" />}
+                    {sub.label}
+                    <span className="text-[10px] opacity-60">{sub.count}</span>
+                  </button>
+                ))}
+              </div>
+            </motion.div>
+
             {/* ── Demo Option (free users) ── */}
             {!isStandardOrAbove && (
               <motion.div
@@ -251,7 +447,7 @@ export default function ExamsPage() {
           </motion.div>
         </main>
       </div>
-      <SubscriptionGate open={showGate} onOpenChange={setShowGate} requiredTier="standard" featureLabel="Examens blancs illimités" />
+      <SubscriptionGate open={showGate} onOpenChange={setShowGate} requiredTier={gateFeature} featureLabel={gateFeature === 'premium' ? 'Entraînement par sous-thème' : 'Examens blancs illimités'} />
       <TierInfoPopup context="exams" onUpgrade={() => setShowGate(true)} />
     </div>
   );

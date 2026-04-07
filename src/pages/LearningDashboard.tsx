@@ -17,6 +17,7 @@ import DailyQuestionCard from '@/components/daily-question/DailyQuestionCard';
 import WeaknessDrillCard from '@/components/weakness-drill/WeaknessDrillCard';
 import ExamReadinessCard from '@/components/learn/ExamReadinessCard';
 import ParcoursCard from '@/components/learn/ParcoursCard';
+import RevisionCard from '@/components/learn/RevisionCard';
 import MiniatureIcon from '@/components/MiniatureIcon';
 import { Target, FileText, Clock, X, Check, Lock, Crown, Sparkles, Flame, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -201,6 +202,17 @@ export default function LearningDashboard() {
             <motion.div variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0 } }} className="mb-6">
               <DailyQuestionCard />
             </motion.div>
+
+            {/* Revision Card — wrong answers drill */}
+            {stats.wrongQuestionsCount > 0 && (
+              <motion.div variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0 } }}>
+                <RevisionCard
+                  wrongQuestionsCount={stats.wrongQuestionsCount}
+                  isStandardOrAbove={isStandardOrAbove}
+                  onGate={() => openGate('standard')}
+                />
+              </motion.div>
+            )}
 
             {/* Parcours Card — Real progress */}
             <motion.div variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0 } }}>
