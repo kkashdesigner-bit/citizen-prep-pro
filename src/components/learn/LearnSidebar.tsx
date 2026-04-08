@@ -98,11 +98,7 @@ export default function LearnSidebar() {
                   }`}
               >
                 {active && (
-                  <motion.div
-                    layoutId="sidebarActive"
-                    className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-[#0055A4] rounded-r-full"
-                    transition={{ type: "spring", stiffness: 300, damping: 25 }}
-                  />
+                  <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-[#0055A4] rounded-r-full" />
                 )}
                 <Icon className={`h-5 w-5 transition-colors ${active ? 'text-[#0055A4]' : 'text-[var(--dash-text-muted)] group-hover:text-[var(--dash-text)]'}`} />
                 <span>{item.label}</span>
@@ -176,7 +172,7 @@ export default function LearnSidebar() {
                   }`}
               >
                 {active && (
-                  <motion.div layoutId="mobileNavActive" className="absolute inset-0 bg-blue-500/10 rounded-xl" />
+                  <div className="absolute inset-0 bg-blue-500/10 rounded-xl" />
                 )}
                 <Icon className={`h-5 w-5 relative z-10 transition-transform ${active ? 'scale-110' : ''}`} />
                 <span className="relative z-10">{item.label}</span>

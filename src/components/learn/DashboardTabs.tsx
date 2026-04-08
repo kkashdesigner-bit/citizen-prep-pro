@@ -29,11 +29,7 @@ export default function DashboardTabs({ children }: DashboardTabsProps) {
                     >
                         {tab.label}
                         {activeTab === tab.key && (
-                            <motion.div
-                                layoutId="dashboardTabIndicator"
-                                className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#0055A4] rounded-t-full"
-                                transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                            />
+                            <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#0055A4] rounded-t-full" />
                         )}
                     </button>
                 ))}
