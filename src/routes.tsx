@@ -45,6 +45,10 @@ const ThemeInstitutions = lazy(() => import("./pages/seo/ThemeInstitutions"));
 const ThemeDroitsDevoits = lazy(() => import("./pages/seo/ThemeDroitsDevoits"));
 const TestBlanc = lazy(() => import("./pages/seo/TestBlanc"));
 const Naturalisation = lazy(() => import("./pages/seo/Naturalisation"));
+const GuideCombienDeFois = lazy(() => import("./pages/seo/GuideCombienDeFois"));
+const GuideSiJeRate = lazy(() => import("./pages/seo/GuideSiJeRate"));
+const GuideCombienDeTemps = lazy(() => import("./pages/seo/GuideCombienDeTemps"));
+const GuideCommentSInscrire = lazy(() => import("./pages/seo/GuideCommentSInscrire"));
 
 const queryClient = new QueryClient();
 
@@ -108,6 +112,10 @@ export const routes = [
       { path: "themes/droits-devoirs", element: <ThemeDroitsDevoits /> },
       { path: "test-blanc-examen-civique", element: <TestBlanc /> },
       { path: "naturalisation-examen-civique", element: <Naturalisation /> },
+      { path: "guides/combien-de-fois", element: <GuideCombienDeFois /> },
+      { path: "guides/si-je-rate-lexamen", element: <GuideSiJeRate /> },
+      { path: "guides/combien-de-temps-resultats", element: <GuideCombienDeTemps /> },
+      { path: "guides/comment-sinscrire", element: <GuideCommentSInscrire /> },
       { path: "*", element: <NotFound /> },
     ],
   },

@@ -1,6 +1,6 @@
 const BRAND_PRIMARY = '#0055A4';
 const BRAND_GRADIENT_END = '#1B6ED6';
-const SUPPORT_EMAIL = 'gocivique@gmail.com';
+const SUPPORT_EMAIL = 'support@gocivique.fr';
 
 export interface EmailTemplateOptions {
   preheader?: string;

@@ -39,8 +39,8 @@
 ## Tarifs
 
 - Essai gratuit : 1 examen démo
-- Standard (6,99 €/mois) : examens illimités, mode entraînement
-- Premium (10,99 €/trimestre) : tout inclus + traductions et outils avancés
+- Standard (6,99 €/mois ou 49,99 €/an) : examens illimités, mode entraînement
+- Premium (10,99 €/mois ou 79,99 €/an) : tout inclus + traductions et outils avancés
 
 ## Cours de préparation (Module 1 — Les Valeurs Fondamentales)
 

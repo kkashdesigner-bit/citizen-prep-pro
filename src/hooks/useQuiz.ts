@@ -4,6 +4,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useUserProfile, GOAL_TO_LEVEL } from '@/hooks/useUserProfile';
 import { Question, ExamLevel, LANGUAGE_TO_DB, DB_CATEGORIES, getCorrectAnswerText } from '@/lib/types';
+import { calculateNextReview, getQualityFromResult, type SRSCard } from '@/lib/spaced-repetition';
 
 function shuffle<T>(arr: T[]): T[] {
   const a = [...arr];
@@ -14,7 +15,7 @@ function shuffle<T>(arr: T[]): T[] {
   return a;
 }
 
-export type QuizMode = 'exam' | 'study' | 'training' | 'demo';
+export type QuizMode = 'exam' | 'study' | 'training' | 'demo' | 'revision';
 
 export interface UseQuizOptions {
   /** Single category for category training */
@@ -260,6 +261,32 @@ export function useQuiz({
           return;
         }
 
+        // ─── REVISION MODE: SM-2 spaced repetition — fetch questions due for review ───
+        if (mode === 'revision' && user) {
+          const now = new Date().toISOString();
+          const { data: dueReviews } = await supabase
+            .from('question_reviews' as any)
+            .select('question_id')
+            .eq('user_id', user.id)
+            .lte('next_review_date', now)
+            .order('next_review_date', { ascending: true })
+            .limit(30);
+
+          const dueIds = (dueReviews || []).map((r: any) => r.question_id).filter(Boolean);
+
+          if (dueIds.length > 0) {
+            const { data: revQuestions } = await supabase
+              .from('questions')
+              .select('*')
+              .in('id', dueIds);
+            setQuestions(shuffle((revQuestions || []) as Question[]));
+          } else {
+            setQuestions([]);
+          }
+          setLoading(false);
+          return;
+        }
+
         // ─── DEMO MODE: load from bundled CSV/XLSX (no Supabase needed) ───
         if (mode === 'demo') {
           const dbLang = LANGUAGE_TO_DB[language] || 'fr';
@@ -438,12 +465,14 @@ export function useQuiz({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [category, subcategory, user, resolvedLevel, mode, isMiniQuiz, questionLimit, retryKey, classId, retakeIds?.join(','), freshOnly, hardMode, adaptive]);
 
-  /** Save a single answer to user_answers table (skipped in demo mode) */
+  /** Save a single answer to user_answers table and update SM-2 review schedule (skipped in demo mode) */
   const saveAnswer = useCallback(
-    async (question: Question, selectedAnswer: string) => {
+    async (question: Question, selectedAnswer: string, timeSpentMs?: number) => {
       if (!user || !shouldSaveAnswers) return;
       const correctText = getCorrectAnswerText(question);
       const isCorrect = selectedAnswer === correctText;
+
+      // Save to user_answers
       await supabase.from('user_answers' as any).insert({
         user_id: user.id,
         question_id: question.id,
@@ -451,6 +480,50 @@ export function useQuiz({
         is_correct: isCorrect,
         category: question.category,
       });
+
+      // Update SM-2 spaced repetition schedule in question_reviews
+      if (typeof timeSpentMs === 'number') {
+        try {
+          const quality = getQualityFromResult(isCorrect, timeSpentMs);
+
+          // Fetch existing review card or create a new one
+          const { data: existing } = await supabase
+            .from('question_reviews' as any)
+            .select('*')
+            .eq('user_id', user.id)
+            .eq('question_id', question.id)
+            .maybeSingle();
+
+          const card: SRSCard = existing ? {
+            questionId: String(question.id),
+            repetitions: existing.repetitions ?? 0,
+            easeFactor: existing.ease_factor ?? 2.5,
+            intervalDays: existing.interval_days ?? 0,
+            nextReviewDate: new Date(existing.next_review_date ?? Date.now()),
+          } : {
+            questionId: String(question.id),
+            repetitions: 0,
+            easeFactor: 2.5,
+            intervalDays: 0,
+            nextReviewDate: new Date(),
+          };
+
+          const updated = calculateNextReview(card, quality);
+
+          await supabase.from('question_reviews' as any).upsert({
+            user_id: user.id,
+            question_id: question.id,
+            repetitions: updated.repetitions,
+            ease_factor: updated.easeFactor,
+            interval_days: updated.intervalDays,
+            next_review_date: updated.nextReviewDate.toISOString(),
+            last_quality: quality,
+            updated_at: new Date().toISOString(),
+          }, { onConflict: 'user_id,question_id' });
+        } catch (e) {
+          console.error('SM-2 update failed:', e);
+        }
+      }
     },
     [user, shouldSaveAnswers],
   );

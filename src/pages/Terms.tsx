@@ -81,7 +81,7 @@ export default function Terms() {
                             <section>
                                 <h2 className="text-xl font-bold mb-3">Article 8 – Données personnelles et cookies</h2>
                                 <p className="text-muted-foreground leading-relaxed mb-4">
-                                    Les données collectées sont traitées conformément au Règlement Général sur la Protection des Données (RGPD). Elles sont utilisées uniquement pour la gestion des comptes, paiements et accès aux services. L’utilisateur peut exercer ses droits d’accès, de rectification ou de suppression en contactant : <a href="mailto:gocivique@gmail.com" className="text-primary hover:underline">gocivique@gmail.com</a>
+                                    Les données collectées sont traitées conformément au Règlement Général sur la Protection des Données (RGPD). Elles sont utilisées uniquement pour la gestion des comptes, paiements et accès aux services. L’utilisateur peut exercer ses droits d’accès, de rectification ou de suppression en contactant : <a href="mailto:dpo@gocivique.fr" className="text-primary hover:underline">dpo@gocivique.fr</a>
                                 </p>
                                 <p className="text-muted-foreground leading-relaxed">
                                     Des cookies peuvent être utilisés pour améliorer la navigation ; ils peuvent être désactivés dans les paramètres du navigateur. Pour plus d’informations, veuillez consulter notre <a href="/privacy" className="text-primary hover:underline">Politique de Confidentialité</a>.

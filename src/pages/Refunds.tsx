@@ -67,7 +67,7 @@ export default function Refunds() {
                             <section>
                                 <h2 className="text-xl font-bold mb-3">Article 5 – Procédure de demande de remboursement</h2>
                                 <p className="text-muted-foreground leading-relaxed mb-4">
-                                    Toute demande doit être adressée à : <a href="mailto:gocivique@gmail.com" className="text-primary hover:underline">gocivique@gmail.com</a> dans un délai de 7 jours suivant la commande, en précisant :
+                                    Toute demande doit être adressée à : <a href="mailto:support@gocivique.fr" className="text-primary hover:underline">support@gocivique.fr</a> dans un délai de 7 jours suivant la commande, en précisant :
                                 </p>
                                 <ul className="list-disc pl-5 space-y-2 text-muted-foreground mb-4">
                                     <li>le nom et prénom du titulaire du compte ;</li>

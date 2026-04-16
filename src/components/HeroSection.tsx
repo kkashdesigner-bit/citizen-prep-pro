@@ -129,13 +129,14 @@ export default function HeroSection() {
             <span className="text-[hsl(var(--success))]">LIVE</span>
           </span>
           <div className="flex -space-x-2">
-            {[33, 47, 12, 65].map((imgId, i) => (
+            {[1, 2, 3, 4].map((n, i) => (
               <img
                 key={i}
-                src={`https://i.pravatar.cc/100?img=${imgId}`}
-                alt="User avatar"
+                src={`/examen-civique-avatar-${n}.webp`}
+                alt={`examen-civique utilisateur ${n}`}
                 width={28}
                 height={28}
+                loading="lazy"
                 className="h-6 w-6 sm:h-7 sm:w-7 rounded-full border-2 border-card object-cover"
               />
             ))}

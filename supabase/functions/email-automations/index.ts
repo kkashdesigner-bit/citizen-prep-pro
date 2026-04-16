@@ -39,7 +39,7 @@ function buildHtml(opts: EmailOpts): string {
           ${opts.blocks.map(b => `<div style="color:#4b5563;line-height:1.7;margin-bottom:16px;font-size:15px">${b}</div>`).join('')}
           ${cta}
           <p style="color:#6b7280;font-size:13px;text-align:center;margin-top:24px">
-            Une question ? <a href="mailto:gocivique@gmail.com" style="color:${BRAND_PRIMARY}">gocivique@gmail.com</a>
+            Une question ? <a href="mailto:support@gocivique.fr" style="color:${BRAND_PRIMARY}">support@gocivique.fr</a>
           </p>
         </td></tr>
         <tr><td style="background:#f9fafb;padding:20px 32px;border-top:1px solid #e5e7eb;text-align:center">

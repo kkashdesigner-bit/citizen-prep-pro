@@ -25,6 +25,9 @@ import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { motion } from 'framer-motion';
 import type { GoalType } from '@/hooks/useUserProfile';
 import NotificationBell from '@/components/notifications/NotificationBell';
+import ReferralSection from '@/components/ReferralSection';
+import { generateReferralCode } from '@/utils/referral';
+import { useAuth } from '@/hooks/useAuth';
 
 const CATEGORY_MAP: Record<string, { emoji: string; gradient: string; shadow: string; label: string; desc: string; dbCategory: string; image: string; imageAlt: string }> = {
   Principles: { emoji: '⚖️', gradient: 'from-blue-600 via-blue-500 to-indigo-600', shadow: 'shadow-blue-500/30', label: 'Fondamentaux', desc: 'Valeurs et principes de la République', dbCategory: 'Principles and values of the Republic', image: '/examen-civique-qcm-valeurs-republique-francaise.jpg', imageAlt: 'QCM examen civique — Valeurs et principes de la République française' },
@@ -40,6 +43,7 @@ export default function LearningDashboard() {
   const { profile: userProfile, loading: profileLoading, saveProfile } = useUserProfile();
   const stats = useDashboardStats();
 
+  const { user } = useAuth();
   const [showGate, setShowGate] = useState(false);
   const [gateTier, setGateTier] = useState<'standard' | 'premium'>('standard');
   const [showGoalModal, setShowGoalModal] = useState(false);
@@ -193,6 +197,17 @@ export default function LearningDashboard() {
                   <ExamReadinessCard
                     successRate={stats.successRate}
                     totalExams={stats.examHistory.length}
+                    themeStats={Object.fromEntries(
+                      stats.domainMastery.map(d => {
+                        const themeKey =
+                          d.dbCategory.includes('History') ? 'histoire' :
+                          d.dbCategory.includes('Institutional') ? 'institutions' :
+                          d.dbCategory.includes('Principles') ? 'valeurs' :
+                          d.dbCategory.includes('Rights') ? 'symboles' :
+                          d.dbCategory.includes('Living') ? 'europe' : d.dbCategory;
+                        return [themeKey, { correct: d.correct, total: d.total }];
+                      })
+                    )}
                   />
                 </div>
               </div>
@@ -218,6 +233,38 @@ export default function LearningDashboard() {
             <motion.div variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0 } }}>
               <ParcoursCard />
             </motion.div>
+
+            {/* Révision du jour — SM-2 spaced repetition */}
+            <motion.div variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0 } }} className="mb-6">
+              <div className="bg-[var(--dash-card)] rounded-2xl border border-[var(--dash-card-border)] p-5 shadow-[0_2px_12px_rgba(0,0,0,0.04)]">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-base font-bold text-[var(--dash-text)] flex items-center gap-2">
+                      <span className="text-lg">🧠</span> R&eacute;vision du jour
+                    </h3>
+                    <p className="text-xs text-[var(--dash-text-muted)] mt-1">
+                      R&eacute;visez les questions que vous &ecirc;tes sur le point d'oublier
+                    </p>
+                  </div>
+                  <Button
+                    onClick={() => navigate('/quiz?mode=revision')}
+                    className="bg-[#0055A4] hover:bg-[#1B6ED6] text-white font-bold rounded-xl h-10 px-5 text-sm"
+                  >
+                    Commencer
+                  </Button>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Referral Section */}
+            {user && (
+              <motion.div variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0 } }} className="mb-6">
+                <ReferralSection
+                  referralCode={generateReferralCode(user.id)}
+                  referralCount={0}
+                />
+              </motion.div>
+            )}
 
             {/* Category Grid — Real mastery % */}
             <motion.div variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0 } }}>

@@ -52,12 +52,11 @@ export default function SEOHead({
         "logo": { "@type": "ImageObject", "url": `${BASE_URL}/gocivique-logo-examen-civique.png` },
         "description": "Plateforme de préparation à l'examen civique de naturalisation française 2026",
         "inLanguage": ["fr", "en", "ar", "es", "tr", "pt"],
-        "sameAs": [
-            "https://twitter.com/GoCivique"
-        ],
+        "foundingDate": "2025-01-01",
         "contactPoint": {
             "@type": "ContactPoint",
             "contactType": "customer support",
+            "email": "support@gocivique.fr",
             "url": `${BASE_URL}/contact`,
             "availableLanguage": ["French", "English", "Arabic", "Spanish", "Turkish", "Portuguese"]
         }
@@ -85,7 +84,7 @@ export default function SEOHead({
         "name": "Préparation à l'examen civique français 2026",
         "description": "Cours complet de préparation à l'examen civique obligatoire pour la naturalisation française, la carte de séjour pluriannuelle et la carte de résident. Quiz interactifs, examens blancs chronométrés et suivi de progression.",
         "datePublished": "2025-01-01",
-        "dateModified": "2026-03-08",
+        "dateModified": "2026-04-14",
         "provider": {
             "@id": `${BASE_URL}/#organization`
         },

@@ -33,7 +33,7 @@ export default function Privacy() {
                             <section>
                                 <h2 className="text-xl font-bold mb-3">Article 2 – Responsable du traitement</h2>
                                 <p className="text-muted-foreground leading-relaxed">
-                                    Le responsable du traitement des données personnelles est l’éditeur du site gocivique.fr. Pour toute question relative aux données personnelles ou à l’exercice de vos droits, vous pouvez contacter l’éditeur à l’adresse suivante : <a href="mailto:gocivique@gmail.com" className="text-primary hover:underline">gocivique@gmail.com</a>
+                                    Le responsable du traitement des données personnelles est l’éditeur du site gocivique.fr. Pour toute question relative aux données personnelles ou à l’exercice de vos droits, vous pouvez contacter l’éditeur à l’adresse suivante : <a href="mailto:dpo@gocivique.fr" className="text-primary hover:underline">dpo@gocivique.fr</a>
                                 </p>
                             </section>
 
@@ -94,7 +94,7 @@ export default function Privacy() {
                                     <li><strong>Droit d’opposition ou de limitation :</strong> s’opposer ou limiter certains traitements.</li>
                                 </ul>
                                 <p className="text-muted-foreground leading-relaxed">
-                                    Ces droits peuvent être exercés en contactant : <a href="mailto:gocivique@gmail.com" className="text-primary hover:underline">gocivique@gmail.com</a>
+                                    Ces droits peuvent être exercés en contactant : <a href="mailto:dpo@gocivique.fr" className="text-primary hover:underline">dpo@gocivique.fr</a>
                                 </p>
                             </section>
 
@@ -122,7 +122,7 @@ export default function Privacy() {
                             <section>
                                 <h2 className="text-xl font-bold mb-3">Article 11 – Contact et recours</h2>
                                 <p className="text-muted-foreground leading-relaxed">
-                                    Pour toute question relative à la protection des données, vous pouvez contacter : <a href="mailto:gocivique@gmail.com" className="text-primary hover:underline">gocivique@gmail.com</a>. En cas de désaccord sur la gestion de vos données, vous pouvez également saisir la <a href="https://www.cnil.fr" target="_blank" rel="noreferrer" className="text-primary hover:underline">CNIL</a>.
+                                    Pour toute question relative à la protection des données, vous pouvez contacter : <a href="mailto:dpo@gocivique.fr" className="text-primary hover:underline">dpo@gocivique.fr</a>. En cas de désaccord sur la gestion de vos données, vous pouvez également saisir la <a href="https://www.cnil.fr" target="_blank" rel="noreferrer" className="text-primary hover:underline">CNIL</a>.
                                 </p>
                             </section>
                         </CardContent>

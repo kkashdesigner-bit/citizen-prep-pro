@@ -2,12 +2,14 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { Check, X, Crown, Sparkles } from 'lucide-react';
+import { Check, X, Crown, Sparkles, Shield } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import AnimatedSection from '@/components/AnimatedSection';
 import { useAuth } from '@/hooks/useAuth';
 import { useSubscription } from '@/hooks/useSubscription';
 import SubscriptionGate from '@/components/SubscriptionGate';
+
+type BillingPeriod = 'monthly' | 'annual';
 
 export default function PricingSection() {
   const { t } = useLanguage();
@@ -17,6 +19,7 @@ export default function PricingSection() {
 
   const [showGate, setShowGate] = useState(false);
   const [gateTier, setGateTier] = useState<'standard' | 'premium'>('standard');
+  const [billingPeriod, setBillingPeriod] = useState<BillingPeriod>('monthly');
 
   const features = [
     { key: 'pricing.feat.browse', free: true, standard: true, premium: true },
@@ -34,6 +37,11 @@ export default function PricingSection() {
 
   const tierIds = ['free', 'standard', 'premium'] as const;
 
+  const pricing = {
+    standard: { monthly: '6,99 €', annual: '49,99 €', monthlyEquiv: '4,17 €' },
+    premium: { monthly: '10,99 €', annual: '79,99 €', monthlyEquiv: '6,67 €' },
+  };
+
   const tiers = [
     {
       id: 'free' as const,
@@ -47,8 +55,9 @@ export default function PricingSection() {
     {
       id: 'standard' as const,
       name: 'Standard',
-      price: '6,99 €',
-      period: '/mois',
+      price: billingPeriod === 'annual' ? pricing.standard.annual : pricing.standard.monthly,
+      period: billingPeriod === 'annual' ? '/an' : '/mois',
+      monthlyEquiv: billingPeriod === 'annual' ? pricing.standard.monthlyEquiv : null,
       popular: true,
       badge: t('pricing.recommended'),
       cta: t('pricing.ctaStandard'),
@@ -60,8 +69,9 @@ export default function PricingSection() {
     {
       id: 'premium' as const,
       name: 'Premium',
-      price: '10,99 €',
-      period: '/mois',
+      price: billingPeriod === 'annual' ? pricing.premium.annual : pricing.premium.monthly,
+      period: billingPeriod === 'annual' ? '/an' : '/mois',
+      monthlyEquiv: billingPeriod === 'annual' ? pricing.premium.monthlyEquiv : null,
       popular: false,
       cta: t('pricing.ctaPremium'),
       onClick: () => {
@@ -90,7 +100,37 @@ export default function PricingSection() {
           </div>
         </AnimatedSection>
 
-        <div className="mx-auto mt-8 md:mt-12 grid max-w-5xl grid-cols-1 gap-4 sm:gap-6 md:grid-cols-3">
+        {/* Billing period toggle */}
+        <div className="mx-auto mt-6 md:mt-8 flex items-center justify-center gap-3">
+          <div className="inline-flex items-center gap-1 rounded-full border border-border bg-card p-1 shadow-sm">
+            <button
+              type="button"
+              onClick={() => setBillingPeriod('monthly')}
+              aria-pressed={billingPeriod === 'monthly'}
+              className={`px-4 py-1.5 text-sm font-semibold rounded-full transition-colors ${billingPeriod === 'monthly' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+            >
+              Mensuel
+            </button>
+            <button
+              type="button"
+              onClick={() => setBillingPeriod('annual')}
+              aria-pressed={billingPeriod === 'annual'}
+              className={`relative px-4 py-1.5 text-sm font-semibold rounded-full transition-colors ${billingPeriod === 'annual' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+            >
+              Annuel
+              <span className="absolute -top-2 -right-2 rounded-full bg-emerald-500 px-1.5 py-0.5 text-[10px] font-bold text-white shadow-sm">
+                −40%
+              </span>
+            </button>
+          </div>
+        </div>
+
+        <div className="mx-auto mt-6 md:mt-8 flex items-center justify-center gap-2 text-xs text-muted-foreground">
+          <Shield className="h-3.5 w-3.5 text-emerald-500" />
+          <span>Garantie satisfait ou remboursé 7 jours</span>
+        </div>
+
+        <div className="mx-auto mt-6 md:mt-8 grid max-w-5xl grid-cols-1 gap-4 sm:gap-6 md:grid-cols-3">
           {tiers.map((tier, i) => {
             const isCurrent = isUserTier(tier.id);
             const isBelow = isUserAboveTier(tier.id);
@@ -136,6 +176,11 @@ export default function PricingSection() {
                       <span className={`font-serif text-4xl font-bold ${tier.id === 'free' ? 'text-[#1764ac]' : tier.id === 'standard' ? 'text-[#f04e42]' : 'gradient-text'}`}>{tier.price}</span>
                       {tier.period && <span className="text-sm font-medium text-muted-foreground">{tier.period}</span>}
                     </div>
+                    {(tier as any).monthlyEquiv && (
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        soit {(tier as any).monthlyEquiv}/mois
+                      </p>
+                    )}
                   </div>
                   <ul className="mb-6 flex-1 space-y-3 mt-4">
                     {features.map((feat) => {

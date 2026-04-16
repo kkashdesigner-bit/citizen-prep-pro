@@ -7,7 +7,7 @@ const corsHeaders = {
 };
 
 const FROM = 'GoCivique <noreply@gocivique.fr>';
-const SUPPORT_EMAIL = 'gocivique@gmail.com';
+const SUPPORT_EMAIL = 'support@gocivique.fr';
 
 async function sendResendEmail(apiKey: string, payload: object): Promise<{ ok: boolean; error?: string }> {
   const res = await fetch('https://api.resend.com/emails', {

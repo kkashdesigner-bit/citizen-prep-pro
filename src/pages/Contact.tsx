@@ -65,7 +65,7 @@ export default function Contact() {
         } catch (error) {
             console.error('Error sending message:', error);
             toast.error(
-                'Erreur d\'envoi. Vous pouvez nous contacter directement à gocivique@gmail.com',
+                'Erreur d\'envoi. Vous pouvez nous contacter directement à support@gocivique.fr',
                 { duration: 8000 }
             );
         } finally {
@@ -114,8 +114,8 @@ export default function Contact() {
                                     <h3 className="font-bold text-lg text-slate-800">Email</h3>
                                 </div>
                                 <p className="text-slate-500 text-sm mb-1">Notre équipe de support</p>
-                                <a href="mailto:gocivique@gmail.com" className="text-[#135bec] font-semibold hover:underline">
-                                    gocivique@gmail.com
+                                <a href="mailto:support@gocivique.fr" className="text-[#135bec] font-semibold hover:underline">
+                                    support@gocivique.fr
                                 </a>
                             </div>
 

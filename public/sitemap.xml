@@ -5,7 +5,7 @@
   <!-- Homepage -->
   <url>
     <loc>https://gocivique.fr/</loc>
-    <lastmod>2026-03-22</lastmod>
+    <lastmod>2026-04-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <xhtml:link rel="alternate" hreflang="fr" href="https://gocivique.fr/" />
@@ -20,7 +20,7 @@
   <!-- Quiz (Practice) -->
   <url>
     <loc>https://gocivique.fr/quiz</loc>
-    <lastmod>2026-03-22</lastmod>
+    <lastmod>2026-04-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="fr" href="https://gocivique.fr/quiz" />
@@ -35,7 +35,7 @@
   <!-- Mock Exams -->
   <url>
     <loc>https://gocivique.fr/exams</loc>
-    <lastmod>2026-03-22</lastmod>
+    <lastmod>2026-04-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="fr" href="https://gocivique.fr/exams" />
@@ -50,7 +50,7 @@
   <!-- Courses -->
   <url>
     <loc>https://gocivique.fr/courses</loc>
-    <lastmod>2026-03-22</lastmod>
+    <lastmod>2026-04-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="fr" href="https://gocivique.fr/courses" />
@@ -65,7 +65,7 @@
   <!-- Study Material -->
   <url>
     <loc>https://gocivique.fr/study-material</loc>
-    <lastmod>2026-03-22</lastmod>
+    <lastmod>2026-04-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="fr" href="https://gocivique.fr/study-material" />
@@ -80,7 +80,7 @@
   <!-- Parcours (100 levels) -->
   <url>
     <loc>https://gocivique.fr/parcours</loc>
-    <lastmod>2026-03-22</lastmod>
+    <lastmod>2026-04-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -88,7 +88,7 @@
   <!-- SEO Guide -->
   <url>
     <loc>https://gocivique.fr/guide-examen-civique</loc>
-    <lastmod>2026-03-22</lastmod>
+    <lastmod>2026-04-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -96,25 +96,25 @@
   <!-- Theme Pages -->
   <url>
     <loc>https://gocivique.fr/themes/valeurs-republique</loc>
-    <lastmod>2026-03-22</lastmod>
+    <lastmod>2026-04-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gocivique.fr/themes/histoire-geographie</loc>
-    <lastmod>2026-03-22</lastmod>
+    <lastmod>2026-04-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gocivique.fr/themes/institutions</loc>
-    <lastmod>2026-03-22</lastmod>
+    <lastmod>2026-04-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gocivique.fr/themes/droits-devoirs</loc>
-    <lastmod>2026-03-22</lastmod>
+    <lastmod>2026-04-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -122,7 +122,7 @@
   <!-- Test Blanc -->
   <url>
     <loc>https://gocivique.fr/test-blanc-examen-civique</loc>
-    <lastmod>2026-03-22</lastmod>
+    <lastmod>2026-04-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -130,7 +130,7 @@
   <!-- Naturalisation Guide -->
   <url>
     <loc>https://gocivique.fr/naturalisation-examen-civique</loc>
-    <lastmod>2026-03-22</lastmod>
+    <lastmod>2026-04-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -138,55 +138,81 @@
   <!-- Course Preview Pages -->
   <url>
     <loc>https://gocivique.fr/cours/examen-civique-symboles-republique</loc>
-    <lastmod>2026-03-22</lastmod>
+    <lastmod>2026-04-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gocivique.fr/cours/examen-civique-devise-francaise</loc>
-    <lastmod>2026-03-22</lastmod>
+    <lastmod>2026-04-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gocivique.fr/cours/examen-civique-ddhc-1789</loc>
-    <lastmod>2026-03-22</lastmod>
+    <lastmod>2026-04-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gocivique.fr/cours/examen-civique-laicite-neutralite</loc>
-    <lastmod>2026-03-22</lastmod>
+    <lastmod>2026-04-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gocivique.fr/cours/examen-civique-republique-indivisible</loc>
-    <lastmod>2026-03-22</lastmod>
+    <lastmod>2026-04-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gocivique.fr/cours/examen-civique-democratie-souverainete</loc>
-    <lastmod>2026-03-22</lastmod>
+    <lastmod>2026-04-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gocivique.fr/cours/examen-civique-etat-de-droit</loc>
-    <lastmod>2026-03-22</lastmod>
+    <lastmod>2026-04-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gocivique.fr/cours/examen-civique-egalite-femmes-hommes</loc>
-    <lastmod>2026-03-22</lastmod>
+    <lastmod>2026-04-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gocivique.fr/cours/examen-civique-non-discrimination</loc>
-    <lastmod>2026-03-22</lastmod>
+    <lastmod>2026-04-14</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Guide Pages (anxiety content / long-tail SEO) -->
+  <url>
+    <loc>https://gocivique.fr/guides/combien-de-fois</loc>
+    <lastmod>2026-04-14</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://gocivique.fr/guides/si-je-rate-lexamen</loc>
+    <lastmod>2026-04-14</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://gocivique.fr/guides/combien-de-temps-resultats</loc>
+    <lastmod>2026-04-14</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://gocivique.fr/guides/comment-sinscrire</loc>
+    <lastmod>2026-04-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -194,7 +220,7 @@
   <!-- About -->
   <url>
     <loc>https://gocivique.fr/about</loc>
-    <lastmod>2026-03-22</lastmod>
+    <lastmod>2026-04-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="fr" href="https://gocivique.fr/about" />
@@ -209,7 +235,7 @@
   <!-- Contact -->
   <url>
     <loc>https://gocivique.fr/contact</loc>
-    <lastmod>2026-03-22</lastmod>
+    <lastmod>2026-04-14</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
     <xhtml:link rel="alternate" hreflang="fr" href="https://gocivique.fr/contact" />

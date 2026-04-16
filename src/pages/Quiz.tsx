@@ -162,6 +162,9 @@ export default function Quiz() {
   const [flagged, setFlagged] = useState<Set<number>>(new Set());
   const [timeRemaining, setTimeRemaining] = useState(QUIZ_TIME);
   const [startTime, setStartTime] = useState(Date.now());
+  // Per-question timer for SM-2 spaced repetition quality scoring
+  const questionStartTime = useRef(Date.now());
+  const questionTimes = useRef<Record<number, number>>({});
 
   // Safety net: reset quiz state if the question set is replaced mid-session (e.g. mode flicker)
   const prevQuestionSetKey = useRef<string>('');
@@ -256,8 +259,10 @@ export default function Quiz() {
   const handleAnswer = (answer: string) => {
     const question = questions[currentIndex];
     if (!question) return;
+    const timeSpentMs = Date.now() - questionStartTime.current;
+    questionTimes.current[question.id] = timeSpentMs;
     setAnswers((prev) => ({ ...prev, [question.id]: answer }));
-    saveAnswer(question, answer);
+    saveAnswer(question, answer, timeSpentMs);
   };
 
   const toggleFlag = () => {
@@ -277,6 +282,7 @@ export default function Quiz() {
     setWarpState('exit');
     setTimeout(() => {
       setCurrentIndex(newIndex);
+      questionStartTime.current = Date.now();
       setWarpState('enter');
       setTimeout(() => setWarpState('idle'), 250);
     }, 200);
