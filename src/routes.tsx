@@ -10,6 +10,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "next-themes";
 import { LanguageProvider } from "@/contexts/LanguageContext";
+import { Analytics } from "@vercel/analytics/react";
 
 const Index = lazy(() => import("./pages/Index"));
 const Auth = lazy(() => import("./pages/Auth"));
@@ -65,6 +66,7 @@ function Root() {
                 <Suspense fallback={null}>
                   <Outlet />
                 </Suspense>
+                <Analytics />
               </TooltipProvider>
             </LanguageProvider>
           </ThemeProvider>
