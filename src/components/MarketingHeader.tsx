@@ -64,8 +64,8 @@ export default function MarketingHeader() {
             : null;
 
     const navLinks = [
-        { label: 'Comment ça marche', id: 'practice' },
-        { label: 'Fonctionnalités', id: 'modes' },
+        { label: "L'examen", id: 'exam-decoder' },
+        { label: 'Comment ça marche', id: 'how-it-works' },
         { label: 'Tarifs', id: 'pricing' },
     ];
 

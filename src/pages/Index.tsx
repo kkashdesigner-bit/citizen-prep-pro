@@ -1,6 +1,13 @@
 import MarketingHeader from '@/components/MarketingHeader';
 import HeroSection from '@/components/HeroSection';
-import LandingFeatures from '@/components/LandingFeatures';
+import StatsBar from '@/components/landing/StatsBar';
+import ExamDecoder from '@/components/landing/ExamDecoder';
+import HowItWorks from '@/components/landing/HowItWorks';
+import ThemesShowcase from '@/components/landing/ThemesShowcase';
+import FeaturesShowcase from '@/components/landing/FeaturesShowcase';
+import SocialProof from '@/components/landing/SocialProof';
+import FAQSection from '@/components/landing/FAQSection';
+import FinalCTA from '@/components/landing/FinalCTA';
 import PricingSection from '@/components/PricingSection';
 import Footer from '@/components/Footer';
 import SEOHead from '@/components/SEOHead';
@@ -87,8 +94,15 @@ export default function Index() {
       <MarketingHeader />
       <main className="pt-16">
         <HeroSection />
-        <LandingFeatures />
+        <StatsBar />
+        <ExamDecoder />
+        <HowItWorks />
+        <ThemesShowcase />
+        <FeaturesShowcase />
+        <SocialProof />
         <PricingSection />
+        <FAQSection />
+        <FinalCTA />
       </main>
       <Footer />
     </div>

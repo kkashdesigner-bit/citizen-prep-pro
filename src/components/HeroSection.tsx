@@ -106,7 +106,9 @@ export default function HeroSection() {
             }`}
           style={{ transitionDelay: '200ms' }}
         >
-          {t('hero.title')}
+          Tout ce qu'il faut savoir
+          <br className="hidden sm:block" />
+          <span className="gradient-text"> sur la France.</span>
         </h1>
 
         {/* Gradient underline */}
@@ -117,6 +119,14 @@ export default function HeroSection() {
             transitionDelay: '400ms',
           }}
         />
+
+        {/* Subtext */}
+        <p
+          className={`mb-6 md:mb-8 max-w-xl text-center text-sm sm:text-base text-slate-600 font-medium transition-all duration-700 ${loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+          style={{ transitionDelay: '450ms' }}
+        >
+          7 034 questions officielles&nbsp;•&nbsp;5 thèmes&nbsp;•&nbsp;100 cours — tout pour passer votre examen.
+        </p>
 
         {/* Social proof bar */}
         <div
