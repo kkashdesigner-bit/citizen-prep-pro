@@ -641,7 +641,7 @@ function CourseDetail({ classId, onBack }: { classId: string; onBack: () => void
 export default function CoursesPage() {
   const { loading: authLoading } = useAuth();
   const { tier, loading: tierLoading } = useSubscription();
-  const { classes, progress, loading: parcoursLoading } = useParcours();
+  const { classes, progress, questionCounts, loading: parcoursLoading } = useParcours();
 
   const [search, setSearch] = useState('');
   const [activeCategory, setActiveCategory] = useState('all');
@@ -925,9 +925,16 @@ export default function CoursesPage() {
 
                             {/* Footer */}
                             <div className="flex items-center justify-between">
-                              <span className="flex items-center gap-1.5 text-[11px] text-slate-400 font-medium">
-                                <Clock className="w-3 h-3" /> {clazz.estimated_minutes} min
-                              </span>
+                              <div className="flex items-center gap-3">
+                                <span className="flex items-center gap-1.5 text-[11px] text-slate-400 font-medium">
+                                  <Clock className="w-3 h-3" /> {clazz.estimated_minutes} min
+                                </span>
+                                {questionCounts[clazz.id] != null && (
+                                  <span className="flex items-center gap-1 text-[11px] font-semibold text-[#0055A4]/70">
+                                    <BrainCircuit className="w-3 h-3" /> {questionCounts[clazz.id]} questions
+                                  </span>
+                                )}
+                              </div>
 
                               {/* CircleProgress for completed courses */}
                               {done && p?.score != null && (

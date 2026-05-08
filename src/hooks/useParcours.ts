@@ -25,6 +25,7 @@ export function useParcours() {
 
     const [classes, setClasses] = useState<ParcoursClass[]>([]);
     const [progress, setProgress] = useState<Record<string, ClassProgress>>({});
+    const [questionCounts, setQuestionCounts] = useState<Record<string, number>>({});
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -87,6 +88,21 @@ export function useParcours() {
             });
             setProgress(progressMap);
 
+            // 4. Fetch question counts per class
+            const classIds = (classData || []).map((c: any) => c.id);
+            if (classIds.length > 0) {
+                const { data: qLinks } = await (supabase as any)
+                    .from('class_questions')
+                    .select('class_id')
+                    .in('class_id', classIds);
+
+                const counts: Record<string, number> = {};
+                (qLinks || []).forEach((row: any) => {
+                    counts[row.class_id] = (counts[row.class_id] || 0) + 1;
+                });
+                setQuestionCounts(counts);
+            }
+
         } catch (err: any) {
             console.error('Error fetching parcours:', err);
             setError(err.message);
@@ -146,5 +162,5 @@ export function useParcours() {
         }
     };
 
-    return { classes, progress, loading, error, updateProgress, refetch: fetchParcoursData };
+    return { classes, progress, questionCounts, loading, error, updateProgress, refetch: fetchParcoursData };
 }

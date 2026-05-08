@@ -18,6 +18,7 @@ import WeaknessDrillCard from '@/components/weakness-drill/WeaknessDrillCard';
 import ExamReadinessCard from '@/components/learn/ExamReadinessCard';
 import ParcoursCard from '@/components/learn/ParcoursCard';
 import RevisionCard from '@/components/learn/RevisionCard';
+import { useParcours } from '@/hooks/useParcours';
 import MiniatureIcon from '@/components/MiniatureIcon';
 import { Target, FileText, Clock, X, Check, Lock, Crown, Sparkles, Flame, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -44,6 +45,7 @@ export default function LearningDashboard() {
   const stats = useDashboardStats();
 
   const { user } = useAuth();
+  const { classes: parcoursClasses, progress: parcoursProgress } = useParcours();
   const [showGate, setShowGate] = useState(false);
   const [gateTier, setGateTier] = useState<'standard' | 'premium'>('standard');
   const [showGoalModal, setShowGoalModal] = useState(false);
@@ -240,10 +242,10 @@ export default function LearningDashboard() {
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="text-base font-bold text-[var(--dash-text)] flex items-center gap-2">
-                      <span className="text-lg">🧠</span> R&eacute;vision du jour
+                      <span className="text-lg">🧠</span> Révision du jour
                     </h3>
                     <p className="text-xs text-[var(--dash-text-muted)] mt-1">
-                      R&eacute;visez les questions que vous &ecirc;tes sur le point d'oublier
+                      Révisez les questions que vous êtes sur le point d'oublier
                     </p>
                   </div>
                   <Button
@@ -387,8 +389,21 @@ export default function LearningDashboard() {
             {/* Tabs */}
             <motion.div variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0 } }}>
               <DashboardTabs>
-                {/* Resume study */}
-                <ResumeStudyCard chapterTitle="Quiz : Histoire de France" chapterNumber={3} totalChapters={5} progressPercent={65} />
+                {/* Resume study — real parcours data */}
+                {(() => {
+                  const completedCount = Object.values(parcoursProgress).filter(p => p.status === 'completed').length;
+                  const nextClass = parcoursClasses.find(c => parcoursProgress[c.id]?.status !== 'completed');
+                  const total = parcoursClasses.length || 100;
+                  const pct = total > 0 ? Math.round((completedCount / total) * 100) : 0;
+                  return (
+                    <ResumeStudyCard
+                      chapterTitle={nextClass ? nextClass.title : 'Parcours terminé'}
+                      chapterNumber={nextClass?.class_number ?? total}
+                      totalChapters={total}
+                      progressPercent={pct}
+                    />
+                  );
+                })()}
 
                 {/* Analytics row — Real data */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
