@@ -10,6 +10,7 @@ import FAQSection from '@/components/landing/FAQSection';
 import FinalCTA from '@/components/landing/FinalCTA';
 import PricingSection from '@/components/PricingSection';
 import Footer from '@/components/Footer';
+import StickyCtaBar from '@/components/StickyCtaBar';
 import SEOHead from '@/components/SEOHead';
 
 export default function Index() {
@@ -105,6 +106,7 @@ export default function Index() {
         <FinalCTA />
       </main>
       <Footer />
+      <StickyCtaBar />
     </div>
   );
 }

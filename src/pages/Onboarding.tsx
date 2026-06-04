@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/hooks/useAuth';
+import { useResumeCheckout } from '@/hooks/useResumeCheckout';
 import { useUserProfile, GoalType, LevelType, TimelineType, GOAL_TO_LEVEL } from '@/hooks/useUserProfile';
 import { supabase } from '@/integrations/supabase/client';
 import {
@@ -31,6 +32,8 @@ type OnboardingData = {
 export default function Onboarding() {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
+  // If the user signed in via Google after clicking a paid plan, send them to Stripe.
+  useResumeCheckout();
   const { profile, loading: profileLoading, saveProfile } = useUserProfile();
   const [step, setStep] = useState(1);
   const [data, setData] = useState<OnboardingData>({

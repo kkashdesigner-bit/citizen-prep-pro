@@ -19,7 +19,8 @@ export default function PricingSection() {
 
   const [showGate, setShowGate] = useState(false);
   const [gateTier, setGateTier] = useState<'standard' | 'premium'>('standard');
-  const [billingPeriod, setBillingPeriod] = useState<BillingPeriod>('monthly');
+  // Default to annual: it's the best value (−40%) and lifts retention/LTV.
+  const [billingPeriod, setBillingPeriod] = useState<BillingPeriod>('annual');
 
   const features = [
     { key: 'pricing.feat.browse', free: true, standard: true, premium: true },
@@ -125,9 +126,9 @@ export default function PricingSection() {
           </div>
         </div>
 
-        <div className="mx-auto mt-6 md:mt-8 flex items-center justify-center gap-2 text-xs text-muted-foreground">
-          <Shield className="h-3.5 w-3.5 text-emerald-500" />
-          <span>Garantie satisfait ou remboursé 7 jours</span>
+        <div className="mx-auto mt-6 md:mt-8 flex max-w-md items-center justify-center gap-2.5 rounded-full border border-emerald-200 bg-emerald-50 px-5 py-2.5 text-sm font-semibold text-emerald-800 shadow-sm">
+          <Shield className="h-4 w-4 shrink-0 text-emerald-600" />
+          <span>Essayez sans risque — satisfait ou remboursé sous 7 jours, annulation à tout moment.</span>
         </div>
 
         <div className="mx-auto mt-6 md:mt-8 grid max-w-5xl grid-cols-1 gap-4 sm:gap-6 md:grid-cols-3">

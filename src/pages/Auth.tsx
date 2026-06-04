@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { getPendingCheckout, clearPendingCheckout, startCheckout } from '@/lib/checkout';
 import SEOHead from '@/components/SEOHead';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -30,7 +31,36 @@ export default function Auth() {
   const { signInWithEmail, signUpWithEmail, signInWithGoogle } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { profile } = useUserProfile();
+
+  // A logged-out visitor who clicked a paid plan arrives here with a pending
+  // checkout intent. After they authenticate we send them straight to Stripe.
+  const checkoutIntent = searchParams.get('intent') === 'checkout' || !!getPendingCheckout();
+  const redirectTo = searchParams.get('redirect');
+
+  // If they want to buy, default the form to "sign up" rather than "log in".
+  useEffect(() => {
+    if (checkoutIntent) setIsLogin(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  /** After successful auth, resume checkout if pending, else honor redirect. */
+  const routeAfterAuth = (defaultPath: string) => {
+    const pendingTier = getPendingCheckout();
+    if (pendingTier) {
+      clearPendingCheckout();
+      supabase.auth.getUser().then(({ data }) => {
+        if (data.user) {
+          startCheckout(pendingTier, { id: data.user.id, email: data.user.email });
+        } else {
+          navigate(defaultPath);
+        }
+      });
+      return;
+    }
+    navigate(redirectTo || defaultPath);
+  };
 
   const cooldownRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -66,7 +96,7 @@ export default function Auth() {
     try {
       if (isLogin) {
         await signInWithEmail(email, password);
-        navigate(profile?.onboarding_completed ? '/learn' : '/onboarding');
+        routeAfterAuth(profile?.onboarding_completed ? '/learn' : '/onboarding');
       } else {
         await signUpWithEmail(email, password);
         // Save display name to profiles
@@ -84,7 +114,7 @@ export default function Auth() {
         supabase.functions.invoke('send-email', {
           body: { type: 'signup_welcome', data: { email, firstName: displayName.trim() || '' } }
         }).catch(console.error);
-        navigate('/onboarding');
+        routeAfterAuth('/onboarding');
       }
     } catch (error: any) {
       toast({
@@ -265,12 +295,16 @@ export default function Auth() {
               ) : (
                 <>
                   <h1 className="text-2xl sm:text-3xl font-bold text-[#1A1A1A] tracking-tight">
-                    {isLogin ? 'Bon retour !' : 'Créez votre compte'}
+                    {checkoutIntent
+                      ? 'Dernière étape avant votre abonnement'
+                      : isLogin ? 'Bon retour !' : 'Créez votre compte'}
                   </h1>
                   <p className="text-[#1A1A1A]/60 mt-2">
-                    {isLogin
-                      ? 'Connectez-vous pour continuer votre préparation.'
-                      : 'Rejoignez des milliers de candidats qui préparent leur examen civique.'}
+                    {checkoutIntent
+                      ? 'Créez votre compte en 10 secondes — vous serez redirigé vers le paiement sécurisé juste après.'
+                      : isLogin
+                        ? 'Connectez-vous pour continuer votre préparation.'
+                        : 'Rejoignez des milliers de candidats qui préparent leur examen civique.'}
                   </p>
                 </>
               )}

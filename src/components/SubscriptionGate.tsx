@@ -5,6 +5,7 @@ import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Check, ArrowRight, Loader2, X, CheckCircle2, Lock, Crown, Sparkles } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useSubscription } from '@/hooks/useSubscription';
+import { setPendingCheckout, startCheckout } from '@/lib/checkout';
 import { toast } from 'sonner';
 
 interface SubscriptionGateProps {
@@ -59,31 +60,21 @@ const SubscriptionGate = forwardRef<HTMLDivElement, SubscriptionGateProps>(
     const plan = plans[selectedPlan];
 
     const handleSubscribe = async () => {
+      // Logged-out: remember the chosen plan and resume checkout right after auth,
+      // instead of dropping the visitor on the signup page and losing the intent.
       if (!user) {
+        setPendingCheckout(selectedPlan);
         onOpenChange(false);
-        navigate('/auth');
+        navigate('/auth?intent=checkout');
         return;
       }
 
       setIsProcessing(true);
       try {
-        localStorage.setItem('pending_subscription_tier', selectedPlan);
-
-        const premiumLink = import.meta.env.VITE_STRIPE_PREMIUM_LINK || 'https://buy.stripe.com/cNiaEZ9QRcHz44i1gR6EU01';
-        const standardLink = import.meta.env.VITE_STRIPE_STANDARD_LINK || 'https://buy.stripe.com/8x2dRb4wxfTLfN02kV6EU00';
-        const baseUrl = selectedPlan === 'premium' ? premiumLink : standardLink;
-
-        const url = new URL(baseUrl);
-        url.searchParams.set('client_reference_id', user.id);
-        if (user.email) {
-          url.searchParams.set('prefilled_email', user.email);
-        }
-
-        window.location.href = url.toString();
+        startCheckout(selectedPlan, { id: user.id, email: user.email });
       } catch (err) {
         toast.error("Erreur lors de l'activation de l'abonnement");
         console.error(err);
-      } finally {
         setIsProcessing(false);
       }
     };
@@ -176,6 +167,16 @@ const SubscriptionGate = forwardRef<HTMLDivElement, SubscriptionGateProps>(
                   </span>
                 ))}
               </div>
+            </div>
+
+            {/* Risk-free guarantee — acts like a 7-day trial */}
+            <div className="flex items-center gap-2.5 rounded-xl bg-emerald-50 border border-emerald-100 px-4 py-3 mb-4">
+              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center">
+                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+              </div>
+              <p className="text-xs text-emerald-800 leading-snug">
+                <span className="font-bold">Essayez sans risque.</span> Satisfait ou remboursé sous 7 jours — annulez en un clic, à tout moment.
+              </p>
             </div>
 
             {/* CTA */}
