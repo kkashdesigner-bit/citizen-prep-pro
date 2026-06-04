@@ -49,19 +49,25 @@ export function useNotifications() {
     fetchNotifications();
   }, [fetchNotifications]);
 
-  // Realtime subscription for new notifications
+  // Realtime subscription for new notifications.
+  // Use a per-subscription unique channel name and depend on the stable user id
+  // so a re-render never calls `.on()` on an already-subscribed channel
+  // (which throws "cannot add postgres_changes callbacks ... after subscribe()").
   useEffect(() => {
-    if (!user) return;
+    if (!user?.id) return;
 
-    const channel = supabase
-      .channel('notifications-realtime')
+    const userId = user.id;
+    const channel = supabase.channel(
+      `notifications-realtime-${userId}-${Math.random().toString(36).slice(2)}`
+    );
+    channel
       .on(
         'postgres_changes',
         {
           event: 'INSERT',
           schema: 'public',
           table: 'notifications',
-          filter: `user_id=eq.${user.id}`,
+          filter: `user_id=eq.${userId}`,
         },
         (payload: any) => {
           const newNotif = payload.new as Notification;
@@ -73,7 +79,7 @@ export function useNotifications() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [user]);
+  }, [user?.id]);
 
   const unreadCount = notifications.filter((n) => !n.is_read).length;
 

@@ -124,17 +124,13 @@ export default function Results() {
                                             onClick={() => {
                                                 sessionStorage.removeItem('quizResults');
                                                 sessionStorage.removeItem('quizErrors');
-                                                if (classId && nextClass) {
-                                                    sessionStorage.removeItem('quizClassId');
-                                                    navigate(`/parcours/classe/${nextClass.id}`);
-                                                } else {
-                                                    navigate('/quiz?mode=exam');
-                                                }
+                                                sessionStorage.removeItem('quizClassId');
+                                                navigate('/learn');
                                             }}
                                             className="bg-[#135bec] text-white py-4 px-10 rounded-2xl font-black flex items-center gap-4 hover:scale-105 transition-all shadow-xl"
                                         >
-                                            <span>{classId && nextClass ? 'Classe suivante' : t('results.nextExam')}</span>
-                                            <ArrowRight size={24} />
+                                            <span>Retourner au Tableau de Bord</span>
+                                            <LayoutDashboard size={24} />
                                         </button>
                                     </div>
                                 </div>
@@ -184,30 +180,29 @@ export default function Results() {
 
                         <div className="lg:col-span-4 space-y-4">
                             <h3 className="text-xl font-black px-1 font-display uppercase tracking-widest text-slate-400">Actions</h3>
-                            <button
-                                onClick={() => {
-                                    if (!user) { navigate('/auth'); return; }
-                                    navigate('/learn');
-                                }}
-                                className="w-full bg-slate-100 text-slate-700 py-4 px-6 rounded-2xl font-bold flex items-center gap-4 hover:bg-slate-200 transition-all border-b-4 border-slate-300 active:border-b-0 active:translate-y-1"
-                            >
-                                <LayoutDashboard className="text-[#135bec]" />
-                                {t('results.dashboard')}
-                            </button>
-
                             {classId && (() => {
                                 const currentClass = classes.find(c => c.id === classId);
                                 const nextClass = currentClass ? classes.find(c => c.class_number === currentClass.class_number + 1) : null;
                                 return nextClass ? (
                                     <button
                                         onClick={() => { sessionStorage.removeItem('quizResults'); sessionStorage.removeItem('quizErrors'); sessionStorage.removeItem('quizClassId'); navigate(`/parcours/classe/${nextClass.id}`); }}
-                                        className="w-full bg-[#135bec] text-white py-4 px-6 rounded-2xl font-bold flex items-center gap-4 hover:bg-[#0d4fd4] transition-all shadow-lg shadow-blue-500/20 border-b-4 border-blue-700 active:border-b-0 active:translate-y-1"
+                                        className="w-full bg-slate-100 text-slate-700 py-4 px-6 rounded-2xl font-bold flex items-center gap-4 hover:bg-slate-200 transition-all border-b-4 border-slate-300 active:border-b-0 active:translate-y-1"
                                     >
-                                        <ChevronRight className="text-white" />
-                                        Classe suivante
+                                        <ChevronRight className="text-[#135bec]" />
+                                        Classe suivante ({nextClass.class_number})
                                     </button>
                                 ) : null;
                             })()}
+
+                            {!classId && (
+                                <button
+                                    onClick={() => { sessionStorage.removeItem('quizResults'); sessionStorage.removeItem('quizErrors'); navigate('/quiz?mode=exam'); }}
+                                    className="w-full bg-slate-100 text-slate-700 py-4 px-6 rounded-2xl font-bold flex items-center gap-4 hover:bg-slate-200 transition-all border-b-4 border-slate-300 active:border-b-0 active:translate-y-1"
+                                >
+                                    <ArrowRight className="text-[#135bec]" />
+                                    Lancer un nouvel Examen Blanc
+                                </button>
+                            )}
 
                             <button
                                 onClick={() => {

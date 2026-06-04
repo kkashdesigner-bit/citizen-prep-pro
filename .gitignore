@@ -29,3 +29,4 @@ dist-ssr
 
 # Claude Code skills (large CSV data files)
 .claude/skills/
+.superpowers/

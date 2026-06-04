@@ -20,6 +20,8 @@ import ParcoursCard from '@/components/learn/ParcoursCard';
 import RevisionCard from '@/components/learn/RevisionCard';
 import { useParcours } from '@/hooks/useParcours';
 import MiniatureIcon from '@/components/MiniatureIcon';
+import OnboardingChecklist from '@/components/learn/OnboardingChecklist';
+import NextActionCard from '@/components/learn/NextActionCard';
 import { Target, FileText, Clock, X, Check, Lock, Crown, Sparkles, Flame, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
@@ -214,6 +216,12 @@ export default function LearningDashboard() {
                 </div>
               </div>
             </motion.div>
+
+            {/* Onboarding Checklist Guide */}
+            <OnboardingChecklist stats={stats} />
+
+            {/* Next Recommended Study Action (Funnel) */}
+            <NextActionCard stats={stats} />
 
             {/* Daily Question */}
             <motion.div variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0 } }} className="mb-6">
