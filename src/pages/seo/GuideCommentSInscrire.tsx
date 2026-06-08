@@ -43,6 +43,9 @@ export default function GuideCommentSInscrire() {
         title="Comment s'inscrire \u00e0 l'examen civique ? | GoCivique"
         description="Proc\u00e9dure d'inscription \u00e0 l'examen civique fran\u00e7ais : qui peut s'inscrire, quand, et comment obtenir une convocation pour votre entretien de naturalisation."
         path="/guides/comment-sinscrire"
+        isArticle
+        publishedTime="2025-11-01T00:00:00+00:00"
+        modifiedTime="2026-06-04T00:00:00+00:00"
         schema={[faqSchema, breadcrumbSchema]}
       />
 

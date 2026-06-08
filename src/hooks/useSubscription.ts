@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 
-export type SubscriptionTier = 'free' | 'standard' | 'premium';
+export type SubscriptionTier = 'free' | 'standard' | 'premium' | 'lifetime';
 
 export function useSubscription() {
   const { user, loading: authLoading } = useAuth();
@@ -26,12 +26,16 @@ export function useSubscription() {
 
       if (data) {
         const t = data.subscription_tier;
-        if (t === 'standard' || t === 'premium') {
-          setTier(t as SubscriptionTier);
-        } else if (t === 'tier_1') {
+        if (t === 'lifetime') {
+          setTier('lifetime');
+        } else if (t === 'premium') {
+          setTier('premium');
+        } else if (t === 'standard') {
           setTier('standard');
         } else if (t === 'tier_2') {
           setTier('premium');
+        } else if (t === 'tier_1') {
+          setTier('standard');
         } else if (data.is_subscribed) {
           setTier('standard');
         } else {
@@ -44,13 +48,18 @@ export function useSubscription() {
     fetchTier();
   }, [user, authLoading]);
 
+  const isLifetime   = tier === 'lifetime';
+  const isPremium    = tier === 'premium' || tier === 'lifetime';
+  const isStandardOrAbove = tier === 'standard' || tier === 'premium' || tier === 'lifetime';
+
   return {
     tier,
-    isStandardOrAbove: tier === 'standard' || tier === 'premium',
-    isPremium: tier === 'premium',
-    // backward compat aliases
-    isTier1OrAbove: tier === 'standard' || tier === 'premium',
-    isTier2: tier === 'premium',
+    isLifetime,
+    isPremium,
+    isStandardOrAbove,
+    // backward-compat aliases
+    isTier1OrAbove: isStandardOrAbove,
+    isTier2: isPremium,
     loading,
   };
 }

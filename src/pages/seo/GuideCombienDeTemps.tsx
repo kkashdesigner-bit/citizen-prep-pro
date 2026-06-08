@@ -43,6 +43,9 @@ export default function GuideCombienDeTemps() {
         title="Combien de temps pour avoir les r\u00e9sultats de l'examen civique ? | GoCivique"
         description="Les r\u00e9sultats de l'examen civique sont communiqu\u00e9s rapidement. D\u00e9couvrez les d\u00e9lais officiels et ce qui se passe apr\u00e8s votre passage."
         path="/guides/combien-de-temps-resultats"
+        isArticle
+        publishedTime="2025-11-01T00:00:00+00:00"
+        modifiedTime="2026-06-04T00:00:00+00:00"
         schema={[faqSchema, breadcrumbSchema]}
       />
 

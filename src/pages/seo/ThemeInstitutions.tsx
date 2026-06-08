@@ -18,6 +18,9 @@ export default function ThemeInstitutions() {
         title="Institutions et Système Politique Français — Examen Civique | GoCivique"
         description="Président, Parlement, gouvernement, justice : comprenez le fonctionnement des institutions françaises pour réussir l'examen civique de naturalisation 2026."
         path="/themes/institutions"
+        isArticle
+        publishedTime="2025-06-01T00:00:00+00:00"
+        modifiedTime="2026-06-04T00:00:00+00:00"
         schema={breadcrumbSchema}
       />
 

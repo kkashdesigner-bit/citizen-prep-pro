@@ -170,6 +170,9 @@ export default function GuideExamen() {
         title="Guide Complet de l'Examen Civique 2026 — Tout Savoir pour Reussir | GoCivique"
         description="Le guide definitif de l'examen civique 2026 : nouveau format QCM, 5 themes officiels, plan de revision, exemples de questions et FAQ. Preparez-vous efficacement avec GoCivique."
         path="/guide-examen-civique"
+        isArticle
+        publishedTime="2025-06-01T00:00:00+00:00"
+        modifiedTime="2026-06-04T00:00:00+00:00"
         schema={[breadcrumbSchema, faqSchema]}
       />
 

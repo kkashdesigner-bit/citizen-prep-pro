@@ -1,11 +1,12 @@
 // Centralised Stripe checkout helpers.
 //
-// Why this exists: previously, a logged-out visitor who clicked a paid plan was
-// bounced to /auth and their purchase intent was lost. These helpers let us
-// remember the chosen tier across the signup/login step and resume checkout
-// automatically once the user is authenticated.
+// Uses a Supabase Edge Function (create-checkout-session) to create a
+// Stripe Checkout Session with a 3-day free trial, instead of direct
+// payment links (which charge immediately and don't support trials).
 
-export type CheckoutTier = 'standard' | 'premium';
+import { supabase } from '@/integrations/supabase/client';
+
+export type CheckoutTier = 'standard' | 'premium' | 'lifetime';
 
 /** localStorage key holding the tier a logged-out user wanted to buy. */
 export const PENDING_CHECKOUT_KEY = 'pending_checkout_tier';
@@ -13,27 +14,49 @@ export const PENDING_CHECKOUT_KEY = 'pending_checkout_tier';
 /** localStorage key read by SubscriptionSuccess to confirm the tier after payment. */
 export const PENDING_SUBSCRIPTION_KEY = 'pending_subscription_tier';
 
-const PREMIUM_LINK =
-  import.meta.env.VITE_STRIPE_PREMIUM_LINK || 'https://buy.stripe.com/cNiaEZ9QRcHz44i1gR6EU01';
-const STANDARD_LINK =
-  import.meta.env.VITE_STRIPE_STANDARD_LINK || 'https://buy.stripe.com/8x2dRb4wxfTLfN02kV6EU00';
+const SUPABASE_URL =
+  import.meta.env.VITE_SUPABASE_URL || 'https://jblhxpzqbbarpqstcbvq.supabase.co';
+const SUPABASE_ANON_KEY =
+  import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpibGh4cHpxYmJhcnBxc3RjYnZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA1NzMxMDIsImV4cCI6MjA4NjE0OTEwMn0.vrHjiLjI67zsTGzSooqkREEVrzUAC353iuI0nA-zrH8';
 
 type CheckoutUser = { id: string; email?: string | null };
 
-/** Build the Stripe payment-link URL for a tier, tagged with the user id/email. */
-export function buildCheckoutUrl(tier: CheckoutTier, user: CheckoutUser): string {
-  const base = tier === 'premium' ? PREMIUM_LINK : STANDARD_LINK;
-  const url = new URL(base);
-  url.searchParams.set('client_reference_id', user.id);
-  if (user.email) url.searchParams.set('prefilled_email', user.email);
-  return url.toString();
-}
-
-/** Redirect the browser straight to Stripe Checkout for the given tier. */
-export function startCheckout(tier: CheckoutTier, user: CheckoutUser): void {
-  // Read back by SubscriptionSuccess as a fallback if the webhook is slow.
+/**
+ * Redirect to Stripe Checkout with a 3-day free trial.
+ * Creates a Checkout Session via the Edge Function (server-side) so the
+ * trial_period_days is authoritative and cannot be bypassed.
+ */
+export async function startCheckout(tier: CheckoutTier, user: CheckoutUser): Promise<void> {
   localStorage.setItem(PENDING_SUBSCRIPTION_KEY, tier);
-  window.location.href = buildCheckoutUrl(tier, user);
+
+  // Get the live access token from the current Supabase session
+  const { data: sessionData } = await supabase.auth.getSession();
+  const accessToken = sessionData?.session?.access_token;
+
+  if (!accessToken) {
+    throw new Error('Session expirée — veuillez vous reconnecter.');
+  }
+
+  const returnUrl = window.location.origin;
+
+  const res = await fetch(`${SUPABASE_URL}/functions/v1/create-checkout-session`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${accessToken}`,
+      apikey: SUPABASE_ANON_KEY,
+    },
+    body: JSON.stringify({ tier, return_url: returnUrl }),
+  });
+
+  const data = await res.json();
+
+  if (!res.ok || !data.url) {
+    throw new Error(data.error || 'Erreur lors de la création de la session de paiement.');
+  }
+
+  window.location.href = data.url;
 }
 
 /** Remember which tier a logged-out user wanted, so we can resume after auth. */

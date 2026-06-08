@@ -7,6 +7,7 @@ import {
   AlertTriangle, ArrowRight, Crown, X as XIcon,
   Loader2, Lock, Sparkles
 } from 'lucide-react';
+import { startCheckout } from '@/lib/checkout';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
@@ -77,23 +78,10 @@ export default function TierMismatchPopup({
 
     setIsProcessing(true);
     try {
-      localStorage.setItem('pending_subscription_tier', requiredTier);
-
-      const premiumLink = import.meta.env.VITE_STRIPE_PREMIUM_LINK || 'https://buy.stripe.com/cNiaEZ9QRcHz44i1gR6EU01';
-      const standardLink = import.meta.env.VITE_STRIPE_STANDARD_LINK || 'https://buy.stripe.com/8x2dRb4wxfTLfN02kV6EU00';
-      const baseUrl = requiredTier === 'premium' ? premiumLink : standardLink;
-
-      const url = new URL(baseUrl);
-      url.searchParams.set('client_reference_id', user.id);
-      if (user.email) {
-        url.searchParams.set('prefilled_email', user.email);
-      }
-
-      window.location.href = url.toString();
+      await startCheckout(requiredTier, { id: user.id, email: user.email });
     } catch (err) {
       toast.error("Erreur lors de la redirection vers le paiement");
       console.error(err);
-    } finally {
       setIsProcessing(false);
     }
   };

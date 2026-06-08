@@ -9,11 +9,19 @@ interface ExamReadinessCardProps {
 }
 
 const THEME_LABELS: Record<string, string> = {
+    histoire: 'Hist.',
+    institutions: 'Inst.',
+    valeurs: 'Val.',
+    symboles: 'Symb.',
+    europe: 'Eur.',
+};
+
+const THEME_FULL_LABELS: Record<string, string> = {
     histoire: 'Histoire',
     institutions: 'Institutions',
-    valeurs: 'Valeurs',
-    symboles: 'Symboles',
-    europe: 'Europe',
+    valeurs: 'Valeurs et Principes',
+    symboles: 'Symboles et Rites',
+    europe: 'Europe et Monde',
 };
 
 export default function ExamReadinessCard({ successRate, totalExams, themeStats }: ExamReadinessCardProps) {
@@ -76,12 +84,12 @@ export default function ExamReadinessCard({ successRate, totalExams, themeStats 
                         <Icon className={`h-5 w-5 ${statusColor}`} />
                     </div>
                     <h3 className="text-base sm:text-lg font-bold text-[var(--dash-text)]">
-                        Pr\u00e9paration \u00e0 l'Examen
+                        Préparation à l'Examen
                     </h3>
                 </div>
                 <div className="text-right">
                     <span className={`text-xl font-bold ${statusColor}`}>{predictedOutOf40}</span>
-                    <span className="text-xs text-[var(--dash-text-muted)] ml-1">/40 pr\u00e9vu</span>
+                    <span className="text-xs text-[var(--dash-text-muted)] ml-1">/40 prévu</span>
                 </div>
             </div>
 
@@ -111,7 +119,10 @@ export default function ExamReadinessCard({ successRate, totalExams, themeStats 
                         const isWeak = readiness!.weakestThemes.includes(theme);
                         return (
                             <div key={theme} className="text-center">
-                                <p className={`text-[10px] font-bold uppercase tracking-wider ${isWeak ? 'text-red-500' : 'text-[var(--dash-text-muted)]'}`}>
+                                <p 
+                                  className={`text-[10px] font-bold uppercase tracking-wider ${isWeak ? 'text-red-500' : 'text-[var(--dash-text-muted)]'}`}
+                                  title={THEME_FULL_LABELS[theme] || theme}
+                                >
                                     {THEME_LABELS[theme] || theme}
                                 </p>
                                 <p className={`text-sm font-bold ${isWeak ? 'text-red-500' : 'text-[var(--dash-text)]'}`}>
@@ -127,7 +138,7 @@ export default function ExamReadinessCard({ successRate, totalExams, themeStats 
             {readiness?.confidenceLevel === 'low' && (
                 <p className="text-[11px] text-[var(--dash-text-muted)] mt-2 flex items-center gap-1">
                     <BookOpen className="h-3 w-3" />
-                    Faites plus de quiz pour am\u00e9liorer la pr\u00e9cision de cette estimation.
+                    Faites plus de quiz pour améliorer la précision de cette estimation.
                 </p>
             )}
         </motion.div>

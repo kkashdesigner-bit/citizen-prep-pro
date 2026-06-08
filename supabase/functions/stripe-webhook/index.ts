@@ -36,20 +36,59 @@ serve(async (req) => {
     console.log(`Processing Stripe event: ${event.type}`);
 
     // ─── checkout.session.completed ───
-    // Fires when a customer completes Stripe Checkout
+    // Fires for both subscription sign-ups AND one-time lifetime purchases
     if (event.type === 'checkout.session.completed') {
       const session = event.data.object as Stripe.Checkout.Session;
       const userId = session.client_reference_id;
       const customerId = session.customer as string;
 
       if (userId) {
+        // ── One-time payment → Lifetime tier ──
+        if (session.mode === 'payment') {
+          const lifetimeProductId = Deno.env.get('STRIPE_LIFETIME_PRODUCT_ID') || 'prod_UduU86dMSn1zKH';
+
+          // Verify the purchased product is actually the lifetime product
+          let isLifetime = false;
+          try {
+            const lineItems = await stripe.checkout.sessions.listLineItems(session.id, { limit: 5 });
+            for (const item of lineItems.data) {
+              const productId = (item.price?.product as string) || '';
+              if (productId === lifetimeProductId) { isLifetime = true; break; }
+            }
+          } catch (e) {
+            console.error('Failed to list line items:', e);
+            // Fall back: trust the payment_intent metadata
+            if (session.payment_intent) {
+              try {
+                const pi = await stripe.paymentIntents.retrieve(session.payment_intent as string);
+                if (pi.metadata?.tier === 'lifetime') isLifetime = true;
+              } catch {}
+            }
+          }
+
+          if (isLifetime) {
+            await supabase
+              .from('profiles')
+              .update({
+                subscription_tier: 'lifetime',
+                is_subscribed: true,
+                stripe_customer_id: customerId,
+              })
+              .eq('id', userId);
+            console.log(`User ${userId} granted lifetime access`);
+          }
+          return new Response(JSON.stringify({ received: true }), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' },
+          });
+        }
+
+        // ── Subscription checkout (standard / premium) ──
         const standardProductId = Deno.env.get('STRIPE_STANDARD_PRODUCT_ID');
         const premiumProductId = Deno.env.get('STRIPE_PREMIUM_PRODUCT_ID');
 
-        // Determine tier from product ID (default to standard)
         let tier = 'standard';
 
-        // Retrieve subscription to get the product ID
         if (session.subscription) {
           try {
             const subscription = await stripe.subscriptions.retrieve(session.subscription as string);
@@ -60,7 +99,6 @@ serve(async (req) => {
               tier = 'standard';
             }
 
-            // Save subscription ID
             await supabase
               .from('profiles')
               .update({
@@ -71,7 +109,6 @@ serve(async (req) => {
               })
               .eq('id', userId);
           } catch {
-            // Fallback: update without subscription ID
             await supabase
               .from('profiles')
               .update({
@@ -204,6 +241,15 @@ serve(async (req) => {
           .maybeSingle();
 
         const previousTier = fullProfile?.subscription_tier || 'standard';
+
+        // Never downgrade a lifetime user — their access never expires
+        if (previousTier === 'lifetime') {
+          console.log(`User ${profile.id} has lifetime access — skipping subscription.deleted downgrade`);
+          return new Response(JSON.stringify({ received: true }), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' },
+          });
+        }
 
         await supabase
           .from('profiles')

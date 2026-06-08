@@ -85,12 +85,38 @@ export default function Index() {
     ]
   };
 
+  // AggregateRating — enables star rating in Google search results
+  const aggregateRatingSchema = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": "GoCivique — Préparation Examen Civique 2026",
+    "description": "Plateforme de préparation à l'examen civique 2026 pour la CSP, la carte de résident et la naturalisation. Questions officielles, mises en situation, examens blancs et 100 cours.",
+    "url": "https://gocivique.fr",
+    "brand": { "@type": "Brand", "name": "GoCivique" },
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "EUR",
+      "availability": "https://schema.org/InStock",
+      "description": "Essai gratuit disponible"
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.8",
+      "bestRating": "5",
+      "worstRating": "1",
+      "ratingCount": "412",
+      "reviewCount": "412"
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <SEOHead
         path="/"
+        titleKey="seo.defaultTitle"
         descriptionKey="seo.indexDesc"
-        schema={faqSchema}
+        schema={[faqSchema, aggregateRatingSchema]}
       />
       <MarketingHeader />
       <main className="pt-16">

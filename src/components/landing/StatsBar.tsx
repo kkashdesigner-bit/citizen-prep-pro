@@ -28,7 +28,7 @@ function AnimatedNumber({ value, suffix = '', color }: AnimatedNumberProps) {
 
 const stats = [
   { label: 'questions officielles', color: '#0055A4', animated: true, value: 7034, suffix: '' },
-  { label: 'thèmes du programme', color: '#0055A4', animated: false, display: '5' },
+  { label: 'mises en situation', color: '#0055A4', animated: true, value: 200, suffix: '+' },
   { label: 'cours structurés', color: '#EF4135', animated: true, value: 100, suffix: '' },
   { label: 'score pour réussir', color: '#EF4135', animated: false, display: '80%' },
 ] as const;

@@ -19,7 +19,7 @@ export function useResumeCheckout(): boolean {
     if (!tier) return;
     fired.current = true;
     clearPendingCheckout();
-    startCheckout(tier, { id: user.id, email: user.email });
+    startCheckout(tier, { id: user.id, email: user.email }).catch(console.error);
   }, [user, loading]);
 
   // True while a redirect is pending so callers can show a spinner / skip nav.

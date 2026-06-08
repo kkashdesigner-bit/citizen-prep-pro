@@ -39,7 +39,7 @@ export default function ReferralSection({ referralCode, referralCount }: Referra
         />
         <Button onClick={handleCopy} className="gap-2 bg-[#0055A4] hover:bg-[#1B6ED6] text-white">
           {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-          {copied ? 'Copi\u00e9 !' : 'Copier'}
+          {copied ? 'Copié !' : 'Copier'}
         </Button>
       </div>
       <p className="text-xs text-muted-foreground mt-2">

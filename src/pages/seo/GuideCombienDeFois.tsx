@@ -43,6 +43,9 @@ export default function GuideCombienDeFois() {
         title="Combien de fois peut-on repasser l'examen civique ? | GoCivique"
         description="Il n'y a aucune limite au nombre de passages de l'examen civique fran\u00e7ais. D\u00e9couvrez comment optimiser vos chances d\u00e8s la premi\u00e8re tentative."
         path="/guides/combien-de-fois"
+        isArticle
+        publishedTime="2025-11-01T00:00:00+00:00"
+        modifiedTime="2026-06-04T00:00:00+00:00"
         schema={[faqSchema, breadcrumbSchema]}
       />
 

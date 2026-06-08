@@ -435,6 +435,9 @@ export default function TestBlanc() {
         title="Test Blanc Examen Civique 2026 — 15 Questions Gratuites | GoCivique"
         description="Entraînez-vous avec ce test blanc examen civique gratuit : 15 QCM corrigés sur les valeurs, institutions, droits, histoire et société françaises. Préparez l'examen civique 2026 efficacement."
         path="/test-blanc-examen-civique"
+        isArticle
+        publishedTime="2025-06-01T00:00:00+00:00"
+        modifiedTime="2026-06-04T00:00:00+00:00"
         schema={[breadcrumbSchema, faqSchema]}
       />
 

@@ -12,7 +12,6 @@ import DashboardTabs from '@/components/learn/DashboardTabs';
 import ResumeStudyCard from '@/components/learn/ResumeStudyCard';
 import WeeklyActivityChart from '@/components/learn/WeeklyActivityChart';
 import DomainMasteryBars from '@/components/learn/DomainMasteryBars';
-import WeaknessAlerts from '@/components/learn/WeaknessAlerts';
 import DailyQuestionCard from '@/components/daily-question/DailyQuestionCard';
 import WeaknessDrillCard from '@/components/weakness-drill/WeaknessDrillCard';
 import ExamReadinessCard from '@/components/learn/ExamReadinessCard';
@@ -41,7 +40,7 @@ const CATEGORY_MAP: Record<string, { emoji: string; gradient: string; shadow: st
 };
 
 export default function LearningDashboard() {
-  const { tier, isPremium, isStandardOrAbove, loading: tierLoading } = useSubscription();
+  const { tier, isPremium, isStandardOrAbove, isLifetime, loading: tierLoading } = useSubscription();
   const navigate = useNavigate();
   const { profile: userProfile, loading: profileLoading, saveProfile } = useUserProfile();
   const stats = useDashboardStats();
@@ -137,7 +136,11 @@ export default function LearningDashboard() {
 
                   <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mt-1.5 sm:mt-3">
                     {/* Tier Badge */}
-                    {isPremium ? (
+                    {isLifetime ? (
+                      <div className="inline-flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-bold border bg-violet-100 text-violet-700 border-violet-200">
+                        <Sparkles className="h-3 w-3 sm:h-3.5 sm:w-3.5" /> Accès à Vie
+                      </div>
+                    ) : isPremium ? (
                       <div className="inline-flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-bold border bg-amber-100 text-amber-700 border-amber-200">
                         <Crown className="h-3 w-3 sm:h-3.5 sm:w-3.5" /> Premium
                       </div>

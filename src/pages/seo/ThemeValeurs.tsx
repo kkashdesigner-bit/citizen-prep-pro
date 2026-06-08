@@ -18,6 +18,9 @@ export default function ThemeValeurs() {
         title="Valeurs de la République Française — Examen Civique | GoCivique"
         description="Liberté, Égalité, Fraternité, laïcité, droits de l'homme : maîtrisez les principes et valeurs fondamentaux de la République française pour réussir l'examen civique."
         path="/themes/valeurs-republique"
+        isArticle
+        publishedTime="2025-06-01T00:00:00+00:00"
+        modifiedTime="2026-06-04T00:00:00+00:00"
         schema={breadcrumbSchema}
       />
 

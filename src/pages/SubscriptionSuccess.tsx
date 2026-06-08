@@ -16,30 +16,20 @@ export default function SubscriptionSuccess() {
         const updateSubscription = async () => {
             if (!user) return;
 
+            // Access is granted server-side by the Stripe webhook (the source of truth).
+            // We intentionally no longer write subscription_tier/is_subscribed from the
+            // browser - that allowed users to self-upgrade without paying. Here we only
+            // send the welcome email and celebrate; the webhook activates the account.
             const pendingTier = localStorage.getItem('pending_subscription_tier');
+            localStorage.removeItem('pending_subscription_tier');
             if (pendingTier) {
                 try {
-                    // 1. Update profile tier in DB
-                    const { error } = await supabase
-                        .from('profiles')
-                        .update({
-                            subscription_tier: pendingTier,
-                            is_subscribed: true
-                        })
-                        .eq('id', user.id);
-
-                    if (error) throw error;
-
-                    localStorage.removeItem('pending_subscription_tier');
-
-                    // 2. Fetch display name for welcome email
                     const { data: profile } = await supabase
                         .from('profiles')
                         .select('display_name')
                         .eq('id', user.id)
                         .maybeSingle();
 
-                    // 3. Send welcome email via edge function
                     await supabase.functions.invoke('send-email', {
                         body: {
                             type: 'welcome',
@@ -50,12 +40,10 @@ export default function SubscriptionSuccess() {
                             }
                         }
                     });
-
-                    toast.success(`Abonnement ${pendingTier === 'premium' ? 'Premium' : 'Standard'} activé avec succès !`);
                 } catch (err) {
-                    console.error('Error updating subscription:', err);
-                    toast.error("Erreur lors de l'activation de l'abonnement");
+                    console.error('Welcome email error:', err);
                 }
+                toast.success("Paiement recu ! Votre acces est en cours d'activation.");
             }
             setIsUpdating(false);
         };

@@ -33,6 +33,15 @@ export function useClassDetail(classId?: string) {
     const fetchClassData = useCallback(async () => {
         if (!classId) return;
 
+        // Guard against stale/legacy non-UUID ids (e.g. old bookmarked numeric URLs).
+        // Querying a uuid column with "480" throws Postgres 22P02; treat as not-found.
+        const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(classId);
+        if (!isUuid) {
+            setError("Classe introuvable.");
+            setLoading(false);
+            return;
+        }
+
         setLoading(true);
         try {
             // 1. Fetch core class info

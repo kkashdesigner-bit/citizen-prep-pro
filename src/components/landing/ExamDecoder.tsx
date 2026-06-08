@@ -17,13 +17,13 @@ const goals = [
     desc: 'Pour tout premier renouvellement dépassant 1 an.',
   },
   {
-    badge: 'Résident',
+    badge: 'CR',
     color: '#4F46E5',
     title: 'Carte de Résident',
     desc: 'Pour une installation durable en France (10 ans).',
   },
   {
-    badge: 'Naturali.',
+    badge: 'NAT',
     color: '#059669',
     title: 'Naturalisation',
     desc: 'Pour devenir citoyen français à part entière.',
@@ -131,15 +131,15 @@ export default function ExamDecoder() {
               {goals.map((goal) => (
                 <div
                   key={goal.badge}
-                  className="rounded-xl border border-slate-200 p-4 flex items-start gap-4 bg-white/60 hover:bg-white/90 transition-colors"
+                  className="rounded-xl border border-slate-200 p-4 flex items-start gap-4 bg-white/60 hover:bg-white/90 transition-colors shadow-sm"
                 >
                   <div
-                    className="mt-0.5 w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 text-white text-xs font-black"
+                    className="mt-0.5 w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 text-white text-xs font-black shadow-sm"
                     style={{ background: goal.color }}
                   >
                     {goal.badge}
                   </div>
-                  <div>
+                  <div className="flex-1 min-w-0">
                     <p className="font-bold text-slate-900 text-sm leading-snug">{goal.title}</p>
                     <p className="text-xs text-slate-500 mt-1">{goal.desc}</p>
                   </div>

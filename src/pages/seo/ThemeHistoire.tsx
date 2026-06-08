@@ -18,6 +18,9 @@ export default function ThemeHistoire() {
         title="Histoire et Géographie de France — Examen Civique | GoCivique"
         description="Révolutions, guerres mondiales, géographie et symboles : maîtrisez le thème Histoire et géographie de la France pour réussir l'examen civique de naturalisation."
         path="/themes/histoire-geographie"
+        isArticle
+        publishedTime="2025-06-01T00:00:00+00:00"
+        modifiedTime="2026-06-04T00:00:00+00:00"
         schema={breadcrumbSchema}
       />
 

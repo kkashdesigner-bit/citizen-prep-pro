@@ -66,7 +66,7 @@ export default function FinalCTA() {
         </div>
 
         <p className="text-white/50 text-xs mt-6">
-          Sans carte de crédit · Résiliation en 1 clic · Garantie 7 jours
+          3 jours gratuits · Aucun débit pendant l'essai · Résiliation en 1 clic
         </p>
       </div>
 

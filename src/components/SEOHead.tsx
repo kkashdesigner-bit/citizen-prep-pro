@@ -10,10 +10,18 @@ interface SEOHeadProps {
     type?: string;
     noindex?: boolean;
     schema?: Record<string, any> | Record<string, any>[];
+    /** Set to true for guide/article pages to inject article:published_time etc. */
+    isArticle?: boolean;
+    publishedTime?: string;
+    modifiedTime?: string;
+    ogImage?: string;
 }
 
 const SITE_NAME = 'GoCivique';
 const BASE_URL = 'https://gocivique.fr';
+const DEFAULT_OG_IMAGE = `${BASE_URL}/gocivique-og-image.png`;
+const OG_IMAGE_WIDTH = 1200;
+const OG_IMAGE_HEIGHT = 630;
 
 const SUPPORTED_LANGS = [
     { code: 'fr', param: '' },
@@ -33,6 +41,10 @@ export default function SEOHead({
     type = 'website',
     noindex = false,
     schema,
+    isArticle = false,
+    publishedTime = '2025-01-01T00:00:00+00:00',
+    modifiedTime = '2026-06-04T00:00:00+00:00',
+    ogImage,
 }: SEOHeadProps) {
     const { t } = useLanguage();
 
@@ -41,18 +53,27 @@ export default function SEOHead({
 
     const fullTitle = resolvedTitle.includes(SITE_NAME) ? resolvedTitle : `${resolvedTitle} | ${SITE_NAME}`;
     const url = `${BASE_URL}${path}`;
+    const imageUrl = ogImage || DEFAULT_OG_IMAGE;
 
-    // Organization Schema
+    // ── Organization Schema ──
     const orgSchema = {
         "@context": "https://schema.org",
         "@type": ["Organization", "EducationalOrganization"],
         "@id": `${BASE_URL}/#organization`,
         "name": "GoCivique",
         "url": BASE_URL,
-        "logo": { "@type": "ImageObject", "url": `${BASE_URL}/gocivique-logo-examen-civique.png` },
-        "description": "Plateforme de préparation à l'examen civique de naturalisation française 2026",
+        "logo": {
+            "@type": "ImageObject",
+            "url": `${BASE_URL}/gocivique-logo-examen-civique.png`,
+            "width": 512,
+            "height": 512
+        },
+        "description": "Plateforme de préparation à l'examen civique de naturalisation française 2026 — CSP, Carte de Résident, Naturalisation",
         "inLanguage": ["fr", "en", "ar", "es", "tr", "pt"],
         "foundingDate": "2025-01-01",
+        "sameAs": [
+            "https://gocivique.fr"
+        ],
         "contactPoint": {
             "@type": "ContactPoint",
             "contactType": "customer support",
@@ -62,11 +83,11 @@ export default function SEOHead({
         }
     };
 
-    // WebSite Schema — enables Google sitelinks search box
+    // ── WebSite Schema — enables Google Sitelinks Search Box ──
     const webSiteSchema = {
         "@context": "https://schema.org",
         "@type": "WebSite",
-        "name": "GoCivique",
+        "name": "GoCivique — Examen Civique 2026",
         "url": BASE_URL,
         "inLanguage": ["fr", "en", "ar", "es", "tr", "pt"],
         "potentialAction": {
@@ -76,66 +97,141 @@ export default function SEOHead({
         }
     };
 
-    // Course Schema — enhanced with courseInstance, offers, and multi-language
-    const courseSchema = {
+    // ── SoftwareApplication Schema ──
+    const softwareSchema = {
         "@context": "https://schema.org",
-        "@type": "Course",
-        "@id": `${BASE_URL}/#course`,
-        "name": "Préparation à l'examen civique français 2026",
-        "description": "Cours complet de préparation à l'examen civique obligatoire pour la naturalisation française, la carte de séjour pluriannuelle et la carte de résident. Quiz interactifs, examens blancs chronométrés et suivi de progression.",
-        "datePublished": "2025-01-01",
-        "dateModified": "2026-04-14",
-        "provider": {
-            "@id": `${BASE_URL}/#organization`
-        },
-        "hasCourseInstance": {
-            "@type": "CourseInstance",
-            "courseMode": "online",
-            "inLanguage": ["fr", "en", "ar", "es", "tr", "pt"]
-        },
+        "@type": "SoftwareApplication",
+        "@id": `${BASE_URL}/#app`,
+        "name": "GoCivique — Préparation Examen Civique",
+        "applicationCategory": "EducationalApplication",
+        "applicationSubCategory": "Exam Preparation",
+        "operatingSystem": "Web, iOS, Android",
+        "url": BASE_URL,
+        "description": "Application de préparation à l'examen civique 2026 : 7 034 questions officielles, mises en situation, examens blancs chronométrés, 100 cours, suivi de progression. Pour la CSP, la carte de résident et la naturalisation française.",
+        "screenshot": `${BASE_URL}/gocivique-og-image.png`,
+        "inLanguage": ["fr", "en", "ar", "es", "tr", "pt"],
         "offers": [
             {
                 "@type": "Offer",
                 "price": "0",
                 "priceCurrency": "EUR",
-                "description": "Essai gratuit — 1 examen démo",
+                "name": "Gratuit",
+                "description": "1 examen démo, 10 classes, accès limité",
                 "availability": "https://schema.org/InStock"
             },
             {
                 "@type": "Offer",
                 "price": "6.99",
                 "priceCurrency": "EUR",
-                "description": "Standard — Examens illimités et mode entraînement",
+                "name": "Standard",
+                "description": "Examens illimités, parcours complet 1→100, suivi de progression",
                 "availability": "https://schema.org/InStock"
             },
             {
                 "@type": "Offer",
-                "price": "10.99",
+                "price": "30",
                 "priceCurrency": "EUR",
-                "description": "Premium — Traductions, guides et outils avancés",
+                "name": "Accès à Vie",
+                "description": "Paiement unique — toutes les fonctionnalités Premium à vie",
                 "availability": "https://schema.org/InStock"
             }
         ],
+        "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.8",
+            "bestRating": "5",
+            "worstRating": "1",
+            "ratingCount": "412",
+            "reviewCount": "412"
+        }
+    };
+
+    // ── Course Schema ──
+    const courseSchema = {
+        "@context": "https://schema.org",
+        "@type": "Course",
+        "@id": `${BASE_URL}/#course`,
+        "name": "Préparation complète à l'examen civique 2026 — CSP, Carte de Résident, Naturalisation",
+        "description": "Cours complet de préparation à l'examen civique obligatoire depuis le 1er janvier 2026 pour la naturalisation française, la carte de séjour pluriannuelle (CSP) et la carte de résident. 7 034 questions officielles, 100 cours, mises en situation, examens blancs chronométrés et suivi de progression.",
+        "datePublished": "2025-01-01",
+        "dateModified": "2026-06-04",
+        "provider": { "@id": `${BASE_URL}/#organization` },
+        "hasCourseInstance": {
+            "@type": "CourseInstance",
+            "courseMode": "online",
+            "inLanguage": ["fr", "en", "ar", "es", "tr", "pt"],
+            "courseWorkload": "PT15M"
+        },
+        "numberOfCredits": 0,
         "educationalLevel": "Beginner",
+        "teaches": [
+            "Principes et valeurs de la République française",
+            "Institutions et système politique français",
+            "Droits et devoirs du citoyen",
+            "Histoire, géographie et culture de France",
+            "Vivre en société — intégration"
+        ],
         "about": [
-            "Examen civique",
+            "Examen civique 2026",
             "Naturalisation française",
-            "Carte de séjour pluriannuelle",
+            "Carte de séjour pluriannuelle (CSP)",
             "Carte de résident",
-            "Valeurs de la République française"
+            "QCM citoyenneté",
+            "Mises en situation civiques"
+        ],
+        "offers": [
+            {
+                "@type": "Offer",
+                "price": "0",
+                "priceCurrency": "EUR",
+                "description": "Essai gratuit — 1 examen démo, 10 classes",
+                "availability": "https://schema.org/InStock"
+            },
+            {
+                "@type": "Offer",
+                "price": "6.99",
+                "priceCurrency": "EUR",
+                "description": "Standard mensuel — Examens illimités, parcours complet",
+                "availability": "https://schema.org/InStock"
+            },
+            {
+                "@type": "Offer",
+                "price": "30",
+                "priceCurrency": "EUR",
+                "description": "Accès à Vie — paiement unique, toutes fonctionnalités Premium",
+                "availability": "https://schema.org/InStock"
+            }
         ]
     };
 
-    const schemasToInject = schema ?
-        (Array.isArray(schema) ? [orgSchema, webSiteSchema, courseSchema, ...schema] : [orgSchema, webSiteSchema, courseSchema, schema])
-        : [orgSchema, webSiteSchema, courseSchema];
+    const baseSchemas = [orgSchema, webSiteSchema, softwareSchema, courseSchema];
+
+    const schemasToInject = schema
+        ? (Array.isArray(schema) ? [...baseSchemas, ...schema] : [...baseSchemas, schema])
+        : baseSchemas;
+
+    const articleType = isArticle ? 'article' : type;
 
     return (
         <Helmet>
             <title>{fullTitle}</title>
             <meta name="description" content={resolvedDesc} />
+            <meta name="keywords" content="examen civique, préparation examen civique, qcm examen civique, mises en situation, naturalisation française, carte de résident, carte de séjour pluriannuelle, CSP, test civique france, examen civique 2026" />
+            <meta name="application-name" content="GoCivique" />
+            <meta name="author" content="GoCivique" />
+            <meta name="creator" content="GoCivique" />
+            <meta name="publisher" content="GoCivique" />
+            <meta name="theme-color" content="#0055A4" />
+            <meta name="apple-mobile-web-app-capable" content="yes" />
+            <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+            <meta name="apple-mobile-web-app-title" content="GoCivique" />
             <link rel="canonical" href={url} />
-            {noindex && <meta name="robots" content="noindex, nofollow" />}
+
+            {noindex
+                ? <meta name="robots" content="noindex, nofollow" />
+                : <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+            }
+            <meta name="googlebot" content={noindex ? "noindex, nofollow" : "index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1"} />
 
             {/* hreflang tags for multi-language SEO */}
             {SUPPORTED_LANGS.map((lang) => (
@@ -152,13 +248,32 @@ export default function SEOHead({
             <meta property="og:title" content={fullTitle} />
             <meta property="og:description" content={resolvedDesc} />
             <meta property="og:url" content={url} />
-            <meta property="og:type" content={type} />
+            <meta property="og:type" content={articleType} />
             <meta property="og:site_name" content={SITE_NAME} />
             <meta property="og:locale" content="fr_FR" />
+            <meta property="og:image" content={imageUrl} />
+            <meta property="og:image:secure_url" content={imageUrl} />
+            <meta property="og:image:width" content={String(OG_IMAGE_WIDTH)} />
+            <meta property="og:image:height" content={String(OG_IMAGE_HEIGHT)} />
+            <meta property="og:image:alt" content={`${SITE_NAME} — Préparation examen civique 2026`} />
+            <meta property="og:image:type" content="image/png" />
 
-            {/* Twitter */}
+            {/* Article meta for guide/blog pages */}
+            {isArticle && (
+                <>
+                    <meta property="article:published_time" content={publishedTime} />
+                    <meta property="article:modified_time" content={modifiedTime} />
+                    <meta property="article:section" content="Guide examen civique" />
+                    <meta property="article:publisher" content="https://gocivique.fr" />
+                </>
+            )}
+
+            {/* Twitter Card */}
+            <meta name="twitter:card" content="summary_large_image" />
             <meta name="twitter:title" content={fullTitle} />
             <meta name="twitter:description" content={resolvedDesc} />
+            <meta name="twitter:image" content={imageUrl} />
+            <meta name="twitter:image:alt" content={`${SITE_NAME} — Préparation examen civique 2026`} />
 
             {/* Structured Data (JSON-LD) */}
             {schemasToInject.map((s, i) => (

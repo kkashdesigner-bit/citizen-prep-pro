@@ -39,9 +39,10 @@ export default function Auth() {
   const checkoutIntent = searchParams.get('intent') === 'checkout' || !!getPendingCheckout();
   const redirectTo = searchParams.get('redirect');
 
-  // If they want to buy, default the form to "sign up" rather than "log in".
+  // If they want to buy or try the demo, default the form to "sign up" rather than "log in".
   useEffect(() => {
-    if (checkoutIntent) setIsLogin(false);
+    const isDemoIntent = redirectTo?.includes('demo');
+    if (checkoutIntent || isDemoIntent) setIsLogin(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -52,7 +53,9 @@ export default function Auth() {
       clearPendingCheckout();
       supabase.auth.getUser().then(({ data }) => {
         if (data.user) {
-          startCheckout(pendingTier, { id: data.user.id, email: data.user.email });
+          startCheckout(pendingTier, { id: data.user.id, email: data.user.email }).catch(() => {
+            navigate(defaultPath);
+          });
         } else {
           navigate(defaultPath);
         }

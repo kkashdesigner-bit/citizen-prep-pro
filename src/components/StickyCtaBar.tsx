@@ -46,7 +46,7 @@ export default function StickyCtaBar() {
             Prêt à réussir l'examen civique 2026 ?
           </p>
           <p className="hidden truncate text-xs text-white/60 sm:block">
-            Accès illimité dès 4,17 €/mois — satisfait ou remboursé sous 7 jours.
+            Accès illimité dès 4,17 €/mois — 3 jours d'essai gratuit, aucun débit avant.
           </p>
         </div>
         <Button

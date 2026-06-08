@@ -43,6 +43,9 @@ export default function GuideSiJeRate() {
         title="Que se passe-t-il si je rate l'examen civique ? | GoCivique"
         description="L'\u00e9chec \u00e0 l'examen civique ne bloque pas d\u00e9finitivement votre dossier. D\u00e9couvrez les proc\u00e9dures de rattrapage, d\u00e9lais, et comment mieux vous pr\u00e9parer."
         path="/guides/si-je-rate-lexamen"
+        isArticle
+        publishedTime="2025-11-01T00:00:00+00:00"
+        modifiedTime="2026-06-04T00:00:00+00:00"
         schema={[faqSchema, breadcrumbSchema]}
       />
 

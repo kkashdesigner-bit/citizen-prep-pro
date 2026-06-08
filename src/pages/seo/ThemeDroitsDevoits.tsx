@@ -18,6 +18,9 @@ export default function ThemeDroitsDevoits() {
         title="Droits et Devoirs du Citoyen Français — Examen Civique | GoCivique"
         description="Droit de vote, libertés fondamentales, obligations civiques et fiscales : maîtrisez les droits et devoirs du citoyen français pour réussir l'examen civique 2026."
         path="/themes/droits-devoirs"
+        isArticle
+        publishedTime="2025-06-01T00:00:00+00:00"
+        modifiedTime="2026-06-04T00:00:00+00:00"
         schema={breadcrumbSchema}
       />
 
