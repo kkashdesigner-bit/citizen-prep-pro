@@ -1,5 +1,6 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { json, isServiceRoleRequest } from './shared.ts';
 
 // ── Shared template (copied — Deno edge functions can't share across dirs) ──
 
@@ -294,7 +295,10 @@ const EXAM_REMINDER_DAYS = [30, 14, 7, 3, 1];
 const STREAK_MILESTONES = [7, 30, 60, 100];
 const INACTIVITY_DAYS = [3, 7, 14];
 
-serve(async (_req) => {
+serve(async (req) => {
+  // Internal cron/admin endpoint: service-role callers only.
+  if (!isServiceRoleRequest(req)) return json(req, { error: 'Forbidden' }, 403);
+
   try {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;

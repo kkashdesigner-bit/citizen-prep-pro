@@ -2,8 +2,15 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from './types';
 
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || "https://jblhxpzqbbarpqstcbvq.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpibGh4cHpxYmJhcnBxc3RjYnZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA1NzMxMDIsImV4cCI6MjA4NjE0OTEwMn0.vrHjiLjI67zsTGzSooqkREEVrzUAC353iuI0nA-zrH8";
+// Prefer environment configuration; fall back to the project's PUBLIC values.
+// The anon/publishable key is public by design — it ships in the browser bundle
+// and access is enforced by Row Level Security — so this fallback is safe and
+// only guarantees the app boots if VITE_ env vars aren't wired on the host.
+const SUPABASE_URL =
+  import.meta.env.VITE_SUPABASE_URL || 'https://jblhxpzqbbarpqstcbvq.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY =
+  import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpibGh4cHpxYmJhcnBxc3RjYnZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA1NzMxMDIsImV4cCI6MjA4NjE0OTEwMn0.vrHjiLjI67zsTGzSooqkREEVrzUAC353iuI0nA-zrH8';
 
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";

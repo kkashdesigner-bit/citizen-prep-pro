@@ -280,7 +280,7 @@ export default function SettingsPage() {
                                     <div className="space-y-4">
                                         <div>
                                             <Label htmlFor="firstName" className="text-xs font-bold text-[var(--dash-text-muted)] uppercase tracking-wider">Prénom</Label>
-                                            <Input id="firstName" value={firstName} onChange={(e) => { setFirstName(e.target.value); setProfileDirty(true); }}
+                                            <Input id="firstName" maxLength={100} value={firstName} onChange={(e) => { setFirstName(e.target.value); setProfileDirty(true); }}
                                                 placeholder="Votre prénom"
                                                 className="mt-1.5 bg-[var(--dash-surface)] border-[var(--dash-card-border)] text-[var(--dash-text)] focus:border-[#0055A4] focus:ring-[#0055A4]/20 rounded-xl h-11" />
                                         </div>
@@ -350,7 +350,7 @@ export default function SettingsPage() {
                                             <div>
                                                 <Label htmlFor="currentPw" className="text-xs font-bold text-[var(--dash-text-muted)] uppercase tracking-wider">Mot de passe actuel</Label>
                                                 <div className="relative mt-1.5">
-                                                    <Input id="currentPw" type={showCurrent ? 'text' : 'password'} value={currentPw}
+                                                    <Input id="currentPw" maxLength={128} type={showCurrent ? 'text' : 'password'} value={currentPw}
                                                         onChange={(e) => setCurrentPw(e.target.value)} placeholder="Votre mot de passe actuel"
                                                         className="bg-[var(--dash-surface)] border-[var(--dash-card-border)] text-[var(--dash-text)] focus:border-[#0055A4] focus:ring-[#0055A4]/20 rounded-xl h-11 pr-10" />
                                                     <button type="button" onClick={() => setShowCurrent(!showCurrent)}
@@ -363,7 +363,7 @@ export default function SettingsPage() {
                                             <div>
                                                 <Label htmlFor="newPw" className="text-xs font-bold text-[var(--dash-text-muted)] uppercase tracking-wider">Nouveau mot de passe</Label>
                                                 <div className="relative mt-1.5">
-                                                    <Input id="newPw" type={showNew ? 'text' : 'password'} value={newPw}
+                                                    <Input id="newPw" maxLength={128} type={showNew ? 'text' : 'password'} value={newPw}
                                                         onChange={(e) => setNewPw(e.target.value)} placeholder="Min. 6 caractères"
                                                         className="bg-[var(--dash-surface)] border-[var(--dash-card-border)] text-[var(--dash-text)] focus:border-[#0055A4] focus:ring-[#0055A4]/20 rounded-xl h-11 pr-10" />
                                                     <button type="button" onClick={() => setShowNew(!showNew)}
@@ -376,7 +376,7 @@ export default function SettingsPage() {
                                             <div>
                                                 <Label htmlFor="confirmPw" className="text-xs font-bold text-[var(--dash-text-muted)] uppercase tracking-wider">Confirmer le nouveau mot de passe</Label>
                                                 <div className="relative mt-1.5">
-                                                    <Input id="confirmPw" type={showConfirm ? 'text' : 'password'} value={confirmPw}
+                                                    <Input id="confirmPw" maxLength={128} type={showConfirm ? 'text' : 'password'} value={confirmPw}
                                                         onChange={(e) => setConfirmPw(e.target.value)} placeholder="Retapez le nouveau mot de passe"
                                                         className="bg-[var(--dash-surface)] border-[var(--dash-card-border)] text-[var(--dash-text)] focus:border-[#0055A4] focus:ring-[#0055A4]/20 rounded-xl h-11 pr-10" />
                                                     <button type="button" onClick={() => setShowConfirm(!showConfirm)}

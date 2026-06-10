@@ -245,6 +245,7 @@ export default function UpdatePassword() {
                         id="new-password"
                         type={showPassword ? 'text' : 'password'}
                         placeholder="Au moins 6 caractères"
+                        maxLength={128}
                         value={password}
                         onChange={e => setPassword(e.target.value)}
                         required
@@ -290,6 +291,7 @@ export default function UpdatePassword() {
                         id="confirm-password"
                         type={showConfirm ? 'text' : 'password'}
                         placeholder="Répétez le mot de passe"
+                        maxLength={128}
                         value={confirm}
                         onChange={e => setConfirm(e.target.value)}
                         required

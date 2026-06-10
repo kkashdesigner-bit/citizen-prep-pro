@@ -14,6 +14,7 @@ export const PENDING_CHECKOUT_KEY = 'pending_checkout_tier';
 /** localStorage key read by SubscriptionSuccess to confirm the tier after payment. */
 export const PENDING_SUBSCRIPTION_KEY = 'pending_subscription_tier';
 
+// Public Supabase values (env-first, with safe public fallback — see client.ts).
 const SUPABASE_URL =
   import.meta.env.VITE_SUPABASE_URL || 'https://jblhxpzqbbarpqstcbvq.supabase.co';
 const SUPABASE_ANON_KEY =

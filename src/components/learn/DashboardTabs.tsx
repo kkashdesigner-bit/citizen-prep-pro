@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
+import { LayoutGrid, BarChart3, History } from 'lucide-react';
 import { useDashboardStats } from '@/hooks/useDashboardStats';
 import WeeklyActivityChart from '@/components/learn/WeeklyActivityChart';
 import DomainMasteryBars from '@/components/learn/DomainMasteryBars';
@@ -10,74 +11,105 @@ interface DashboardTabsProps {
 }
 
 const TABS = [
-    { key: 'overview', label: 'Aperçu' },
-    { key: 'stats', label: 'Statistiques' },
-    { key: 'history', label: 'Historique' },
+    { key: 'overview', label: 'Aperçu', icon: LayoutGrid },
+    { key: 'stats', label: 'Statistiques', icon: BarChart3 },
+    { key: 'history', label: 'Historique', icon: History },
 ];
 
 export default function DashboardTabs({ children }: DashboardTabsProps) {
     const [activeTab, setActiveTab] = useState('overview');
     const stats = useDashboardStats();
+    const reducedMotion = useReducedMotion();
 
     return (
         <div className="mb-8">
-            <div className="flex items-center gap-1 border-b border-[var(--dash-card-border)] mb-6">
-                {TABS.map((tab) => (
-                    <button
-                        key={tab.key}
-                        onClick={() => setActiveTab(tab.key)}
-                        className={`relative px-4 py-3 text-sm font-semibold transition-colors ${activeTab === tab.key
-                                ? 'text-[#0055A4]'
-                                : 'text-[var(--dash-text-muted)] hover:text-[var(--dash-text)]'
+            {/* Glass pill tab bar with sliding indicator */}
+            <div
+                data-tour="progress"
+                role="tablist"
+                aria-label="Sections du tableau de bord"
+                className="inline-flex items-center gap-1 p-1 mb-6 rounded-2xl border border-[var(--dash-card-border)] bg-[var(--dash-card)]/80 backdrop-blur-xl shadow-[0_2px_12px_rgba(0,0,0,0.04)]"
+            >
+                {TABS.map(({ key, label, icon: Icon }) => {
+                    const isActive = activeTab === key;
+                    return (
+                        <button
+                            key={key}
+                            role="tab"
+                            aria-selected={isActive}
+                            onClick={() => setActiveTab(key)}
+                            className={`relative px-3.5 sm:px-5 py-2 text-xs sm:text-sm font-semibold rounded-xl transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#0055A4]/50 ${
+                                isActive ? 'text-white' : 'text-[var(--dash-text-muted)] hover:text-[var(--dash-text)]'
                             }`}
-                    >
-                        {tab.label}
-                        {activeTab === tab.key && (
-                            <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#0055A4] rounded-t-full" />
-                        )}
-                    </button>
-                ))}
+                        >
+                            {isActive && (
+                                <motion.span
+                                    layoutId="dash-tab-pill"
+                                    transition={reducedMotion ? { duration: 0 } : { type: 'spring', stiffness: 420, damping: 34 }}
+                                    className="absolute inset-0 rounded-xl bg-gradient-to-r from-[#0055A4] to-[#1B6ED6] shadow-[0_4px_14px_rgba(0,85,164,0.35)]"
+                                    aria-hidden
+                                />
+                            )}
+                            <span className="relative z-10 inline-flex items-center gap-1.5">
+                                <Icon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                                {label}
+                            </span>
+                        </button>
+                    );
+                })}
             </div>
 
-            <motion.div
-                key={activeTab}
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.25 }}
-            >
-                {activeTab === 'overview' && children}
+            <AnimatePresence mode="wait">
+                <motion.div
+                    key={activeTab}
+                    initial={reducedMotion ? false : { opacity: 0, y: 10, filter: 'blur(2px)' }}
+                    animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                    exit={reducedMotion ? undefined : { opacity: 0, y: -8, filter: 'blur(2px)' }}
+                    transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+                >
+                    {activeTab === 'overview' && children}
 
-                {activeTab === 'stats' && (
-                    <div className="space-y-6">
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                            {[
-                                { label: 'Taux de réussite', value: `${stats.successRate}%` },
-                                { label: 'Série de jours', value: stats.streak },
-                                { label: 'XP total', value: stats.totalXP },
-                                { label: 'À réviser', value: stats.wrongQuestionsCount },
-                            ].map((s) => (
-                                <div key={s.label} className="rounded-xl border border-[var(--dash-card-border)] p-4">
-                                    <p className="text-xs text-[var(--dash-text-muted)]">{s.label}</p>
-                                    <p className="text-2xl font-bold text-[var(--dash-text)] mt-1">{s.value}</p>
-                                </div>
-                            ))}
+                    {activeTab === 'stats' && (
+                        <div className="space-y-6">
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                                {[
+                                    { label: 'Taux de réussite', value: `${stats.successRate}%`, accent: '#0055A4' },
+                                    { label: 'Série de jours', value: stats.streak, accent: '#F59E0B' },
+                                    { label: 'XP total', value: stats.totalXP, accent: '#8B5CF6' },
+                                    { label: 'À réviser', value: stats.wrongQuestionsCount, accent: '#EF4135' },
+                                ].map((s, i) => (
+                                    <motion.div
+                                        key={s.label}
+                                        initial={reducedMotion ? false : { opacity: 0, y: 10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: i * 0.06 }}
+                                        whileHover={reducedMotion ? undefined : { y: -2, boxShadow: '0 8px 24px -8px rgba(0,85,164,0.15)' }}
+                                        className="rounded-xl border border-[var(--dash-card-border)] bg-[var(--dash-card)] p-4 relative overflow-hidden"
+                                    >
+                                        <span aria-hidden className="absolute top-0 left-0 h-full w-1 rounded-r" style={{ backgroundColor: s.accent, opacity: 0.85 }} />
+                                        <p className="text-xs text-[var(--dash-text-muted)] pl-2">{s.label}</p>
+                                        <p className="text-2xl font-bold text-[var(--dash-text)] mt-1 pl-2 tabular-nums">{s.value}</p>
+                                    </motion.div>
+                                ))}
+                            </div>
+                            <WeeklyActivityChart data={stats.weeklyActivity} />
+                            <DomainMasteryBars domains={stats.domainMastery} />
                         </div>
-                        <WeeklyActivityChart data={stats.weeklyActivity} />
-                        <DomainMasteryBars domains={stats.domainMastery} />
-                    </div>
-                )}
+                    )}
 
-                {activeTab === 'history' && (
-                    stats.recentActivity.length > 0 ? (
-                        <RecentActivityLog activities={stats.recentActivity} />
-                    ) : (
-                        <div className="text-center py-16 text-[var(--dash-text-muted)]">
-                            <p className="text-lg font-semibold mb-1">Aucun examen pour l'instant</p>
-                            <p className="text-sm">Lancez votre premier quiz pour voir votre historique ici.</p>
-                        </div>
-                    )
-                )}
-            </motion.div>
+                    {activeTab === 'history' && (
+                        stats.recentActivity.length > 0 ? (
+                            <RecentActivityLog activities={stats.recentActivity} />
+                        ) : (
+                            <div className="text-center py-16 text-[var(--dash-text-muted)] rounded-2xl border border-dashed border-[var(--dash-card-border)] bg-[var(--dash-card)]/50">
+                                <History className="h-8 w-8 mx-auto mb-3 opacity-40" />
+                                <p className="text-lg font-semibold mb-1">Aucun examen pour l'instant</p>
+                                <p className="text-sm">Lancez votre premier quiz pour voir votre historique ici.</p>
+                            </div>
+                        )
+                    )}
+                </motion.div>
+            </AnimatePresence>
         </div>
     );
 }

@@ -271,6 +271,7 @@ function StepProfile({ name, avatar, onNameChange, onAvatarChange, onContinue }:
             id="onboard-name"
             type="text"
             placeholder="Votre prénom"
+            maxLength={100}
             value={name}
             onChange={(e) => onNameChange(e.target.value)}
             className="pl-10 h-12 rounded-xl border-[#E6EAF0] bg-[#F5F7FA] hover:border-[#0055A4]/30 focus:border-[#0055A4] focus:bg-white focus:shadow-[0_0_0_3px_rgba(0,85,164,0.1)] transition-all text-lg"

@@ -10,6 +10,8 @@ import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useUserProfile } from '@/hooks/useUserProfile';
+import { checkLoginAllowed, recordLoginAttempt, lockoutMessage } from '@/lib/authRateLimit';
+import { signInSchema, signUpSchema, firstError } from '@/lib/validation';
 import Logo from '@/components/Logo';
 import { ArrowRight, Eye, EyeOff, Mail, Lock, User, ChevronLeft, Sparkles, Shield, BarChart3, CheckCircle2, RefreshCw } from 'lucide-react';
 import { useEffect, useRef } from 'react';
@@ -95,10 +97,37 @@ export default function Auth() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validate + sanitize inputs before hitting the API
+    const parsed = isLogin
+      ? signInSchema.safeParse({ email, password })
+      : signUpSchema.safeParse({ email, password, displayName });
+    const validationError = firstError(parsed);
+    if (validationError) {
+      toast({ title: 'Saisie invalide', description: validationError, variant: 'destructive' });
+      return;
+    }
+
     setLoading(true);
     try {
       if (isLogin) {
-        await signInWithEmail(email, password);
+        // Server-enforced limit: max 5 failed attempts per 15 minutes
+        const gate = await checkLoginAllowed(email);
+        if (!gate.allowed) {
+          toast({
+            title: 'Compte temporairement bloqué',
+            description: lockoutMessage(gate.retryAfterSeconds),
+            variant: 'destructive',
+          });
+          return;
+        }
+        try {
+          await signInWithEmail(email, password);
+        } catch (signInError) {
+          recordLoginAttempt(email, false).catch(() => {});
+          throw signInError;
+        }
+        recordLoginAttempt(email, true).catch(() => {});
         routeAfterAuth(profile?.onboarding_completed ? '/learn' : '/onboarding');
       } else {
         await signUpWithEmail(email, password);
@@ -365,6 +394,7 @@ export default function Auth() {
                         type="email"
                         placeholder="votre@email.com"
                         value={email}
+                        maxLength={320}
                         onChange={(e) => setEmail(e.target.value)}
                         required
                         className="pl-10 h-12 rounded-xl border-[#E6EAF0] bg-[#F5F7FA] hover:border-[#0055A4]/30 focus:border-[#0055A4] focus:bg-white focus:shadow-[0_0_0_3px_rgba(0,85,164,0.1)] transition-all"
@@ -416,6 +446,7 @@ export default function Auth() {
                           type="text"
                           placeholder="Votre prénom"
                           value={displayName}
+                          maxLength={100}
                           onChange={(e) => setDisplayName(e.target.value)}
                           className="pl-10 h-12 rounded-xl border-[#E6EAF0] bg-[#F5F7FA] hover:border-[#0055A4]/30 focus:border-[#0055A4] focus:bg-white focus:shadow-[0_0_0_3px_rgba(0,85,164,0.1)] transition-all"
                         />
@@ -432,6 +463,7 @@ export default function Auth() {
                         type="email"
                         placeholder="votre@email.com"
                         value={email}
+                        maxLength={320}
                         onChange={(e) => setEmail(e.target.value)}
                         required
                         className="pl-10 h-12 rounded-xl border-[#E6EAF0] bg-[#F5F7FA] hover:border-[#0055A4]/30 focus:border-[#0055A4] focus:bg-white focus:shadow-[0_0_0_3px_rgba(0,85,164,0.1)] transition-all"
@@ -462,6 +494,7 @@ export default function Auth() {
                         onChange={(e) => setPassword(e.target.value)}
                         required
                         minLength={6}
+                        maxLength={128}
                         className="pl-10 pr-10 h-12 rounded-xl border-[#E6EAF0] bg-[#F5F7FA] hover:border-[#0055A4]/30 focus:border-[#0055A4] focus:bg-white focus:shadow-[0_0_0_3px_rgba(0,85,164,0.1)] transition-all"
                       />
                       <button
@@ -547,7 +580,6 @@ export default function Auth() {
         @keyframes slideDown {
           0% { opacity: 0; transform: translateY(-8px); }
           100% { opacity: 1; transform: translateY(0); }
-        }
       `}</style>
     </div>
   );

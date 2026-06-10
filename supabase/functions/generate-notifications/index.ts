@@ -1,9 +1,13 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { json, isServiceRoleRequest } from './shared.ts';
 
 const MILESTONE_THRESHOLDS = [100, 250, 500, 1000, 2000, 5000];
 
-serve(async (_req) => {
+serve(async (req) => {
+  // Internal cron/admin endpoint: service-role callers only.
+  if (!isServiceRoleRequest(req)) return json(req, { error: 'Forbidden' }, 403);
+
   try {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;

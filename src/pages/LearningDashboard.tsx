@@ -21,6 +21,7 @@ import { useParcours } from '@/hooks/useParcours';
 import MiniatureIcon from '@/components/MiniatureIcon';
 import OnboardingChecklist from '@/components/learn/OnboardingChecklist';
 import NextActionCard from '@/components/learn/NextActionCard';
+import GuidedTour from '@/components/learn/GuidedTour';
 import { Target, FileText, Clock, X, Check, Lock, Crown, Sparkles, Flame, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
@@ -107,32 +108,82 @@ export default function LearningDashboard() {
             className="flex-1 min-w-0"
           >
             {/* ─── User Profile Card + Inline Stats (mobile) ─── */}
-            <motion.div variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0 } }} className="mb-4 sm:mb-6 bg-[var(--dash-card)] rounded-2xl border border-[var(--dash-card-border)] shadow-[0_2px_10px_rgba(0,0,0,0.03)] relative overflow-hidden">
-              {/* Decorative blurs */}
-              <div className="absolute -top-10 -right-10 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
-              <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-indigo-500/5 rounded-full blur-3xl pointer-events-none" />
+            <motion.div variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0 } }} className="mb-4 sm:mb-6 bg-[var(--dash-card)] rounded-2xl border border-[var(--dash-card-border)] shadow-[0_8px_30px_-12px_rgba(0,85,164,0.12)] relative overflow-hidden">
+              {/* Tricolor hairline */}
+              <div aria-hidden className="absolute top-0 inset-x-0 h-[3px] bg-gradient-to-r from-[#0055A4] via-white to-[#EF4135] opacity-80" />
+              {/* Gradient mesh backdrop */}
+              <div aria-hidden className="absolute inset-0 pointer-events-none opacity-70 dark:opacity-40"
+                style={{ background: 'radial-gradient(420px 180px at 12% 0%, rgba(0,85,164,0.10), transparent 60%), radial-gradient(380px 200px at 88% 10%, rgba(239,65,53,0.06), transparent 60%), radial-gradient(300px 160px at 55% 100%, rgba(27,110,214,0.07), transparent 60%)' }} />
+              <motion.div
+                aria-hidden
+                className="absolute -top-12 -right-12 w-40 h-40 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"
+                animate={{ scale: [1, 1.15, 1], opacity: [0.7, 1, 0.7] }}
+                transition={{ duration: 9, repeat: Infinity, ease: 'easeInOut' }}
+              />
 
               {/* Profile row */}
               <div className="p-4 sm:p-6 flex items-center gap-3 sm:gap-5">
-                <div className="relative shrink-0">
-                  {displayAvatar ? (
-                    <img src={displayAvatar} alt="Avatar" className="w-10 h-10 sm:w-20 sm:h-20 rounded-full border-2 sm:border-4 border-white object-cover shadow-lg" />
-                  ) : (
-                    <div className="w-10 h-10 sm:w-20 sm:h-20 rounded-full border-2 sm:border-4 border-white bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-lg sm:text-2xl shadow-lg">
-                      {firstName.charAt(0)}
-                    </div>
+                {/* Avatar wrapped in an SVG daily-goal progress ring */}
+                <div className="relative shrink-0 w-[52px] h-[52px] sm:w-[96px] sm:h-[96px]">
+                  <svg viewBox="0 0 100 100" className="absolute inset-0 w-full h-full -rotate-90">
+                    <defs>
+                      <linearGradient id="heroRingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stopColor="#0055A4" />
+                        <stop offset="60%" stopColor="#1B6ED6" />
+                        <stop offset="100%" stopColor="#4D94E0" />
+                      </linearGradient>
+                    </defs>
+                    <circle cx="50" cy="50" r="46" stroke="var(--dash-card-border)" strokeWidth="5" fill="none" />
+                    <motion.circle
+                      cx="50" cy="50" r="46"
+                      stroke="url(#heroRingGrad)" strokeWidth="5" fill="none" strokeLinecap="round"
+                      strokeDasharray={2 * Math.PI * 46}
+                      initial={{ strokeDashoffset: 2 * Math.PI * 46 }}
+                      animate={{ strokeDashoffset: (2 * Math.PI * 46) * (1 - Math.min(1, stats.dailyGoalTarget > 0 ? stats.dailyGoalCurrent / stats.dailyGoalTarget : 0)) }}
+                      transition={{ duration: 1.4, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                      style={{ filter: 'drop-shadow(0 0 4px rgba(27,110,214,0.45))' }}
+                    />
+                  </svg>
+                  <div className="absolute inset-[7px] sm:inset-[9px] rounded-full overflow-hidden ring-2 ring-[var(--dash-card)] shadow-lg">
+                    {displayAvatar ? (
+                      <img src={displayAvatar} alt="Avatar" className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-300 flex items-center justify-center font-bold text-lg sm:text-2xl">
+                        {firstName.charAt(0)}
+                      </div>
+                    )}
+                  </div>
+                  {/* Streak flame badge */}
+                  {stats.streak > 0 && (
+                    <motion.div
+                      initial={{ scale: 0, rotate: -30 }}
+                      animate={{ scale: 1, rotate: 0 }}
+                      transition={{ type: 'spring', stiffness: 260, damping: 14, delay: 0.9 }}
+                      className="absolute -bottom-0.5 -right-0.5 sm:bottom-0 sm:right-0 flex items-center gap-0.5 rounded-full bg-gradient-to-br from-[#F59E0B] to-[#F97316] text-white text-[9px] sm:text-[11px] font-bold pl-1 pr-1.5 py-0.5 shadow-[0_2px_8px_rgba(245,158,11,0.5)] ring-2 ring-[var(--dash-card)]"
+                      title={`Série de ${stats.streak} jours`}
+                    >
+                      <Flame className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
+                      {stats.streak}
+                    </motion.div>
                   )}
                 </div>
 
                 <div className="flex-1 min-w-0 z-10">
                   <div className="flex items-start justify-between gap-2">
                     <h1 className="text-base sm:text-2xl md:text-3xl font-bold text-[var(--dash-text)] tracking-tight truncate">
-                      Bonjour, {firstName} <span className="inline-block animate-wave origin-bottom-right">👋</span>
+                      {new Date().getHours() >= 18 ? 'Bonsoir' : 'Bonjour'},{' '}
+                      <span className="bg-gradient-to-r from-[#0055A4] to-[#1B6ED6] bg-clip-text text-transparent">{firstName}</span>{' '}
+                      <span className="inline-block animate-wave origin-bottom-right">👋</span>
                     </h1>
                     <div className="sm:hidden shrink-0 mt-0.5">
                       <NotificationBell align="right" />
                     </div>
                   </div>
+                  <p className="hidden sm:block text-sm text-[var(--dash-text-muted)] mt-0.5 font-medium">
+                    {stats.dailyGoalCurrent >= stats.dailyGoalTarget
+                      ? 'Objectif du jour atteint — bravo ! 🎉'
+                      : `Plus que ${Math.max(0, stats.dailyGoalTarget - stats.dailyGoalCurrent)} question${stats.dailyGoalTarget - stats.dailyGoalCurrent > 1 ? 's' : ''} pour atteindre votre objectif du jour.`}
+                  </p>
 
                   <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mt-1.5 sm:mt-3">
                     {/* Tier Badge */}
@@ -155,13 +206,15 @@ export default function LearningDashboard() {
                     )}
 
                     {/* Goal Badge */}
-                    <button
+                    <motion.button
+                      whileHover={{ y: -1, scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
                       onClick={() => setShowGoalModal(true)}
-                      className="inline-flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-bold border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition-colors shadow-sm"
+                      className="inline-flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-bold border border-[var(--dash-card-border)] bg-[var(--dash-card)] text-[var(--dash-text-muted)] hover:border-[#0055A4]/40 hover:text-[#0055A4] transition-colors shadow-sm"
                     >
                       <Target className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-[#0055A4]" />
                       <span className="hidden sm:inline">Objectif : </span>{personaGoalLabel}
-                    </button>
+                    </motion.button>
                   </div>
                 </div>
               </div>
@@ -221,7 +274,7 @@ export default function LearningDashboard() {
             </motion.div>
 
             {/* Onboarding Checklist Guide */}
-            <OnboardingChecklist stats={stats} />
+            <div data-tour="checklist"><OnboardingChecklist stats={stats} /></div>
 
             {/* Next Recommended Study Action (Funnel) */}
             <NextActionCard stats={stats} />
@@ -244,12 +297,12 @@ export default function LearningDashboard() {
 
             {/* Parcours Card — Real progress */}
             <motion.div variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0 } }}>
-              <ParcoursCard />
+              <div data-tour="parcours"><ParcoursCard /></div>
             </motion.div>
 
             {/* Révision du jour — SM-2 spaced repetition */}
             <motion.div variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0 } }} className="mb-6">
-              <div className="bg-[var(--dash-card)] rounded-2xl border border-[var(--dash-card-border)] p-5 shadow-[0_2px_12px_rgba(0,0,0,0.04)]">
+              <div data-tour="revision" className="bg-[var(--dash-card)] rounded-2xl border border-[var(--dash-card-border)] p-5 shadow-[0_2px_12px_rgba(0,0,0,0.04)]">
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="text-base font-bold text-[var(--dash-text)] flex items-center gap-2">
@@ -283,7 +336,7 @@ export default function LearningDashboard() {
             <motion.div variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0 } }}>
               <div className="mb-6">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-bold text-[var(--dash-text)]">Entraînement par catégorie</h3>
+                  <h3 className="text-lg font-bold text-[var(--dash-text)]" data-tour="categories">Entraînement par catégorie</h3>
                   {/* Desktop nav arrows */}
                   <div className="hidden sm:flex gap-2">
                     <button
@@ -428,7 +481,7 @@ export default function LearningDashboard() {
                 {/* Recommended Exam */}
                 <motion.div
                   whileHover={{ y: -2 }}
-                  className="bg-[var(--dash-card)] rounded-2xl border-2 border-[#0055A4] p-5 md:p-6 shadow-[0_4px_20px_rgba(0,85,164,0.06)] mb-8 relative overflow-hidden"
+                  data-tour="exam" className="bg-[var(--dash-card)] rounded-2xl border-2 border-[#0055A4] p-5 md:p-6 shadow-[0_4px_20px_rgba(0,85,164,0.06)] mb-8 relative overflow-hidden"
                 >
                   <div className="absolute top-0 right-0 p-3">
                     <span className="bg-blue-500/10 text-[#0055A4] text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-widest">Recommandé</span>
@@ -472,6 +525,8 @@ export default function LearningDashboard() {
       </main>
 
       <SubscriptionGate open={showGate} onOpenChange={setShowGate} requiredTier={gateTier} featureLabel={gateTier === 'premium' ? 'Entraînement par catégorie' : 'Examens illimités'} />
+
+      <GuidedTour />
 
       {/* Goal Modal */}
       <Dialog open={showGoalModal} onOpenChange={setShowGoalModal}>

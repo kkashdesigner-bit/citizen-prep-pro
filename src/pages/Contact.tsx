@@ -11,6 +11,7 @@ import Footer from '@/components/Footer';
 import SEOHead from '@/components/SEOHead';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { contactSchema, firstError } from '@/lib/validation';
 
 export default function Contact() {
     const { t } = useLanguage();
@@ -28,8 +29,10 @@ export default function Contact() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (!formData.name || !formData.email || !formData.message) {
-            toast.error('Veuillez remplir tous les champs obligatoires.');
+        const parsed = contactSchema.safeParse(formData);
+        const validationError = firstError(parsed);
+        if (validationError) {
+            toast.error(validationError);
             return;
         }
 
@@ -143,6 +146,7 @@ export default function Contact() {
                                         <Input
                                             id="name"
                                             name="name"
+                                            maxLength={100}
                                             placeholder="Jean Dupont"
                                             value={formData.name}
                                             onChange={handleChange}
@@ -158,6 +162,7 @@ export default function Contact() {
                                         <Input
                                             id="email"
                                             name="email"
+                                            maxLength={320}
                                             type="email"
                                             placeholder="jean.dupont@email.com"
                                             value={formData.email}
@@ -175,6 +180,7 @@ export default function Contact() {
                                     <Input
                                         id="subject"
                                         name="subject"
+                                        maxLength={200}
                                         placeholder="Ex: Problème de facturation, Question sur une leçon..."
                                         value={formData.subject}
                                         onChange={handleChange}
@@ -189,6 +195,7 @@ export default function Contact() {
                                     <Textarea
                                         id="message"
                                         name="message"
+                                        maxLength={5000}
                                         placeholder="Comment pouvons-nous vous aider ?"
                                         rows={6}
                                         value={formData.message}

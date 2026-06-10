@@ -1,5 +1,6 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { json, isServiceRoleRequest, getAuthedUser, isValidEmail } from './shared.ts';
 
 const BRAND_PRIMARY = '#0055A4';
 const BRAND_GRADIENT_END = '#1B6ED6';
@@ -202,10 +203,29 @@ async function sendEmail(apiKey: string, to: string, subject: string, html: stri
 }
 
 serve(async (req) => {
+  // Admin-only endpoint: service-role callers or users with the 'admin' role.
+  // (verify_jwt alone is NOT enough: any logged-in user has a valid JWT.)
+  if (!isServiceRoleRequest(req)) {
+    const gateClient = createClient(
+      Deno.env.get('SUPABASE_URL')!,
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
+    );
+    const user = await getAuthedUser(req, gateClient);
+    if (!user) return json(req, { error: 'Forbidden' }, 403);
+    const { data: roleRow } = await gateClient
+      .from('user_roles')
+      .select('id')
+      .eq('user_id', user.id)
+      .eq('role', 'admin')
+      .maybeSingle();
+    if (!roleRow) return json(req, { error: 'Forbidden' }, 403);
+  }
+
   try {
     const url = new URL(req.url);
     const dryRun = url.searchParams.get('dry_run') === 'true';
-    const testEmail = url.searchParams.get('test_email'); // e.g. ?test_email=foo@bar.com
+    const testEmailRaw = url.searchParams.get('test_email');
+    const testEmail = isValidEmail(testEmailRaw) ? testEmailRaw : null;
 
     const campaignParam = url.searchParams.get('campaign') ?? '7000_questions';
     const campaign: CampaignId = campaignParam === 'exam_60d' ? 'exam_60d' : '7000_questions';

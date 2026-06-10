@@ -46,17 +46,18 @@ export interface UseQuizOptions {
 
 const DEMO_QUESTIONS_PER_EXAM = 20;
 
-/** Map UI language codes to XLSX filenames in /public/ */
-const LANG_TO_XLSX: Record<string, string> = {
-  ar: '/demo_questions%20ar.xlsx',
-  en: '/demo_questions%20en-US.xlsx',
-  es: '/demo_questions%20es-ES.xlsx',
-  pt: '/demo_questions%20pt-PT.xlsx',
-  tr: '/demo_questions%20tr.xlsx',
-  zh: '/demo_questions%20zh-Hans.xlsx',
+/** Map UI language codes to TSV filenames in /public/ (converted from XLSX;
+ * the 'xlsx' package was removed — high-severity vulnerability, no fix available) */
+const LANG_TO_TSV: Record<string, string> = {
+  ar: '/demo_questions%20ar.tsv',
+  en: '/demo_questions%20en-US.tsv',
+  es: '/demo_questions%20es-ES.tsv',
+  pt: '/demo_questions%20pt-PT.tsv',
+  tr: '/demo_questions%20tr.tsv',
+  zh: '/demo_questions%20zh-Hans.tsv',
 };
 
-/** Map a row array (from CSV or XLSX) to a Question object */
+/** Map a row array (from CSV or TSV) to a Question object */
 function rowToQuestion(cols: string[], idx: number): Question {
   return {
     id: idx + 9000,
@@ -87,28 +88,26 @@ async function parseDemoCSV(): Promise<Question[]> {
   return lines.slice(1).map((line, idx) => rowToQuestion(line.split(';'), idx));
 }
 
-/** Parse a language-specific XLSX file into Question objects (dynamic import for SSG safety) */
-async function parseDemoXLSX(url: string): Promise<Question[]> {
-  const XLSX = await import('xlsx');
+/** Parse a language-specific tab-separated file into Question objects */
+async function parseDemoTSV(url: string): Promise<Question[]> {
   const res = await fetch(url);
-  const buffer = await res.arrayBuffer();
-  const workbook = XLSX.read(buffer, { type: 'array' });
-  const sheet = workbook.Sheets[workbook.SheetNames[0]];
-  const rows = XLSX.utils.sheet_to_json<string[]>(sheet, { header: 1 });
-  return (rows as string[][]).slice(1).map((row, idx) => rowToQuestion(row.map(String), idx));
+  if (!res.ok) throw new Error(`TSV fetch failed: ${res.status}`);
+  const text = await res.text();
+  const lines = text.trim().split('\n');
+  return lines.slice(1).map((line, idx) => rowToQuestion(line.split('\t'), idx));
 }
 
 /**
  * Load demo questions for the given UI language.
- * French → CSV; all others → matching XLSX with CSV fallback.
+ * French → CSV; all others → matching TSV with CSV fallback.
  */
 async function fetchDemoQuestionsFromCSV(lang = 'fr'): Promise<Question[]> {
   // Normalize: LANGUAGE_TO_DB returns 'fr','ar','en','es','pt','tr','zh' etc.
-  const xlsxUrl = LANG_TO_XLSX[lang];
-  if (!xlsxUrl) return parseDemoCSV();
+  const tsvUrl = LANG_TO_TSV[lang];
+  if (!tsvUrl) return parseDemoCSV();
 
   try {
-    const questions = await parseDemoXLSX(xlsxUrl);
+    const questions = await parseDemoTSV(tsvUrl);
     if (questions.length > 0) return questions;
   } catch {
     // fall through to CSV
@@ -287,7 +286,7 @@ export function useQuiz({
           return;
         }
 
-        // ─── DEMO MODE: load from bundled CSV/XLSX (no Supabase needed) ───
+        // ─── DEMO MODE: load from bundled CSV/TSV (no Supabase needed) ───
         if (mode === 'demo') {
           const dbLang = LANGUAGE_TO_DB[language] || 'fr';
           const allDemo = await fetchDemoQuestionsFromCSV(dbLang);
