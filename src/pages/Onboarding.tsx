@@ -16,6 +16,7 @@ import {
   CalendarDays, HelpCircle,
 } from 'lucide-react';
 import Logo from '@/components/Logo';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const TOTAL_STEPS = 7;
 const AVATARS = Array.from({ length: 8 }, (_, i) => `/examen-civique-avatar-${i + 1}.webp`);
@@ -30,6 +31,7 @@ type OnboardingData = {
 };
 
 export default function Onboarding() {
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
   // If the user signed in via Google after clicking a paid plan, send them to Stripe.
@@ -119,7 +121,7 @@ export default function Onboarding() {
               className="text-[#1A1A1A]/50 hover:text-[#1A1A1A] transition-colors flex items-center gap-1 text-sm font-medium"
             >
               <ChevronLeft className="h-4 w-4" />
-              <span className="hidden sm:inline">Retour</span>
+              <span className="hidden sm:inline">{t('auth.back')}</span>
             </button>
           )}
           <div className="flex items-center gap-1.5">
@@ -206,6 +208,7 @@ export default function Onboarding() {
 
 /* ─── Step 1: Welcome ─── */
 function StepWelcome({ onContinue }: { onContinue: () => void }) {
+  const { t } = useLanguage();
   return (
     <div className="text-center space-y-8">
       <div className="space-y-4" style={{ animation: 'slideUp 0.6s ease-out' }}>
@@ -213,19 +216,19 @@ function StepWelcome({ onContinue }: { onContinue: () => void }) {
           <Flag className="h-10 w-10 text-[#0055A4]" />
         </div>
         <h1 className="text-3xl md:text-4xl font-bold text-[#1A1A1A] leading-tight">
-          Commençons par comprendre<br />
-          <span className="text-[#0055A4]">votre objectif</span>
+          {t('onboard.welcomeTitle1')}<br />
+          <span className="text-[#0055A4]">{t('onboard.welcomeTitle2')}</span>
         </h1>
         <p className="text-[#1A1A1A]/60 text-lg max-w-md mx-auto">
-          Répondez à quelques questions pour que nous puissions personnaliser votre parcours d'apprentissage.
+          {t('onboard.welcomeSubtitle')}
         </p>
       </div>
 
       <div className="grid grid-cols-3 gap-3 sm:gap-4" style={{ animation: 'slideUp 0.6s ease-out 0.15s both' }}>
         {[
-          { icon: <Crosshair className="h-5 w-5 sm:h-6 sm:w-6 text-[#0055A4]" />, label: 'Objectif ciblé' },
-          { icon: <BarChart3 className="h-5 w-5 sm:h-6 sm:w-6 text-[#0055A4]" />, label: 'Progression suivie' },
-          { icon: <Zap className="h-5 w-5 sm:h-6 sm:w-6 text-[#0055A4]" />, label: 'Résultats rapides' },
+          { icon: <Crosshair className="h-5 w-5 sm:h-6 sm:w-6 text-[#0055A4]" />, label: t('onboard.chip1') },
+          { icon: <BarChart3 className="h-5 w-5 sm:h-6 sm:w-6 text-[#0055A4]" />, label: t('onboard.chip2') },
+          { icon: <Zap className="h-5 w-5 sm:h-6 sm:w-6 text-[#0055A4]" />, label: t('onboard.chip3') },
         ].map(item => (
           <div key={item.label} className="rounded-2xl border border-[#E6EAF0] bg-[#F5F7FA] p-4 flex flex-col items-center gap-2">
             {item.icon}
@@ -240,7 +243,7 @@ function StepWelcome({ onContinue }: { onContinue: () => void }) {
         onClick={onContinue}
         style={{ animation: 'slideUp 0.6s ease-out 0.3s both' }}
       >
-        Continuer
+        {t('onboard.continue')}
         <ArrowRight className="h-5 w-5" />
       </Button>
     </div>
@@ -255,22 +258,23 @@ function StepProfile({ name, avatar, onNameChange, onAvatarChange, onContinue }:
   onAvatarChange: (a: string) => void;
   onContinue: () => void;
 }) {
+  const { t } = useLanguage();
   return (
     <div className="space-y-6">
       <div className="text-center space-y-2" style={{ animation: 'slideUp 0.5s ease-out' }}>
-        <h2 className="text-2xl md:text-3xl font-bold text-[#1A1A1A]">Personnalisez votre profil</h2>
-        <p className="text-[#1A1A1A]/60">Choisissez votre avatar et entrez votre prénom</p>
+        <h2 className="text-2xl md:text-3xl font-bold text-[#1A1A1A]">{t('onboard.profileTitle')}</h2>
+        <p className="text-[#1A1A1A]/60">{t('onboard.profileSubtitle')}</p>
       </div>
 
       {/* Name input */}
       <div className="space-y-2" style={{ animation: 'slideUp 0.5s ease-out 0.1s both' }}>
-        <Label htmlFor="onboard-name" className="text-sm font-medium text-[#1A1A1A]">Comment vous appelez-vous ?</Label>
+        <Label htmlFor="onboard-name" className="text-sm font-medium text-[#1A1A1A]">{t('onboard.nameQuestion')}</Label>
         <div className="relative">
           <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#1A1A1A]/30" />
           <Input
             id="onboard-name"
             type="text"
-            placeholder="Votre prénom"
+            placeholder={t('auth.firstNamePlaceholder')}
             maxLength={100}
             value={name}
             onChange={(e) => onNameChange(e.target.value)}
@@ -281,7 +285,7 @@ function StepProfile({ name, avatar, onNameChange, onAvatarChange, onContinue }:
 
       {/* Avatar grid */}
       <div style={{ animation: 'slideUp 0.5s ease-out 0.2s both' }}>
-        <p className="text-sm font-medium text-[#1A1A1A] mb-3">Choisissez votre avatar</p>
+        <p className="text-sm font-medium text-[#1A1A1A] mb-3">{t('onboard.chooseAvatar')}</p>
         <div className="grid grid-cols-4 gap-3 sm:gap-4">
           {AVATARS.map((src, i) => {
             const isSelected = avatar === src;
@@ -319,7 +323,7 @@ function StepProfile({ name, avatar, onNameChange, onAvatarChange, onContinue }:
         onClick={onContinue}
         style={{ animation: 'slideUp 0.5s ease-out 0.3s both' }}
       >
-        Continuer
+        {t('onboard.continue')}
         <ArrowRight className="h-5 w-5" />
       </Button>
     </div>
@@ -328,9 +332,9 @@ function StepProfile({ name, avatar, onNameChange, onAvatarChange, onContinue }:
 
 /* ─── Step 3: Goal ─── */
 const GOALS: { value: GoalType; label: string; description: string; icon: React.ReactNode }[] = [
-  { value: 'naturalisation', label: 'Naturalisation française', description: 'Je prépare ma demande de naturalisation', icon: <Landmark className="h-6 w-6" /> },
-  { value: 'carte_resident', label: 'Carte de Résident (CR)', description: 'Je renouvelle ou demande ma CR 10 ans', icon: <CreditCard className="h-6 w-6" /> },
-  { value: 'csp', label: 'Carte de Séjour Pluriannuelle (CSP)', description: 'Valeurs républicaines fondamentales', icon: <ClipboardList className="h-6 w-6" /> },
+  { value: 'naturalisation', label: 'onboard.goal1Label', description: 'onboard.goal1Desc', icon: <Landmark className="h-6 w-6" /> },
+  { value: 'carte_resident', label: 'onboard.goal2Label', description: 'onboard.goal2Desc', icon: <CreditCard className="h-6 w-6" /> },
+  { value: 'csp', label: 'onboard.goal3Label', description: 'onboard.goal3Desc', icon: <ClipboardList className="h-6 w-6" /> },
 ];
 
 function StepGoal({ selected, onSelect, onContinue }: {
@@ -338,11 +342,12 @@ function StepGoal({ selected, onSelect, onContinue }: {
   onSelect: (g: GoalType) => void;
   onContinue: () => void;
 }) {
+  const { t } = useLanguage();
   return (
     <div className="space-y-6">
       <div className="text-center space-y-2">
-        <h2 className="text-2xl md:text-3xl font-bold text-[#1A1A1A]">Quel est votre objectif ?</h2>
-        <p className="text-[#1A1A1A]/60">Sélectionnez votre situation actuelle</p>
+        <h2 className="text-2xl md:text-3xl font-bold text-[#1A1A1A]">{t('onboard.goalTitle')}</h2>
+        <p className="text-[#1A1A1A]/60">{t('onboard.goalSubtitle')}</p>
       </div>
 
       <div className="space-y-3">
@@ -361,8 +366,8 @@ function StepGoal({ selected, onSelect, onContinue }: {
               {goal.icon}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="font-semibold text-[#1A1A1A]">{goal.label}</p>
-              <p className="text-sm text-[#1A1A1A]/60 mt-0.5">{goal.description}</p>
+              <p className="font-semibold text-[#1A1A1A]">{t(goal.label)}</p>
+              <p className="text-sm text-[#1A1A1A]/60 mt-0.5">{t(goal.description)}</p>
             </div>
             {selected === goal.value && (
               <div className="flex-shrink-0 h-6 w-6 rounded-full bg-[#0055A4] flex items-center justify-center">
@@ -379,7 +384,7 @@ function StepGoal({ selected, onSelect, onContinue }: {
         disabled={!selected}
         onClick={onContinue}
       >
-        Continuer
+        {t('onboard.continue')}
         <ArrowRight className="h-5 w-5" />
       </Button>
     </div>
@@ -388,9 +393,9 @@ function StepGoal({ selected, onSelect, onContinue }: {
 
 /* ─── Step 4: Level ─── */
 const LEVELS: { value: LevelType; label: string; description: string; icon: React.ReactNode }[] = [
-  { value: 'beginner', label: 'Débutant', description: 'Je commence à apprendre les bases', icon: <Sprout className="h-6 w-6" /> },
-  { value: 'intermediate', label: 'Intermédiaire', description: "J'ai quelques connaissances du sujet", icon: <BookOpen className="h-6 w-6" /> },
-  { value: 'advanced', label: 'Avancé', description: 'Je connais bien le sujet et veux affiner', icon: <GraduationCap className="h-6 w-6" /> },
+  { value: 'beginner', label: 'onboard.level1Label', description: 'onboard.level1Desc', icon: <Sprout className="h-6 w-6" /> },
+  { value: 'intermediate', label: 'onboard.level2Label', description: 'onboard.level2Desc', icon: <BookOpen className="h-6 w-6" /> },
+  { value: 'advanced', label: 'onboard.level3Label', description: 'onboard.level3Desc', icon: <GraduationCap className="h-6 w-6" /> },
 ];
 
 function StepLevel({ selected, onSelect, onContinue }: {
@@ -398,11 +403,12 @@ function StepLevel({ selected, onSelect, onContinue }: {
   onSelect: (l: LevelType) => void;
   onContinue: () => void;
 }) {
+  const { t } = useLanguage();
   return (
     <div className="space-y-6">
       <div className="text-center space-y-2">
-        <h2 className="text-2xl md:text-3xl font-bold text-[#1A1A1A]">Quel est votre niveau actuel ?</h2>
-        <p className="text-[#1A1A1A]/60">Cela nous aide à calibrer vos questions</p>
+        <h2 className="text-2xl md:text-3xl font-bold text-[#1A1A1A]">{t('onboard.levelTitle')}</h2>
+        <p className="text-[#1A1A1A]/60">{t('onboard.levelSubtitle')}</p>
       </div>
 
       <div className="space-y-3">
@@ -421,8 +427,8 @@ function StepLevel({ selected, onSelect, onContinue }: {
               {level.icon}
             </div>
             <div className="flex-1">
-              <p className="font-semibold text-[#1A1A1A] text-lg">{level.label}</p>
-              <p className="text-sm text-[#1A1A1A]/60">{level.description}</p>
+              <p className="font-semibold text-[#1A1A1A] text-lg">{t(level.label)}</p>
+              <p className="text-sm text-[#1A1A1A]/60">{t(level.description)}</p>
             </div>
             {selected === level.value && (
               <div className="flex-shrink-0 h-6 w-6 rounded-full bg-[#0055A4] flex items-center justify-center">
@@ -439,7 +445,7 @@ function StepLevel({ selected, onSelect, onContinue }: {
         disabled={!selected}
         onClick={onContinue}
       >
-        Continuer
+        {t('onboard.continue')}
         <ArrowRight className="h-5 w-5" />
       </Button>
     </div>
@@ -448,10 +454,10 @@ function StepLevel({ selected, onSelect, onContinue }: {
 
 /* ─── Step 5: Timeline ─── */
 const TIMELINES: { value: TimelineType; label: string; description: string; icon: React.ReactNode }[] = [
-  { value: 'less_1_month', label: 'Moins de 1 mois', description: 'Mode intensif — révision express', icon: <Zap className="h-5 w-5" /> },
-  { value: '1_3_months', label: '1 à 3 mois', description: 'Préparation progressive et solide', icon: <Target className="h-5 w-5" /> },
-  { value: 'more_3_months', label: 'Plus de 3 mois', description: 'Apprentissage approfondi et durable', icon: <Clock className="h-5 w-5" /> },
-  { value: 'not_sure', label: 'Pas sûr', description: "Je veux juste m'entraîner pour l'instant", icon: <ShieldQuestion className="h-5 w-5" /> },
+  { value: 'less_1_month', label: 'onboard.time1Label', description: 'onboard.time1Desc', icon: <Zap className="h-5 w-5" /> },
+  { value: '1_3_months', label: 'onboard.time2Label', description: 'onboard.time2Desc', icon: <Target className="h-5 w-5" /> },
+  { value: 'more_3_months', label: 'onboard.time3Label', description: 'onboard.time3Desc', icon: <Clock className="h-5 w-5" /> },
+  { value: 'not_sure', label: 'onboard.time4Label', description: 'onboard.time4Desc', icon: <ShieldQuestion className="h-5 w-5" /> },
 ];
 
 function StepTimeline({ selected, onSelect, onContinue }: {
@@ -459,33 +465,34 @@ function StepTimeline({ selected, onSelect, onContinue }: {
   onSelect: (t: TimelineType) => void;
   onContinue: () => void;
 }) {
+  const { t } = useLanguage();
   return (
     <div className="space-y-6">
       <div className="text-center space-y-2">
-        <h2 className="text-2xl md:text-3xl font-bold text-[#1A1A1A]">Quand voulez-vous passer l'examen ?</h2>
-        <p className="text-[#1A1A1A]/60">Adaptez le rythme à votre calendrier</p>
+        <h2 className="text-2xl md:text-3xl font-bold text-[#1A1A1A]">{t('onboard.timeTitle')}</h2>
+        <p className="text-[#1A1A1A]/60">{t('onboard.timeSubtitle')}</p>
       </div>
 
       <div className="space-y-3">
-        {TIMELINES.map((t, i) => (
+        {TIMELINES.map((tl, i) => (
           <button
-            key={t.value}
-            onClick={() => onSelect(t.value)}
-            className={`w-full flex items-center gap-4 rounded-2xl border-2 p-4 text-left transition-all duration-200 hover:-translate-y-0.5 ${selected === t.value
+            key={tl.value}
+            onClick={() => onSelect(tl.value)}
+            className={`w-full flex items-center gap-4 rounded-2xl border-2 p-4 text-left transition-all duration-200 hover:-translate-y-0.5 ${selected === tl.value
               ? 'border-[#0055A4] bg-[#0055A4]/5 shadow-[0_4px_16px_rgba(0,85,164,0.15)]'
               : 'border-[#E6EAF0] bg-white hover:border-[#0055A4]/30'
               }`}
             style={{ animation: `slideUp 0.4s ease-out ${i * 0.08}s both` }}
           >
-            <div className={`flex-shrink-0 h-10 w-10 rounded-xl flex items-center justify-center ${selected === t.value ? 'bg-[#0055A4] text-white' : 'bg-[#0055A4]/10 text-[#0055A4]'
+            <div className={`flex-shrink-0 h-10 w-10 rounded-xl flex items-center justify-center ${selected === tl.value ? 'bg-[#0055A4] text-white' : 'bg-[#0055A4]/10 text-[#0055A4]'
               }`}>
-              {t.icon}
+              {tl.icon}
             </div>
             <div className="flex-1">
-              <p className="font-semibold text-[#1A1A1A]">{t.label}</p>
-              <p className="text-sm text-[#1A1A1A]/60">{t.description}</p>
+              <p className="font-semibold text-[#1A1A1A]">{t(tl.label)}</p>
+              <p className="text-sm text-[#1A1A1A]/60">{t(tl.description)}</p>
             </div>
-            {selected === t.value && (
+            {selected === tl.value && (
               <div className="flex-shrink-0 h-6 w-6 rounded-full bg-[#0055A4] flex items-center justify-center">
                 <Check className="h-3.5 w-3.5 text-white" />
               </div>
@@ -500,7 +507,7 @@ function StepTimeline({ selected, onSelect, onContinue }: {
         disabled={!selected}
         onClick={onContinue}
       >
-        Continuer
+        {t('onboard.continue')}
         <ArrowRight className="h-5 w-5" />
       </Button>
     </div>
@@ -518,6 +525,7 @@ function StepExamDate({ selected, onSelect, onContinue }: {
 
   // Minimum date = today
   const today = new Date().toISOString().split('T')[0];
+  const { t } = useLanguage();
 
   return (
     <div className="space-y-6">
@@ -525,13 +533,13 @@ function StepExamDate({ selected, onSelect, onContinue }: {
         <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-[#0055A4]/10 mx-auto">
           <CalendarDays className="h-8 w-8 text-[#0055A4]" />
         </div>
-        <h2 className="text-2xl md:text-3xl font-bold text-[#1A1A1A]">Quelle est la date de votre examen ?</h2>
-        <p className="text-[#1A1A1A]/60">Cela nous aide à planifier vos révisions</p>
+        <h2 className="text-2xl md:text-3xl font-bold text-[#1A1A1A]">{t('onboard.dateTitle')}</h2>
+        <p className="text-[#1A1A1A]/60">{t('onboard.dateSubtitle')}</p>
       </div>
 
       {/* Date picker */}
       <div style={{ animation: 'slideUp 0.5s ease-out 0.1s both' }}>
-        <label htmlFor="exam-date" className="text-sm font-medium text-[#1A1A1A] mb-2 block">Date de l'examen</label>
+        <label htmlFor="exam-date" className="text-sm font-medium text-[#1A1A1A] mb-2 block">{t('onboard.dateLabel')}</label>
         <input
           id="exam-date"
           type="date"
@@ -563,8 +571,8 @@ function StepExamDate({ selected, onSelect, onContinue }: {
           <HelpCircle className="h-5 w-5" />
         </div>
         <div className="flex-1">
-          <p className="font-semibold text-[#1A1A1A]">Je ne sais pas encore</p>
-          <p className="text-sm text-[#1A1A1A]/60">Pas encore inscrit ou date non confirmée</p>
+          <p className="font-semibold text-[#1A1A1A]">{t('onboard.dontKnowYet')}</p>
+          <p className="text-sm text-[#1A1A1A]/60">{t('onboard.notRegistered')}</p>
         </div>
         {isUnknown && (
           <div className="flex-shrink-0 h-6 w-6 rounded-full bg-[#0055A4] flex items-center justify-center">
@@ -580,7 +588,7 @@ function StepExamDate({ selected, onSelect, onContinue }: {
         onClick={onContinue}
         style={{ animation: 'slideUp 0.5s ease-out 0.3s both' }}
       >
-        Continuer
+        {t('onboard.continue')}
         <ArrowRight className="h-5 w-5" />
       </Button>
     </div>
@@ -594,6 +602,7 @@ function StepComplete({ data, onStart, saving }: {
   onStart: () => void;
   saving: boolean;
 }) {
+  const { t } = useLanguage();
   return (
     <div className="text-center space-y-8">
       <div className="space-y-4" style={{ animation: 'slideUp 0.6s ease-out' }}>
@@ -614,9 +623,9 @@ function StepComplete({ data, onStart, saving }: {
         </div>
 
         <h2 className="text-3xl md:text-4xl font-bold text-[#1A1A1A] leading-tight">
-          {data.first_name ? `Bienvenue, ${data.first_name} !` : 'Bienvenue !'}
+          {data.first_name ? `${t('onboard.greeting')}, ${data.first_name} !` : `${t('onboard.greeting')} !`}
           <br />
-          <span className="text-[#0055A4]">Tout est prêt !</span>
+          <span className="text-[#0055A4]">{t('onboard.allSet')}</span>
         </h2>
       </div>
 
@@ -627,7 +636,7 @@ function StepComplete({ data, onStart, saving }: {
         disabled={saving}
         style={{ animation: 'slideUp 0.6s ease-out 0.2s both' }}
       >
-        {saving ? 'Préparation...' : "Commencer l'entraînement"}
+        {saving ? t('onboard.preparing') : t('onboard.startTraining')}
         {!saving && <ArrowRight className="h-5 w-5" />}
       </Button>
     </div>

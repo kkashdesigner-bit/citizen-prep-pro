@@ -104,7 +104,7 @@ export default function Auth() {
       : signUpSchema.safeParse({ email, password, displayName });
     const validationError = firstError(parsed);
     if (validationError) {
-      toast({ title: 'Saisie invalide', description: validationError, variant: 'destructive' });
+      toast({ title: t('auth.invalidInput'), description: validationError, variant: 'destructive' });
       return;
     }
 
@@ -115,7 +115,7 @@ export default function Auth() {
         const gate = await checkLoginAllowed(email);
         if (!gate.allowed) {
           toast({
-            title: 'Compte temporairement bloqué',
+            title: t('auth.accountLocked'),
             description: lockoutMessage(gate.retryAfterSeconds),
             variant: 'destructive',
           });
@@ -139,8 +139,8 @@ export default function Auth() {
           }
         }
         toast({
-          title: 'Compte créé !',
-          description: 'Vérifiez votre email pour confirmer votre compte.',
+          title: t('auth.accountCreated'),
+          description: t('auth.checkEmailConfirm'),
         });
         // Send signup welcome email (fire-and-forget)
         supabase.functions.invoke('send-email', {
@@ -150,7 +150,7 @@ export default function Auth() {
       }
     } catch (error: any) {
       toast({
-        title: 'Erreur',
+        title: t('auth.error'),
         description: error.message,
         variant: 'destructive',
       });
@@ -171,7 +171,7 @@ export default function Auth() {
       setResetCooldown(60);
     } catch (error: any) {
       toast({
-        title: 'Erreur',
+        title: t('auth.error'),
         description: error.message,
         variant: 'destructive',
       });
@@ -192,7 +192,7 @@ export default function Auth() {
   };
 
   const strength = getPasswordStrength(password);
-  const strengthLabels = ['', 'Faible', 'Moyen', 'Bon', 'Fort', 'Excellent'];
+  const strengthLabels = ['', t('auth.strength1'), t('auth.strength2'), t('auth.strength3'), t('auth.strength4'), t('auth.strength5')];
   const strengthColors = ['', '#EF4135', '#F59E0B', '#3B82F6', '#10B981', '#059669'];
 
   return (
@@ -244,7 +244,7 @@ export default function Auth() {
             {/* Center badge */}
             <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-28 h-28 rounded-3xl bg-white/10 backdrop-blur-lg border border-white/20 flex flex-col items-center justify-center shadow-2xl">
               <span className="text-4xl mb-1">🇫🇷</span>
-              <span className="text-white text-xs font-bold tracking-wide">Examen 2026</span>
+              <span className="text-white text-xs font-bold tracking-wide">{t('auth.exam2026')}</span>
             </div>
           </div>
         </div>
@@ -256,8 +256,8 @@ export default function Auth() {
               <Sparkles className="w-5 h-5" />
             </div>
             <div>
-              <p className="font-semibold text-sm">+7 000 questions</p>
-              <p className="text-xs text-white/60">Questions officielles actualisées</p>
+              <p className="font-semibold text-sm">{t('auth.value1Title')}</p>
+              <p className="text-xs text-white/60">{t('auth.value1Desc')}</p>
             </div>
           </div>
           <div className="flex items-center gap-3 text-white/90">
@@ -265,8 +265,8 @@ export default function Auth() {
               <BarChart3 className="w-5 h-5" />
             </div>
             <div>
-              <p className="font-semibold text-sm">Suivi personnalisé</p>
-              <p className="text-xs text-white/60">Parcours adapté à votre objectif</p>
+              <p className="font-semibold text-sm">{t('auth.value2Title')}</p>
+              <p className="text-xs text-white/60">{t('auth.value2Desc')}</p>
             </div>
           </div>
           <div className="flex items-center gap-3 text-white/90">
@@ -274,8 +274,8 @@ export default function Auth() {
               <Shield className="w-5 h-5" />
             </div>
             <div>
-              <p className="font-semibold text-sm">Conforme programme 2026</p>
-              <p className="text-xs text-white/60">Ministère de l'Intérieur</p>
+              <p className="font-semibold text-sm">{t('auth.value3Title')}</p>
+              <p className="text-xs text-white/60">{t('auth.value3Desc')}</p>
             </div>
           </div>
         </div>
@@ -316,27 +316,27 @@ export default function Auth() {
                       className="flex items-center gap-1 text-sm text-[#0055A4] font-medium mb-4 hover:gap-2 transition-all"
                     >
                       <ChevronLeft className="w-4 h-4" />
-                      Retour
+                      {t('auth.back')}
                     </button>
                   )}
                   <h1 className="text-2xl sm:text-3xl font-bold text-[#1A1A1A] tracking-tight">
-                    {resetSent ? 'Email envoyé !' : 'Mot de passe oublié ?'}
+                    {resetSent ? t('auth.emailSent') : t('auth.forgotPassword')}
                   </h1>
-                  {!resetSent && <p className="text-[#1A1A1A]/60 mt-2">Entrez votre email pour recevoir un lien de réinitialisation.</p>}
+                  {!resetSent && <p className="text-[#1A1A1A]/60 mt-2">{t('auth.resetIntro')}</p>}
                 </>
               ) : (
                 <>
                   <h1 className="text-2xl sm:text-3xl font-bold text-[#1A1A1A] tracking-tight">
                     {checkoutIntent
-                      ? 'Dernière étape avant votre abonnement'
-                      : isLogin ? 'Bon retour !' : 'Créez votre compte'}
+                      ? t('auth.lastStep')
+                      : isLogin ? t('auth.welcomeBack') : t('auth.createAccount')}
                   </h1>
                   <p className="text-[#1A1A1A]/60 mt-2">
                     {checkoutIntent
-                      ? 'Créez votre compte en 10 secondes — vous serez redirigé vers le paiement sécurisé juste après.'
+                      ? t('auth.checkoutIntro')
                       : isLogin
-                        ? 'Connectez-vous pour continuer votre préparation.'
-                        : 'Rejoignez des milliers de candidats qui préparent leur examen civique.'}
+                        ? t('auth.loginIntro')
+                        : t('auth.signupIntro')}
                   </p>
                 </>
               )}
@@ -351,16 +351,16 @@ export default function Auth() {
                     <div className="w-14 h-14 rounded-2xl bg-emerald-100 flex items-center justify-center mb-4">
                       <CheckCircle2 className="w-7 h-7 text-emerald-600" />
                     </div>
-                    <h2 className="text-lg font-bold text-[#1A1A1A] mb-1">Vérifiez votre boîte mail</h2>
+                    <h2 className="text-lg font-bold text-[#1A1A1A] mb-1">{t('auth.checkInbox')}</h2>
                     <p className="text-sm text-[#1A1A1A]/60 leading-relaxed">
-                      Nous avons envoyé un lien à <span className="font-semibold text-[#1A1A1A]">{email}</span>.<br />
-                      Cliquez sur ce lien pour créer votre nouveau mot de passe.
+                      {t('auth.sentLinkTo')} <span className="font-semibold text-[#1A1A1A]">{email}</span>.<br />
+                      {t('auth.clickLink')}
                     </p>
                   </div>
 
                   <div className="rounded-xl bg-amber-50 border border-amber-100 p-4 text-sm text-amber-800">
-                    <p className="font-semibold mb-1">⏱ Le lien expire dans 1 heure</p>
-                    <p className="text-amber-700/80 text-xs">Vérifiez aussi vos spams si vous ne trouvez pas l'email.</p>
+                    <p className="font-semibold mb-1">{t('auth.linkExpires')}</p>
+                    <p className="text-amber-700/80 text-xs">{t('auth.checkSpam')}</p>
                   </div>
 
                   <div className="flex flex-col gap-3">
@@ -371,14 +371,14 @@ export default function Auth() {
                       className="flex items-center justify-center gap-2 text-sm font-semibold text-[#0055A4] hover:underline underline-offset-2 disabled:opacity-40 disabled:cursor-not-allowed disabled:no-underline"
                     >
                       <RefreshCw className="w-3.5 h-3.5" />
-                      {resetCooldown > 0 ? `Renvoyer l'email (${resetCooldown}s)` : "Renvoyer l'email"}
+                      {resetCooldown > 0 ? `${t('auth.resendEmail')} (${resetCooldown}s)` : t('auth.resendEmail')}
                     </button>
                     <button
                       type="button"
                       onClick={() => { setIsForgot(false); setResetSent(false); setResetCooldown(0); }}
                       className="text-sm text-[#1A1A1A]/50 hover:text-[#1A1A1A] transition-colors"
                     >
-                      ← Retour à la connexion
+                      ← {t('auth.backToLogin')}
                     </button>
                   </div>
                 </div>
@@ -386,13 +386,13 @@ export default function Auth() {
                 /* ── Enter email form ── */
                 <form onSubmit={handleResetPassword} className="space-y-5">
                   <div className="space-y-2">
-                    <Label htmlFor="reset-email" className="text-sm font-medium text-[#1A1A1A]">Email</Label>
+                    <Label htmlFor="reset-email" className="text-sm font-medium text-[#1A1A1A]">{t('auth.email')}</Label>
                     <div className="relative">
                       <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#1A1A1A]/30" />
                       <Input
                         id="reset-email"
                         type="email"
-                        placeholder="votre@email.com"
+                        placeholder={t('auth.emailPlaceholder')}
                         value={email}
                         maxLength={320}
                         onChange={(e) => setEmail(e.target.value)}
@@ -402,7 +402,7 @@ export default function Auth() {
                     </div>
                   </div>
                   <Button type="submit" disabled={loading} className="w-full h-12 rounded-xl bg-[#0055A4] hover:bg-[#1B6ED6] text-white font-bold text-base transition-all hover:scale-[1.01] active:scale-[0.99]">
-                    {loading ? <span className="animate-pulse">Envoi en cours...</span> : 'Envoyer le lien de réinitialisation'}
+                    {loading ? <span className="animate-pulse">{t('auth.sending')}</span> : t('auth.sendResetLink')}
                   </Button>
                 </form>
               )
@@ -420,7 +420,7 @@ export default function Auth() {
                     <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
                     <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
                   </svg>
-                  Continuer avec Google
+                  {t('auth.google')}
                 </Button>
 
                 {/* Divider */}
@@ -429,7 +429,7 @@ export default function Auth() {
                     <span className="w-full border-t border-[#E6EAF0]" />
                   </div>
                   <div className="relative flex justify-center">
-                    <span className="bg-white px-4 text-sm text-[#1A1A1A]/40 font-medium">ou</span>
+                    <span className="bg-white px-4 text-sm text-[#1A1A1A]/40 font-medium">{t('auth.or')}</span>
                   </div>
                 </div>
 
@@ -438,13 +438,13 @@ export default function Auth() {
                   {/* Name (sign-up only) */}
                   {!isLogin && (
                     <div className="space-y-2" style={{ animation: 'slideDown 0.3s ease-out' }}>
-                      <Label htmlFor="name" className="text-sm font-medium text-[#1A1A1A]">Prénom</Label>
+                      <Label htmlFor="name" className="text-sm font-medium text-[#1A1A1A]">{t('auth.firstName')}</Label>
                       <div className="relative">
                         <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#1A1A1A]/30" />
                         <Input
                           id="name"
                           type="text"
-                          placeholder="Votre prénom"
+                          placeholder={t('auth.firstNamePlaceholder')}
                           value={displayName}
                           maxLength={100}
                           onChange={(e) => setDisplayName(e.target.value)}
@@ -455,13 +455,13 @@ export default function Auth() {
                   )}
 
                   <div className="space-y-2">
-                    <Label htmlFor="email" className="text-sm font-medium text-[#1A1A1A]">Email</Label>
+                    <Label htmlFor="email" className="text-sm font-medium text-[#1A1A1A]">{t('auth.email')}</Label>
                     <div className="relative">
                       <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#1A1A1A]/30" />
                       <Input
                         id="email"
                         type="email"
-                        placeholder="votre@email.com"
+                        placeholder={t('auth.emailPlaceholder')}
                         value={email}
                         maxLength={320}
                         onChange={(e) => setEmail(e.target.value)}
@@ -473,14 +473,14 @@ export default function Auth() {
 
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
-                      <Label htmlFor="password" className="text-sm font-medium text-[#1A1A1A]">Mot de passe</Label>
+                      <Label htmlFor="password" className="text-sm font-medium text-[#1A1A1A]">{t('auth.password')}</Label>
                       {isLogin && (
                         <button
                           type="button"
                           onClick={() => setIsForgot(true)}
                           className="text-xs text-[#0055A4] font-medium hover:underline underline-offset-2"
                         >
-                          Mot de passe oublié ?
+                          {t('auth.forgotPassword')}
                         </button>
                       )}
                     </div>
@@ -489,7 +489,7 @@ export default function Auth() {
                       <Input
                         id="password"
                         type={showPassword ? 'text' : 'password'}
-                        placeholder={isLogin ? '••••••••' : 'Au moins 6 caractères'}
+                        placeholder={isLogin ? '••••••••' : t('auth.passwordMin')}
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
@@ -531,10 +531,10 @@ export default function Auth() {
                     className="w-full h-12 rounded-xl bg-[#0055A4] hover:bg-[#1B6ED6] text-white font-bold text-base gap-2 transition-all hover:scale-[1.01] active:scale-[0.99] mt-2"
                   >
                     {loading ? (
-                      <span className="animate-pulse">{isLogin ? 'Connexion...' : 'Création du compte...'}</span>
+                      <span className="animate-pulse">{isLogin ? t('auth.loggingIn') : t('auth.creatingAccount')}</span>
                     ) : (
                       <>
-                        {isLogin ? 'Se connecter' : 'Créer mon compte'}
+                        {isLogin ? t('auth.loginCta') : t('auth.signupCta')}
                         <ArrowRight className="w-4 h-4" />
                       </>
                     )}
@@ -543,12 +543,12 @@ export default function Auth() {
 
                 {/* Toggle login/signup */}
                 <p className="text-center text-sm text-[#1A1A1A]/50 mt-6">
-                  {isLogin ? "Pas encore de compte ?" : 'Déjà un compte ?'}{' '}
+                  {isLogin ? t('auth.noAccount') : t('auth.hasAccount')}{' '}
                   <button
                     onClick={() => switchMode(!isLogin)}
                     className="font-semibold text-[#0055A4] hover:underline underline-offset-2"
                   >
-                    {isLogin ? "S'inscrire" : 'Se connecter'}
+                    {isLogin ? t('auth.signupLink') : t('auth.loginCta')}
                   </button>
                 </p>
               </>
@@ -558,11 +558,11 @@ export default function Auth() {
 
         {/* Mobile footer trust badge */}
         <div className="lg:hidden border-t border-[#E6EAF0] p-4 flex items-center justify-center gap-4 text-xs text-[#1A1A1A]/40">
-          <span className="flex items-center gap-1"><Shield className="w-3 h-3" /> Données sécurisées</span>
+          <span className="flex items-center gap-1"><Shield className="w-3 h-3" /> {t('auth.secureData')}</span>
           <span>•</span>
-          <span>+7 000 questions</span>
+          <span>{t('auth.value1Title')}</span>
           <span>•</span>
-          <span>Conforme 2026</span>
+          <span>{t('auth.compliant2026')}</span>
         </div>
       </div>
 

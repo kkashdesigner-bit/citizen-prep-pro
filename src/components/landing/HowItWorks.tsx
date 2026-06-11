@@ -4,47 +4,49 @@ import AnimatedSection from '@/components/AnimatedSection';
 import { gsap } from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 gsap.registerPlugin(ScrollTrigger);
 
 interface Step {
   number: string;
-  title: string;
+  titleKey: string;
   icon: LucideIcon;
   color: string;
-  desc: string;
-  badge: string;
+  descKey: string;
+  badgeKey: string;
 }
 
 const steps: Step[] = [
   {
     number: '01',
-    title: 'Diagnostiquez votre niveau',
+    titleKey: 'landing.how.step1Title',
     icon: Target,
     color: '#0055A4',
-    desc: 'Un test rapide identifie vos lacunes parmi les 5 thèmes. On sait exactement par où commencer.',
-    badge: 'Test gratuit',
+    descKey: 'landing.how.step1Desc',
+    badgeKey: 'landing.how.step1Badge',
   },
   {
     number: '02',
-    title: 'Apprenez avec les cours',
+    titleKey: 'landing.how.step2Title',
     icon: BookOpen,
     color: '#4F46E5',
-    desc: '100 cours structurés, du plus simple au plus avancé. Flashcards, QCM ciblés, explications détaillées.',
-    badge: '100 cours',
+    descKey: 'landing.how.step2Desc',
+    badgeKey: 'landing.how.step2Badge',
   },
   {
     number: '03',
-    title: 'Validez avec un examen blanc',
+    titleKey: 'landing.how.step3Title',
     icon: Trophy,
     color: '#EF4135',
-    desc: "40 questions, 45 minutes, conditions réelles. Votre score prédit s'affiche en direct.",
-    badge: 'Examen blanc',
+    descKey: 'landing.how.step3Desc',
+    badgeKey: 'landing.how.step3Badge',
   },
 ];
 
 export default function HowItWorks() {
   const gridRef = useRef<HTMLDivElement>(null);
+  const { t } = useLanguage();
 
   useGSAP(() => {
     if (!gridRef.current) return;
@@ -67,11 +69,11 @@ export default function HowItWorks() {
         {/* Header */}
         <div className="text-center mb-12">
           <h2 className="font-serif text-3xl sm:text-4xl font-black text-foreground mb-3">
-            De zéro à certifié —
+            {t('landing.how.title1')}
             <br />
-            <span className="gradient-text">en 3 étapes simples</span>
+            <span className="gradient-text">{t('landing.how.title2')}</span>
           </h2>
-          <p className="text-slate-500 text-base">15 minutes par jour suffisent.</p>
+          <p className="text-slate-500 text-base">{t('landing.how.subtitle')}</p>
         </div>
 
         {/* Steps grid */}
@@ -102,8 +104,8 @@ export default function HowItWorks() {
 
                   {/* Content */}
                   <div className="flex-1">
-                    <h3 className="font-bold text-slate-900 text-base mb-2">{step.title}</h3>
-                    <p className="text-sm text-slate-500 leading-relaxed">{step.desc}</p>
+                    <h3 className="font-bold text-slate-900 text-base mb-2">{t(step.titleKey)}</h3>
+                    <p className="text-sm text-slate-500 leading-relaxed">{t(step.descKey)}</p>
                   </div>
 
                   {/* Badge chip */}
@@ -112,7 +114,7 @@ export default function HowItWorks() {
                       className="inline-block px-3 py-1 rounded-full text-xs font-bold"
                       style={{ background: step.color + '15', color: step.color }}
                     >
-                      {step.badge}
+                      {t(step.badgeKey)}
                     </span>
                   </div>
                 </div>

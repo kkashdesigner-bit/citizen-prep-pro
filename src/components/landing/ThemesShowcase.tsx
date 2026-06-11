@@ -3,10 +3,12 @@ import { motion } from 'framer-motion';
 import AnimatedSection from '@/components/AnimatedSection';
 import { Badge } from '@/components/ui/badge';
 import { EXAM_THEMES } from '@/lib/landingData';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function ThemesShowcase() {
   const [activeIndex, setActiveIndex] = useState(0);
   const active = EXAM_THEMES[activeIndex];
+  const { t } = useLanguage();
 
   return (
     <section id="themes" className="bg-secondary/30 py-16 md:py-24">
@@ -14,11 +16,11 @@ export default function ThemesShowcase() {
         {/* Header */}
         <div className="text-center mb-12">
           <h2 className="font-serif text-3xl sm:text-4xl font-black text-foreground mb-3">
-            Les 5 thèmes officiels
+            {t('landing.themes.title1')}
             <br />
-            <span className="gradient-text">de l'examen civique</span>
+            <span className="gradient-text">{t('landing.themes.title2')}</span>
           </h2>
-          <p className="text-slate-500 text-base">7 034 questions réparties en 5 domaines.</p>
+          <p className="text-slate-500 text-base">{t('landing.themes.subtitle')}</p>
         </div>
 
         {/* Desktop layout */}
@@ -47,9 +49,9 @@ export default function ThemesShowcase() {
                 <div className="flex items-center gap-3">
                   <span className="text-xl">{theme.icon}</span>
                   <div>
-                    <p className="text-sm font-bold text-slate-900 leading-snug">{theme.label}</p>
+                    <p className="text-sm font-bold text-slate-900 leading-snug">{t(`theme.${theme.id}.label`)}</p>
                     <p className="text-xs text-slate-400 mt-0.5">
-                      {theme.examQuestions} questions à l'examen
+                      {theme.examQuestions} {t('landing.themes.questionsAtExam')}
                     </p>
                   </div>
                 </div>
@@ -63,13 +65,13 @@ export default function ThemesShowcase() {
               <div className="glass-card p-6 h-full">
                 <img
                   src={active.image}
-                  alt={active.imageAlt}
+                  alt={`${t(`theme.${active.id}.label`)} — GoCivique`}
                   className="w-full h-52 object-cover rounded-2xl border border-slate-200 mb-5"
                   loading="lazy"
                 />
                 <div className="flex items-center gap-3 mb-3">
                   <span className="text-2xl">{active.icon}</span>
-                  <h3 className="font-bold text-slate-900 text-lg leading-snug">{active.label}</h3>
+                  <h3 className="font-bold text-slate-900 text-lg leading-snug">{t(`theme.${active.id}.label`)}</h3>
                   <Badge
                     className="ml-auto text-xs font-bold border"
                     style={{
@@ -78,16 +80,16 @@ export default function ThemesShowcase() {
                       borderColor: active.color + '30',
                     }}
                   >
-                    {active.examQuestions} questions
+                    {active.examQuestions} {t('landing.themes.questions')}
                   </Badge>
                 </div>
-                <p className="text-slate-600 text-sm leading-relaxed">{active.desc}</p>
+                <p className="text-slate-600 text-sm leading-relaxed">{t(`theme.${active.id}.desc`)}</p>
                 <p className="text-xs text-slate-400 mt-3">
-                  Représente{' '}
+                  {t('landing.themes.represents')}{' '}
                   <strong style={{ color: active.color }}>
                     {Math.round((active.examQuestions / 40) * 100)}%
                   </strong>{' '}
-                  de l'examen
+                  {t('landing.themes.ofExam')}
                 </p>
               </div>
             </AnimatedSection>
@@ -101,7 +103,7 @@ export default function ThemesShowcase() {
               <div className="glass-card p-4 flex items-start gap-4">
                 <img
                   src={theme.image}
-                  alt={theme.imageAlt}
+                  alt={`${t(`theme.${theme.id}.label`)} — GoCivique`}
                   className="w-20 h-20 object-cover rounded-xl border border-slate-200 flex-shrink-0"
                   loading="lazy"
                 />
@@ -109,15 +111,15 @@ export default function ThemesShowcase() {
                   <div className="flex items-center gap-2 mb-1">
                     <span className="text-lg">{theme.icon}</span>
                     <p className="font-bold text-slate-900 text-sm leading-snug truncate">
-                      {theme.label}
+                      {t(`theme.${theme.id}.label`)}
                     </p>
                   </div>
-                  <p className="text-xs text-slate-500 leading-relaxed">{theme.desc}</p>
+                  <p className="text-xs text-slate-500 leading-relaxed">{t(`theme.${theme.id}.desc`)}</p>
                   <span
                     className="inline-block mt-2 px-2 py-0.5 rounded-full text-xs font-bold"
                     style={{ background: theme.color + '15', color: theme.color }}
                   >
-                    {theme.examQuestions} questions
+                    {theme.examQuestions} {t('landing.themes.questions')}
                   </span>
                 </div>
               </div>

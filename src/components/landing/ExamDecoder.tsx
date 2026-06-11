@@ -1,36 +1,23 @@
 import AnimatedSection from '@/components/AnimatedSection';
 import { Badge } from '@/components/ui/badge';
 import { CircleCheckBig } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
-const checklist = [
-  '28 QCM (choix multiples)',
-  '12 Mises en situation',
-  'Sur ordinateur, en centre agréé',
-  'Résultat valable à vie',
+const checklistKeys = [
+  'landing.decoder.check1',
+  'landing.decoder.check2',
+  'landing.decoder.check3',
+  'landing.decoder.check4',
 ];
 
 const goals = [
-  {
-    badge: 'CSP',
-    color: '#0055A4',
-    title: 'Carte de Séjour Pluriannuelle',
-    desc: 'Pour tout premier renouvellement dépassant 1 an.',
-  },
-  {
-    badge: 'CR',
-    color: '#4F46E5',
-    title: 'Carte de Résident',
-    desc: 'Pour une installation durable en France (10 ans).',
-  },
-  {
-    badge: 'NAT',
-    color: '#059669',
-    title: 'Naturalisation',
-    desc: 'Pour devenir citoyen français à part entière.',
-  },
+  { badge: 'CSP', color: '#0055A4', titleKey: 'landing.decoder.cspTitle', descKey: 'landing.decoder.cspDesc' },
+  { badge: 'CR', color: '#4F46E5', titleKey: 'landing.decoder.crTitle', descKey: 'landing.decoder.crDesc' },
+  { badge: 'NAT', color: '#059669', titleKey: 'landing.decoder.natTitle', descKey: 'landing.decoder.natDesc' },
 ];
 
 export default function ExamDecoder() {
+  const { t } = useLanguage();
   return (
     <section id="exam-decoder" className="bg-secondary/30 py-16 md:py-24">
       {/* Hidden SVG liquid glass filter */}
@@ -51,15 +38,15 @@ export default function ExamDecoder() {
         {/* Header */}
         <div className="text-center mb-12">
           <span className="inline-block px-3 py-1 rounded-full bg-[#0055A4]/10 text-[#0055A4] text-xs font-bold uppercase tracking-widest mb-4">
-            L'examen, en clair
+            {t('landing.decoder.kicker')}
           </span>
           <h2 className="font-serif text-3xl sm:text-4xl font-black text-foreground mb-3">
-            Ce que vous devez savoir
+            {t('landing.decoder.title1')}
             <br />
-            <span className="gradient-text">avant de commencer</span>
+            <span className="gradient-text">{t('landing.decoder.title2')}</span>
           </h2>
           <p className="text-slate-500 text-base max-w-md mx-auto">
-            L'examen civique 2026 est structuré, prévisible et largement réussable avec une bonne préparation.
+            {t('landing.decoder.subtitle')}
           </p>
         </div>
 
@@ -75,15 +62,15 @@ export default function ExamDecoder() {
               <div className="relative z-10">
                 {/* Title row */}
                 <div className="flex items-center justify-between mb-5">
-                  <span className="font-bold text-slate-900 text-lg">Examen civique 2026</span>
+                  <span className="font-bold text-slate-900 text-lg">{t('landing.decoder.cardTitle')}</span>
                   <Badge className="bg-[#0055A4]/10 text-[#0055A4] border-[#0055A4]/20 text-xs font-bold">
-                    Conforme 2026
+                    {t('landing.decoder.badge')}
                   </Badge>
                 </div>
 
                 {/* Big stats row */}
                 <div className="flex items-center gap-3 mb-6 flex-wrap">
-                  {['40 questions', '45 min', '4 choix'].map((s) => (
+                  {[t('landing.decoder.stat1'), t('landing.decoder.stat2'), t('landing.decoder.stat3')].map((s) => (
                     <span
                       key={s}
                       className="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 text-sm font-bold"
@@ -96,8 +83,8 @@ export default function ExamDecoder() {
                 {/* Progress bar */}
                 <div className="mb-6">
                   <div className="flex justify-between text-xs font-semibold text-slate-500 mb-2">
-                    <span>Score de réussite</span>
-                    <span className="text-[#0055A4] font-bold">32/40 pour réussir</span>
+                    <span>{t('landing.decoder.scoreLabel')}</span>
+                    <span className="text-[#0055A4] font-bold">{t('landing.decoder.scoreTarget')}</span>
                   </div>
                   <div className="h-3 rounded-full bg-slate-100 overflow-hidden">
                     <div
@@ -108,15 +95,15 @@ export default function ExamDecoder() {
                       }}
                     />
                   </div>
-                  <p className="text-[11px] text-slate-400 mt-1.5 text-right">80% de bonnes réponses</p>
+                  <p className="text-[11px] text-slate-400 mt-1.5 text-right">{t('landing.decoder.scorePct')}</p>
                 </div>
 
                 {/* Checklist */}
                 <ul className="space-y-3">
-                  {checklist.map((item) => (
-                    <li key={item} className="flex items-center gap-3 text-sm text-slate-700">
+                  {checklistKeys.map((key) => (
+                    <li key={key} className="flex items-center gap-3 text-sm text-slate-700">
                       <CircleCheckBig className="h-4 w-4 text-[#059669] flex-shrink-0" />
-                      {item}
+                      {t(key)}
                     </li>
                   ))}
                 </ul>
@@ -127,7 +114,7 @@ export default function ExamDecoder() {
           {/* Right — Qui est concerné? */}
           <AnimatedSection direction="right" delay={250}>
             <div className="flex flex-col gap-4 h-full">
-              <h3 className="font-bold text-slate-900 text-lg">Qui est concerné ?</h3>
+              <h3 className="font-bold text-slate-900 text-lg">{t('landing.decoder.whoTitle')}</h3>
               {goals.map((goal) => (
                 <div
                   key={goal.badge}
@@ -140,15 +127,15 @@ export default function ExamDecoder() {
                     {goal.badge}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-bold text-slate-900 text-sm leading-snug">{goal.title}</p>
-                    <p className="text-xs text-slate-500 mt-1">{goal.desc}</p>
+                    <p className="font-bold text-slate-900 text-sm leading-snug">{t(goal.titleKey)}</p>
+                    <p className="text-xs text-slate-500 mt-1">{t(goal.descKey)}</p>
                   </div>
                 </div>
               ))}
 
               <div className="mt-auto pt-4 border-t border-slate-200">
                 <p className="text-xs text-slate-400 leading-relaxed">
-                  Obligatoire depuis le 1er janvier 2026 · Organisé par la CCI Paris Île-de-France
+                  {t('landing.decoder.footnote')}
                 </p>
               </div>
             </div>

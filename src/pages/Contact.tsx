@@ -55,7 +55,7 @@ export default function Contact() {
 
             if (error) throw error;
 
-            toast.success('Votre message a bien été envoyé ! Nous vous répondrons dans les plus brefs délais.');
+            toast.success(t('contact.successToast'));
 
             // Reset form
             setFormData({
@@ -67,10 +67,7 @@ export default function Contact() {
 
         } catch (error) {
             console.error('Error sending message:', error);
-            toast.error(
-                'Erreur d\'envoi. Vous pouvez nous contacter directement à support@gocivique.fr',
-                { duration: 8000 }
-            );
+            toast.error(t('contact.errorToast'), { duration: 8000 });
         } finally {
             setIsSubmitting(false);
         }
@@ -98,10 +95,10 @@ export default function Contact() {
 
                     <div className="text-center mb-12 animate-fade-in-up">
                         <h1 className="text-3xl md:text-5xl font-black font-serif text-slate-900 mb-4 tracking-tight">
-                            Contactez-<span className="text-[#135bec]">nous</span>
+                            {t('contact.title1')}<span className="text-[#135bec]">{t('contact.title2')}</span>
                         </h1>
                         <p className="text-lg text-slate-500 max-w-2xl mx-auto">
-                            Une question ? Un problème technique ? Une suggestion ? N'hésitez pas à nous écrire, notre équipe vous répondra dans les meilleurs délais.
+                            {t('contact.subtitle')}
                         </p>
                     </div>
 
@@ -114,9 +111,9 @@ export default function Contact() {
                                     <div className="bg-[#135bec]/10 p-3 rounded-full">
                                         <Mail className="h-6 w-6 text-[#135bec]" />
                                     </div>
-                                    <h3 className="font-bold text-lg text-slate-800">Email</h3>
+                                    <h3 className="font-bold text-lg text-slate-800">{t('auth.email')}</h3>
                                 </div>
-                                <p className="text-slate-500 text-sm mb-1">Notre équipe de support</p>
+                                <p className="text-slate-500 text-sm mb-1">{t('contact.supportTeam')}</p>
                                 <a href="mailto:support@gocivique.fr" className="text-[#135bec] font-semibold hover:underline">
                                     support@gocivique.fr
                                 </a>
@@ -127,10 +124,10 @@ export default function Contact() {
                                     <div className="bg-emerald-500/10 p-3 rounded-full">
                                         <MessageSquare className="h-6 w-6 text-emerald-600" />
                                     </div>
-                                    <h3 className="font-bold text-lg text-slate-800">Support Client</h3>
+                                    <h3 className="font-bold text-lg text-slate-800">{t('contact.supportClient')}</h3>
                                 </div>
                                 <p className="text-slate-500 text-sm">
-                                    Nous répondons généralement en moins de 24 heures les jours ouvrés.
+                                    {t('contact.supportHours')}
                                 </p>
                             </div>
                         </div>
@@ -141,7 +138,7 @@ export default function Contact() {
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                     <div className="space-y-2">
                                         <Label htmlFor="name" className="text-slate-700 font-semibold">
-                                            Nom complet <span className="text-red-500">*</span>
+                                            {t('contact.fullName')} <span className="text-red-500">*</span>
                                         </Label>
                                         <Input
                                             id="name"
@@ -157,7 +154,7 @@ export default function Contact() {
 
                                     <div className="space-y-2">
                                         <Label htmlFor="email" className="text-slate-700 font-semibold">
-                                            Adresse email <span className="text-red-500">*</span>
+                                            {t('contact.emailAddress')} <span className="text-red-500">*</span>
                                         </Label>
                                         <Input
                                             id="email"
@@ -175,13 +172,13 @@ export default function Contact() {
 
                                 <div className="space-y-2">
                                     <Label htmlFor="subject" className="text-slate-700 font-semibold">
-                                        Sujet Optionnel
+                                        {t('contact.subjectOptional')}
                                     </Label>
                                     <Input
                                         id="subject"
                                         name="subject"
                                         maxLength={200}
-                                        placeholder="Ex: Problème de facturation, Question sur une leçon..."
+                                        placeholder={t('contact.subjectPlaceholder')}
                                         value={formData.subject}
                                         onChange={handleChange}
                                         className="border-slate-200 bg-white/50 focus-visible:ring-[#135bec]"
@@ -190,13 +187,13 @@ export default function Contact() {
 
                                 <div className="space-y-2">
                                     <Label htmlFor="message" className="text-slate-700 font-semibold">
-                                        Votre message <span className="text-red-500">*</span>
+                                        {t('contact.yourMessage')} <span className="text-red-500">*</span>
                                     </Label>
                                     <Textarea
                                         id="message"
                                         name="message"
                                         maxLength={5000}
-                                        placeholder="Comment pouvons-nous vous aider ?"
+                                        placeholder={t('contact.messagePlaceholder')}
                                         rows={6}
                                         value={formData.message}
                                         onChange={handleChange}
@@ -211,16 +208,16 @@ export default function Contact() {
                                     disabled={isSubmitting}
                                 >
                                     {isSubmitting ? (
-                                        'Envoi en cours...'
+                                        t('auth.sending')
                                     ) : (
                                         <>
-                                            Envoyer le message <Send className="h-5 w-5" />
+                                            {t('contact.send')} <Send className="h-5 w-5" />
                                         </>
                                     )}
                                 </Button>
 
                                 <p className="text-xs text-center text-slate-400 mt-4 flex items-center justify-center gap-1">
-                                    <AlertCircle className="h-3 w-3" /> Vos données sont protégées et ne seront utilisées que pour vous répondre.
+                                    <AlertCircle className="h-3 w-3" /> {t('contact.dataProtected')}
                                 </p>
                             </form>
                         </div>

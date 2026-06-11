@@ -31,14 +31,14 @@ export default function PricingSection() {
   ];
 
   const lifetimePerks = [
-    { icon: Infinity,  text: 'Tout dans Standard — à jamais' },
-    { icon: Unlock,    text: 'Accès libre entre toutes les classes' },
-    { icon: Globe,     text: 'Traduction instantanée en 5 langues' },
-    { icon: BarChart2, text: 'Entraînement ciblé par catégorie' },
-    { icon: BookOpen,  text: '7 034 questions officielles illimitées' },
-    { icon: Zap,       text: 'Accès anticipé aux nouvelles fonctionnalités' },
-    { icon: Star,      text: 'Badge exclusif Membre Fondateur' },
-    { icon: Gift,      text: 'Aucun frais récurrent — jamais' },
+    { icon: Infinity,  key: 'pricing.lifetime.perk1' },
+    { icon: Unlock,    key: 'pricing.lifetime.perk2' },
+    { icon: Globe,     key: 'pricing.lifetime.perk3' },
+    { icon: BarChart2, key: 'pricing.lifetime.perk4' },
+    { icon: BookOpen,  key: 'pricing.lifetime.perk5' },
+    { icon: Zap,       key: 'pricing.lifetime.perk6' },
+    { icon: Star,      key: 'pricing.lifetime.perk7' },
+    { icon: Gift,      key: 'pricing.lifetime.perk8' },
   ];
 
   const isUserTier = (tierId: string) => user && userTier === tierId;
@@ -57,7 +57,7 @@ export default function PricingSection() {
               <span className="gradient-text">{t('pricing.title')}</span>
             </h2>
             <p className="mt-3 text-sm text-muted-foreground">
-              Commencez gratuitement — passez à Lifetime pour un accès permanent à tout.
+              {t('pricing.subtitle2')}
             </p>
           </div>
         </AnimatedSection>
@@ -75,10 +75,10 @@ export default function PricingSection() {
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-3">
                     <span className="bg-violet-400/20 border border-violet-400/30 text-violet-300 text-xs font-black px-3 py-1 rounded-full uppercase tracking-widest flex items-center gap-1.5">
-                      <Infinity className="w-3 h-3" /> Accès à Vie
+                      <Infinity className="w-3 h-3" /> {t('pricing.lifetime.badge')}
                     </span>
                     <span className="bg-amber-400/20 border border-amber-400/30 text-amber-300 text-xs font-bold px-3 py-1 rounded-full">
-                      Meilleur rapport qualité/prix
+                      {t('pricing.lifetime.bestValue')}
                     </span>
                   </div>
 
@@ -87,16 +87,16 @@ export default function PricingSection() {
                     <span className="text-white/50 text-lg font-semibold line-through">79,99 €/an</span>
                     <span className="bg-emerald-500 text-white text-xs font-black px-2 py-0.5 rounded-full">−63%</span>
                   </div>
-                  <p className="text-white/60 text-sm mb-6">Paiement unique · Aucun abonnement · Aucun renouvellement</p>
+                  <p className="text-white/60 text-sm mb-6">{t('pricing.lifetime.oneTime')}</p>
 
                   {/* Perks grid */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                    {lifetimePerks.map(({ icon: Icon, text }) => (
-                      <div key={text} className="flex items-center gap-2">
+                    {lifetimePerks.map(({ icon: Icon, key }) => (
+                      <div key={key} className="flex items-center gap-2">
                         <div className="flex-shrink-0 w-5 h-5 rounded-full bg-violet-400/20 flex items-center justify-center">
                           <Icon className="w-3 h-3 text-violet-300" />
                         </div>
-                        <span className="text-xs text-white/80 font-medium">{text}</span>
+                        <span className="text-xs text-white/80 font-medium">{t(key)}</span>
                       </div>
                     ))}
                   </div>
@@ -106,7 +106,7 @@ export default function PricingSection() {
                 <div className="flex-shrink-0 flex flex-col items-center gap-4 w-full lg:w-56">
                   {isLifetime ? (
                     <Button className="w-full h-14 rounded-2xl bg-white/20 text-white border border-white/30 font-bold text-base cursor-default" disabled>
-                      <Check className="h-5 w-5 mr-2" /> Votre forfait
+                      <Check className="h-5 w-5 mr-2" /> {t('pricing.yourPlan')}
                     </Button>
                   ) : (
                     <>
@@ -116,11 +116,11 @@ export default function PricingSection() {
                         style={{ background: 'linear-gradient(135deg, #7C3AED, #4F46E5)' }}
                       >
                         <Infinity className="h-5 w-5 mr-2" />
-                        Obtenir l'accès à vie
+                        {t('pricing.lifetime.cta')}
                       </Button>
                       <div className="flex items-center gap-1.5 text-white/50 text-xs">
                         <Shield className="h-3 w-3 text-emerald-400" />
-                        Paiement sécurisé Stripe
+                        {t('pricing.securePaymentStripe')}
                       </div>
                     </>
                   )}
@@ -130,9 +130,9 @@ export default function PricingSection() {
 
             {/* Bottom strip */}
             <div className="bg-violet-950/60 border-t border-violet-700/30 px-8 py-3 flex flex-wrap items-center justify-center gap-x-6 gap-y-1">
-              {['Paiement unique', 'Accès immédiat', 'Pas de renouvellement', 'Tous les futurs contenus inclus'].map(t => (
-                <span key={t} className="flex items-center gap-1.5 text-xs text-violet-300/70 font-medium">
-                  <Check className="w-3 h-3 text-violet-400" /> {t}
+              {['pricing.lifetime.strip1', 'pricing.lifetime.strip2', 'pricing.lifetime.strip3', 'pricing.lifetime.strip4'].map(k => (
+                <span key={k} className="flex items-center gap-1.5 text-xs text-violet-300/70 font-medium">
+                  <Check className="w-3 h-3 text-violet-400" /> {t(k)}
                 </span>
               ))}
             </div>
@@ -145,14 +145,14 @@ export default function PricingSection() {
           <AnimatedSection delay={100}>
             <div className={`glass-card relative flex flex-col overflow-hidden p-6 h-full ${isUserTier('free') ? 'border-[#1764ac] ring-2 ring-[#1764ac]/30' : ''}`}>
               {isUserTier('free') && (
-                <Badge className="absolute right-4 top-4 bg-[#1764ac] text-white border-0">✓ Votre forfait</Badge>
+                <Badge className="absolute right-4 top-4 bg-[#1764ac] text-white border-0">✓ {t('pricing.yourPlan')}</Badge>
               )}
               <div className="mb-4">
-                <p className="text-xl font-bold text-foreground">Gratuit</p>
+                <p className="text-xl font-bold text-foreground">{t('pricing.free')}</p>
                 <div className="flex items-baseline gap-1 mt-2">
                   <span className="font-serif text-4xl font-bold text-[#1764ac]">0 €</span>
                 </div>
-                <p className="text-xs text-muted-foreground mt-1">Pour démarrer sans risque</p>
+                <p className="text-xs text-muted-foreground mt-1">{t('pricing.free.tagline')}</p>
               </div>
 
               <ul className="mb-6 flex-1 space-y-3">
@@ -169,9 +169,9 @@ export default function PricingSection() {
               </ul>
 
               {isUserTier('free') ? (
-                <Button className="w-full" variant="outline" disabled><Check className="h-4 w-4 mr-2" /> Abonné</Button>
+                <Button className="w-full" variant="outline" disabled><Check className="h-4 w-4 mr-2" /> {t('pricing.subscribed')}</Button>
               ) : isUserAboveTier('free') ? (
-                <Button className="w-full" variant="outline" disabled>Inclus dans votre forfait</Button>
+                <Button className="w-full" variant="outline" disabled>{t('pricing.includedInPlan')}</Button>
               ) : (
                 <Button
                   className="w-full bg-[#0055A4] hover:bg-[#1B6ED6] text-white border-0 shadow-lg shadow-[#0055A4]/25"
@@ -187,7 +187,7 @@ export default function PricingSection() {
           <AnimatedSection delay={200}>
             <div className={`glass-card glow-hover relative flex flex-col overflow-hidden p-6 h-full border-[#f04e42]/40 shadow-[0_0_35px_rgba(240,78,66,0.12)] ${isUserTier('standard') ? 'border-emerald-400 shadow-[0_0_35px_rgba(16,185,129,0.15)] ring-2 ring-emerald-400/30' : ''}`}>
               {isUserTier('standard') ? (
-                <Badge className="absolute right-4 top-4 bg-emerald-500 text-white border-0">✓ Votre forfait</Badge>
+                <Badge className="absolute right-4 top-4 bg-emerald-500 text-white border-0">✓ {t('pricing.yourPlan')}</Badge>
               ) : !isUserAboveTier('standard') ? (
                 <Badge
                   className="absolute right-4 top-4 text-white border-0"
@@ -203,9 +203,9 @@ export default function PricingSection() {
                 </p>
                 <div className="flex items-baseline gap-1 mt-2">
                   <span className="font-serif text-4xl font-bold text-[#f04e42]">6,99 €</span>
-                  <span className="text-sm font-medium text-muted-foreground">/mois</span>
+                  <span className="text-sm font-medium text-muted-foreground">{t('gate.perMonth')}</span>
                 </div>
-                <p className="text-xs text-muted-foreground mt-1">3 jours gratuits • Sans engagement</p>
+                <p className="text-xs text-muted-foreground mt-1">{t('pricing.standard.tagline')}</p>
               </div>
 
               <ul className="mb-6 flex-1 space-y-3">
@@ -222,9 +222,9 @@ export default function PricingSection() {
               </ul>
 
               {isUserTier('standard') ? (
-                <Button className="w-full" variant="outline" disabled><Check className="h-4 w-4 mr-2" /> Abonné</Button>
+                <Button className="w-full" variant="outline" disabled><Check className="h-4 w-4 mr-2" /> {t('pricing.subscribed')}</Button>
               ) : isUserAboveTier('standard') ? (
-                <Button className="w-full" variant="outline" disabled>Inclus dans votre forfait</Button>
+                <Button className="w-full" variant="outline" disabled>{t('pricing.includedInPlan')}</Button>
               ) : (
                 <Button
                   className="w-full bg-white text-[#EF4135] border-2 border-[#EF4135] hover:bg-[#EF4135] hover:text-white shadow-lg shadow-[#EF4135]/20 transition-colors"
@@ -242,7 +242,7 @@ export default function PricingSection() {
         <AnimatedSection delay={300}>
           <div className="mx-auto mt-8 max-w-3xl flex items-center justify-center gap-2.5 rounded-full border border-emerald-200 bg-emerald-50 px-5 py-2.5 text-sm font-semibold text-emerald-800 shadow-sm">
             <Shield className="h-4 w-4 shrink-0 text-emerald-600" />
-            <span>3 jours d'essai gratuit sur Standard · Paiement unique pour Lifetime · Annulation libre</span>
+            <span>{t('pricing.reassurance')}</span>
           </div>
         </AnimatedSection>
       </div>

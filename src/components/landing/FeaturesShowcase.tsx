@@ -2,64 +2,65 @@ import { useState, useRef } from 'react';
 import { Target, Flame, ClipboardList, Map, Globe, RefreshCw, LucideIcon } from 'lucide-react';
 import AnimatedSection from '@/components/AnimatedSection';
 import PassProbabilityRing from '@/components/PassProbabilityRing';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface Feature {
   id: string;
-  title: string;
+  titleKey: string;
   icon: LucideIcon;
   color: string;
   large: boolean;
-  desc: string;
+  descKey: string;
 }
 
 const features: Feature[] = [
   {
     id: 'pass-ring',
-    title: 'Taux de réussite prédit',
+    titleKey: 'landing.features.f1Title',
     icon: Target,
     color: '#0055A4',
     large: true,
-    desc: 'Notre algorithme prédit votre score officiel en temps réel, basé sur vos résultats par thème.',
+    descKey: 'landing.features.f1Desc',
   },
   {
     id: 'streak',
-    title: 'Série de jours',
+    titleKey: 'landing.features.f2Title',
     icon: Flame,
     color: '#F59E0B',
     large: false,
-    desc: "Une question par jour. Maintenez votre série et restez dans le rythme jusqu'à l'examen.",
+    descKey: 'landing.features.f2Desc',
   },
   {
     id: 'mock-exam',
-    title: 'Examens blancs',
+    titleKey: 'landing.features.f3Title',
     icon: ClipboardList,
     color: '#EF4135',
     large: false,
-    desc: '40 questions, 45 minutes, résultats détaillés. En conditions réelles.',
+    descKey: 'landing.features.f3Desc',
   },
   {
     id: 'parcours',
-    title: '3 parcours adaptés',
+    titleKey: 'landing.features.f4Title',
     icon: Map,
     color: '#059669',
     large: false,
-    desc: 'CSP, Carte de Résident ou Naturalisation — chaque parcours cible vos questions.',
+    descKey: 'landing.features.f4Desc',
   },
   {
     id: 'traduction',
-    title: 'Questions en 7 langues',
+    titleKey: 'landing.features.f5Title',
     icon: Globe,
     color: '#4F46E5',
     large: false,
-    desc: 'Révisez en arabe, espagnol, portugais, chinois, turc, anglais ou français.',
+    descKey: 'landing.features.f5Desc',
   },
   {
     id: 'spaced-rep',
-    title: 'Répétition espacée',
+    titleKey: 'landing.features.f6Title',
     icon: RefreshCw,
     color: '#8B5CF6',
     large: false,
-    desc: 'Les questions où vous échouez reviennent plus souvent. Apprenez ce qui compte.',
+    descKey: 'landing.features.f6Desc',
   },
 ];
 
@@ -76,6 +77,7 @@ function CornerBrackets({ color }: { color: string }) {
 }
 
 export default function FeaturesShowcase() {
+  const { t } = useLanguage();
   const [mouse, setMouse] = useState({ x: 0, y: 0 });
   const sectionRef = useRef<HTMLElement>(null);
 
@@ -98,10 +100,10 @@ export default function FeaturesShowcase() {
         {/* Header */}
         <div className="text-center mb-12">
           <h2 className="font-serif text-3xl sm:text-4xl font-black text-foreground mb-3">
-            <span className="gradient-text">Tout ce qu'il faut</span> pour réussir
+            <span className="gradient-text">{t('landing.features.title1')}</span> {t('landing.features.title2')}
           </h2>
           <p className="text-slate-500 text-base">
-            Une plateforme conçue pour les futurs citoyens français.
+            {t('landing.features.subtitle')}
           </p>
         </div>
 
@@ -133,15 +135,15 @@ export default function FeaturesShowcase() {
                     </div>
 
                     <div className="flex-1">
-                      <h3 className="font-bold text-slate-900 text-sm mb-1.5">{feature.title}</h3>
-                      <p className="text-xs text-slate-500 leading-relaxed">{feature.desc}</p>
+                      <h3 className="font-bold text-slate-900 text-sm mb-1.5">{t(feature.titleKey)}</h3>
+                      <p className="text-xs text-slate-500 leading-relaxed">{t(feature.descKey)}</p>
                     </div>
 
                     {/* Large card visual */}
                     {feature.large && (
                       <div className="mt-4 flex flex-col items-center gap-2">
                         <PassProbabilityRing probability={85} size={80} animated={false} />
-                        <p className="text-xs font-semibold text-slate-500">Votre score prédit</p>
+                        <p className="text-xs font-semibold text-slate-500">{t('landing.features.predictedScore')}</p>
                       </div>
                     )}
                   </div>

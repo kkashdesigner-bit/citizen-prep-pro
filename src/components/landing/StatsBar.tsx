@@ -1,5 +1,6 @@
 import { useRef, useEffect } from 'react';
 import { motion, useInView, useSpring, useTransform } from 'framer-motion';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface AnimatedNumberProps {
   value: number;
@@ -27,19 +28,20 @@ function AnimatedNumber({ value, suffix = '', color }: AnimatedNumberProps) {
 }
 
 const stats = [
-  { label: 'questions officielles', color: '#0055A4', animated: true, value: 7034, suffix: '' },
-  { label: 'mises en situation', color: '#0055A4', animated: true, value: 200, suffix: '+' },
-  { label: 'cours structurés', color: '#EF4135', animated: true, value: 100, suffix: '' },
-  { label: 'score pour réussir', color: '#EF4135', animated: false, display: '80%' },
+  { labelKey: 'landing.stats.questions', color: '#0055A4', animated: true, value: 7034, suffix: '' },
+  { labelKey: 'landing.stats.scenarios', color: '#0055A4', animated: true, value: 200, suffix: '+' },
+  { labelKey: 'landing.stats.courses', color: '#EF4135', animated: true, value: 100, suffix: '' },
+  { labelKey: 'landing.stats.passScore', color: '#EF4135', animated: false, display: '80%' },
 ] as const;
 
 export default function StatsBar() {
+  const { t } = useLanguage();
   return (
     <section className="bg-white border-y border-slate-100 py-6">
       <div className="container max-w-4xl">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
           {stats.map((stat) => (
-            <div key={stat.label} className="flex flex-col items-center">
+            <div key={stat.labelKey} className="flex flex-col items-center">
               <p className="font-serif text-3xl sm:text-4xl font-black">
                 {'animated' in stat && stat.animated ? (
                   <AnimatedNumber value={stat.value} suffix={stat.suffix} color={stat.color} />
@@ -48,7 +50,7 @@ export default function StatsBar() {
                 )}
               </p>
               <p className="text-xs font-semibold text-slate-500 mt-1 uppercase tracking-wide">
-                {stat.label}
+                {t(stat.labelKey)}
               </p>
               <div
                 className="mx-auto mt-2 w-8 h-0.5 rounded-full"

@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import Logo from '@/components/Logo';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Eye, EyeOff, Lock, CheckCircle2, AlertCircle, Sparkles, Shield, BarChart3, ArrowRight } from 'lucide-react';
 
 const AVATARS = Array.from({ length: 8 }, (_, i) => `/examen-civique-avatar-${i + 1}.webp`);
@@ -14,6 +15,7 @@ const AVATARS = Array.from({ length: 8 }, (_, i) => `/examen-civique-avatar-${i 
 type PageState = 'waiting' | 'ready' | 'success' | 'invalid';
 
 export default function UpdatePassword() {
+  const { t } = useLanguage();
   const [pageState, setPageState] = useState<PageState>('waiting');
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
@@ -61,17 +63,17 @@ export default function UpdatePassword() {
   };
 
   const strength = getPasswordStrength(password);
-  const strengthLabels = ['', 'Faible', 'Moyen', 'Bon', 'Fort', 'Excellent'];
+  const strengthLabels = ['', t('auth.strength1'), t('auth.strength2'), t('auth.strength3'), t('auth.strength4'), t('auth.strength5')];
   const strengthColors = ['', '#EF4135', '#F59E0B', '#3B82F6', '#10B981', '#059669'];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (password !== confirm) {
-      toast({ title: 'Erreur', description: 'Les mots de passe ne correspondent pas.', variant: 'destructive' });
+      toast({ title: t('auth.error'), description: t('updatepw.errMismatch'), variant: 'destructive' });
       return;
     }
     if (password.length < 6) {
-      toast({ title: 'Erreur', description: 'Le mot de passe doit contenir au moins 6 caractères.', variant: 'destructive' });
+      toast({ title: t('auth.error'), description: t('updatepw.errTooShort'), variant: 'destructive' });
       return;
     }
     setLoading(true);
@@ -79,7 +81,7 @@ export default function UpdatePassword() {
       const { error } = await supabase.auth.updateUser({ password });
       if (error) throw error;
       setPageState('success');
-      toast({ title: 'Mot de passe mis à jour !', description: 'Vous allez être redirigé vers votre tableau de bord.' });
+      toast({ title: t('updatepw.updated'), description: t('updatepw.redirectShort') });
       // Send password changed confirmation email (fire-and-forget)
       const { data: { user: currentUser } } = await supabase.auth.getUser();
       if (currentUser?.email) {
@@ -89,7 +91,7 @@ export default function UpdatePassword() {
       }
       setTimeout(() => navigate('/learn'), 2000);
     } catch (err: any) {
-      toast({ title: 'Erreur', description: err.message, variant: 'destructive' });
+      toast({ title: t('auth.error'), description: err.message, variant: 'destructive' });
     } finally {
       setLoading(false);
     }
@@ -139,16 +141,16 @@ export default function UpdatePassword() {
             })}
             <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-28 h-28 rounded-3xl bg-white/10 backdrop-blur-lg border border-white/20 flex flex-col items-center justify-center shadow-2xl">
               <Lock className="w-10 h-10 text-white mb-1" />
-              <span className="text-white text-xs font-bold tracking-wide">Sécurisé</span>
+              <span className="text-white text-xs font-bold tracking-wide">{t('updatepw.secure')}</span>
             </div>
           </div>
         </div>
 
         <div className="relative z-10 space-y-4">
           {[
-            { icon: Sparkles, title: '+7 000 questions', sub: 'Questions officielles actualisées' },
-            { icon: BarChart3, title: 'Suivi personnalisé', sub: 'Parcours adapté à votre objectif' },
-            { icon: Shield, title: 'Conforme programme 2026', sub: "Ministère de l'Intérieur" },
+            { icon: Sparkles, title: t('auth.value1Title'), sub: t('auth.value1Desc') },
+            { icon: BarChart3, title: t('auth.value2Title'), sub: t('auth.value2Desc') },
+            { icon: Shield, title: t('auth.value3Title'), sub: t('auth.value3Desc') },
           ].map(({ icon: Icon, title, sub }) => (
             <div key={title} className="flex items-center gap-3 text-white/90">
               <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center">
@@ -184,8 +186,8 @@ export default function UpdatePassword() {
                 <div className="w-16 h-16 rounded-2xl bg-blue-50 flex items-center justify-center mx-auto mb-5">
                   <div className="h-7 w-7 animate-spin rounded-full border-3 border-[#0055A4] border-t-transparent" />
                 </div>
-                <h1 className="text-2xl font-bold text-[#1A1A1A] mb-2">Vérification du lien…</h1>
-                <p className="text-[#1A1A1A]/60 text-sm">Merci de patienter quelques secondes.</p>
+                <h1 className="text-2xl font-bold text-[#1A1A1A] mb-2">{t('updatepw.verifying')}</h1>
+                <p className="text-[#1A1A1A]/60 text-sm">{t('updatepw.pleaseWait')}</p>
               </div>
             )}
 
@@ -195,16 +197,16 @@ export default function UpdatePassword() {
                 <div className="w-16 h-16 rounded-2xl bg-red-50 flex items-center justify-center mx-auto mb-5">
                   <AlertCircle className="w-8 h-8 text-red-500" />
                 </div>
-                <h1 className="text-2xl font-bold text-[#1A1A1A] mb-2">Lien invalide ou expiré</h1>
+                <h1 className="text-2xl font-bold text-[#1A1A1A] mb-2">{t('updatepw.invalidLink')}</h1>
                 <p className="text-[#1A1A1A]/60 text-sm mb-6">
-                  Ce lien de réinitialisation est invalide ou a expiré (durée de validité : 1 heure).<br />
-                  Veuillez faire une nouvelle demande.
+                  {t('updatepw.invalidLinkDesc')}<br />
+                  {t('updatepw.newRequest')}
                 </p>
                 <Button
                   onClick={() => navigate('/auth')}
                   className="w-full h-12 rounded-xl bg-[#0055A4] hover:bg-[#1B6ED6] text-white font-bold text-base gap-2"
                 >
-                  Retourner à la connexion
+                  {t('updatepw.backToLogin')}
                   <ArrowRight className="w-4 h-4" />
                 </Button>
               </div>
@@ -216,8 +218,8 @@ export default function UpdatePassword() {
                 <div className="w-16 h-16 rounded-2xl bg-emerald-50 flex items-center justify-center mx-auto mb-5">
                   <CheckCircle2 className="w-8 h-8 text-emerald-500" />
                 </div>
-                <h1 className="text-2xl font-bold text-[#1A1A1A] mb-2">Mot de passe mis à jour !</h1>
-                <p className="text-[#1A1A1A]/60 text-sm">Vous allez être redirigé vers votre tableau de bord…</p>
+                <h1 className="text-2xl font-bold text-[#1A1A1A] mb-2">{t('updatepw.updated')}</h1>
+                <p className="text-[#1A1A1A]/60 text-sm">{t('updatepw.redirecting')}</p>
               </div>
             )}
 
@@ -226,10 +228,10 @@ export default function UpdatePassword() {
               <>
                 <div className="mb-8">
                   <h1 className="text-2xl sm:text-3xl font-bold text-[#1A1A1A] tracking-tight">
-                    Nouveau mot de passe
+                    {t('updatepw.newPassword')}
                   </h1>
                   <p className="text-[#1A1A1A]/60 mt-2">
-                    Choisissez un mot de passe sécurisé pour votre compte.
+                    {t('updatepw.choosePassword')}
                   </p>
                 </div>
 
@@ -237,14 +239,14 @@ export default function UpdatePassword() {
                   {/* New password */}
                   <div className="space-y-2">
                     <Label htmlFor="new-password" className="text-sm font-medium text-[#1A1A1A]">
-                      Nouveau mot de passe
+                      {t('updatepw.newPassword')}
                     </Label>
                     <div className="relative">
                       <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#1A1A1A]/30" />
                       <Input
                         id="new-password"
                         type={showPassword ? 'text' : 'password'}
-                        placeholder="Au moins 6 caractères"
+                        placeholder={t('auth.passwordMin')}
                         maxLength={128}
                         value={password}
                         onChange={e => setPassword(e.target.value)}
@@ -283,14 +285,14 @@ export default function UpdatePassword() {
                   {/* Confirm password */}
                   <div className="space-y-2">
                     <Label htmlFor="confirm-password" className="text-sm font-medium text-[#1A1A1A]">
-                      Confirmer le mot de passe
+                      {t('updatepw.confirmPassword')}
                     </Label>
                     <div className="relative">
                       <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#1A1A1A]/30" />
                       <Input
                         id="confirm-password"
                         type={showConfirm ? 'text' : 'password'}
-                        placeholder="Répétez le mot de passe"
+                        placeholder={t('updatepw.repeatPassword')}
                         maxLength={128}
                         value={confirm}
                         onChange={e => setConfirm(e.target.value)}
@@ -312,13 +314,13 @@ export default function UpdatePassword() {
                     {mismatch && (
                       <p className="text-xs text-red-500 font-medium flex items-center gap-1">
                         <AlertCircle className="w-3 h-3" />
-                        Les mots de passe ne correspondent pas
+                        {t('updatepw.mismatch')}
                       </p>
                     )}
                     {!mismatch && confirm.length > 0 && password === confirm && (
                       <p className="text-xs text-emerald-600 font-medium flex items-center gap-1">
                         <CheckCircle2 className="w-3 h-3" />
-                        Les mots de passe correspondent
+                        {t('updatepw.match')}
                       </p>
                     )}
                   </div>
@@ -329,10 +331,10 @@ export default function UpdatePassword() {
                     className="w-full h-12 rounded-xl bg-[#0055A4] hover:bg-[#1B6ED6] text-white font-bold text-base gap-2 transition-all hover:scale-[1.01] active:scale-[0.99] mt-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                   >
                     {loading ? (
-                      <span className="animate-pulse">Mise à jour…</span>
+                      <span className="animate-pulse">{t('updatepw.updating')}</span>
                     ) : (
                       <>
-                        Enregistrer le nouveau mot de passe
+                        {t('updatepw.save')}
                         <ArrowRight className="w-4 h-4" />
                       </>
                     )}
@@ -344,7 +346,7 @@ export default function UpdatePassword() {
                     onClick={() => navigate('/auth')}
                     className="font-semibold text-[#0055A4] hover:underline underline-offset-2"
                   >
-                    ← Retour à la connexion
+                    ← {t('auth.backToLogin')}
                   </button>
                 </p>
               </>
@@ -354,11 +356,11 @@ export default function UpdatePassword() {
 
         {/* Mobile footer */}
         <div className="lg:hidden border-t border-[#E6EAF0] p-4 flex items-center justify-center gap-4 text-xs text-[#1A1A1A]/40">
-          <span className="flex items-center gap-1"><Shield className="w-3 h-3" /> Données sécurisées</span>
+          <span className="flex items-center gap-1"><Shield className="w-3 h-3" /> {t('auth.secureData')}</span>
           <span>•</span>
-          <span>+7 000 questions</span>
+          <span>{t('auth.value1Title')}</span>
           <span>•</span>
-          <span>Conforme 2026</span>
+          <span>{t('auth.compliant2026')}</span>
         </div>
       </div>
 

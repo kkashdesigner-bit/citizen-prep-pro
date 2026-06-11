@@ -6,10 +6,12 @@ import { useAuth } from '@/hooks/useAuth';
 import { useUserProfile } from '@/hooks/useUserProfile';
 import ParticleMesh from '@/components/ParticleMesh';
 import DemoExamPopup from '@/components/DemoExamPopup';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function FinalCTA() {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { t } = useLanguage();
   const { profile, loading: profileLoading } = useUserProfile();
   const [showDemoPopup, setShowDemoPopup] = useState(false);
 
@@ -37,13 +39,13 @@ export default function FinalCTA() {
         </div>
 
         <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-black text-white mb-4 leading-tight">
-          Prêt à devenir
+          {t('landing.cta.title1')}
           <br />
-          citoyen français ?
+          {t('landing.cta.title2')}
         </h2>
 
         <p className="text-white/80 text-base mb-8">
-          Commencez gratuitement. Votre premier examen blanc est offert.
+          {t('landing.cta.subtitle')}
         </p>
 
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
@@ -52,7 +54,7 @@ export default function FinalCTA() {
             className="bg-white text-[#0055A4] hover:bg-white/90 font-bold gap-2 px-8 shadow-2xl"
             onClick={handleStart}
           >
-            Commencer gratuitement
+            {t('landing.cta.start')}
             <ArrowRight className="h-4 w-4" />
           </Button>
           <Button
@@ -61,12 +63,12 @@ export default function FinalCTA() {
             className="text-white border border-white/40 hover:bg-white/10 font-medium px-8"
             onClick={() => setShowDemoPopup(true)}
           >
-            Voir une démo
+            {t('landing.cta.demo')}
           </Button>
         </div>
 
         <p className="text-white/50 text-xs mt-6">
-          3 jours gratuits · Aucun débit pendant l'essai · Résiliation en 1 clic
+          {t('landing.cta.trust')}
         </p>
       </div>
 

@@ -1,39 +1,40 @@
 import AnimatedSection from '@/components/AnimatedSection';
 import { Badge } from '@/components/ui/badge';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const trustStats = [
-  { value: '+ 2 000', label: 'apprenants actifs' },
-  { value: '85%', label: 'taux de réussite moyen' },
-  { value: '7 jours', label: 'pour atteindre 80%' },
+  { value: '+ 2 000', labelKey: 'landing.social.stat1' },
+  { value: '85%', labelKey: 'landing.social.stat2' },
+  { valueKey: 'landing.social.stat3Value', labelKey: 'landing.social.stat3' },
 ];
 
 const testimonials = [
   {
     name: 'Mariam B.',
-    origin: 'Maroc',
-    goal: 'Naturalisation',
+    originKey: 'landing.social.origin1',
+    goalKey: 'landing.social.goal1',
     score: '36/40',
     initial: 'M',
     color: '#0055A4',
-    text: "En une semaine, j'étais prête. Les examens blancs m'ont donné confiance. J'ai obtenu 36/40 le jour J.",
+    textKey: 'landing.social.t1Text',
   },
   {
     name: 'Yusuf K.',
-    origin: 'Turquie',
-    goal: 'Carte de Résident',
+    originKey: 'landing.social.origin2',
+    goalKey: 'landing.social.goal2',
     score: '34/40',
     initial: 'Y',
     color: '#4F46E5',
-    text: "Je ne comprenais pas le système français. Les cours m'ont tout expliqué clairement, dans ma langue.",
+    textKey: 'landing.social.t2Text',
   },
   {
     name: 'Ana P.',
-    origin: 'Brésil',
-    goal: 'CSP',
+    originKey: 'landing.social.origin3',
+    goalKey: 'landing.social.goal3',
     score: '34/40',
     initial: 'A',
     color: '#059669',
-    text: "15 minutes par jour pendant 10 jours. Le score prédit indiquait 88% — j'ai eu 85%. Incroyable.",
+    textKey: 'landing.social.t3Text',
   },
 ];
 
@@ -45,6 +46,7 @@ function getScoreColor(score: string): string {
 }
 
 export default function SocialProof() {
+  const { t } = useLanguage();
   return (
     <section className="bg-secondary/30 py-16 md:py-24">
       <div className="container">
@@ -52,10 +54,10 @@ export default function SocialProof() {
         <AnimatedSection>
           <div className="text-center mb-10">
             <h2 className="font-serif text-3xl sm:text-4xl font-black text-foreground mb-3">
-              Ils ont réussi leur examen
+              {t('landing.social.title')}
             </h2>
             <p className="text-slate-500 text-base">
-              Des candidats comme vous, préparés en quelques jours.
+              {t('landing.social.subtitle')}
             </p>
           </div>
         </AnimatedSection>
@@ -64,7 +66,7 @@ export default function SocialProof() {
         <AnimatedSection delay={100}>
           <div className="flex flex-wrap items-center justify-center gap-8 mb-12">
             {trustStats.map((stat, i) => (
-              <div key={stat.label} className="flex items-center gap-3">
+              <div key={stat.labelKey} className="flex items-center gap-3">
                 {/* Avatars only next to first stat */}
                 {i === 0 && (
                   <div className="flex -space-x-2 mr-1">
@@ -82,8 +84,8 @@ export default function SocialProof() {
                   </div>
                 )}
                 <div className="text-center">
-                  <p className="font-serif text-2xl font-black text-[#0055A4]">{stat.value}</p>
-                  <p className="text-xs text-slate-500 font-medium">{stat.label}</p>
+                  <p className="font-serif text-2xl font-black text-[#0055A4]">{'valueKey' in stat ? t(stat.valueKey) : stat.value}</p>
+                  <p className="text-xs text-slate-500 font-medium">{t(stat.labelKey)}</p>
                 </div>
                 {i < trustStats.length - 1 && (
                   <div className="hidden sm:block w-px h-8 bg-slate-200 ml-8" />
@@ -95,27 +97,27 @@ export default function SocialProof() {
 
         {/* Testimonials */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-5xl mx-auto">
-          {testimonials.map((t, i) => {
-            const scoreColor = getScoreColor(t.score);
+          {testimonials.map((tm, i) => {
+            const scoreColor = getScoreColor(tm.score);
             return (
-              <AnimatedSection key={t.name} delay={i * 120}>
+              <AnimatedSection key={tm.name} delay={i * 120}>
                 <div className="glass-card p-5 flex flex-col gap-3 h-full">
                   {/* Header row */}
                   <div className="flex items-center gap-3">
                     <div
                       className="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-black flex-shrink-0"
-                      style={{ background: t.color }}
+                      style={{ background: tm.color }}
                     >
-                      {t.initial}
+                      {tm.initial}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="font-bold text-slate-900 text-sm">{t.name}</p>
+                      <p className="font-bold text-slate-900 text-sm">{tm.name}</p>
                       <Badge
                         variant="outline"
                         className="text-[10px] font-semibold px-2 py-0 mt-0.5"
-                        style={{ borderColor: t.color + '40', color: t.color }}
+                        style={{ borderColor: tm.color + '40', color: tm.color }}
                       >
-                        {t.origin}
+                        {t(tm.originKey)}
                       </Badge>
                     </div>
                     <span
@@ -125,15 +127,15 @@ export default function SocialProof() {
                         color: scoreColor,
                       }}
                     >
-                      {t.score}
+                      {tm.score}
                     </span>
                   </div>
 
                   {/* Goal */}
-                  <p className="text-xs text-slate-400 font-medium">{t.goal}</p>
+                  <p className="text-xs text-slate-400 font-medium">{t(tm.goalKey)}</p>
 
                   {/* Quote */}
-                  <p className="text-sm italic text-slate-600 leading-relaxed flex-1">"{t.text}"</p>
+                  <p className="text-sm italic text-slate-600 leading-relaxed flex-1">"{t(tm.textKey)}"</p>
                 </div>
               </AnimatedSection>
             );
@@ -141,7 +143,7 @@ export default function SocialProof() {
         </div>
 
         <p className="text-center text-xs text-slate-400 mt-6">
-          *Résultats représentatifs. Les résultats individuels peuvent varier.
+          {t('landing.social.disclaimer')}
         </p>
       </div>
     </section>

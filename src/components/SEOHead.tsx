@@ -24,12 +24,13 @@ const OG_IMAGE_WIDTH = 1200;
 const OG_IMAGE_HEIGHT = 630;
 
 const SUPPORTED_LANGS = [
-    { code: 'fr', param: '' },
-    { code: 'en', param: '?lang=en' },
-    { code: 'ar', param: '?lang=ar' },
-    { code: 'es', param: '?lang=es' },
-    { code: 'tr', param: '?lang=tr' },
-    { code: 'pt', param: '?lang=pt' },
+    { code: 'fr', param: '', ogLocale: 'fr_FR' },
+    { code: 'en', param: '?lang=en', ogLocale: 'en_US' },
+    { code: 'ar', param: '?lang=ar', ogLocale: 'ar_AR' },
+    { code: 'es', param: '?lang=es', ogLocale: 'es_ES' },
+    { code: 'pt', param: '?lang=pt', ogLocale: 'pt_PT' },
+    { code: 'zh', param: '?lang=zh', ogLocale: 'zh_CN' },
+    { code: 'tr', param: '?lang=tr', ogLocale: 'tr_TR' },
 ];
 
 export default function SEOHead({
@@ -46,13 +47,17 @@ export default function SEOHead({
     modifiedTime = '2026-06-04T00:00:00+00:00',
     ogImage,
 }: SEOHeadProps) {
-    const { t } = useLanguage();
+    const { t, language } = useLanguage();
 
     const resolvedTitle = titleKey ? t(titleKey) : (title || t('seo.defaultTitle'));
     const resolvedDesc = descriptionKey ? t(descriptionKey) : (description || t('seo.defaultDesc'));
 
     const fullTitle = resolvedTitle.includes(SITE_NAME) ? resolvedTitle : `${resolvedTitle} | ${SITE_NAME}`;
-    const url = `${BASE_URL}${path}`;
+    // Self-referencing canonical: each language variant canonicalizes to itself,
+    // otherwise Google drops the translated versions from the index.
+    const currentLang = SUPPORTED_LANGS.find((l) => l.code === language) || SUPPORTED_LANGS[0];
+    const url = `${BASE_URL}${path}${currentLang.param}`;
+    const ogLocale = currentLang.ogLocale;
     const imageUrl = ogImage || DEFAULT_OG_IMAGE;
 
     // ── Organization Schema ──
@@ -250,7 +255,10 @@ export default function SEOHead({
             <meta property="og:url" content={url} />
             <meta property="og:type" content={articleType} />
             <meta property="og:site_name" content={SITE_NAME} />
-            <meta property="og:locale" content="fr_FR" />
+            <meta property="og:locale" content={ogLocale} />
+            {SUPPORTED_LANGS.filter((l) => l.code !== language).map((l) => (
+                <meta key={l.code} property="og:locale:alternate" content={l.ogLocale} />
+            ))}
             <meta property="og:image" content={imageUrl} />
             <meta property="og:image:secure_url" content={imageUrl} />
             <meta property="og:image:width" content={String(OG_IMAGE_WIDTH)} />

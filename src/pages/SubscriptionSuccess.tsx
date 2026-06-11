@@ -6,10 +6,12 @@ import { CheckCircle, Route, Users, GraduationCap, PartyPopper, Star, ShieldChec
 import Logo from '@/components/Logo';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function SubscriptionSuccess() {
     const navigate = useNavigate();
     const { user } = useAuth();
+    const { t } = useLanguage();
     const [isUpdating, setIsUpdating] = useState(true);
 
     useEffect(() => {
@@ -43,7 +45,7 @@ export default function SubscriptionSuccess() {
                 } catch (err) {
                     console.error('Welcome email error:', err);
                 }
-                toast.success("Paiement recu ! Votre acces est en cours d'activation.");
+                toast.success(t('subsuccess.paymentReceived'));
             }
             setIsUpdating(false);
         };
@@ -77,10 +79,10 @@ export default function SubscriptionSuccess() {
                 </div>
 
                 <h1 className="text-4xl md:text-5xl font-bold font-serif text-foreground mb-4">
-                    Bienvenue à bord !
+                    {t('subsuccess.welcomeAboard')}
                 </h1>
                 <p className="text-muted-foreground text-lg md:text-xl max-w-lg mb-10">
-                    Votre voyage vers la citoyenneté française commence maintenant. Vous avez débloqué un accès complet à tous les cours et examens.
+                    {t('subsuccess.journey')}
                 </p>
 
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
@@ -90,15 +92,15 @@ export default function SubscriptionSuccess() {
                         onClick={() => navigate('/learn')}
                         disabled={isUpdating}
                     >
-                        Commencer l'entraînement →
+                        {t('onboard.startTraining')} →
                     </Button>
                     <Button
                         variant="ghost"
                         className="text-muted-foreground gap-2"
-                        onClick={() => toast.info('Un reçu a été envoyé à votre adresse e-mail.')}
+                        onClick={() => toast.info(t('subsuccess.receiptSent'))}
                     >
                         <Route className="h-4 w-4" />
-                        Voir le reçu
+                        {t('subsuccess.viewReceipt')}
                     </Button>
                 </div>
 
@@ -108,24 +110,24 @@ export default function SubscriptionSuccess() {
                         <div className="h-10 w-10 bg-primary/10 rounded-full flex items-center justify-center mb-4">
                             <GraduationCap className="h-5 w-5 text-primary" />
                         </div>
-                        <h3 className="font-bold text-foreground">Accès complet</h3>
-                        <p className="text-sm text-muted-foreground mt-2">Cours et modules culturels illimités</p>
+                        <h3 className="font-bold text-foreground">{t('subsuccess.fullAccess')}</h3>
+                        <p className="text-sm text-muted-foreground mt-2">{t('subsuccess.fullAccessDesc')}</p>
                     </div>
 
                     <div className="bg-card border border-border/40 rounded-2xl p-6 shadow-sm flex flex-col items-center">
                         <div className="h-10 w-10 bg-secondary/10 rounded-full flex items-center justify-center mb-4">
                             <CheckCircle className="h-5 w-5 text-secondary" />
                         </div>
-                        <h3 className="font-bold text-foreground">Examens blancs</h3>
-                        <p className="text-sm text-muted-foreground mt-2">Simulations en conditions réelles incluses</p>
+                        <h3 className="font-bold text-foreground">{t('subsuccess.mockExams')}</h3>
+                        <p className="text-sm text-muted-foreground mt-2">{t('subsuccess.mockExamsDesc')}</p>
                     </div>
 
                     <div className="bg-card border border-border/40 rounded-2xl p-6 shadow-sm flex flex-col items-center">
                         <div className="h-10 w-10 bg-[hsl(var(--success))]/10 rounded-full flex items-center justify-center mb-4">
                             <Users className="h-5 w-5 text-[hsl(var(--success))]" />
                         </div>
-                        <h3 className="font-bold text-foreground">Communauté</h3>
-                        <p className="text-sm text-muted-foreground mt-2">Rejoignez +10 000 futurs citoyens</p>
+                        <h3 className="font-bold text-foreground">{t('subsuccess.community')}</h3>
+                        <p className="text-sm text-muted-foreground mt-2">{t('subsuccess.communityDesc')}</p>
                     </div>
                 </div>
             </div>

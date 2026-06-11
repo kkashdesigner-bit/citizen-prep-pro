@@ -61,6 +61,9 @@ export const EXAM_THEMES = [
   },
 ];
 
+/** Number of FAQ entries — content lives in LanguageContext as faq.qN / faq.aN keys (all 7 languages). */
+export const FAQ_COUNT = 8;
+
 export const FAQ_ITEMS = [
   {
     q: "L'examen civique est-il obligatoire en 2026 ?",

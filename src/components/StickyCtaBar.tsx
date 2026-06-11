@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight, X, ShieldCheck } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useSubscription } from '@/hooks/useSubscription';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 /**
  * A slim, dismissible conversion bar fixed to the bottom of the landing page.
@@ -15,6 +16,7 @@ import { useSubscription } from '@/hooks/useSubscription';
 export default function StickyCtaBar() {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { t } = useLanguage();
   const { isStandardOrAbove, loading } = useSubscription();
   const [visible, setVisible] = useState(false);
   const [dismissed, setDismissed] = useState(false);
@@ -43,22 +45,22 @@ export default function StickyCtaBar() {
         </div>
         <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-bold text-white">
-            Prêt à réussir l'examen civique 2026 ?
+            {t('landing.sticky.title')}
           </p>
           <p className="hidden truncate text-xs text-white/60 sm:block">
-            Accès illimité dès 4,17 €/mois — 3 jours d'essai gratuit, aucun débit avant.
+            {t('landing.sticky.subtitle')}
           </p>
         </div>
         <Button
           onClick={goToPricing}
           className="shrink-0 gap-1.5 rounded-xl bg-white px-4 font-bold text-[#0a2540] hover:bg-white/90"
         >
-          {user ? "S'abonner" : 'Voir les offres'}
+          {user ? t('landing.sticky.subscribe') : t('landing.sticky.viewOffers')}
           <ArrowRight className="h-4 w-4" />
         </Button>
         <button
           onClick={() => setDismissed(true)}
-          aria-label="Fermer"
+          aria-label={t('common.close')}
           className="shrink-0 text-white/50 transition-colors hover:text-white"
         >
           <X className="h-4 w-4" />
