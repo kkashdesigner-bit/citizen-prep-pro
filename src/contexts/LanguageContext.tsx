@@ -3749,6 +3749,4 @@ const fallback: LanguageContextType = {
 export function useLanguage() {
   const context = useContext(LanguageContext);
   return context ?? fallback;
-}
-
-function applyDocumentLangu
+}
