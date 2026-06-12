@@ -12,6 +12,8 @@ serve(async (req) => {
     }
 
     const stripe = new Stripe(stripeKey, { apiVersion: '2023-10-16' });
+    // Deno requires SubtleCryptoProvider for webhook signature verification
+    const cryptoProvider = Stripe.createSubtleCryptoProvider();
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
@@ -27,7 +29,15 @@ serve(async (req) => {
 
     let event: Stripe.Event;
     try {
-      event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
+      // Must use constructEventAsync (not constructEvent) in Deno runtime
+      // because Deno uses Web Crypto API instead of Node.js crypto
+      event = await stripe.webhooks.constructEventAsync(
+        body,
+        signature,
+        webhookSecret,
+        undefined,
+        cryptoProvider,
+      );
     } catch (err) {
       console.error('Webhook signature verification failed:', err);
       return new Response('Invalid signature', { status: 400 });
