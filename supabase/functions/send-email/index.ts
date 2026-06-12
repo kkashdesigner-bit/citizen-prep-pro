@@ -20,7 +20,10 @@ async function sendResendEmail(apiKey: string, payload: object): Promise<{ ok: b
   const res = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
-    body: JSON.stringify(payload),
+    body: JSON.stringify({
+      reply_to: SUPPORT_EMAIL,
+      ...payload,
+    }),
   });
   if (!res.ok) return { ok: false, error: await res.text() };
   return { ok: true };
@@ -281,24 +284,36 @@ serve(async (req) => {
 
     // ─── Welcome / subscription confirmation ───
     if (type === 'welcome' || type === 'subscription_activated') {
+      const isTrial = tierRaw === 'standard';
+      
+      const blocks = [
+        isTrial 
+          ? `Votre essai gratuit de 3 jours au plan <strong>Standard</strong> a commencé ! Vous ne serez pas débité(e) pendant l'essai et vous pouvez annuler à tout moment en un clic depuis vos paramètres.`
+          : `Votre abonnement <strong>${tierLabel}</strong> est maintenant actif. Vous avez accès à l’ensemble de la plateforme GoCivique.`,
+        `<ul style="color:#4b5563;line-height:2;padding-left:20px">
+          <li>Examens blancs illimités (40 questions, 45 min)</li>
+          <li>Parcours d’apprentissage complet (100 classes)</li>
+          <li>Traduction instantanée des questions</li>
+          <li>Suivi de progression en temps réel</li>
+        </ul>`,
+        `Si vous rencontrez le moindre problème ou si vous avez des questions, répondez simplement à cet e-mail ou écrivez-nous à <strong>${SUPPORT_EMAIL}</strong>. Nous sommes là pour vous aider !`
+      ];
+
       const html = buildEmailHtml({
-        preheader: `Votre abonnement ${tierLabel} est actif !`,
+        preheader: isTrial 
+          ? `Votre essai gratuit Standard de 3 jours commence maintenant !` 
+          : `Votre abonnement ${tierLabel} est actif !`,
         greeting: `Bienvenue${firstName ? `, ${firstName}` : ''} !`,
-        blocks: [
-          `Votre abonnement <strong>${tierLabel}</strong> est maintenant actif. Vous avez accès à l’ensemble de la plateforme GoCivique.`,
-          `<ul style="color:#4b5563;line-height:2;padding-left:20px">
-            <li>Examens blancs illimités (40 questions, 45 min)</li>
-            <li>Parcours d’apprentissage complet (100 classes)</li>
-            <li>Traduction instantanée des questions</li>
-            <li>Suivi de progression en temps réel</li>
-          </ul>`,
-        ],
+        blocks,
         ctaText: 'Commencer l’entraînement →',
         ctaUrl: 'https://gocivique.fr/learn',
         showUnsubscribe: false,
       });
       if (resendApiKey) {
-        const result = await sendResendEmail(resendApiKey, { from: FROM, to: [recipient], subject: `Bienvenue sur GoCivique ${tierLabel} !`, html });
+        const subject = isTrial 
+          ? `Votre essai gratuit de 3 jours GoCivique Standard est activé !` 
+          : `Bienvenue sur GoCivique ${tierLabel} !`;
+        const result = await sendResendEmail(resendApiKey, { from: FROM, to: [recipient], subject, html });
         if (!result.ok) console.error('Resend welcome error:', result.error);
       }
       return json(req, { success: true });

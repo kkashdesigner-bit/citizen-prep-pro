@@ -39,8 +39,41 @@ serve(async (req) => {
     // Fires for both subscription sign-ups AND one-time lifetime purchases
     if (event.type === 'checkout.session.completed') {
       const session = event.data.object as Stripe.Checkout.Session;
-      const userId = session.client_reference_id;
+      let userId = session.client_reference_id;
       const customerId = session.customer as string;
+
+      // Fallback: if client_reference_id is missing, find user by stripe_customer_id or email
+      if (!userId && customerId) {
+        console.log(`Missing client_reference_id in checkout.session.completed, performing fallback lookup for customer ${customerId}`);
+        const { data: profileByCustomer } = await supabase
+          .from('profiles')
+          .select('id')
+          .eq('stripe_customer_id', customerId)
+          .maybeSingle();
+
+        if (profileByCustomer) {
+          userId = profileByCustomer.id;
+          console.log(`Resolved userId: ${userId} via stripe_customer_id fallback`);
+        } else {
+          try {
+            const customer = await stripe.customers.retrieve(customerId);
+            if (customer && !customer.deleted && customer.email) {
+              const { data: profileByEmail } = await supabase
+                .from('profiles')
+                .select('id')
+                .eq('email', customer.email)
+                .maybeSingle();
+              if (profileByEmail) {
+                userId = profileByEmail.id;
+                console.log(`Resolved userId: ${userId} via email fallback (${customer.email})`);
+                await supabase.from('profiles').update({ stripe_customer_id: customerId }).eq('id', userId);
+              }
+            }
+          } catch (e) {
+            console.error('Email lookup fallback failed in checkout.session.completed:', e);
+          }
+        }
+      }
 
       if (userId) {
         // ── One-time payment → Lifetime tier ──
@@ -84,8 +117,8 @@ serve(async (req) => {
         }
 
         // ── Subscription checkout (standard / premium) ──
-        const standardProductId = Deno.env.get('STRIPE_STANDARD_PRODUCT_ID');
-        const premiumProductId = Deno.env.get('STRIPE_PREMIUM_PRODUCT_ID');
+        const standardProductId = Deno.env.get('STRIPE_STANDARD_PRODUCT_ID') || 'prod_U5buOHEYCg9BRp';
+        const premiumProductId = Deno.env.get('STRIPE_PREMIUM_PRODUCT_ID') || 'prod_U5buC3rswQEzSA';
 
         let tier = 'standard';
 
@@ -170,8 +203,8 @@ serve(async (req) => {
       }
 
       if (profile) {
-        const standardProductId = Deno.env.get('STRIPE_STANDARD_PRODUCT_ID');
-        const premiumProductId = Deno.env.get('STRIPE_PREMIUM_PRODUCT_ID');
+        const standardProductId = Deno.env.get('STRIPE_STANDARD_PRODUCT_ID') || 'prod_U5buOHEYCg9BRp';
+        const premiumProductId = Deno.env.get('STRIPE_PREMIUM_PRODUCT_ID') || 'prod_U5buC3rswQEzSA';
         const productId = subscription.items.data[0]?.price?.product as string;
 
         let tier = 'standard';
@@ -181,11 +214,14 @@ serve(async (req) => {
           tier = 'standard';
         }
 
-        // Update tier + subscription ID in case of plan change
+        const isSubscribed = ['active', 'trialing'].includes(subscription.status);
+
+        // Update tier + subscription ID + subscribed status in case of plan change or trial status update
         await supabase
           .from('profiles')
           .update({
-            subscription_tier: tier,
+            subscription_tier: isSubscribed ? tier : 'free',
+            is_subscribed: isSubscribed,
             stripe_subscription_id: subscription.id,
           })
           .eq('id', profile.id);
@@ -193,7 +229,7 @@ serve(async (req) => {
         if (subscription.cancel_at_period_end) {
           console.log(`User ${profile.id} subscription (${tier}) marked for cancellation`);
         } else {
-          console.log(`User ${profile.id} subscription updated to ${tier}`);
+          console.log(`User ${profile.id} subscription updated to ${tier} (active status: ${isSubscribed})`);
         }
       }
     }
@@ -325,12 +361,35 @@ serve(async (req) => {
       if (profile) {
         console.log(`Payment failed for user ${profile.id}`);
 
-        // Send payment failed email
+        // Send payment failed email and downgrade gracefully
         const { data: fullProfile } = await supabase
           .from('profiles')
           .select('email, display_name, subscription_tier')
           .eq('id', profile.id)
           .maybeSingle();
+
+        const previousTier = fullProfile?.subscription_tier || 'standard';
+
+        // Never downgrade a lifetime user
+        if (previousTier === 'lifetime') {
+          console.log(`User ${profile.id} has lifetime access — skipping payment failed downgrade`);
+          return new Response(JSON.stringify({ received: true }), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' },
+          });
+        }
+
+        // Downgrade to free tier
+        await supabase
+          .from('profiles')
+          .update({
+            subscription_tier: 'free',
+            is_subscribed: false,
+            stripe_subscription_id: null,
+          })
+          .eq('id', profile.id);
+
+        console.log(`User ${profile.id} subscription downgraded to free due to payment failure`);
 
         if (fullProfile?.email) {
           try {
@@ -345,7 +404,7 @@ serve(async (req) => {
                 data: {
                   email: fullProfile.email,
                   firstName: fullProfile.display_name || '',
-                  tier: fullProfile.subscription_tier || 'standard',
+                  tier: previousTier,
                 },
               }),
             });
