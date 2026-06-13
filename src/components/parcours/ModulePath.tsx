@@ -39,7 +39,8 @@ function xOffset(i: number): number {
 export default function ModulePath({
     classes, color, isUnlocked, isCompleted, scoreOf, nextClassId, onClassClick, nextClassRef,
 }: ModulePathProps) {
-    const height = classes.length * ROW_H;
+    // Extra 56px at the bottom so the last node's label isn't clipped
+    const height = classes.length * ROW_H + 56;
 
     // Snaking connector through all node centers (centered coordinate system, 0 = column middle)
     const pathD = useMemo(() => {
@@ -61,7 +62,7 @@ export default function ModulePath({
             <svg
                 className="absolute left-1/2 top-0 -translate-x-1/2 pointer-events-none"
                 width={AMP * 2 + NODE}
-                height={height}
+                height={height - 56}
                 viewBox={`${-(AMP + NODE / 2)} 0 ${AMP * 2 + NODE} ${height}`}
                 aria-hidden="true"
             >
@@ -134,9 +135,9 @@ export default function ModulePath({
                                 <Star className="w-6 h-6" style={{ color }} />
                             )}
 
-                            {/* Class number badge */}
+                            {/* Class number badge — min-width so 1–100 all fit cleanly */}
                             <span
-                                className="absolute -bottom-1.5 -right-1.5 z-20 w-6 h-6 rounded-full bg-white border text-[10px] font-black flex items-center justify-center shadow-sm"
+                                className="absolute -bottom-1.5 -right-1.5 z-20 min-w-[22px] h-[22px] px-1 rounded-full bg-white border text-[10px] font-black flex items-center justify-center shadow-sm leading-none"
                                 style={{ borderColor: completed ? '#059669' : '#E5E7EB', color: completed ? '#059669' : '#6B7280' }}
                             >
                                 {clazz.class_number}

@@ -3733,7 +3733,7 @@ function isSupported(lang: string | null | undefined): lang is Language {
   return !!lang && (SUPPORTED_LANGUAGES as string[]).includes(lang);
 }
 
-/** Resolve initial language: ?lang= URL param → saved preference → browser language → fr */
+/** Resolve initial language: ?lang= URL param → saved preference → fr (always default) */
 function detectInitialLanguage(): Language {
   if (typeof window === 'undefined') return 'fr';
   try {
@@ -3741,8 +3741,6 @@ function detectInitialLanguage(): Language {
     if (isSupported(urlLang)) return urlLang;
     const stored = localStorage.getItem(LANG_STORAGE_KEY);
     if (isSupported(stored)) return stored;
-    const browser = (navigator.language || '').slice(0, 2).toLowerCase();
-    if (isSupported(browser)) return browser;
   } catch {
     // ignore (storage blocked, etc.)
   }
