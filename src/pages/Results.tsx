@@ -8,6 +8,7 @@ import Header from '@/components/Header';
 import { useParcours } from '@/hooks/useParcours';
 import { useAuth } from '@/hooks/useAuth';
 import { ArrowRight, Scale, Landmark, HeartHandshake, LayoutDashboard, RotateCcw, AlertTriangle, Medal, Check, X, ChevronUp, ChevronDown, ChevronRight } from 'lucide-react';
+import { fireConfetti } from '@/lib/confetti';
 
 const passImage = '/examen-civique-resultat-passe.jpg';
 const failImage = '/examen-civique-resultat-nonpasse.jpg';
@@ -36,11 +37,16 @@ export default function Results() {
     useEffect(() => {
         const stored = sessionStorage.getItem('quizResults');
         if (stored) {
-            setResult(JSON.parse(stored));
+            const parsed = JSON.parse(stored);
+            setResult(parsed);
             const storedErrors = sessionStorage.getItem('quizErrors');
             if (storedErrors) setErrors(JSON.parse(storedErrors));
             const storedClassId = sessionStorage.getItem('quizClassId');
             if (storedClassId) setClassId(storedClassId);
+            // Celebrate a pass with a tricolore confetti burst 🎉
+            if (parsed?.passed) {
+                setTimeout(() => fireConfetti(), 400);
+            }
         } else {
             navigate('/');
         }

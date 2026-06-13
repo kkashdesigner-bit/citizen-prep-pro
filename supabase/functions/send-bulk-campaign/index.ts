@@ -122,36 +122,107 @@ function buildPaidEmail(firstName: string, tier: string): { subject: string; htm
 }
 
 function buildExam60dFreeEmail(firstName: string, daysLeft: number): { subject: string; html: string } {
-  const name = firstName ? `Bonjour ${firstName} !` : 'Bonjour !';
   const dLabel = daysLeft === 1 ? '1 jour' : `${daysLeft} jours`;
-  const plural = daysLeft > 1 ? 's' : '';
+  const hello = firstName ? `${firstName}, votre` : 'Votre';
+
+  // Rooster-led, Duolingo-style teaser. CTA = the 3-day free Standard trial.
+  const html = `<!DOCTYPE html>
+<html lang="fr">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#f3f4f6;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif">
+  <div style="display:none;max-height:0;overflow:hidden">J-${daysLeft} avant votre examen civique — le coq GoCivique commence à s'inquiéter… 🐓</div>
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f3f4f6">
+    <tr><td align="center" style="padding:32px 16px">
+      <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#fff;border-radius:16px;overflow:hidden;border:1px solid #e5e7eb">
+
+        <!-- Header: rooster + brand -->
+        <tr><td style="background:linear-gradient(135deg,${BRAND_PRIMARY},${BRAND_GRADIENT_END});padding:32px 32px 28px;text-align:center">
+          <img src="https://gocivique.fr/gocivique-logo-examen-civique.png" width="84" height="84" alt="Le coq GoCivique" style="display:block;margin:0 auto 12px;border-radius:20px;background:#ffffff;padding:6px" />
+          <h1 style="color:#fff;margin:0;font-size:26px;font-weight:900;letter-spacing:-0.5px">GoCivique</h1>
+          <p style="color:rgba(255,255,255,0.85);margin:6px 0 0;font-size:14px">Cocorico ! Petit message de votre coach 🐓</p>
+        </td></tr>
+
+        <!-- Countdown chip -->
+        <tr><td style="padding:0;text-align:center">
+          <div style="margin:-18px auto 0;display:inline-block;background:#EF4135;color:#fff;font-weight:900;font-size:22px;padding:10px 28px;border-radius:999px;border:4px solid #fff;box-shadow:0 4px 14px rgba(239,65,53,0.35)">
+            J−${daysLeft}
+          </div>
+        </td></tr>
+
+        <tr><td style="padding:28px 32px 8px">
+          <h2 style="color:#1a1a1a;margin:0 0 12px;font-size:22px;line-height:1.3;text-align:center">
+            ${hello} examen civique est dans <span style="color:#EF4135">${dLabel}</span>.
+          </h2>
+          <p style="color:#4b5563;line-height:1.7;font-size:15px;text-align:center;margin:0 0 20px">
+            Le coq de GoCivique s'est levé tôt pour vous le rappeler : il vous faudra <strong>32 bonnes réponses sur 40</strong> le jour J. La bonne nouvelle ? ${dLabel}, c'est encore largement assez — à condition de s'entraîner avec les vraies questions.
+          </p>
+
+          <!-- Progress tease -->
+          <div style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:14px;padding:18px 20px;margin-bottom:20px">
+            <p style="margin:0 0 10px;font-size:13px;font-weight:700;color:#1a1a1a">Votre accès actuel à la banque officielle :</p>
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+              <tr><td style="background:#e5e7eb;border-radius:999px;height:14px">
+                <div style="width:3%;min-width:18px;background:linear-gradient(90deg,${BRAND_PRIMARY},#EF4135);height:14px;border-radius:999px"></div>
+              </td></tr>
+            </table>
+            <p style="margin:10px 0 0;font-size:13px;color:#6b7280">
+              <strong style="color:#EF4135">200</strong> questions gratuites sur <strong style="color:${BRAND_PRIMARY}">7 232</strong> questions officielles…
+              le coq trouve que c'est un peu juste. 😬
+            </p>
+          </div>
+
+          <!-- What the trial unlocks -->
+          <div style="background:#f0f5ff;border-radius:14px;padding:18px 20px;border-left:4px solid ${BRAND_PRIMARY};margin-bottom:24px">
+            <p style="margin:0 0 10px;font-weight:800;color:${BRAND_PRIMARY};font-size:14px">Avec l'essai gratuit Standard, vous débloquez :</p>
+            <p style="margin:0;color:#374151;font-size:14px;line-height:1.9">
+              🔓 Les <strong>7 232 questions officielles</strong> (CSP, CR, Naturalisation)<br/>
+              🎯 Les <strong>examens blancs illimités</strong> en conditions réelles<br/>
+              🧠 La <strong>révision de vos erreurs</strong> jusqu'à la maîtrise<br/>
+              📈 Votre <strong>score prédit</strong> mis à jour en direct
+            </p>
+          </div>
+        </td></tr>
+
+        <!-- CTA -->
+        <tr><td style="padding:0 32px;text-align:center">
+          <a href="https://gocivique.fr/#pricing" style="background:${BRAND_PRIMARY};color:#fff;padding:16px 36px;border-radius:14px;text-decoration:none;font-weight:800;font-size:17px;display:inline-block;box-shadow:0 6px 18px rgba(0,85,164,0.35)">
+            🎁 Commencer mes 3 jours gratuits
+          </a>
+          <p style="color:#6b7280;font-size:12px;margin:12px 0 0">
+            Aucun débit pendant l'essai · Résiliation en 1 clic
+          </p>
+        </td></tr>
+
+        <tr><td style="padding:24px 32px 28px">
+          <p style="color:#4b5563;font-size:14px;line-height:1.7;text-align:center;margin:0">
+            On se retrouve sur la plateforme ?<br/>
+            <strong>Le coq croit en vous. 🇫🇷</strong>
+          </p>
+          <p style="color:#6b7280;font-size:13px;text-align:center;margin:18px 0 0">
+            Une question ? <a href="mailto:support@gocivique.fr" style="color:${BRAND_PRIMARY}">support@gocivique.fr</a>
+          </p>
+        </td></tr>
+
+        <!-- Footer -->
+        <tr><td style="background:#f9fafb;padding:20px 32px;border-top:1px solid #e5e7eb;text-align:center">
+          <p style="color:#9ca3af;font-size:12px;margin:0">
+            GoCivique · Plateforme de préparation à l'examen civique français<br/>
+            <a href="https://gocivique.fr/privacy" style="color:#9ca3af">Politique de confidentialité</a>
+          </p>
+          <p style="color:#9ca3af;font-size:11px;margin:8px 0 0">
+            Vous ne souhaitez plus recevoir ces emails ?
+            <a href="https://gocivique.fr/settings" style="color:#9ca3af;text-decoration:underline">Se désabonner</a>
+          </p>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`;
 
   return {
-    subject: `Votre examen dans ${daysLeft} jour${plural} — avez-vous accès aux 7 232 questions ?`,
-    html: buildHtml({
-      preheader: `J-${daysLeft} : passez à la vitesse supérieure avant votre examen civique.`,
-      greeting: name,
-      blocks: [
-        `Votre examen civique approche — il ne vous reste que <strong>${dLabel}</strong> pour vous préparer au maximum.`,
-        `<div style="background:#fff3cd;border-radius:10px;padding:16px;border-left:4px solid #f59e0b">
-          <strong style="color:#b45309">⚠️ Compte gratuit : accès limité</strong><br/><br/>
-          Avec votre compte gratuit, vous n'avez accès qu'à un <strong>aperçu</strong> de la plateforme. Vous passez à côté de la quasi-totalité des questions officielles.
-        </div>`,
-        `<div style="background:#f0f5ff;border-radius:10px;padding:16px;border-left:4px solid #0055A4">
-          <strong style="color:#0055A4">Ce que vous débloquez avec un abonnement Standard :</strong><br/><br/>
-          • <strong>7 232 questions officielles</strong> (CSP, Carte de résident, Naturalisation)<br/>
-          • Mode <strong>"Questions Inédites"</strong> — ne répondez jamais deux fois à la même question<br/>
-          • Mode <strong>"Révision des Erreurs"</strong> — rejouez exactement les questions ratées<br/>
-          • Mode <strong>"Maîtrise par Catégorie"</strong> — progressez jusqu'à 85 % par thème<br/>
-          • Mode <strong>"Difficile"</strong> — les questions les plus redoutées statistiquement<br/>
-          • <strong>Difficulté adaptative</strong> — l'algorithme ajuste le niveau en temps réel
-        </div>`,
-        `Il vous reste <strong>${dLabel}</strong>. C'est encore suffisant pour faire une vraie différence — à condition d'avoir accès à toutes les questions.`,
-      ],
-      ctaText: 'Débloquer les 7 232 questions →',
-      ctaUrl: 'https://gocivique.fr/#pricing',
-      footerExtra: 'À partir de quelques euros par mois · Annulable à tout moment',
-    }),
+    subject: `🐓 J−${daysLeft} ${firstName ? firstName + ' ' : ''}— le coq a sonné, votre examen approche !`,
+    html,
   };
 }
 
@@ -307,7 +378,7 @@ serve(async (req) => {
 
       const profile = profileMap[user.id] ?? { first_name: '', exam_date: null };
       const firstName = profile.first_name || user.display_name || '';
-      const isPaid = user.subscription_tier === 'standard' || user.subscription_tier === 'premium';
+      const isPaid = ['standard', 'premium', 'lifetime'].includes(user.subscription_tier);
 
       let subject: string;
       let html: string;

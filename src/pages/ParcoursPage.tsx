@@ -6,6 +6,7 @@ import { useUserProfile, GOAL_LABELS } from '@/hooks/useUserProfile';
 import { useSubscription } from '@/hooks/useSubscription';
 import { useParcours } from '@/hooks/useParcours';
 import LearnSidebar from '@/components/learn/LearnSidebar';
+import ModulePath from '@/components/parcours/ModulePath';
 import SubscriptionGate from '@/components/SubscriptionGate';
 import TierInfoPopup from '@/components/TierInfoPopup';
 import TierMismatchPopup from '@/components/TierMismatchPopup';
@@ -41,7 +42,7 @@ export default function ParcoursPage() {
     const navigate = useNavigate();
     const { user, loading: authLoading } = useAuth();
     const { profile, loading: profileLoading } = useUserProfile();
-    const { tier, loading: tierLoading } = useSubscription();
+    const { tier, isPremium, loading: tierLoading } = useSubscription();
     const { classes, progress, loading: parcoursLoading } = useParcours();
 
     const [showGate, setShowGate] = useState(false);
@@ -67,12 +68,13 @@ export default function ParcoursPage() {
 
     /* ─── Unlock logic (dynamic state derivation) ─── */
     const isUnlocked = (clazz: any) => {
-        // Premium: can jump anywhere
-        if (tier === 'premium') return true;
+        // Premium (and lifetime): can jump anywhere
+        if (isPremium) return true;
 
-        // Free: only Classes 1–10 are accessible (sequentially)
+        // Free: only Classes 1–4 are accessible (sequentially) — matches the
+        // 200-question free pool enforced server-side by RLS
         if (tier === 'free') {
-            if (clazz.class_number > 10) return false;
+            if (clazz.class_number > 4) return false;
         }
 
         // Sequential: Class 1 always open, others need previous class completed WITH passing score
@@ -208,14 +210,14 @@ export default function ParcoursPage() {
                                 />
                             </div>
 
-                            {tier === 'premium' && (
+                            {isPremium && (
                                 <div className="mt-3 inline-flex items-center gap-1.5 text-xs font-bold text-amber-300 bg-white/10 px-3 py-1 rounded-full">
                                     <Sparkles className="w-3.5 h-3.5" /> Accès libre à toutes les classes
                                 </div>
                             )}
                             {tier === 'free' && (
                                 <div className="mt-3 inline-flex items-center gap-1.5 text-xs font-bold text-white/70 bg-white/10 px-3 py-1 rounded-full">
-                                    <Lock className="w-3.5 h-3.5" /> Accès gratuit : Classes 1 à 10
+                                    <Lock className="w-3.5 h-3.5" /> Accès gratuit : Classes 1 à 4 · 200 questions offertes
                                 </div>
                             )}
                         </div>
@@ -274,124 +276,17 @@ export default function ParcoursPage() {
                                         </div>
                                     </div>
 
-                                    {/* Vertical Timeline of Classes */}
-                                    <div className="relative ml-3 sm:ml-5 md:ml-[22px] border-l-2 border-gray-100 pl-6 sm:pl-8 md:pl-10 space-y-1">
-                                        {moduleClasses.map((clazz, idx) => {
-                                            const clazzProgress = progress[clazz.id];
-                                            const status = clazzProgress?.status || 'not_started';
-                                            const isCompleted = status === 'completed';
-                                            const unlocked = isUnlocked(clazz);
-                                            const isNext = nextClass?.id === clazz.id;
-                                            const score = clazzProgress?.score || 0;
-                                            const mastery = isCompleted ? getMasteryInfo(score) : null;
-
-                                            return (
-                                                <div
-                                                    key={clazz.id}
-                                                    ref={isNext ? nextClassRef : undefined}
-                                                    className="relative"
-                                                >
-                                                    {/* Timeline Node (dot on the line) */}
-                                                    <div className={`absolute -left-[33px] sm:-left-[41px] md:-left-[49px] top-4 w-4 h-4 rounded-full border-2 z-10 ${isCompleted
-                                                        ? 'bg-emerald-500 border-emerald-500'
-                                                        : isNext && unlocked
-                                                            ? 'bg-[#0055A4] border-[#0055A4] ring-4 ring-[#0055A4]/20 animate-pulse'
-                                                            : unlocked
-                                                                ? 'bg-white border-[#0055A4]'
-                                                                : 'bg-gray-100 border-gray-200'
-                                                        }`}>
-                                                        {isCompleted && (
-                                                            <CheckCircle2 className="w-3 h-3 text-white absolute top-0 left-0" />
-                                                        )}
-                                                    </div>
-
-                                                    {/* "Vous êtes ici" indicator */}
-                                                    {isNext && unlocked && (
-                                                        <div className="absolute -left-[90px] sm:-left-[100px] md:-left-[112px] top-3 text-[9px] font-bold text-[#0055A4] uppercase tracking-wider whitespace-nowrap hidden sm:block">
-                                                            ← Vous êtes ici
-                                                        </div>
-                                                    )}
-
-                                                    {/* Class Card */}
-                                                    <motion.div
-                                                        whileHover={unlocked ? { x: 4 } : {}}
-                                                        onClick={() => handleClassClick(clazz)}
-                                                        className={`group relative py-3.5 px-5 rounded-xl border transition-all duration-200 mb-2 ${unlocked ? 'cursor-pointer' : 'cursor-not-allowed'
-                                                            } ${isCompleted
-                                                                ? 'bg-white border-emerald-200 hover:border-emerald-300'
-                                                                : isNext && unlocked
-                                                                    ? 'bg-[#0055A4]/[0.03] border-[#0055A4]/30 hover:border-[#0055A4]/50 shadow-sm'
-                                                                    : unlocked
-                                                                        ? 'bg-white border-gray-150 hover:border-[#0055A4]/30 hover:shadow-sm'
-                                                                        : 'bg-gray-50/70 border-gray-100 opacity-60'
-                                                            }`}
-                                                    >
-                                                        <div className="flex items-center gap-4">
-                                                            {/* Class Number */}
-                                                            <span className={`text-lg font-black font-mono w-8 text-center flex-shrink-0 ${isCompleted
-                                                                ? 'text-emerald-500'
-                                                                : isNext && unlocked
-                                                                    ? 'text-[#0055A4]'
-                                                                    : unlocked
-                                                                        ? 'text-gray-800'
-                                                                        : 'text-gray-300'
-                                                                }`}>
-                                                                {clazz.class_number}
-                                                            </span>
-
-                                                            {/* Title & Meta */}
-                                                            <div className="flex-1 min-w-0">
-                                                                <h3 className={`font-semibold text-sm leading-tight truncate ${!unlocked ? 'text-gray-400' : 'text-gray-900'
-                                                                    }`}>
-                                                                    {clazz.title}
-                                                                </h3>
-                                                                <div className="flex items-center gap-3 mt-0.5">
-                                                                    {unlocked && (
-                                                                        <span className="text-[11px] text-gray-400 flex items-center gap-1">
-                                                                            <Clock className="w-3 h-3" /> {clazz.estimated_minutes} min
-                                                                        </span>
-                                                                    )}
-                                                                    {/* Mastery tag */}
-                                                                    {mastery && (
-                                                                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${mastery.color} ${mastery.textColor}`}>
-                                                                            {score}% · {mastery.label}
-                                                                        </span>
-                                                                    )}
-                                                                    {/* Failed tag — attempted but didn't pass */}
-                                                                    {!isCompleted && status !== 'not_started' && (clazzProgress?.score ?? 0) < 60 && (clazzProgress?.score ?? 0) > 0 && (
-                                                                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-red-500/10 text-red-500">
-                                                                            {clazzProgress?.score}% · Non réussi — Réessayez
-                                                                        </span>
-                                                                    )}
-                                                                </div>
-                                                            </div>
-
-                                                            {/* Right Side: Status */}
-                                                            <div className="flex-shrink-0">
-                                                                {isCompleted ? (
-                                                                    <CheckCircle2 className="w-5 h-5 text-emerald-500" />
-                                                                ) : isNext && unlocked ? (
-                                                                    <Button
-                                                                        size="sm"
-                                                                        className="bg-[#0055A4] hover:bg-[#1B6ED6] text-white text-xs font-bold rounded-lg h-8 px-4 shadow-sm"
-                                                                        onClick={(e) => { e.stopPropagation(); handleClassClick(clazz); }}
-                                                                    >
-                                                                        Commencer <Play className="w-3 h-3 ml-1 fill-current" />
-                                                                    </Button>
-                                                                ) : !unlocked ? (
-                                                                    <Lock className="w-4 h-4 text-gray-300" />
-                                                                ) : status === 'in_progress' ? (
-                                                                    <span className="text-[10px] font-bold uppercase tracking-wider bg-[#0055A4]/10 text-[#0055A4] px-2.5 py-1 rounded-full">
-                                                                        En cours
-                                                                    </span>
-                                                                ) : null}
-                                                            </div>
-                                                        </div>
-                                                    </motion.div>
-                                                </div>
-                                            );
-                                        })}
-                                    </div>
+                                    {/* Duolingo-style winding path of classes */}
+                                    <ModulePath
+                                        classes={moduleClasses}
+                                        color={mod.color}
+                                        isUnlocked={isUnlocked}
+                                        isCompleted={(c) => progress[c.id]?.status === 'completed'}
+                                        scoreOf={(c) => progress[c.id]?.score || 0}
+                                        nextClassId={nextClass?.id}
+                                        onClassClick={handleClassClick}
+                                        nextClassRef={nextClassRef}
+                                    />
                                 </motion.div>
                             );
                         })}

@@ -33,6 +33,23 @@ const plans = {
       'Suivi de progression',
     ],
   },
+  premium: {
+    name: 'Premium',
+    icon: <Crown className="w-4 h-4" />,
+    price: '10,99',
+    priceLabel: '10,99 €/mois',
+    period: '/mois',
+    periodLabel: 'Facturé mensuellement · 3 jours gratuits',
+    color: '#D97706',
+    badge: null as string | null,
+    features: [
+      'Tout dans Standard',
+      'Entraînement ciblé par catégorie',
+      'Traduction instantanée (5 langues)',
+      'Accès libre entre les classes',
+      'Guides vidéo',
+    ],
+  },
   lifetime: {
     name: 'Accès à Vie',
     icon: <Infinity className="w-4 h-4" />,
@@ -43,11 +60,8 @@ const plans = {
     color: '#7C3AED',
     badge: 'Meilleur rapport',
     features: [
-      'Tout dans Standard',
+      'Tout dans Premium',
       'Accès Premium complet à vie',
-      'Entraînement ciblé par catégorie',
-      'Traduction instantanée (5 langues)',
-      'Accès libre entre les classes',
       'Accès anticipé aux nouvelles fonctionnalités',
       'Badge exclusif Membre Fondateur',
     ],
@@ -70,7 +84,7 @@ const SubscriptionGate = forwardRef<HTMLDivElement, SubscriptionGateProps>(
 
     const handleSubscribe = async () => {
       if (!user) {
-        setPendingCheckout(selectedPlan === 'lifetime' ? 'lifetime' : 'standard');
+        setPendingCheckout(selectedPlan);
         onOpenChange(false);
         navigate('/auth?intent=checkout');
         return;
@@ -122,7 +136,7 @@ const SubscriptionGate = forwardRef<HTMLDivElement, SubscriptionGateProps>(
 
             {/* Plan toggle */}
             <div className="flex gap-2 p-1 bg-slate-100 rounded-xl mb-5">
-              {(['standard', 'lifetime'] as PlanKey[]).map((id) => {
+              {(['standard', 'premium', 'lifetime'] as PlanKey[]).map((id) => {
                 const p = plans[id];
                 const isActive = selectedPlan === id;
                 return (
@@ -189,8 +203,8 @@ const SubscriptionGate = forwardRef<HTMLDivElement, SubscriptionGateProps>(
               </div>
               <p className="text-xs text-emerald-800 leading-snug">
                 {selectedPlan === 'lifetime'
-                  ? <><span className="font-bold">Paiement unique, accès éternel.</span> Aucun frais récurrent — jamais.</>
-                  : <><span className="font-bold">3 jours gratuits, sans engagement.</span> Aucun débit pendant l'essai.</>
+                   ? <><span className="font-bold">Paiement unique, accès éternel.</span> Aucun frais récurrent — jamais.</>
+                   : <><span className="font-bold">3 jours gratuits, sans engagement.</span> Aucun débit pendant l'essai. Annulez quand vous voulez.</>
                 }
               </p>
             </div>

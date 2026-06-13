@@ -377,3 +377,29 @@
   70% { box-shadow: 0 0 0 10px rgba(0,85,164,0); }
   100% { box-shadow: 0 0 0 0 rgba(0,85,164,0); }
 }
+
+/* ─── Duolingo-style micro-interactions (site-wide) ─── */
+/* Springy press feedback on every button — playful, subtle, respects reduced motion */
+@media (prefers-reduced-motion: no-preference) {
+  button, [role="button"], a.btn {
+    transition: transform 0.12s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  button:active:not(:disabled), [role="button"]:active:not([aria-disabled="true"]) {
+    transform: scale(0.96);
+  }
+
+  /* Cards lift gently on hover */
+  .glass-card {
+    transition: transform 0.25s cubic-bezier(0.34, 1.4, 0.64, 1), box-shadow 0.25s ease, border-color 0.2s ease;
+  }
+  .glass-card:hover {
+    transform: translateY(-2px);
+  }
+}
+
+/* Success pop — used by progress chips and mastery badges */
+@keyframes popIn {
+  0% { transform: scale(0); opacity: 0; }
+  70% { transform: scale(1.15); }
+  100% { transform: scale(1); opacity: 1; }
+}

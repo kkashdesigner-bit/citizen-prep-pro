@@ -7,7 +7,9 @@ import {
 
 const TRIAL_DAYS = 3;
 const LIFETIME_PRICE_ID = 'price_1TecfyP5T0wCun4w2LA3Tk8g';
-const ALLOWED_TIERS = new Set(['standard', 'premium', 'lifetime']);
+// 'lifetime' kept for backward compatibility (grandfathered offer, no longer sold).
+// 'yearly' = Premium billed annually (maps to premium entitlements via the webhook).
+const ALLOWED_TIERS = new Set(['standard', 'premium', 'yearly', 'lifetime']);
 const DEFAULT_RETURN_URL = 'https://gocivique.fr';
 
 serve(async (req) => {
@@ -79,11 +81,19 @@ serve(async (req) => {
 
     const standardPriceId = Deno.env.get('STRIPE_STANDARD_PRICE_ID');
     const premiumPriceId = Deno.env.get('STRIPE_PREMIUM_PRICE_ID');
+    const yearlyPriceId = Deno.env.get('STRIPE_YEARLY_PRICE_ID');
     const standardProductId = Deno.env.get('STRIPE_STANDARD_PRODUCT_ID');
     const premiumProductId = Deno.env.get('STRIPE_PREMIUM_PRODUCT_ID');
-    let priceId = tier === 'premium' ? premiumPriceId : standardPriceId;
+    const yearlyProductId = Deno.env.get('STRIPE_YEARLY_PRODUCT_ID');
+    let priceId =
+      tier === 'yearly' ? yearlyPriceId :
+      tier === 'premium' ? premiumPriceId :
+      standardPriceId;
     if (!priceId) {
-      const productId = tier === 'premium' ? premiumProductId : standardProductId;
+      const productId =
+        tier === 'yearly' ? yearlyProductId :
+        tier === 'premium' ? premiumProductId :
+        standardProductId;
       if (productId) {
         const product = await stripe.products.retrieve(productId);
         priceId = product.default_price as string | undefined;
