@@ -383,7 +383,7 @@ export default function LearningDashboard() {
                             <div className="h-1.5 w-full bg-[var(--dash-surface)] rounded-full overflow-hidden">
                               <motion.div initial={{ width: 0 }} animate={{ width: `${masteryPercent}%` }} transition={{ duration: 0.8, delay: 0.2 + idx * 0.1, ease: "easeOut" }} className="h-full bg-[#0055A4] rounded-full" />
                             </div>
-                            <Button onClick={() => handleStartExam(cat)} variant="outline" className="w-full border-[var(--dash-card-border)] hover:border-[#0055A4] text-[var(--dash-text)] hover:text-[#0055A4] hover:bg-blue-500/5 font-bold rounded-xl h-9 text-sm transition-all gap-1.5">
+                            <Button onClick={() => handleStartExam(cat)} variant="outline" className="w-full border-[var(--dash-card-border)] hover:border-[#0055A4] bg-transparent text-[var(--dash-text)] hover:text-[#0055A4] hover:bg-blue-500/5 font-bold rounded-xl h-9 text-sm transition-all gap-1.5">
                               {tier !== 'premium' && <Lock className="h-3.5 w-3.5 text-slate-400" />}
                               S'entraîner
                             </Button>
@@ -437,7 +437,7 @@ export default function LearningDashboard() {
                             <Button
                               onClick={() => handleStartExam(cat)}
                               variant="outline"
-                              className="w-full border-[var(--dash-card-border)] hover:border-[#0055A4] text-[var(--dash-text)] hover:text-[#0055A4] hover:bg-blue-500/5 font-bold rounded-xl h-9 text-sm transition-all gap-1.5"
+                              className="w-full border-[var(--dash-card-border)] hover:border-[#0055A4] bg-transparent text-[var(--dash-text)] hover:text-[#0055A4] hover:bg-blue-500/5 font-bold rounded-xl h-9 text-sm transition-all gap-1.5"
                             >
                               {tier !== 'premium' && <Lock className="h-3.5 w-3.5 text-slate-400" />}
                               S'entraîner
