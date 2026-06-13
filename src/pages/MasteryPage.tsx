@@ -177,16 +177,18 @@ export default function MasteryPage() {
                           </span>
                           <Button
                             size="sm"
-                            className="rounded-xl h-8 px-4 text-xs font-bold gap-1.5 text-white"
-                            style={{ background: isPremium ? cat.color : undefined }}
-                            variant={isPremium ? 'default' : 'outline'}
+                            variant="outline"
+                            className="rounded-xl h-8 px-4 text-xs font-bold gap-1.5"
+                            style={isPremium
+                              ? { background: cat.color, color: '#ffffff', border: `1.5px solid ${cat.color}` }
+                              : { background: '#ffffff', color: '#1A1A1A', border: `1.5px solid ${cat.color}` }}
                             onClick={() => {
                               if (!isPremium) { setShowGate(true); return; }
                               navigate(`/quiz?mode=training&category=${encodeURIComponent(cat.key)}&fresh=1&limit=20`);
                             }}
                           >
-                            {!isPremium && <Lock className="h-3 w-3" />}
-                            <Zap className="h-3 w-3" />
+                            {!isPremium && <Lock className="h-3 w-3" style={{ color: cat.color }} />}
+                            <Zap className="h-3 w-3" style={{ color: isPremium ? '#ffffff' : cat.color }} />
                             S'entraîner
                           </Button>
                         </div>
