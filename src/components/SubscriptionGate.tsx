@@ -74,11 +74,19 @@ const SubscriptionGate = forwardRef<HTMLDivElement, SubscriptionGateProps>(
   function SubscriptionGate({ open, onOpenChange, requiredTier = 'standard', featureLabel }, ref) {
     const navigate = useNavigate();
     const { user } = useAuth();
-    const { isLifetime } = useSubscription();
+    const { isPremium, isStandardOrAbove } = useSubscription();
     const [selectedPlan, setSelectedPlan] = useState<PlanKey>('lifetime');
     const [isProcessing, setIsProcessing] = useState(false);
 
-    if (isLifetime) return null;
+    // Never show a wall to someone who already has what they're reaching for.
+    // Premium/lifetime users have everything; a Standard user only ever hits a
+    // wall on genuinely Premium-only features (requiredTier === 'premium').
+    if (isPremium) return null;
+    if (requiredTier === 'standard' && isStandardOrAbove) return null;
+
+    // Only offer plans that would actually unlock the gated feature.
+    const availablePlans: PlanKey[] =
+      requiredTier === 'premium' ? ['premium', 'lifetime'] : ['standard', 'premium', 'lifetime'];
 
     const plan = plans[selectedPlan];
 
@@ -136,7 +144,7 @@ const SubscriptionGate = forwardRef<HTMLDivElement, SubscriptionGateProps>(
 
             {/* Plan toggle */}
             <div className="flex gap-2 p-1 bg-slate-100 rounded-xl mb-5">
-              {(['standard', 'premium', 'lifetime'] as PlanKey[]).map((id) => {
+              {availablePlans.map((id) => {
                 const p = plans[id];
                 const isActive = selectedPlan === id;
                 return (
