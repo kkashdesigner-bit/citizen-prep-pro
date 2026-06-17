@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { BookOpen, Crown, ArrowRight, Sparkles, X } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface DemoExamPopupProps {
   open: boolean;
@@ -39,6 +40,7 @@ const progressVariants = {
 
 export default function DemoExamPopup({ open, onOpenChange }: DemoExamPopupProps) {
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   const handleContinueDemo = () => {
     onOpenChange(false);
@@ -73,7 +75,7 @@ export default function DemoExamPopup({ open, onOpenChange }: DemoExamPopupProps
               <button
                 onClick={() => onOpenChange(false)}
                 className="absolute top-4 right-4 z-20 h-8 w-8 rounded-full bg-slate-100/80 hover:bg-slate-200 flex items-center justify-center text-slate-400 hover:text-slate-600 transition-all duration-200 cursor-pointer"
-                aria-label="Fermer"
+                aria-label={t('common.close')}
               >
                 <X className="w-4 h-4" />
               </button>
@@ -89,18 +91,18 @@ export default function DemoExamPopup({ open, onOpenChange }: DemoExamPopupProps
                 <motion.div variants={childVariants} className="flex items-center gap-2 mb-5">
                   <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-[#0055A4]/10 to-[#0055A4]/5 border border-[#0055A4]/15 text-[#0055A4] text-xs font-semibold">
                     <BookOpen className="w-3 h-3" />
-                    Version Démo
+                    {t('demo.version')}
                   </span>
                 </motion.div>
 
                 {/* Title */}
                 <motion.h2 variants={childVariants} className="text-2xl font-bold text-slate-900 mb-2">
-                  Examen d'essai gratuit
+                  {t('demo.title')}
                 </motion.h2>
 
                 {/* Description */}
                 <motion.p variants={childVariants} className="text-sm text-slate-500 leading-relaxed mb-6">
-                  Découvrez le format de l'examen civique avec un aperçu de nos questions.
+                  {t('demo.desc')}
                 </motion.p>
 
                 {/* Progress card */}
@@ -115,15 +117,15 @@ export default function DemoExamPopup({ open, onOpenChange }: DemoExamPopupProps
                         <BookOpen className="w-5 h-5 text-[#0055A4]" />
                       </div>
                       <div>
-                        <p className="text-sm font-bold text-slate-900">300 questions</p>
-                        <p className="text-xs text-slate-400">Incluses dans la démo</p>
+                        <p className="text-sm font-bold text-slate-900">{t('demo.questionsCount')}</p>
+                        <p className="text-xs text-slate-400">{t('demo.questionsInDemo')}</p>
                       </div>
                     </div>
                     <ArrowRight className="w-4 h-4 text-slate-300" />
                     <div className="flex items-center gap-3">
                       <div>
-                        <p className="text-sm font-bold text-[#0055A4] text-right">7 500 questions</p>
-                        <p className="text-xs text-slate-400 text-right">Banque complète</p>
+                        <p className="text-sm font-bold text-[#0055A4] text-right">{t('demo.questionsTotalCount')}</p>
+                        <p className="text-xs text-slate-400 text-right">{t('demo.questionsFullBank')}</p>
                       </div>
                       <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-[#0055A4] to-[#3a7cc7] flex items-center justify-center">
                         <Crown className="w-5 h-5 text-white" />
@@ -143,8 +145,8 @@ export default function DemoExamPopup({ open, onOpenChange }: DemoExamPopupProps
                     <div className="absolute inset-y-0 left-0 w-full rounded-full bg-gradient-to-r from-[#0055A4]/5 to-[#EF4135]/5" />
                   </div>
                   <div className="flex justify-between mt-2">
-                    <span className="text-[10px] font-medium text-slate-400">4% de la banque</span>
-                    <span className="text-[10px] font-medium text-[#0055A4]">100% avec abonnement</span>
+                    <span className="text-[10px] font-medium text-slate-400">{t('demo.bankPercentage')}</span>
+                    <span className="text-[10px] font-medium text-[#0055A4]">{t('demo.bankWithSubscription')}</span>
                   </div>
                 </motion.div>
 
@@ -155,13 +157,13 @@ export default function DemoExamPopup({ open, onOpenChange }: DemoExamPopupProps
                 >
                   <div className="flex items-center gap-2 mb-2.5">
                     <Sparkles className="w-4 h-4 text-amber-500" />
-                    <p className="text-xs font-bold text-slate-700 uppercase tracking-wide">En vous abonnant</p>
+                    <p className="text-xs font-bold text-slate-700 uppercase tracking-wide">{t('demo.subscribingTitle')}</p>
                   </div>
                   <ul className="space-y-1.5">
                     {[
-                      '7 500 questions officielles',
-                      'Examens blancs illimités',
-                      '100 classes avec parcours guidé',
+                      t('demo.subscribingFeat1'),
+                      t('demo.subscribingFeat2'),
+                      t('demo.subscribingFeat3'),
                     ].map((feat) => (
                       <li key={feat} className="flex items-center gap-2 text-xs text-slate-600">
                         <div className="h-1 w-1 rounded-full bg-[#0055A4]" />
@@ -178,7 +180,7 @@ export default function DemoExamPopup({ open, onOpenChange }: DemoExamPopupProps
                     className="w-full rounded-xl font-bold text-sm py-5 text-white shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] bg-gradient-to-r from-[#0055A4] to-[#3a7cc7] hover:from-[#003d7a] hover:to-[#2f6aad] cursor-pointer"
                   >
                     <Crown className="w-4 h-4 mr-2" />
-                    S'abonner — Débloquer tout
+                    {t('demo.subscribeCta')}
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
                   <Button
@@ -186,13 +188,13 @@ export default function DemoExamPopup({ open, onOpenChange }: DemoExamPopupProps
                     onClick={handleContinueDemo}
                     className="w-full rounded-xl font-medium text-sm py-5 border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-all duration-200 cursor-pointer"
                   >
-                    Continuer avec la démo (300 questions)
+                    {t('demo.continueCta')}
                   </Button>
                 </motion.div>
 
                 {/* Footer */}
                 <motion.p variants={childVariants} className="text-[10px] text-slate-400 text-center mt-4">
-                  À partir de 6,99€/mois · Sans engagement · Annulation libre
+                  {t('demo.footerText')}
                 </motion.p>
               </motion.div>
             </motion.div>

@@ -54,8 +54,8 @@ export default function HeroSection() {
             <span className="text-[#0055A4] font-black text-sm">Q</span>
           </div>
           <div>
-            <p className="text-sm font-bold text-slate-800 mb-1.5 leading-snug">Quelle est la devise de la République ?</p>
-            <p className="text-[11px] font-semibold text-[#0055A4] bg-[#0055A4]/8 px-2 py-0.5 rounded-full inline-block">Liberté, Égalité, Fraternité</p>
+            <p className="text-sm font-bold text-slate-800 mb-1.5 leading-snug">{t('hero.card1.q')}</p>
+            <p className="text-[11px] font-semibold text-[#0055A4] bg-[#0055A4]/8 px-2 py-0.5 rounded-full inline-block">{t('hero.card1.a')}</p>
           </div>
         </div>
       </div>
@@ -69,8 +69,8 @@ export default function HeroSection() {
             <span className="text-[#EF4135] font-black text-sm">Q</span>
           </div>
           <div>
-            <p className="text-sm font-bold text-slate-800 mb-1.5 leading-snug">Qui a écrit La Marseillaise ?</p>
-            <p className="text-[11px] font-semibold text-[#EF4135] bg-[#EF4135]/8 px-2 py-0.5 rounded-full inline-block">Rouget de Lisle</p>
+            <p className="text-sm font-bold text-slate-800 mb-1.5 leading-snug">{t('hero.card2.q')}</p>
+            <p className="text-[11px] font-semibold text-[#EF4135] bg-[#EF4135]/8 px-2 py-0.5 rounded-full inline-block">{t('hero.card2.a')}</p>
           </div>
         </div>
       </div>
@@ -84,8 +84,8 @@ export default function HeroSection() {
             <span className="text-amber-600 font-black text-sm">Q</span>
           </div>
           <div>
-            <p className="text-sm font-bold text-slate-800 mb-1.5 leading-snug">En quelle année : la Révolution française ?</p>
-            <p className="text-[11px] font-semibold text-amber-600 bg-amber-500/8 px-2 py-0.5 rounded-full inline-block">1789</p>
+            <p className="text-sm font-bold text-slate-800 mb-1.5 leading-snug">{t('hero.card3.q')}</p>
+            <p className="text-[11px] font-semibold text-amber-600 bg-amber-500/8 px-2 py-0.5 rounded-full inline-block">{t('hero.card3.a')}</p>
           </div>
         </div>
       </div>
@@ -105,7 +105,7 @@ export default function HeroSection() {
         >
           <h1 className="font-serif font-black tracking-tight text-slate-900 leading-[1.1]">
             <span className="block text-3xl sm:text-5xl md:text-6xl lg:text-7xl">
-              Tout ce qu'il faut savoir
+              {t('hero.title1')}
             </span>
             {/* Gradient on its own block — no overflow clip from parent h1 */}
             <span
@@ -118,7 +118,7 @@ export default function HeroSection() {
                 paddingBottom: '0.1em', /* prevents descender clip */
               }}
             >
-              sur la France.
+              {t('hero.title2')}
             </span>
           </h1>
         </div>
@@ -138,9 +138,9 @@ export default function HeroSection() {
           className={`mb-6 md:mb-8 max-w-lg text-center text-sm sm:text-base text-slate-500 font-medium transition-all duration-700 leading-relaxed ${loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
           style={{ transitionDelay: '450ms' }}
         >
-          7 034 questions officielles&nbsp;·&nbsp;5 thèmes&nbsp;·&nbsp;100 cours
+          {t('hero.subtext1')}
           <br className="hidden sm:block" />
-          Tout pour réussir l'examen civique 2026.
+          {t('hero.subtext2')}
         </p>
 
         {/* Social proof bar */}
@@ -205,12 +205,12 @@ export default function HeroSection() {
         >
           <span className="flex items-center gap-1.5 text-[11px] text-slate-400 font-medium">
             <Shield className="h-3 w-3 text-emerald-500" />
-            3 jours gratuits
+            {t('hero.trust.days')}
           </span>
           <span className="h-3 w-px bg-slate-200" />
-          <span className="text-[11px] text-slate-400 font-medium">Sans carte requise</span>
+          <span className="text-[11px] text-slate-400 font-medium">{t('hero.trust.noCard')}</span>
           <span className="h-3 w-px bg-slate-200" />
-          <span className="text-[11px] text-slate-400 font-medium">Annulation libre</span>
+          <span className="text-[11px] text-slate-400 font-medium">{t('hero.trust.freeCancel')}</span>
         </div>
       </div>
 

@@ -16,6 +16,15 @@ function identifyForClarity(user: User) {
   }
 }
 
+/** Mask display name for public privacy (first 3 letters + ...) */
+function maskDisplayName(name: string | null) {
+  if (!name) return 'App';
+  let base = name.split('@')[0];
+  base = base.replace(/\.\.\.$/, '');
+  if (base.length <= 3) return base;
+  return base.substring(0, 3) + '...';
+}
+
 export function useAuth() {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
@@ -46,7 +55,7 @@ export function useAuth() {
             supabase
               .from('profiles')
               .update({
-                display_name: fullName || newSession.user.email,
+                display_name: maskDisplayName(fullName || newSession.user.email),
                 avatar_url: avatar,
               })
               .eq('id', newSession.user.id)

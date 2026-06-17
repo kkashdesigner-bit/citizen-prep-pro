@@ -5,21 +5,23 @@ import { useDashboardStats } from '@/hooks/useDashboardStats';
 import WeeklyActivityChart from '@/components/learn/WeeklyActivityChart';
 import DomainMasteryBars from '@/components/learn/DomainMasteryBars';
 import RecentActivityLog from '@/components/learn/RecentActivityLog';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface DashboardTabsProps {
     children: React.ReactNode;
 }
 
 const TABS = [
-    { key: 'overview', label: 'Aperçu', icon: LayoutGrid },
-    { key: 'stats', label: 'Statistiques', icon: BarChart3 },
-    { key: 'history', label: 'Historique', icon: History },
+    { key: 'overview', labelKey: 'dashboard.tab.overview', icon: LayoutGrid },
+    { key: 'stats', labelKey: 'dashboard.tab.stats', icon: BarChart3 },
+    { key: 'history', labelKey: 'dashboard.tab.history', icon: History },
 ];
 
 export default function DashboardTabs({ children }: DashboardTabsProps) {
     const [activeTab, setActiveTab] = useState('overview');
     const stats = useDashboardStats();
     const reducedMotion = useReducedMotion();
+    const { t } = useLanguage();
 
     return (
         <div className="mb-8">
@@ -27,10 +29,10 @@ export default function DashboardTabs({ children }: DashboardTabsProps) {
             <div
                 data-tour="progress"
                 role="tablist"
-                aria-label="Sections du tableau de bord"
+                aria-label={t('dashboard.tab.aria')}
                 className="inline-flex items-center gap-1 p-1 mb-6 rounded-2xl border border-[var(--dash-card-border)] bg-[var(--dash-card)]/80 backdrop-blur-xl shadow-[0_2px_12px_rgba(0,0,0,0.04)]"
             >
-                {TABS.map(({ key, label, icon: Icon }) => {
+                {TABS.map(({ key, labelKey, icon: Icon }) => {
                     const isActive = activeTab === key;
                     return (
                         <button
@@ -52,7 +54,7 @@ export default function DashboardTabs({ children }: DashboardTabsProps) {
                             )}
                             <span className="relative z-10 inline-flex items-center gap-1.5">
                                 <Icon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                                {label}
+                                {t(labelKey)}
                             </span>
                         </button>
                     );
@@ -73,10 +75,10 @@ export default function DashboardTabs({ children }: DashboardTabsProps) {
                         <div className="space-y-6">
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                                 {[
-                                    { label: 'Taux de réussite', value: `${stats.successRate}%`, accent: '#0055A4' },
-                                    { label: 'Série de jours', value: stats.streak, accent: '#F59E0B' },
-                                    { label: 'XP total', value: stats.totalXP, accent: '#8B5CF6' },
-                                    { label: 'À réviser', value: stats.wrongQuestionsCount, accent: '#EF4135' },
+                                    { label: t('dashboard.tab.stat.success'), value: `${stats.successRate}%`, accent: '#0055A4' },
+                                    { label: t('dashboard.tab.stat.streak'), value: stats.streak, accent: '#F59E0B' },
+                                    { label: t('dashboard.tab.stat.xp'), value: stats.totalXP, accent: '#8B5CF6' },
+                                    { label: t('dashboard.tab.stat.review'), value: stats.wrongQuestionsCount, accent: '#EF4135' },
                                 ].map((s, i) => (
                                     <motion.div
                                         key={s.label}
@@ -103,8 +105,8 @@ export default function DashboardTabs({ children }: DashboardTabsProps) {
                         ) : (
                             <div className="text-center py-16 text-[var(--dash-text-muted)] rounded-2xl border border-dashed border-[var(--dash-card-border)] bg-[var(--dash-card)]/50">
                                 <History className="h-8 w-8 mx-auto mb-3 opacity-40" />
-                                <p className="text-lg font-semibold mb-1">Aucun examen pour l'instant</p>
-                                <p className="text-sm">Lancez votre premier quiz pour voir votre historique ici.</p>
+                                <p className="text-lg font-semibold mb-1">{t('dashboard.tab.history.empty.title')}</p>
+                                <p className="text-sm">{t('dashboard.tab.history.empty.desc')}</p>
                             </div>
                         )
                     )}

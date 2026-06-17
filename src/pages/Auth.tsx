@@ -18,6 +18,14 @@ import { useEffect, useRef } from 'react';
 
 const AVATARS = Array.from({ length: 8 }, (_, i) => `/examen-civique-avatar-${i + 1}.webp`);
 
+const maskDisplayName = (name: string) => {
+  if (!name) return 'App';
+  let base = name.split('@')[0];
+  base = base.replace(/\.\.\.$/, '');
+  if (base.length <= 3) return base;
+  return base.substring(0, 3) + '...';
+};
+
 export default function Auth() {
   const [isLogin, setIsLogin] = useState(true);
   const [isForgot, setIsForgot] = useState(false);
@@ -135,7 +143,7 @@ export default function Auth() {
         if (displayName.trim()) {
           const { data: { user } } = await supabase.auth.getUser();
           if (user) {
-            await supabase.from('profiles').update({ display_name: displayName.trim() }).eq('id', user.id);
+            await supabase.from('profiles').update({ display_name: maskDisplayName(displayName.trim()) }).eq('id', user.id);
           }
         }
         toast({

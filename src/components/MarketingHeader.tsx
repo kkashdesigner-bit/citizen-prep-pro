@@ -64,9 +64,9 @@ export default function MarketingHeader() {
             : null;
 
     const navLinks = [
-        { label: "L'examen", id: 'exam-decoder' },
-        { label: 'Comment ça marche', id: 'how-it-works' },
-        { label: 'Tarifs', id: 'pricing' },
+        { label: t('nav.exam'), id: 'exam-decoder' },
+        { label: t('nav.howItWorks'), id: 'how-it-works' },
+        { label: t('nav.pricing'), id: 'pricing' },
     ];
 
     return (
@@ -148,7 +148,7 @@ export default function MarketingHeader() {
                                 onClick={() => navigate('/learn')}
                             >
                                 <LayoutDashboard className="mr-1.5 h-4 w-4" />
-                                Tableau de bord
+                                {t('nav.dashboard')}
                             </Button>
 
                             {/* Avatar dropdown */}
@@ -170,14 +170,14 @@ export default function MarketingHeader() {
                                     </div>
                                     <DropdownMenuSeparator />
                                     <DropdownMenuItem onClick={() => navigate('/learn')}>
-                                        <User className="mr-2 h-4 w-4" /> Profil
+                                        <User className="mr-2 h-4 w-4" /> {t('nav.profile')}
                                     </DropdownMenuItem>
                                     <DropdownMenuItem onClick={() => navigate('/learn')}>
-                                        <Settings className="mr-2 h-4 w-4" /> Paramètres
+                                        <Settings className="mr-2 h-4 w-4" /> {t('nav.settings')}
                                     </DropdownMenuItem>
                                     <DropdownMenuSeparator />
                                     <DropdownMenuItem onClick={handleSignOut} className="text-red-500 focus:text-red-500">
-                                        <LogOut className="mr-2 h-4 w-4" /> Déconnexion
+                                        <LogOut className="mr-2 h-4 w-4" /> {t('nav.logout')}
                                     </DropdownMenuItem>
                                 </DropdownMenuContent>
                             </DropdownMenu>
@@ -190,14 +190,14 @@ export default function MarketingHeader() {
                                 className={`font-medium ${scrolled ? 'text-slate-600 hover:text-slate-900' : 'text-slate-700'}`}
                                 onClick={() => navigate('/auth')}
                             >
-                                Se connecter
+                                {t('nav.loginButton')}
                             </Button>
                             <Button
                                 size="sm"
                                 className="bg-[#135bec] hover:bg-[#0f4fd4] text-white font-bold rounded-full px-5 shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 transition-all hover:scale-[1.03]"
                                 onClick={() => navigate('/auth')}
                             >
-                                Essai Gratuit
+                                {t('nav.freeTrial')}
                             </Button>
                         </>
                     )}
@@ -212,7 +212,7 @@ export default function MarketingHeader() {
                             className="bg-[#135bec] hover:bg-[#0f4fd4] text-white font-bold rounded-full px-4 text-xs shadow-md"
                             onClick={() => navigate('/auth')}
                         >
-                            Essai Gratuit
+                            {t('nav.freeTrial')}
                         </Button>
                     )}
 
@@ -240,11 +240,11 @@ export default function MarketingHeader() {
                                 </div>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem onClick={() => navigate('/learn')}>
-                                    <LayoutDashboard className="mr-2 h-4 w-4" /> Tableau de bord
+                                    <LayoutDashboard className="mr-2 h-4 w-4" /> {t('nav.dashboard')}
                                 </DropdownMenuItem>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem onClick={handleSignOut} className="text-red-500 focus:text-red-500">
-                                    <LogOut className="mr-2 h-4 w-4" /> Déconnexion
+                                    <LogOut className="mr-2 h-4 w-4" /> {t('nav.logout')}
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
@@ -283,27 +283,27 @@ export default function MarketingHeader() {
                                     className="w-full text-left px-4 py-3.5 text-lg font-semibold text-slate-800 hover:bg-slate-50 rounded-xl transition-colors flex items-center gap-2"
                                 >
                                     <LayoutDashboard className="h-5 w-5 text-blue-600" />
-                                    Tableau de bord
+                                    {t('nav.dashboard')}
                                 </button>
                             )}
                         </div>
 
                         {/* Bottom Actions */}
                         <div className="px-6 pb-8 space-y-3 border-t border-slate-100 pt-4">
-                            {!user && (
+                             {!user && (
                                 <>
                                     <Button
                                         className="w-full bg-[#135bec] hover:bg-[#0f4fd4] text-white font-bold rounded-xl py-6 text-base shadow-lg"
                                         onClick={() => { navigate('/auth'); setMobileMenuOpen(false); }}
                                     >
-                                        Commencer l'essai gratuit
+                                        {t('nav.freeTrial')}
                                     </Button>
                                     <Button
                                         variant="outline"
                                         className="w-full rounded-xl py-5 text-base font-medium border-slate-200"
                                         onClick={() => { navigate('/auth'); setMobileMenuOpen(false); }}
                                     >
-                                        Se connecter
+                                        {t('nav.loginButton')}
                                     </Button>
                                 </>
                             )}

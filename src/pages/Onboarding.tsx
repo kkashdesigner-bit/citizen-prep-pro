@@ -30,6 +30,14 @@ type OnboardingData = {
   exam_date: string | null;
 };
 
+const maskDisplayName = (name: string | null) => {
+  if (!name) return 'App';
+  let base = name.split('@')[0];
+  base = base.replace(/\.\.\.$/, '');
+  if (base.length <= 3) return base;
+  return base.substring(0, 3) + '...';
+};
+
 export default function Onboarding() {
   const { t } = useLanguage();
   const navigate = useNavigate();
@@ -86,7 +94,7 @@ export default function Onboarding() {
     // Also sync avatar + display name to profiles table
     if (user) {
       await supabase.from('profiles').update({
-        display_name: data.first_name || null,
+        display_name: data.first_name ? maskDisplayName(data.first_name) : null,
         avatar_url: data.avatar_url,
       }).eq('id', user.id);
     }

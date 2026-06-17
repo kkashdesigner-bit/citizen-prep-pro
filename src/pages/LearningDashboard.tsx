@@ -2,7 +2,7 @@ import { useState } from 'react';
 import SEOHead from '@/components/SEOHead';
 import { useNavigate } from 'react-router-dom';
 import { useSubscription } from '@/hooks/useSubscription';
-import { useUserProfile, GOAL_LABELS } from '@/hooks/useUserProfile';
+import { useUserProfile } from '@/hooks/useUserProfile';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useDashboardStats } from '@/hooks/useDashboardStats';
 import LearnSidebar from '@/components/learn/LearnSidebar';
@@ -33,12 +33,12 @@ import ReferralSection from '@/components/ReferralSection';
 import { generateReferralCode } from '@/utils/referral';
 import { useAuth } from '@/hooks/useAuth';
 
-const CATEGORY_MAP: Record<string, { emoji: string; gradient: string; shadow: string; label: string; desc: string; dbCategory: string; image: string; imageAlt: string }> = {
-  Principles: { emoji: '⚖️', gradient: 'from-blue-600 via-blue-500 to-indigo-600', shadow: 'shadow-blue-500/30', label: 'Fondamentaux', desc: 'Valeurs et principes de la République', dbCategory: 'Principles and values of the Republic', image: '/examen-civique-qcm-valeurs-republique-francaise.jpg', imageAlt: 'QCM examen civique — Valeurs et principes de la République française' },
-  Institutions: { emoji: '🏛️', gradient: 'from-indigo-600 via-purple-500 to-violet-600', shadow: 'shadow-indigo-500/30', label: 'Institutions', desc: "Fonctionnement de l'État et des institutions", dbCategory: 'Institutional and political system', image: '/examen-civique-qcm-institutions-systeme-politique.jpg', imageAlt: 'QCM examen civique — Institutions et système politique français' },
-  Rights: { emoji: '🛡️', gradient: 'from-emerald-600 via-green-500 to-teal-600', shadow: 'shadow-emerald-500/30', label: 'Droits & Devoirs', desc: 'Droits et devoirs du citoyen', dbCategory: 'Rights and duties', image: '/examen-civique-qcm-droits-devoirs-citoyen.jpg', imageAlt: 'QCM examen civique — Droits et devoirs du citoyen français' },
-  History: { emoji: '📜', gradient: 'from-amber-600 via-orange-500 to-yellow-600', shadow: 'shadow-amber-500/30', label: 'Histoire & Culture', desc: 'Histoire de France et repères clés', dbCategory: 'History, geography and culture', image: '/examen-civique-qcm-histoire-geographie-culture.jpg', imageAlt: 'QCM examen civique — Histoire géographie culture de France' },
-  Living: { emoji: '🏠', gradient: 'from-sky-600 via-cyan-500 to-blue-600', shadow: 'shadow-sky-500/30', label: 'Vivre en société', desc: 'Vie quotidienne, éducation, santé, emploi', dbCategory: 'Living in French society', image: '/examen-civique-qcm-vivre-societe-integration.jpg', imageAlt: 'QCM examen civique — Vivre en société et intégration en France' },
+const CATEGORY_MAP: Record<string, { emoji: string; gradient: string; shadow: string; labelKey: string; descKey: string; dbCategory: string; image: string; imageAltKey: string }> = {
+  Principles: { emoji: '⚖️', gradient: 'from-blue-600 via-blue-500 to-indigo-600', shadow: 'shadow-blue-500/30', labelKey: 'theme.valeurs.label', descKey: 'cat.Principles.desc', dbCategory: 'Principles and values of the Republic', image: '/examen-civique-qcm-valeurs-republique-francaise.jpg', imageAltKey: 'theme.valeurs.label' },
+  Institutions: { emoji: '🏛️', gradient: 'from-indigo-600 via-purple-500 to-violet-600', shadow: 'shadow-indigo-500/30', labelKey: 'theme.institutions.label', descKey: 'cat.Institutions.desc', dbCategory: 'Institutional and political system', image: '/examen-civique-qcm-institutions-systeme-politique.jpg', imageAltKey: 'theme.institutions.label' },
+  Rights: { emoji: '🛡️', gradient: 'from-emerald-600 via-green-500 to-teal-600', shadow: 'shadow-emerald-500/30', labelKey: 'theme.droits.label', descKey: 'cat.Rights.desc', dbCategory: 'Rights and duties', image: '/examen-civique-qcm-droits-devoirs-citoyen.jpg', imageAltKey: 'theme.droits.label' },
+  History: { emoji: '📜', gradient: 'from-amber-600 via-orange-500 to-yellow-600', shadow: 'shadow-amber-500/30', labelKey: 'theme.histoire.label', descKey: 'cat.History.desc', dbCategory: 'History, geography and culture', image: '/examen-civique-qcm-histoire-geographie-culture.jpg', imageAltKey: 'theme.histoire.label' },
+  Living: { emoji: '🏠', gradient: 'from-sky-600 via-cyan-500 to-blue-600', shadow: 'shadow-sky-500/30', labelKey: 'theme.societe.label', descKey: 'cat.Living.desc', dbCategory: 'Living in French society', image: '/examen-civique-qcm-vivre-societe-integration.jpg', imageAltKey: 'theme.societe.label' },
 };
 
 export default function LearningDashboard() {
@@ -110,9 +110,16 @@ export default function LearningDashboard() {
     );
   }
 
-  const firstName = userProfile?.first_name || stats.displayName.split(' ')[0] || stats.displayName || 'Apprenant';
+  const getGoalTranslationKey = (goal: string) => {
+    if (goal === 'naturalisation') return 'dashboard.goal.option.nat.label';
+    if (goal === 'carte_resident') return 'dashboard.goal.option.cr.label';
+    if (goal === 'csp') return 'dashboard.goal.option.csp.label';
+    return '';
+  };
+  const firstName = userProfile?.first_name || stats.displayName.split(' ')[0] || stats.displayName || t('dashboard.greeting.student');
   const displayAvatar = userProfile?.avatar_url || stats.avatarUrl;
-  const personaGoalLabel = userProfile?.goal_type ? GOAL_LABELS[userProfile.goal_type as keyof typeof GOAL_LABELS] : 'Naturalisation';
+  const goalKey = userProfile?.goal_type ? getGoalTranslationKey(userProfile.goal_type) : '';
+  const personaGoalLabel = goalKey ? t(goalKey) : t('dashboard.goal.option.nat.label');
 
   // Find domain mastery for category grid
   const getMasteryForCategory = (dbCategory: string) => {
@@ -202,7 +209,7 @@ export default function LearningDashboard() {
                       animate={{ scale: 1, rotate: 0 }}
                       transition={{ type: 'spring', stiffness: 260, damping: 14, delay: 0.9 }}
                       className="absolute -bottom-0.5 -right-0.5 sm:bottom-0 sm:right-0 flex items-center gap-0.5 rounded-full bg-gradient-to-br from-[#F59E0B] to-[#F97316] text-white text-[9px] sm:text-[11px] font-bold pl-1 pr-1.5 py-0.5 shadow-[0_2px_8px_rgba(245,158,11,0.5)] ring-2 ring-[var(--dash-card)]"
-                      title={`Série de ${stats.streak} jours`}
+                      title={t('dashboard.streak.days').replace('{count}', String(stats.streak))}
                     >
                       <Flame className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
                       {stats.streak}
@@ -213,7 +220,7 @@ export default function LearningDashboard() {
                 <div className="flex-1 min-w-0 z-10">
                   <div className="flex items-start justify-between gap-2">
                     <h1 className="text-base sm:text-2xl md:text-3xl font-bold text-[var(--dash-text)] tracking-tight truncate">
-                      {new Date().getHours() >= 18 ? 'Bonsoir' : 'Bonjour'},{' '}
+                      {new Date().getHours() >= 18 ? t('dashboard.greeting.evening') : t('dashboard.greeting.morning')},{' '}
                       <span className="bg-gradient-to-r from-[#0055A4] to-[#1B6ED6] bg-clip-text text-transparent">{firstName}</span>{' '}
                       <span className="inline-block animate-wave origin-bottom-right">👋</span>
                     </h1>
@@ -223,27 +230,29 @@ export default function LearningDashboard() {
                   </div>
                   <p className="hidden sm:block text-sm text-[var(--dash-text-muted)] mt-0.5 font-medium">
                     {stats.dailyGoalCurrent >= stats.dailyGoalTarget
-                      ? 'Objectif du jour atteint — bravo ! 🎉'
-                      : `Plus que ${Math.max(0, stats.dailyGoalTarget - stats.dailyGoalCurrent)} question${stats.dailyGoalTarget - stats.dailyGoalCurrent > 1 ? 's' : ''} pour atteindre votre objectif du jour.`}
+                      ? t('dashboard.daily.reached')
+                      : t('dashboard.daily.remaining')
+                          .replace('{count}', String(Math.max(0, stats.dailyGoalTarget - stats.dailyGoalCurrent)))
+                          .replace('{s}', stats.dailyGoalTarget - stats.dailyGoalCurrent > 1 ? 's' : '')}
                   </p>
 
                   <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mt-1.5 sm:mt-3">
                     {/* Tier Badge */}
                     {isLifetime ? (
                       <div className="inline-flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-bold border bg-violet-100 text-violet-700 border-violet-200">
-                        <Sparkles className="h-3 w-3 sm:h-3.5 sm:w-3.5" /> Accès à Vie
+                        <Sparkles className="h-3 w-3 sm:h-3.5 sm:w-3.5" /> {t('dashboard.tier.lifetime')}
                       </div>
                     ) : isPremium ? (
                       <div className="inline-flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-bold border bg-amber-100 text-amber-700 border-amber-200">
-                        <Crown className="h-3 w-3 sm:h-3.5 sm:w-3.5" /> Premium
+                        <Crown className="h-3 w-3 sm:h-3.5 sm:w-3.5" /> {t('dashboard.tier.premium')}
                       </div>
                     ) : isStandardOrAbove ? (
                       <div className="inline-flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-bold border bg-[#f04e42]/10 text-[#f04e42] border-[#f04e42]/20">
-                        <Sparkles className="h-3 w-3 sm:h-3.5 sm:w-3.5" /> Standard
+                        <Sparkles className="h-3 w-3 sm:h-3.5 sm:w-3.5" /> {t('dashboard.tier.standard')}
                       </div>
                     ) : (
                       <div className="inline-flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-bold border bg-[#f04e42]/10 text-[#f04e42] border-[#f04e42]/20">
-                        Gratuit
+                        {t('dashboard.tier.free')}
                       </div>
                     )}
 
@@ -255,7 +264,7 @@ export default function LearningDashboard() {
                       className="inline-flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-bold border border-[var(--dash-card-border)] bg-[var(--dash-card)] text-[var(--dash-text-muted)] hover:border-[#0055A4]/40 hover:text-[#0055A4] transition-colors shadow-sm"
                     >
                       <Target className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-[#0055A4]" />
-                      <span className="hidden sm:inline">Objectif : </span>{personaGoalLabel}
+                      <span className="hidden sm:inline">{t('dashboard.goal.prefix')}</span>{personaGoalLabel}
                     </motion.button>
                   </div>
                 </div>
@@ -266,7 +275,7 @@ export default function LearningDashboard() {
                 {/* Success Rate */}
                 <div className="flex flex-col items-center py-3 gap-0.5">
                   <span className="text-lg font-bold text-[#0055A4]">{stats.successRate}%</span>
-                  <span className="text-[9px] font-bold text-[var(--dash-text-muted)] uppercase tracking-wider">Réussite</span>
+                  <span className="text-[9px] font-bold text-[var(--dash-text-muted)] uppercase tracking-wider">{t('dashboard.stats.success')}</span>
                 </div>
                 {/* Streak */}
                 <div className="flex flex-col items-center py-3 gap-0.5">
@@ -274,12 +283,12 @@ export default function LearningDashboard() {
                     <Flame className={`h-4 w-4 ${stats.streak > 0 ? 'text-[#F59E0B]' : 'text-[var(--dash-text-muted)]'}`} />
                     <span className="text-lg font-bold text-[var(--dash-text)]">{stats.streak}</span>
                   </div>
-                  <span className="text-[9px] font-bold text-[var(--dash-text-muted)] uppercase tracking-wider">Série</span>
+                  <span className="text-[9px] font-bold text-[var(--dash-text-muted)] uppercase tracking-wider">{t('dashboard.stats.streak')}</span>
                 </div>
                 {/* Daily Goal */}
                 <div className="flex flex-col items-center py-3 gap-0.5">
                   <span className="text-lg font-bold text-[#22C55E]">{stats.dailyGoalCurrent}/{stats.dailyGoalTarget}</span>
-                  <span className="text-[9px] font-bold text-[var(--dash-text-muted)] uppercase tracking-wider">Quotidien</span>
+                  <span className="text-[9px] font-bold text-[var(--dash-text-muted)] uppercase tracking-wider">{t('dashboard.stats.daily')}</span>
                 </div>
               </div>
             </motion.div>
@@ -400,17 +409,17 @@ export default function LearningDashboard() {
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="text-base font-bold text-[var(--dash-text)] flex items-center gap-2">
-                      <span className="text-lg">🧠</span> Révision du jour
+                      <span className="text-lg">🧠</span> {t('dashboard.revision.title')}
                     </h3>
                     <p className="text-xs text-[var(--dash-text-muted)] mt-1">
-                      Révisez les questions que vous êtes sur le point d'oublier
+                      {t('dashboard.revision.desc')}
                     </p>
                   </div>
                   <Button
                     onClick={() => navigate('/quiz?mode=revision')}
                     className="bg-[#0055A4] hover:bg-[#1B6ED6] text-white font-bold rounded-xl h-10 px-5 text-sm"
                   >
-                    Commencer
+                    {t('dashboard.revision.btn')}
                   </Button>
                 </div>
               </div>
@@ -430,7 +439,7 @@ export default function LearningDashboard() {
             <motion.div variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0 } }}>
               <div className="mb-6">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-bold text-[var(--dash-text)]" data-tour="categories">Entraînement par catégorie</h3>
+                  <h3 className="text-lg font-bold text-[var(--dash-text)]" data-tour="categories">{t('dashboard.categories.title')}</h3>
                   {/* Desktop nav arrows */}
                   <div className="hidden sm:flex gap-2">
                     <button
@@ -462,16 +471,20 @@ export default function LearningDashboard() {
                         className="bg-[var(--dash-card)] rounded-2xl border border-[var(--dash-card-border)] shadow-[0_2px_10px_rgba(0,0,0,0.03)] flex flex-col overflow-hidden snap-center shrink-0 w-[72vw] max-w-[280px]"
                       >
                         <div className="relative w-full h-[150px] overflow-hidden">
-                          <img src={info.image} alt={info.imageAlt} className="w-full h-full object-cover" loading="lazy" />
+                          <img src={info.image} alt={t(info.imageAltKey)} className="w-full h-full object-cover" loading="lazy" />
                           {tier !== 'premium' && (
                             <span className="absolute top-2.5 right-2.5 bg-amber-500/90 backdrop-blur-sm text-white text-[9px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow-lg">Premium</span>
                           )}
                         </div>
                         <div className="p-4 flex flex-col flex-1">
-                          <p className="text-xs text-[var(--dash-text-muted)] font-medium mb-4 flex-1 line-clamp-2">{info.desc}</p>
+                          <h4 className="font-bold text-sm text-[var(--dash-text)] mb-1.5 flex items-center gap-1.5">
+                            <span className="text-base">{info.emoji}</span>
+                            {t(info.labelKey)}
+                          </h4>
+                          <p className="text-xs text-[var(--dash-text-muted)] font-medium mb-4 flex-1 line-clamp-2">{t(info.descKey)}</p>
                           <div className="space-y-2.5 mt-auto">
                             <div className="flex justify-between items-center text-[10px] font-bold text-[var(--dash-text-muted)] uppercase tracking-widest">
-                              <span>Progression</span>
+                              <span>{t('dashboard.categories.progression')}</span>
                               <span className="text-[#0055A4]">{masteryPercent}%</span>
                             </div>
                             <div className="h-1.5 w-full bg-[var(--dash-surface)] rounded-full overflow-hidden">
@@ -479,7 +492,7 @@ export default function LearningDashboard() {
                             </div>
                             <Button onClick={() => handleStartExam(cat)} variant="outline" className="w-full border-[var(--dash-card-border)] hover:border-[#0055A4] bg-transparent text-[var(--dash-text)] hover:text-[#0055A4] hover:bg-blue-500/5 font-bold rounded-xl h-9 text-sm transition-all gap-1.5">
                               {tier !== 'premium' && <Lock className="h-3.5 w-3.5 text-slate-400" />}
-                              S'entraîner
+                              {t('dashboard.categories.practice')}
                             </Button>
                           </div>
                         </div>
@@ -504,7 +517,7 @@ export default function LearningDashboard() {
                         <div className="relative w-full h-[150px] overflow-hidden">
                           <img
                             src={info.image}
-                            alt={info.imageAlt}
+                            alt={t(info.imageAltKey)}
                             className="w-full h-full object-cover"
                             loading="lazy"
                           />
@@ -513,11 +526,15 @@ export default function LearningDashboard() {
                           )}
                         </div>
                         <div className="p-4 flex flex-col flex-1">
-                          <p className="text-xs text-[var(--dash-text-muted)] font-medium mb-4 flex-1 line-clamp-2">{info.desc}</p>
+                          <h4 className="font-bold text-sm text-[var(--dash-text)] mb-1.5 flex items-center gap-1.5">
+                            <span className="text-base">{info.emoji}</span>
+                            {t(info.labelKey)}
+                          </h4>
+                          <p className="text-xs text-[var(--dash-text-muted)] font-medium mb-4 flex-1 line-clamp-2">{t(info.descKey)}</p>
 
                           <div className="space-y-2.5 mt-auto">
                             <div className="flex justify-between items-center text-[10px] font-bold text-[var(--dash-text-muted)] uppercase tracking-widest">
-                              <span>Progression</span>
+                              <span>{t('dashboard.categories.progression')}</span>
                               <span className="text-[#0055A4]">{masteryPercent}%</span>
                             </div>
                             <div className="h-1.5 w-full bg-[var(--dash-surface)] rounded-full overflow-hidden">
@@ -534,7 +551,7 @@ export default function LearningDashboard() {
                               className="w-full border-[var(--dash-card-border)] hover:border-[#0055A4] bg-transparent text-[var(--dash-text)] hover:text-[#0055A4] hover:bg-blue-500/5 font-bold rounded-xl h-9 text-sm transition-all gap-1.5"
                             >
                               {tier !== 'premium' && <Lock className="h-3.5 w-3.5 text-slate-400" />}
-                              S'entraîner
+                              {t('dashboard.categories.practice')}
                             </Button>
                           </div>
                         </div>
@@ -578,17 +595,17 @@ export default function LearningDashboard() {
                   data-tour="exam" className="bg-[var(--dash-card)] rounded-2xl border-2 border-[#0055A4] p-5 md:p-6 shadow-[0_4px_20px_rgba(0,85,164,0.06)] mb-8 relative overflow-hidden"
                 >
                   <div className="absolute top-0 right-0 p-3">
-                    <span className="bg-blue-500/10 text-[#0055A4] text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-widest">Recommandé</span>
+                    <span className="bg-blue-500/10 text-[#0055A4] text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-widest">{t('dashboard.exam.badge')}</span>
                   </div>
-                  <h2 className="text-lg sm:text-xl font-bold text-[var(--dash-text)] mb-1.5 mt-3">Examen Blanc</h2>
+                  <h2 className="text-lg sm:text-xl font-bold text-[var(--dash-text)] mb-1.5 mt-3">{t('dashboard.exam.title')}</h2>
                   <p className="text-xs sm:text-sm text-[var(--dash-text-muted)] font-medium mb-4 sm:mb-5 max-w-lg">
-                    40 questions aléatoires couvrant tous les domaines — évaluez votre niveau global.
+                    {t('dashboard.exam.desc')}
                   </p>
                   <div className="flex flex-wrap items-center gap-5 mb-6">
                     {[
-                      { icon: FileText, text: '40 Questions' },
-                      { icon: Clock, text: '~ 45 min' },
-                      { icon: Target, text: 'Seuil : 80%' },
+                      { icon: FileText, text: t('dashboard.exam.questions') },
+                      { icon: Clock, text: t('dashboard.exam.duration') },
+                      { icon: Target, text: t('dashboard.exam.threshold') },
                     ].map(({ icon: Icon, text }) => (
                       <div key={text} className="flex items-center gap-1.5">
                         <Icon className="h-4 w-4 text-[var(--dash-text-muted)]" />
@@ -600,7 +617,7 @@ export default function LearningDashboard() {
                     onClick={() => handleStartExam()}
                     className="w-full sm:w-auto bg-[#0055A4] hover:bg-[#1B6ED6] text-white font-bold rounded-xl h-11 px-8 shadow-[0_4px_14px_rgba(0,85,164,0.25)] hover:-translate-y-0.5 transition-all"
                   >
-                    Commencer l'examen
+                    {t('dashboard.exam.btn')}
                   </Button>
                 </motion.div>
 
@@ -621,7 +638,7 @@ export default function LearningDashboard() {
         </div>
       </main>
 
-      <SubscriptionGate open={showGate} onOpenChange={setShowGate} requiredTier={gateTier} featureLabel={gateTier === 'premium' ? 'Entraînement par catégorie' : 'Examens illimités'} />
+      <SubscriptionGate open={showGate} onOpenChange={setShowGate} requiredTier={gateTier} featureLabel={gateTier === 'premium' ? t('gate.feat4') : t('gate.feat2')} />
 
       <GuidedTour />
 
@@ -630,16 +647,16 @@ export default function LearningDashboard() {
         <DialogContent className="sm:max-w-md p-0 rounded-2xl overflow-hidden bg-[var(--dash-card)] border border-[var(--dash-card-border)] shadow-2xl">
           <div className="p-6">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-bold text-[var(--dash-text)]">Modifier mon objectif</h2>
+              <h2 className="text-xl font-bold text-[var(--dash-text)]">{t('dashboard.goal.title')}</h2>
               <button onClick={() => setShowGoalModal(false)} className="h-8 w-8 rounded-full bg-[var(--dash-surface)] hover:bg-[var(--dash-card-border)] flex items-center justify-center text-[var(--dash-text-muted)] transition-colors">
                 <X className="w-4 h-4" />
               </button>
             </div>
             <div className="space-y-3">
               {([
-                { value: 'naturalisation' as GoalType, label: 'Naturalisation française', desc: 'Devenir citoyen français' },
-                { value: 'carte_resident' as GoalType, label: 'Carte de Résident (CR)', desc: 'Obtenir la carte de résident de 10 ans' },
-                { value: 'csp' as GoalType, label: 'Carte de Séjour Pluriannuelle (CSP)', desc: 'Renouveler votre titre de séjour' },
+                { value: 'naturalisation' as GoalType, label: t('dashboard.goal.option.nat.label'), desc: t('dashboard.goal.option.nat.desc') },
+                { value: 'carte_resident' as GoalType, label: t('dashboard.goal.option.cr.label'), desc: t('dashboard.goal.option.cr.desc') },
+                { value: 'csp' as GoalType, label: t('dashboard.goal.option.csp.label'), desc: t('dashboard.goal.option.csp.desc') },
               ]).map(goal => {
                 const isActive = userProfile?.goal_type === goal.value;
                 return (
