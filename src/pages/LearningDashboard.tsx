@@ -634,6 +634,7 @@ export default function LearningDashboard() {
             leaderboard={stats.leaderboard}
             currentUserRank={stats.currentUserRank}
             currentUserElo={stats.currentUserElo}
+            currentUserGoalType={userProfile?.goal_type ?? null}
           />
         </div>
       </main>

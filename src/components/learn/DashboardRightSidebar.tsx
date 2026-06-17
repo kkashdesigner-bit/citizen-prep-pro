@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { CheckCircle, Lock, ArrowRight, Globe, Sparkles, Zap, Trophy } from 'lucide-react';
+import { CheckCircle, Lock, ArrowRight, Globe, Sparkles, Zap, Trophy, Target } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import RecentActivityLog from './RecentActivityLog';
 import FlashQuizCard from '@/components/flash-quiz/FlashQuizCard';
@@ -14,6 +14,7 @@ interface LearningJourneyProps {
     leaderboard: LeaderboardEntry[];
     currentUserRank: number;
     currentUserElo: number;
+    currentUserGoalType?: string | null;
 }
 
 const STAGES = [
@@ -58,9 +59,15 @@ export default function DashboardRightSidebar({
     totalXP,
     leaderboard,
     currentUserRank,
-    currentUserElo
+    currentUserElo,
+    currentUserGoalType
 }: LearningJourneyProps) {
     const { t, language } = useLanguage();
+    const goalLabelKey = (g?: string | null) =>
+        g === 'naturalisation' ? 'dashboard.goal.option.nat.label'
+        : g === 'carte_resident' ? 'dashboard.goal.option.cr.label'
+        : g === 'csp' ? 'dashboard.goal.option.csp.label'
+        : null;
     const formattedXP = language === 'ar' ? totalXP.toLocaleString('ar-EG') : totalXP.toLocaleString(language === 'fr' ? 'fr-FR' : 'en-US');
 
     return (
@@ -133,9 +140,17 @@ export default function DashboardRightSidebar({
                                         )}
                                     </div>
 
-                                    <span className={`text-xs font-semibold truncate ${entry.isCurrentUser ? 'text-blue-600 dark:text-blue-400 font-bold' : 'text-[var(--dash-text)]'}`}>
-                                        {entry.displayName} {entry.isCurrentUser && ` (${t('dashboard.right.you')})`}
-                                    </span>
+                                    <div className="flex flex-col min-w-0">
+                                        <span className={`text-xs font-semibold truncate ${entry.isCurrentUser ? 'text-blue-600 dark:text-blue-400 font-bold' : 'text-[var(--dash-text)]'}`}>
+                                            {entry.displayName}{entry.isCurrentUser && ` (${t('dashboard.right.you')})`}
+                                        </span>
+                                        {goalLabelKey(entry.goalType) && (
+                                            <span className="flex items-center gap-1 text-[10px] text-[var(--dash-text-muted)] truncate">
+                                                <Target className="h-2.5 w-2.5 shrink-0 text-[#0055A4]" />
+                                                {t(goalLabelKey(entry.goalType)!)}
+                                            </span>
+                                        )}
+                                    </div>
                                 </div>
 
                                 <div className="flex items-center gap-1">
@@ -159,9 +174,17 @@ export default function DashboardRightSidebar({
                                         <span>{t('dashboard.right.you').charAt(0).toUpperCase()}</span>
                                     </div>
 
-                                    <span className="text-xs font-bold text-blue-600 dark:text-blue-400 truncate">
-                                        {t('dashboard.right.you')}
-                                    </span>
+                                    <div className="flex flex-col min-w-0">
+                                        <span className="text-xs font-bold text-blue-600 dark:text-blue-400 truncate">
+                                            {t('dashboard.right.you')}
+                                        </span>
+                                        {goalLabelKey(currentUserGoalType) && (
+                                            <span className="flex items-center gap-1 text-[10px] text-[var(--dash-text-muted)] truncate">
+                                                <Target className="h-2.5 w-2.5 shrink-0 text-[#0055A4]" />
+                                                {t(goalLabelKey(currentUserGoalType)!)}
+                                            </span>
+                                        )}
+                                    </div>
                                 </div>
 
                                 <div className="flex items-center gap-1">

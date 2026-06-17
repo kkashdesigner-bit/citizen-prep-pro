@@ -53,6 +53,7 @@ export interface LeaderboardEntry {
     eloRating: number;
     rank: number;
     isCurrentUser: boolean;
+    goalType: string | null;
 }
 
 export interface DashboardStats {
@@ -322,7 +323,8 @@ export function useDashboardStats(): DashboardStats {
                 avatarUrl: u.avatar_url || null,
                 eloRating: u.elo_rating ?? 1200,
                 rank: Number(u.rank),
-                isCurrentUser: u.id === user.id
+                isCurrentUser: u.id === user.id,
+                goalType: u.goal_type ?? null,
             }));
             setLeaderboard(mappedLeaderboard);
 
