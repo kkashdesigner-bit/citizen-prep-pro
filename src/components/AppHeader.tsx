@@ -4,7 +4,7 @@ import { useUserProfile } from '@/hooks/useUserProfile';
 import { useSubscription } from '@/hooks/useSubscription';
 import { useStreak } from '@/hooks/useStreak';
 import {
-    LogOut, User, BarChart3, Settings, Crown, Sparkles, ChevronLeft, Flame,
+    LogOut, User, BarChart3, Settings, Crown, Sparkles, ChevronLeft, Flame, Globe, Check,
 } from 'lucide-react';
 import {
     DropdownMenu, DropdownMenuContent, DropdownMenuItem,
@@ -14,6 +14,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ReactNode } from 'react';
 import Logo from '@/components/Logo';
 import NotificationBell from '@/components/notifications/NotificationBell';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { LANGUAGES, Language } from '@/lib/types';
 
 interface AppHeaderProps {
     pageTitle: string;
@@ -27,6 +29,7 @@ export default function AppHeader({ pageTitle, pageIcon, backTo = '/learn', back
     const { profile: userProfile } = useUserProfile();
     const { tier, isPremium, isStandardOrAbove } = useSubscription();
     const streak = useStreak();
+    const { language, setLanguage } = useLanguage();
     const navigate = useNavigate();
 
     const handleSignOut = async () => {
@@ -94,6 +97,31 @@ export default function AppHeader({ pageTitle, pageIcon, backTo = '/learn', back
                         {tierConfig.icon}
                         {tierConfig.label}
                     </span>
+
+                    {/* Language switcher (session only) */}
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <button
+                                className="flex items-center gap-1 rounded-full px-2 py-1.5 text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors focus:outline-none"
+                                aria-label="Changer de langue"
+                            >
+                                <Globe className="h-4 w-4" />
+                                <span className="hidden sm:inline text-xs font-semibold uppercase">{language}</span>
+                            </button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-44 bg-white border shadow-lg rounded-xl">
+                            {(Object.entries(LANGUAGES) as [Language, string][]).map(([code, name]) => (
+                                <DropdownMenuItem
+                                    key={code}
+                                    onClick={() => setLanguage(code)}
+                                    className={language === code ? 'font-semibold text-[#0055A4]' : ''}
+                                >
+                                    {name}
+                                    {language === code && <Check className="ml-auto h-4 w-4" />}
+                                </DropdownMenuItem>
+                            ))}
+                        </DropdownMenuContent>
+                    </DropdownMenu>
 
                     {/* Avatar dropdown */}
                     <DropdownMenu>

@@ -6,12 +6,17 @@ import { useDashboardStats } from '@/hooks/useDashboardStats';
 import Logo from '@/components/Logo';
 import {
   LayoutDashboard, FileText, Route, GraduationCap,
-  Settings, HelpCircle, UserCircle, LogOut, TrendingUp
+  Settings, HelpCircle, UserCircle, LogOut, TrendingUp, Globe, Check
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import {
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { supabase } from '@/integrations/supabase/client';
 import { motion } from 'framer-motion';
 import NotificationBell from '@/components/notifications/NotificationBell';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { LANGUAGES, Language } from '@/lib/types';
 
 
 const NAV_ITEMS = [
@@ -38,6 +43,7 @@ export default function LearnSidebar() {
   const { user, avatarUrl } = useAuth();
   const { profile } = useUserProfile();
   const { tier } = useSubscription();
+  const { language, setLanguage } = useLanguage();
 
   const isActive = (item: { path: string; key: string }) => {
     if (item.path === '/learn' && item.key === 'dashboard') {
@@ -75,7 +81,32 @@ export default function LearnSidebar() {
           <Link to="/" className="flex items-center gap-2">
             <Logo size="sm" />
           </Link>
-          <NotificationBell align="left" />
+          <div className="flex items-center gap-1">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  className="flex items-center gap-1 rounded-lg px-2 py-1.5 text-[var(--dash-text-muted)] hover:text-[var(--dash-text)] hover:bg-[var(--dash-surface)] transition-colors focus:outline-none"
+                  aria-label="Changer de langue"
+                >
+                  <Globe className="h-4 w-4" />
+                  <span className="text-xs font-semibold uppercase">{language}</span>
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-44 bg-white border shadow-lg rounded-xl">
+                {(Object.entries(LANGUAGES) as [Language, string][]).map(([code, name]) => (
+                  <DropdownMenuItem
+                    key={code}
+                    onClick={() => setLanguage(code)}
+                    className={language === code ? 'font-semibold text-[#0055A4]' : ''}
+                  >
+                    {name}
+                    {language === code && <Check className="ml-auto h-4 w-4" />}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <NotificationBell align="left" />
+          </div>
         </div>
 
         {/* Nav */}

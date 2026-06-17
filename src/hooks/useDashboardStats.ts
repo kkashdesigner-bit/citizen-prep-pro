@@ -306,28 +306,22 @@ export function useDashboardStats(): DashboardStats {
             // User answers
             setAllAnswers((answersResult.data as UserAnswer[]) || []);
 
-            // Fetch leaderboard top 5
-            const { data: topUsers } = await supabase
-                .from('profiles')
-                .select('id, display_name, email, avatar_url, elo_rating')
-                .order('elo_rating', { ascending: false })
-                .limit(5);
+            // Leaderboard + current rank via SECURITY DEFINER RPCs.
+            // (profiles SELECT RLS is owner-only, so a direct query would only ever
+            // return the current user — which is why the board showed just "you".)
+            const [{ data: lbData }, { data: rankData }] = await Promise.all([
+                supabase.rpc('get_leaderboard', { p_limit: 5 }),
+                supabase.rpc('get_my_elo_rank'),
+            ]);
 
-            // Fetch count of users above to determine current user rank
-            const { count: countAbove } = await supabase
-                .from('profiles')
-                .select('*', { count: 'exact', head: true })
-                .gt('elo_rating', userEloVal);
-            
-            const curRank = (countAbove ?? 0) + 1;
-            setCurrentUserRank(curRank);
+            setCurrentUserRank(typeof rankData === 'number' ? rankData : Number(rankData ?? 1));
 
-            const mappedLeaderboard: LeaderboardEntry[] = (topUsers || []).map((u, index) => ({
+            const mappedLeaderboard: LeaderboardEntry[] = ((lbData as any[]) || []).map((u) => ({
                 id: u.id,
-                displayName: u.display_name || u.email?.split('@')[0] || 'Apprenant',
+                displayName: u.display_name || 'Apprenant',
                 avatarUrl: u.avatar_url || null,
                 eloRating: u.elo_rating ?? 1200,
-                rank: index + 1,
+                rank: Number(u.rank),
                 isCurrentUser: u.id === user.id
             }));
             setLeaderboard(mappedLeaderboard);
