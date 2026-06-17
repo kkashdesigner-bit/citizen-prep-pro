@@ -12,8 +12,54 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: "14.1"
   }
+  graphql_public: {
+    Tables: {
+      [_ in never]: never
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      graphql: {
+        Args: {
+          extensions?: Json
+          operationName?: string
+          query?: string
+          variables?: Json
+        }
+        Returns: Json
+      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
   public: {
     Tables: {
+      active_sessions: {
+        Row: {
+          session_id: string
+          updated_at: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          session_id: string
+          updated_at?: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          session_id?: string
+          updated_at?: string
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       class_lessons: {
         Row: {
           class_id: string
@@ -297,6 +343,24 @@ export type Database = {
         }
         Relationships: []
       }
+      login_attempts: {
+        Row: {
+          attempted_at: string
+          identifier: string
+          success: boolean
+        }
+        Insert: {
+          attempted_at?: string
+          identifier: string
+          success?: boolean
+        }
+        Update: {
+          attempted_at?: string
+          identifier?: string
+          success?: boolean
+        }
+        Relationships: []
+      }
       notifications: {
         Row: {
           body: string
@@ -336,7 +400,9 @@ export type Database = {
           created_at: string
           credits: number
           display_name: string | null
+          elo_rating: number | null
           email: string | null
+          email_opt_out: boolean
           exam_history: Json | null
           id: string
           is_subscribed: boolean
@@ -354,7 +420,9 @@ export type Database = {
           created_at?: string
           credits?: number
           display_name?: string | null
+          elo_rating?: number | null
           email?: string | null
+          email_opt_out?: boolean
           exam_history?: Json | null
           id: string
           is_subscribed?: boolean
@@ -372,7 +440,9 @@ export type Database = {
           created_at?: string
           credits?: number
           display_name?: string | null
+          elo_rating?: number | null
           email?: string | null
+          email_opt_out?: boolean
           exam_history?: Json | null
           id?: string
           is_subscribed?: boolean
@@ -384,6 +454,74 @@ export type Database = {
           updated_at?: string
           used_questions?: string[] | null
           weak_category?: string | null
+        }
+        Relationships: []
+      }
+      question_difficulty: {
+        Row: {
+          attempt_count: number
+          correct_pct: number
+          question_id: number
+          updated_at: string
+        }
+        Insert: {
+          attempt_count?: number
+          correct_pct?: number
+          question_id: number
+          updated_at?: string
+        }
+        Update: {
+          attempt_count?: number
+          correct_pct?: number
+          question_id?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "question_difficulty_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: true
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      question_reviews: {
+        Row: {
+          created_at: string | null
+          ease_factor: number
+          id: string
+          interval_days: number
+          last_quality: number | null
+          next_review_date: string
+          question_id: number
+          repetitions: number
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          ease_factor?: number
+          id?: string
+          interval_days?: number
+          last_quality?: number | null
+          next_review_date?: string
+          question_id: number
+          repetitions?: number
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          ease_factor?: number
+          id?: string
+          interval_days?: number
+          last_quality?: number | null
+          next_review_date?: string
+          question_id?: number
+          repetitions?: number
+          updated_at?: string | null
+          user_id?: string
         }
         Relationships: []
       }
@@ -441,9 +579,11 @@ export type Database = {
         Row: {
           category: string | null
           correct_answer: string | null
+          elo_rating: number | null
           exam_category: string | null
           explanation: string | null
           id: number
+          is_free_pool: boolean
           language: string | null
           level: string | null
           option_a: string | null
@@ -461,9 +601,11 @@ export type Database = {
         Insert: {
           category?: string | null
           correct_answer?: string | null
+          elo_rating?: number | null
           exam_category?: string | null
           explanation?: string | null
           id: number
+          is_free_pool?: boolean
           language?: string | null
           level?: string | null
           option_a?: string | null
@@ -481,9 +623,11 @@ export type Database = {
         Update: {
           category?: string | null
           correct_answer?: string | null
+          elo_rating?: number | null
           exam_category?: string | null
           explanation?: string | null
           id?: number
+          is_free_pool?: boolean
           language?: string | null
           level?: string | null
           option_a?: string | null
@@ -560,6 +704,54 @@ export type Database = {
         }
         Relationships: []
       }
+      rate_limits: {
+        Row: {
+          count: number
+          key: string
+          window_start: string
+        }
+        Insert: {
+          count?: number
+          key: string
+          window_start: string
+        }
+        Update: {
+          count?: number
+          key?: string
+          window_start?: string
+        }
+        Relationships: []
+      }
+      referrals: {
+        Row: {
+          converted_at: string | null
+          created_at: string | null
+          id: string
+          referral_code: string
+          referred_user_id: string | null
+          referrer_user_id: string
+          status: string
+        }
+        Insert: {
+          converted_at?: string | null
+          created_at?: string | null
+          id?: string
+          referral_code: string
+          referred_user_id?: string | null
+          referrer_user_id: string
+          status?: string
+        }
+        Update: {
+          converted_at?: string | null
+          created_at?: string | null
+          id?: string
+          referral_code?: string
+          referred_user_id?: string | null
+          referrer_user_id?: string
+          status?: string
+        }
+        Relationships: []
+      }
       user_answers: {
         Row: {
           answered_at: string
@@ -593,7 +785,7 @@ export type Database = {
             foreignKeyName: "user_answers_question_id_fkey"
             columns: ["question_id"]
             isOneToOne: false
-            referencedRelation: "questions33"
+            referencedRelation: "questions"
             referencedColumns: ["id"]
           },
         ]
@@ -707,6 +899,13 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      check_login_allowed: { Args: { p_identifier: string }; Returns: Json }
+      consume_rate_limit: {
+        Args: { p_key: string; p_max: number; p_window_seconds: number }
+        Returns: Json
+      }
+      ensure_daily_question: { Args: never; Returns: undefined }
+      has_paid_access: { Args: never; Returns: boolean }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -714,6 +913,11 @@ export type Database = {
         }
         Returns: boolean
       }
+      record_login_attempt: {
+        Args: { p_identifier: string; p_success: boolean }
+        Returns: undefined
+      }
+      refresh_question_difficulty: { Args: never; Returns: undefined }
     }
     Enums: {
       app_role: "admin" | "user"
@@ -842,6 +1046,9 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
   public: {
     Enums: {
       app_role: ["admin", "user"],

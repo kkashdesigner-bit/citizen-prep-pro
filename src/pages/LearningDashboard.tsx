@@ -3,6 +3,7 @@ import SEOHead from '@/components/SEOHead';
 import { useNavigate } from 'react-router-dom';
 import { useSubscription } from '@/hooks/useSubscription';
 import { useUserProfile, GOAL_LABELS } from '@/hooks/useUserProfile';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { useDashboardStats } from '@/hooks/useDashboardStats';
 import LearnSidebar from '@/components/learn/LearnSidebar';
 import DashboardRightSidebar from '@/components/learn/DashboardRightSidebar';
@@ -53,6 +54,47 @@ export default function LearningDashboard() {
   const [showGoalModal, setShowGoalModal] = useState(false);
   const [savingGoal, setSavingGoal] = useState(false);
   const [catOffset, setCatOffset] = useState(0);
+
+  // ── Level Up Promotion Logic ──
+  const { t } = useLanguage();
+  const [promoDismissed, setPromoDismissed] = useState(() => {
+    return sessionStorage.getItem('level_promo_dismissed') === 'true';
+  });
+
+  const currentGoal = userProfile?.goal_type;
+  const isCspOrCr = currentGoal === 'csp' || currentGoal === 'carte_resident';
+
+  const examHistory = stats.examHistory || [];
+  const mockExams = [...examHistory]
+    .filter(e => e.mode === 'exam')
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+  const hasThreeExamPassingStreak = mockExams.length >= 3 && mockExams.slice(0, 3).every(e => {
+    return e.passed || (e.score / (e.totalQuestions || 40)) >= 0.8;
+  });
+
+  const showPromoCard = isCspOrCr && hasThreeExamPassingStreak && !promoDismissed;
+
+  const handleUpgradeGoal = async () => {
+    if (!currentGoal) return;
+    const nextGoalMap: Record<string, GoalType> = {
+      csp: 'carte_resident',
+      carte_resident: 'naturalisation'
+    };
+    const nextGoal = nextGoalMap[currentGoal];
+    if (nextGoal) {
+      try {
+        await saveProfile({ goal_type: nextGoal });
+      } catch (err) {
+        console.error('Failed to upgrade goal level:', err);
+      }
+    }
+  };
+
+  const handleDismissPromo = () => {
+    sessionStorage.setItem('level_promo_dismissed', 'true');
+    setPromoDismissed(true);
+  };
 
   const openGate = (required: 'standard' | 'premium') => { setGateTier(required); setShowGate(true); };
 
@@ -241,6 +283,58 @@ export default function LearningDashboard() {
                 </div>
               </div>
             </motion.div>
+
+            {showPromoCard && (
+              <motion.div
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 20 }}
+                className="mb-6 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 rounded-2xl p-5 md:p-6 text-white border border-indigo-500/20 shadow-[0_8px_30px_rgba(99,102,241,0.2)] relative overflow-hidden"
+              >
+                {/* Decorative glowing blobs */}
+                <div className="absolute -top-12 -left-12 w-32 h-32 bg-white/10 rounded-full blur-2xl pointer-events-none" />
+                <div className="absolute -bottom-12 -right-12 w-40 h-40 bg-indigo-400/20 rounded-full blur-3xl pointer-events-none" />
+
+                <div className="flex flex-col md:flex-row items-center md:items-start gap-4 z-10 relative">
+                  <div className="bg-white/10 p-3 rounded-2xl shrink-0 backdrop-blur-md shadow-inner animate-pulse">
+                    <Sparkles className="h-8 w-8 text-yellow-300 fill-yellow-300" />
+                  </div>
+                  <div className="flex-1 text-center md:text-left">
+                    <h3 className="text-lg md:text-xl font-bold tracking-wide">
+                      {t('dashboard.promotion.title')}
+                    </h3>
+                    <p className="text-sm text-blue-100 mt-1.5 leading-relaxed max-w-2xl font-medium">
+                      {currentGoal === 'csp' 
+                        ? t('dashboard.promotion.csp_to_cr') 
+                        : t('dashboard.promotion.cr_to_nat')}
+                    </p>
+                    <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 mt-4">
+                      <Button
+                        onClick={handleUpgradeGoal}
+                        className="bg-white text-indigo-700 hover:bg-blue-50 font-bold px-5 py-2.5 rounded-xl transition-all duration-300 transform hover:scale-[1.03] active:scale-[0.98] shadow-md flex items-center gap-1.5"
+                      >
+                        {t('dashboard.promotion.upgrade_btn')}
+                        <ChevronRight className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        onClick={handleDismissPromo}
+                        className="text-blue-100 hover:text-white hover:bg-white/10 font-medium px-4 py-2.5 rounded-xl transition-colors"
+                      >
+                        {t('dashboard.promotion.dismiss')}
+                      </Button>
+                    </div>
+                  </div>
+                  <button 
+                    onClick={handleDismissPromo}
+                    className="absolute top-2 right-2 md:relative md:top-auto md:right-auto text-blue-200 hover:text-white p-1.5 rounded-lg hover:bg-white/10 transition-colors"
+                    aria-label="Close"
+                  >
+                    <X className="h-5 w-5" />
+                  </button>
+                </div>
+              </motion.div>
+            )}
 
             {/* Stat Cards & Readiness — desktop only (hidden on mobile, merged into profile card above) */}
             <motion.div variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }} className="hidden sm:block">

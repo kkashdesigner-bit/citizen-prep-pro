@@ -36,6 +36,7 @@ export interface Question {
   option_b_translated: string | null;
   option_c_translated: string | null;
   option_d_translated: string | null;
+  elo_rating?: number | null;
 }
 
 /** Convenience: get options as array */

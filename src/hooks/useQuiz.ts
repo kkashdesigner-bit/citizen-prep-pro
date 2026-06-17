@@ -361,9 +361,9 @@ export function useQuiz({
           return ['CSP'];
         };
 
-        // Fetch already-answered question IDs for freshOnly mode
+        // Fetch already-answered question IDs
         let answeredIds: number[] = [];
-        if (freshOnly && user) {
+        if (user) {
           const { data: answeredData } = await supabase
             .from('user_answers' as any)
             .select('question_id')
@@ -371,10 +371,21 @@ export function useQuiz({
           answeredIds = [...new Set((answeredData || []).map((r: any) => r.question_id).filter(Boolean))];
         }
 
+        // Fetch cooldown question IDs (answered in last 24h) for mock exams
+        let cooldownIds: number[] = [];
+        if (user && mode === 'exam' && !retakeIds) {
+          const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+          const { data: cooldownData } = await supabase
+            .from('user_answers' as any)
+            .select('question_id')
+            .eq('user_id', user.id)
+            .gte('answered_at', oneDayAgo);
+          cooldownIds = [...new Set((cooldownData || []).map((r: any) => r.question_id).filter(Boolean))];
+        }
+
         // Helper: apply freshOnly exclusion to a query
         const applyFreshFilter = (q: any) => {
           if (!freshOnly || answeredIds.length === 0) return q;
-          // Supabase .not('id', 'in', `(${ids})`) syntax
           return q.not('id', 'in', `(${answeredIds.slice(0, 1500).join(',')})`);
         };
 
@@ -397,24 +408,146 @@ export function useQuiz({
           return (fallback || []) as Question[];
         };
 
+        // Helper for mock exam with progressive relaxation of filters
+        const fetchCategoryQuestions = async (
+          cat: string,
+          count: number
+        ): Promise<Question[]> => {
+          const allowedLevels = resolveLevelsToFetch(resolvedLevel);
+
+          const runQuery = async (useLevels: boolean, excludeAnswered: boolean, excludeCooldown: boolean) => {
+            let query = supabase.from('questions').select('*').eq('language', dbLang).eq('category', cat);
+            
+            if (useLevels) {
+              query = query.in('exam_category', allowedLevels);
+            }
+
+            const excludeIds = new Set<number>();
+            if (excludeAnswered && freshOnly) {
+              answeredIds.forEach(id => excludeIds.add(id));
+            }
+            if (excludeCooldown) {
+              cooldownIds.forEach(id => excludeIds.add(id));
+            }
+
+            if (excludeIds.size > 0) {
+              const idStr = `(${Array.from(excludeIds).slice(0, 1000).join(',')})`;
+              query = query.not('id', 'in', idStr);
+            }
+
+            const limit = Math.max(count * 4, 100);
+            const { data, error } = await query.limit(limit);
+            if (error) throw error;
+            return (data || []) as Question[];
+          };
+
+          // Progressive relaxation steps:
+          // 1. Strict: Target Level, Fresh (if requested), Cooldown Exclusions
+          let pool = await runQuery(true, true, true);
+          if (pool.length >= count) return shuffle(pool).slice(0, count);
+
+          // 2. Relax cooldown: Target Level, Fresh (if requested), NO Cooldown
+          pool = await runQuery(true, true, false);
+          if (pool.length >= count) return shuffle(pool).slice(0, count);
+
+          // 3. Relax fresh: Target Level, NO Fresh, NO Cooldown
+          pool = await runQuery(true, false, false);
+          if (pool.length >= count) return shuffle(pool).slice(0, count);
+
+          // 4. Relax levels: Any Level, Fresh (if requested), Cooldown Exclusions
+          pool = await runQuery(false, true, true);
+          if (pool.length >= count) return shuffle(pool).slice(0, count);
+
+          // 5. Relax levels and cooldown: Any Level, Fresh (if requested), NO Cooldown
+          pool = await runQuery(false, true, false);
+          if (pool.length >= count) return shuffle(pool).slice(0, count);
+
+          // 6. Absolute Fallback: Any Level, NO Fresh, NO Cooldown
+          pool = await runQuery(false, false, false);
+          return shuffle(pool).slice(0, count);
+        };
+
         let allQuestions: Question[] = [];
 
         if (mode === 'exam' && !category) {
-          // Balanced exam: distribute questions evenly across categories
+          // Balanced exam: distribute questions across categories based on weaknesses
           const cats = [...DB_CATEGORIES];
-          const perCat = Math.floor(resolvedLimit / cats.length);
-          let remainder = resolvedLimit - perCat * cats.length;
+          let catDistribution: Record<string, number> = {};
+
+          if (user) {
+            // Fetch user's recent answers to calculate category weakness
+            const { data: recentAnswers } = await supabase
+              .from('user_answers' as any)
+              .select('category, is_correct')
+              .eq('user_id', user.id)
+              .order('answered_at', { ascending: false })
+              .limit(150);
+
+            const catStats: Record<string, { correct: number; total: number }> = {};
+            cats.forEach(c => { catStats[c] = { correct: 0, total: 0 }; });
+
+            if (recentAnswers && recentAnswers.length > 0) {
+              recentAnswers.forEach((ans: any) => {
+                if (ans.category && catStats[ans.category]) {
+                  catStats[ans.category].total += 1;
+                  if (ans.is_correct) {
+                    catStats[ans.category].correct += 1;
+                  }
+                }
+              });
+            }
+
+            const weaknesses: Record<string, number> = {};
+            cats.forEach(c => {
+              const stats = catStats[c];
+              if (stats.total >= 5) {
+                const accuracy = stats.correct / stats.total;
+                weaknesses[c] = Math.max(0, 1.0 - accuracy);
+              } else {
+                weaknesses[c] = 0.20; // Default weakness (20%)
+              }
+            });
+
+            const baseQuestions = Math.max(2, Math.floor(resolvedLimit * 0.1)); // 4 questions base for resolvedLimit = 40
+            const remainingQuestions = resolvedLimit - baseQuestions * cats.length; // 20 questions for resolvedLimit = 40
+
+            let sumWeakness = 0;
+            cats.forEach(c => { sumWeakness += weaknesses[c]; });
+            const divisor = sumWeakness > 0 ? sumWeakness : 1;
+
+            let allocated = 0;
+            cats.forEach(c => {
+              const extra = (weaknesses[c] / divisor) * remainingQuestions;
+              catDistribution[c] = baseQuestions + Math.floor(extra);
+              allocated += catDistribution[c];
+            });
+
+            let remainder = resolvedLimit - allocated;
+            const fractionalParts = cats.map(c => {
+              const extra = (weaknesses[c] / divisor) * remainingQuestions;
+              return { category: c, fract: extra - Math.floor(extra) };
+            }).sort((a, b) => b.fract - a.fract);
+
+            for (let i = 0; i < remainder; i++) {
+              const catName = fractionalParts[i % cats.length].category;
+              catDistribution[catName] += 1;
+            }
+          } else {
+            // Flat distribution for guest users
+            const perCat = Math.floor(resolvedLimit / cats.length);
+            let remainder = resolvedLimit - perCat * cats.length;
+            cats.forEach(c => {
+              catDistribution[c] = perCat + (remainder-- > 0 ? 1 : 0);
+            });
+          }
 
           const fetches = cats.map(async (cat) => {
-            const count = perCat + (remainder-- > 0 ? 1 : 0);
-            const pool = Math.min(count * 4, 100);
-            const baseQ = () => supabase.from('questions').select('*').eq('language', dbLang).eq('category', cat);
-            const data = await fetchWithLevelFallback(baseQ, resolvedLevel, pool);
-            return shuffle(data).slice(0, count);
+            const count = catDistribution[cat] || 0;
+            if (count <= 0) return [];
+            return fetchCategoryQuestions(cat, count);
           });
 
           const results = await Promise.all(fetches);
-          // Deduplicate by question ID (can occur across category overlaps)
           const seen = new Set<number>();
           allQuestions = shuffle(results.flat()).filter(q => {
             if (seen.has(q.id)) return false;
@@ -490,6 +623,16 @@ export function useQuiz({
         is_correct: isCorrect,
         category: question.category,
       });
+
+      // Update Bayesian Elo ratings in real-time
+      try {
+        await supabase.rpc('update_elo_rating', {
+          p_question_id: question.id,
+          p_is_correct: isCorrect,
+        });
+      } catch (eloErr) {
+        console.error('Failed to update Elo ratings:', eloErr);
+      }
 
       // Update SM-2 spaced repetition schedule in question_reviews
       if (typeof timeSpentMs === 'number') {
