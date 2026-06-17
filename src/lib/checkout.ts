@@ -68,7 +68,7 @@ export function setPendingCheckout(tier: CheckoutTier): void {
 /** Return (without clearing) any pending checkout tier. */
 export function getPendingCheckout(): CheckoutTier | null {
   const t = localStorage.getItem(PENDING_CHECKOUT_KEY);
-  return t === 'standard' || t === 'premium' || t === 'yearly' ? t : null;
+  return t === 'standard' || t === 'premium' || t === 'yearly' || t === 'lifetime' ? t : null;
 }
 
 export function clearPendingCheckout(): void {

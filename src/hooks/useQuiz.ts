@@ -308,15 +308,26 @@ export function useQuiz({
             .order('correct_pct', { ascending: true })
             .limit(300);
 
-          const hardIds = (diffData || []).map((r: any) => r.question_id).filter(Boolean);
+          let hardIds: number[] = (diffData || []).map((r: any) => r.question_id).filter(Boolean);
+
+          // In freshOnly mode, drop questions the user has already answered.
+          // Source of truth is user_answers (not the empty profiles.used_questions).
+          if (freshOnly && user && hardIds.length > 0) {
+            const { data: answeredData } = await supabase
+              .from('user_answers' as any)
+              .select('question_id')
+              .eq('user_id', user.id);
+            const answered = new Set(
+              (answeredData || []).map((r: any) => r.question_id).filter(Boolean)
+            );
+            hardIds = hardIds.filter((id) => !answered.has(id));
+          }
 
           if (hardIds.length > 0) {
-            let q = supabase.from('questions').select('*').in('id', hardIds);
-            if (freshOnly && answeredIds.length > 0) {
-              // answered IDs will be fetched below — skip for hard mode since we fetch first
-            }
-            const { data: hardQs } = await q;
+            const { data: hardQs } = await supabase.from('questions').select('*').in('id', hardIds);
             setQuestions(shuffle((hardQs || []) as Question[]).slice(0, resolvedLimit));
+          } else {
+            setQuestions([]);
           }
           setLoading(false);
           return;

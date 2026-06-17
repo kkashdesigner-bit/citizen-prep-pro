@@ -36,20 +36,28 @@ export default function LandingPassProbability() {
     }
 
     const fetchData = async () => {
-      const [profileResult, countResult] = await Promise.all([
+      const [profileResult, countResult, answeredResult] = await Promise.all([
         supabase
           .from('profiles')
-          .select('exam_history, used_questions')
+          .select('exam_history')
           .eq('id', user.id)
           .maybeSingle(),
         supabase
           .from('questions')
           .select('id', { count: 'exact', head: true }),
+        // Distinct questions the user has actually answered — the real "seen" count.
+        // (profiles.used_questions is empty for nearly everyone, so it can't be used here.)
+        supabase
+          .from('user_answers' as any)
+          .select('question_id')
+          .eq('user_id', user.id),
       ]);
 
       if (profileResult.data) {
         const history = (profileResult.data.exam_history as unknown as ExamHistoryEntry[]) || [];
-        const usedQuestions = (profileResult.data.used_questions as string[]) || [];
+        const uniqueAnswered = new Set(
+          ((answeredResult.data as any[]) || []).map((r) => r.question_id).filter(Boolean)
+        ).size;
         const totalQ = countResult.count || 0;
 
         const last5 = history.slice(-5);
@@ -71,7 +79,7 @@ export default function LandingPassProbability() {
         setPassProb(prob);
         setTotalExams(history.length);
         setAvgScore(avg);
-        setProgressPercent(totalQ > 0 ? Math.round((usedQuestions.length / totalQ) * 100) : 0);
+        setProgressPercent(totalQ > 0 ? Math.round((uniqueAnswered / totalQ) * 100) : 0);
       }
       setLoading(false);
     };

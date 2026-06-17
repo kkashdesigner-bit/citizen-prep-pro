@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { Check, X, Crown, Sparkles, Shield, CalendarDays, Zap, Star, Gift, Globe, BookOpen, BarChart2, Unlock } from 'lucide-react';
+import { Check, X, Crown, Sparkles, Shield, CalendarDays, Zap, Star, Gift, Globe, BookOpen, BarChart2, Unlock, Infinity } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import AnimatedSection from '@/components/AnimatedSection';
 import { useAuth } from '@/hooks/useAuth';
@@ -10,6 +10,12 @@ import { useSubscription } from '@/hooks/useSubscription';
 import SubscriptionGate from '@/components/SubscriptionGate';
 import { startCheckout, setPendingCheckout } from '@/lib/checkout';
 import { toast } from 'sonner';
+
+// Displayed prices — single source of truth. These MUST match the amounts on the
+// corresponding Stripe Prices (STRIPE_LIFETIME_PRICE_ID / STRIPE_YEARLY_PRICE_ID).
+const LIFETIME_PRICE = '99';
+const ANNUAL_PRICE = '29';
+const ANNUAL_OLD_PRICE = '131,88';
 
 export default function PricingSection() {
   const { t } = useLanguage();
@@ -48,6 +54,15 @@ export default function PricingSection() {
     { icon: Gift,      key: 'pricing.yearly.perk8' },
   ];
 
+  const lifetimePerks = [
+    { icon: Crown,     key: 'pricing.lifetime.perk1' },
+    { icon: Unlock,    key: 'pricing.lifetime.perk2' },
+    { icon: Globe,     key: 'pricing.lifetime.perk3' },
+    { icon: BarChart2, key: 'pricing.lifetime.perk4' },
+    { icon: BookOpen,  key: 'pricing.lifetime.perk5' },
+    { icon: Star,      key: 'pricing.lifetime.perk7' },
+  ];
+
   const handleYearlyCheckout = async () => {
     if (!user) {
       setPendingCheckout('yearly');
@@ -56,6 +71,19 @@ export default function PricingSection() {
     }
     try {
       await startCheckout('yearly', user);
+    } catch (err: any) {
+      toast.error(err?.message || 'Erreur lors de la création de la session de paiement.');
+    }
+  };
+
+  const handleLifetimeCheckout = async () => {
+    if (!user) {
+      setPendingCheckout('lifetime');
+      navigate('/auth');
+      return;
+    }
+    try {
+      await startCheckout('lifetime', user);
     } catch (err: any) {
       toast.error(err?.message || 'Erreur lors de la création de la session de paiement.');
     }
@@ -82,80 +110,109 @@ export default function PricingSection() {
           </div>
         </AnimatedSection>
 
-        {/* ─── Yearly all-access highlight banner ─── */}
+        {/* ─── Permanent-access anchors: Lifetime + Annual ─── */}
         <AnimatedSection delay={50}>
-          <div className="mx-auto mb-10 max-w-4xl rounded-3xl overflow-hidden shadow-2xl border border-violet-200/50">
-            <div className="relative bg-gradient-to-br from-[#1e1b4b] via-[#312e81] to-[#4c1d95] p-8 md:p-10">
-              {/* Decorative blobs */}
-              <div className="absolute top-0 right-0 w-64 h-64 bg-violet-400/10 rounded-full blur-3xl pointer-events-none" />
-              <div className="absolute bottom-0 left-0 w-48 h-48 bg-indigo-400/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="mx-auto mb-4 max-w-5xl grid grid-cols-1 lg:grid-cols-2 gap-5">
 
-              <div className="relative z-10 flex flex-col lg:flex-row items-start lg:items-center gap-8">
-                {/* Left: hero copy */}
-                <div className="flex-1">
+            {/* Lifetime — premium one-time anchor */}
+            <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-violet-300/40">
+              <div className="relative h-full bg-gradient-to-br from-[#2e1065] via-[#4c1d95] to-[#6d28d9] p-7 md:p-8 flex flex-col">
+                <div className="absolute top-0 right-0 w-56 h-56 bg-fuchsia-400/10 rounded-full blur-3xl pointer-events-none" />
+                <div className="relative z-10 flex flex-col h-full">
                   <div className="flex items-center gap-2 mb-3">
-                    <span className="bg-violet-400/20 border border-violet-400/30 text-violet-300 text-xs font-black px-3 py-1 rounded-full uppercase tracking-widest flex items-center gap-1.5">
-                      <CalendarDays className="w-3 h-3" /> {t('pricing.yearly.badge')}
-                    </span>
-                    <span className="bg-amber-400/20 border border-amber-400/30 text-amber-300 text-xs font-bold px-3 py-1 rounded-full">
-                      {t('pricing.lifetime.bestValue')}
+                    <span className="bg-violet-400/20 border border-violet-400/30 text-violet-200 text-xs font-black px-3 py-1 rounded-full uppercase tracking-widest flex items-center gap-1.5">
+                      <Infinity className="w-3 h-3" /> {t('pricing.lifetime.badge')}
                     </span>
                   </div>
 
-                  <div className="flex items-baseline gap-2 mb-2">
-                    <span className="text-5xl md:text-6xl font-black text-white">29 €<span className="text-2xl font-bold text-white/60">{t('pricing.yearly.perYear')}</span></span>
-                    <span className="text-white/50 text-lg font-semibold line-through">131,88 €</span>
-                    <span className="bg-emerald-500 text-white text-xs font-black px-2 py-0.5 rounded-full">−78%</span>
+                  <div className="flex items-baseline gap-2 mb-1">
+                    <span className="text-5xl font-black text-white">{LIFETIME_PRICE} €</span>
                   </div>
-                  <p className="text-white/60 text-sm mb-6">{t('pricing.yearly.billing')}</p>
+                  <p className="text-white/60 text-sm mb-5">{t('pricing.lifetime.oneTime')}</p>
 
-                  {/* Perks grid */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                    {yearlyPerks.map(({ icon: Icon, key }) => (
+                  <div className="grid grid-cols-1 gap-2 mb-6 flex-1">
+                    {lifetimePerks.map(({ icon: Icon, key }) => (
                       <div key={key} className="flex items-center gap-2">
                         <div className="flex-shrink-0 w-5 h-5 rounded-full bg-violet-400/20 flex items-center justify-center">
-                          <Icon className="w-3 h-3 text-violet-300" />
+                          <Icon className="w-3 h-3 text-violet-200" />
                         </div>
-                        <span className="text-xs text-white/80 font-medium">{t(key)}</span>
+                        <span className="text-xs text-white/85 font-medium">{t(key)}</span>
                       </div>
                     ))}
                   </div>
-                </div>
 
-                {/* Right: CTA */}
-                <div className="flex-shrink-0 flex flex-col items-center gap-4 w-full lg:w-56">
-                  {isLifetime || isPremium ? (
-                    <Button className="w-full h-14 rounded-2xl bg-white/20 text-white border border-white/30 font-bold text-base cursor-default" disabled>
-                      <Check className="h-5 w-5 mr-2" /> {isLifetime ? t('pricing.yourPlan') : t('pricing.includedInPlan')}
+                  {isLifetime ? (
+                    <Button disabled className="w-full h-12 rounded-2xl bg-white/20 text-white border border-white/30 font-bold cursor-default">
+                      <Check className="h-5 w-5 mr-2" /> {t('pricing.yourPlan')}
                     </Button>
                   ) : (
-                    <>
-                      <Button
-                        onClick={handleYearlyCheckout}
-                        className="w-full h-14 rounded-2xl font-black text-base shadow-2xl hover:-translate-y-0.5 transition-all"
-                        style={{ background: 'linear-gradient(135deg, #7C3AED, #4F46E5)' }}
-                      >
-                        <CalendarDays className="h-5 w-5 mr-2" />
-                        {t('pricing.yearly.cta')}
-                      </Button>
-                      <div className="flex items-center gap-1.5 text-white/50 text-xs">
-                        <Shield className="h-3 w-3 text-emerald-400" />
-                        {t('pricing.securePaymentStripe')}
-                      </div>
-                    </>
+                    <Button
+                      onClick={handleLifetimeCheckout}
+                      className="w-full h-12 rounded-2xl font-black text-base shadow-2xl hover:-translate-y-0.5 transition-all"
+                      style={{ background: 'linear-gradient(135deg, #a855f7, #7C3AED)' }}
+                    >
+                      <Infinity className="h-5 w-5 mr-2" />
+                      {t('pricing.lifetime.cta')}
+                    </Button>
                   )}
                 </div>
               </div>
             </div>
 
-            {/* Bottom strip */}
-            <div className="bg-violet-950/60 border-t border-violet-700/30 px-8 py-3 flex flex-wrap items-center justify-center gap-x-6 gap-y-1">
-              {['pricing.yearly.perk8', 'pricing.lifetime.strip2', 'pricing.yearly.perk7', 'pricing.yearly.save'].map(k => (
-                <span key={k} className="flex items-center gap-1.5 text-xs text-violet-300/70 font-medium">
-                  <Check className="w-3 h-3 text-violet-400" /> {t(k)}
-                </span>
-              ))}
+            {/* Annual — best value (recommended) */}
+            <div className="relative rounded-3xl overflow-hidden shadow-2xl border-2 border-emerald-300/50 ring-2 ring-emerald-300/20">
+              <div className="relative h-full bg-gradient-to-br from-[#1e1b4b] via-[#312e81] to-[#3730a3] p-7 md:p-8 flex flex-col">
+                <div className="absolute top-0 right-0 w-56 h-56 bg-indigo-400/10 rounded-full blur-3xl pointer-events-none" />
+                <div className="relative z-10 flex flex-col h-full">
+                  <div className="flex flex-wrap items-center gap-2 mb-3">
+                    <span className="bg-indigo-400/20 border border-indigo-400/30 text-indigo-200 text-xs font-black px-3 py-1 rounded-full uppercase tracking-widest flex items-center gap-1.5">
+                      <CalendarDays className="w-3 h-3" /> {t('pricing.yearly.badge')}
+                    </span>
+                    <span className="bg-emerald-400/20 border border-emerald-400/30 text-emerald-300 text-xs font-bold px-3 py-1 rounded-full">
+                      {t('pricing.lifetime.bestValue')}
+                    </span>
+                  </div>
+
+                  <div className="flex items-baseline gap-2 mb-1">
+                    <span className="text-5xl font-black text-white">{ANNUAL_PRICE} €<span className="text-xl font-bold text-white/60">{t('pricing.yearly.perYear')}</span></span>
+                    <span className="text-white/50 text-base font-semibold line-through">{ANNUAL_OLD_PRICE} €</span>
+                    <span className="bg-emerald-500 text-white text-xs font-black px-2 py-0.5 rounded-full">−78%</span>
+                  </div>
+                  <p className="text-white/60 text-sm mb-5">{t('pricing.yearly.billing')}</p>
+
+                  <div className="grid grid-cols-1 gap-2 mb-6 flex-1">
+                    {yearlyPerks.slice(0, 6).map(({ icon: Icon, key }) => (
+                      <div key={key} className="flex items-center gap-2">
+                        <div className="flex-shrink-0 w-5 h-5 rounded-full bg-indigo-400/20 flex items-center justify-center">
+                          <Icon className="w-3 h-3 text-indigo-200" />
+                        </div>
+                        <span className="text-xs text-white/85 font-medium">{t(key)}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  {isLifetime || isPremium ? (
+                    <Button disabled className="w-full h-12 rounded-2xl bg-white/20 text-white border border-white/30 font-bold cursor-default">
+                      <Check className="h-5 w-5 mr-2" /> {t('pricing.includedInPlan')}
+                    </Button>
+                  ) : (
+                    <Button
+                      onClick={handleYearlyCheckout}
+                      className="w-full h-12 rounded-2xl font-black text-base shadow-2xl hover:-translate-y-0.5 transition-all"
+                      style={{ background: 'linear-gradient(135deg, #10b981, #059669)' }}
+                    >
+                      <CalendarDays className="h-5 w-5 mr-2" />
+                      {t('pricing.yearly.cta')}
+                    </Button>
+                  )}
+                </div>
+              </div>
             </div>
+          </div>
+
+          <div className="mx-auto mb-10 flex items-center justify-center gap-1.5 text-xs text-muted-foreground">
+            <Shield className="h-3 w-3 text-emerald-600" />
+            {t('pricing.securePaymentStripe')}
           </div>
         </AnimatedSection>
 

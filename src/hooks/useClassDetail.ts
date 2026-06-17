@@ -58,17 +58,24 @@ export function useClassDetail(classId?: string) {
 
             // 2. Content is stored directly on the classes row
 
-            // 3. Fetch the user's already-used question IDs to avoid repeats
+            // 3. Fetch the user's already-answered question IDs to avoid repeats.
+            //    Source of truth is user_answers (every answer is recorded there).
+            //    The legacy profiles.used_questions column was only ever written for
+            //    *passed parcours quizzes* and is empty for virtually all users, so
+            //    relying on it made this "avoid repeats" filter a no-op.
             let usedIds: number[] = [];
             if (user) {
-                const { data: profileData } = await supabase
-                    .from('profiles')
-                    .select('used_questions')
-                    .eq('id', user.id)
-                    .maybeSingle();
+                const { data: answeredData } = await supabase
+                    .from('user_answers' as any)
+                    .select('question_id')
+                    .eq('user_id', user.id);
 
-                if (profileData?.used_questions) {
-                    usedIds = (profileData.used_questions as string[]).map(Number).filter(n => !isNaN(n));
+                if (answeredData) {
+                    usedIds = [...new Set(
+                        (answeredData as any[])
+                            .map(r => Number(r.question_id))
+                            .filter(n => !isNaN(n))
+                    )];
                 }
             }
 
@@ -102,9 +109,11 @@ export function useClassDetail(classId?: string) {
                     .select('*')
                     .limit(200);
 
-                // Exclude already-used questions if any
+                // Exclude already-answered questions if any.
+                // Cap the exclusion list so the request URL can't blow past length limits
+                // for very active users (matches the cap used in useQuiz).
                 if (usedIds.length > 0) {
-                    query = query.not('id', 'in', `(${usedIds.join(',')})`);
+                    query = query.not('id', 'in', `(${usedIds.slice(0, 1500).join(',')})`);
                 }
 
                 const { data: poolQuestions, error: poolErr } = await query;

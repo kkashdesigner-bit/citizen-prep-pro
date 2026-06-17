@@ -693,7 +693,7 @@ export default function CoursesPage() {
   }, [classes]);
 
   const isUnlocked = useCallback((clazz: ParcoursClass) => {
-    if (tier === 'premium') return true;
+    if (tier === 'premium' || tier === 'lifetime') return true;
     if (tier === 'free' && clazz.class_number > 10) return false;
     if (clazz.class_number === 1) return true;
     const prev = classes.find(c => c.class_number === clazz.class_number - 1);

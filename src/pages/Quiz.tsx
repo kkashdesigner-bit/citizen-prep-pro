@@ -377,17 +377,10 @@ export default function Quiz() {
       const passed = score / questions.length >= 0.7; // Parcours uses 70% threshold
       updateClassProgress(classIdParam, percent, passed).catch(console.error);
 
-      // Save used question IDs to profile
-      if (user && passed) {
-        const newIds = questions.map(q => String(q.id));
-        supabase.from('profiles').select('used_questions').eq('id', user.id).maybeSingle()
-          .then(({ data: profileData }) => {
-            const existing: string[] = (profileData?.used_questions as string[]) || [];
-            const merged = [...new Set([...existing, ...newIds])];
-            return supabase.from('profiles').update({ used_questions: merged }).eq('id', user.id);
-          })
-          .then(undefined, (err: unknown) => console.error('Failed to save used questions:', err));
-      }
+      // NOTE: "seen / already-answered" questions are tracked via the user_answers
+      // table (written per-answer by useQuiz.saveAnswer), which is the single source
+      // of truth used by the fresh/unseen filters. The old profiles.used_questions
+      // mirror was redundant (and only populated on passed quizzes), so it's gone.
     } else {
       sessionStorage.removeItem('quizClassId');
     }

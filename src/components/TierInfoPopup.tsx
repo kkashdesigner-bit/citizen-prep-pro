@@ -26,7 +26,7 @@ interface TierContextContent {
 }
 
 function getContent(tier: SubscriptionTier, context: TierContext): TierContextContent | null {
-  if (tier === 'premium') return null; // Premium sees nothing
+  if (tier === 'premium' || tier === 'lifetime') return null; // Premium & lifetime see nothing
 
   if (tier === 'free') {
     switch (context) {
@@ -165,7 +165,7 @@ export default function TierInfoPopup({ context, onUpgrade }: TierInfoPopupProps
   const storageKey = `tier_info_seen_${context}_${tier}`;
 
   useEffect(() => {
-    if (loading || tier === 'premium') return;
+    if (loading || tier === 'premium' || tier === 'lifetime') return;
     // Show once per session per context per tier
     const seen = sessionStorage.getItem(storageKey);
     if (!seen) {
@@ -186,7 +186,7 @@ export default function TierInfoPopup({ context, onUpgrade }: TierInfoPopupProps
     onUpgrade?.();
   };
 
-  if (loading || tier === 'premium') return null;
+  if (loading || tier === 'premium' || tier === 'lifetime') return null;
 
   const content = getContent(tier, context);
   if (!content) return null;

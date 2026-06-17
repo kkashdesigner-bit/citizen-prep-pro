@@ -1,0 +1,103 @@
+<!--
+  ============================================================================
+  GoCivique — Reusable branded email template
+  ============================================================================
+  HOW TO USE
+  Replace the {{TOKENS}} below with your content, then paste the final HTML
+  into Resend (or your sender of choice). Tokens:
+
+    {{PREHEADER}}   Hidden inbox preview text (~90 chars). Shown next to the
+                    subject in most inboxes. Keep it punchy.
+    {{GREETING}}    e.g. "Bonjour Marie," or "Bonjour,"
+    {{BODY}}        Your message. Use <p>…</p> for paragraphs. You can also use
+                    <ul><li>…</li></ul> lists. Keep paragraphs short.
+    {{CTA_TEXT}}    Button label, e.g. "Commencer l'entraînement →"
+    {{CTA_URL}}     Button link, e.g. https://gocivique.fr/learn
+
+  REMOVING THE BUTTON
+  If an email has no call to action, delete the whole block marked
+  <!-- CTA START --> … <!-- CTA END -->.
+
+  NOTES
+  - All styles are inline + table-based for maximum email-client support
+    (Gmail, Outlook, Apple Mail, Proton, etc.).
+  - Brand colours: primary #0055A4, gradient end #1B6ED6, tricolore red #EF4135.
+  - Recommended send identity: GoCivique <support@gocivique.fr>,
+    reply-to support@gocivique.fr.
+  ============================================================================
+-->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="x-apple-disable-message-reformatting">
+  <title>GoCivique</title>
+</head>
+<body style="margin:0;padding:0;background:#f3f4f6;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+
+  <!-- Hidden preheader -->
+  <div style="display:none;max-height:0;overflow:hidden;mso-hide:all;">{{PREHEADER}}</div>
+
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f3f4f6;">
+    <tr>
+      <td align="center" style="padding:32px 16px;">
+
+        <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#ffffff;border-radius:12px;overflow:hidden;border:1px solid #e5e7eb;">
+
+          <!-- Header -->
+          <tr>
+            <td style="background:linear-gradient(135deg,#0055A4,#1B6ED6);padding:40px 32px;text-align:center;">
+              <h1 style="color:#ffffff;margin:0;font-size:28px;font-weight:900;letter-spacing:-0.5px;">GoCivique</h1>
+              <p style="color:rgba(255,255,255,0.85);margin:8px 0 0;font-size:14px;">La voie vers la citoyenneté française</p>
+            </td>
+          </tr>
+
+          <!-- Tricolore accent -->
+          <tr>
+            <td style="height:4px;line-height:4px;font-size:0;background:linear-gradient(90deg,#0055A4 0%,#0055A4 33%,#ffffff 33%,#ffffff 66%,#EF4135 66%,#EF4135 100%);">&nbsp;</td>
+          </tr>
+
+          <!-- Body -->
+          <tr>
+            <td style="padding:32px;">
+              <h2 style="color:#1a1a1a;margin:0 0 16px;font-size:20px;font-weight:700;">{{GREETING}}</h2>
+
+              <div style="color:#4b5563;line-height:1.7;font-size:15px;">
+                {{BODY}}
+              </div>
+
+              <!-- CTA START -->
+              <div style="text-align:center;margin:32px 0 8px;">
+                <a href="{{CTA_URL}}" style="background:#0055A4;color:#ffffff;padding:14px 32px;border-radius:10px;text-decoration:none;font-weight:700;font-size:16px;display:inline-block;">{{CTA_TEXT}}</a>
+              </div>
+              <!-- CTA END -->
+
+              <p style="color:#6b7280;font-size:13px;text-align:center;margin-top:24px;">
+                Une question ? <a href="mailto:support@gocivique.fr" style="color:#0055A4;">support@gocivique.fr</a>
+              </p>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="background:#f9fafb;padding:20px 32px;border-top:1px solid #e5e7eb;text-align:center;">
+              <p style="color:#9ca3af;font-size:12px;margin:0;line-height:1.6;">
+                GoCivique · Plateforme de préparation à l'examen civique français<br/>
+                <a href="https://gocivique.fr/privacy" style="color:#9ca3af;">Politique de confidentialité</a>
+              </p>
+              <p style="color:#9ca3af;font-size:11px;margin:8px 0 0;">
+                Vous ne souhaitez plus recevoir ces emails ?
+                <a href="https://gocivique.fr/settings" style="color:#9ca3af;text-decoration:underline;">Se désabonner</a>
+              </p>
+            </td>
+          </tr>
+
+        </table>
+
+      </td>
+    </tr>
+  </table>
+
+</body>
+</html>
