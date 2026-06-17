@@ -2,6 +2,7 @@ import { lazy, Suspense } from "react";
 import { Outlet, Navigate } from "react-router-dom";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import ErrorBoundary from "@/components/ErrorBoundary";
+import SingleSessionGuard from "@/components/SingleSessionGuard";
 
 import { HelmetProvider } from "react-helmet-async";
 import { Toaster } from "@/components/ui/toaster";
@@ -62,6 +63,7 @@ function Root() {
               <TooltipProvider>
                 <Toaster />
                 <Sonner />
+                <SingleSessionGuard />
                 <Suspense fallback={null}>
                   <Outlet />
                 </Suspense>
