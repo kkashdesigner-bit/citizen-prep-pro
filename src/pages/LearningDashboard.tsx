@@ -614,6 +614,9 @@ export default function LearningDashboard() {
             onUpgrade={() => openGate('premium')}
             recentActivity={stats.recentActivity}
             totalXP={stats.totalXP}
+            leaderboard={stats.leaderboard}
+            currentUserRank={stats.currentUserRank}
+            currentUserElo={stats.currentUserElo}
           />
         </div>
       </main>

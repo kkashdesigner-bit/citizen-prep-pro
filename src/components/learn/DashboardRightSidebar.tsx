@@ -1,15 +1,18 @@
 import { motion } from 'framer-motion';
-import { CheckCircle, Lock, ArrowRight, Globe, Sparkles, Zap } from 'lucide-react';
+import { CheckCircle, Lock, ArrowRight, Globe, Sparkles, Zap, Trophy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import RecentActivityLog from './RecentActivityLog';
 import FlashQuizCard from '@/components/flash-quiz/FlashQuizCard';
-import type { ActivityItem } from '@/hooks/useDashboardStats';
+import type { ActivityItem, LeaderboardEntry } from '@/hooks/useDashboardStats';
 
 interface LearningJourneyProps {
     tier: 'free' | 'standard' | 'premium';
     onUpgrade: () => void;
     recentActivity: ActivityItem[];
     totalXP: number;
+    leaderboard: LeaderboardEntry[];
+    currentUserRank: number;
+    currentUserElo: number;
 }
 
 const STAGES = [
@@ -47,7 +50,15 @@ function StatusDot({ status }: { status: 'completed' | 'current' | 'locked' }) {
     );
 }
 
-export default function DashboardRightSidebar({ tier, onUpgrade, recentActivity, totalXP }: LearningJourneyProps) {
+export default function DashboardRightSidebar({ 
+    tier, 
+    onUpgrade, 
+    recentActivity, 
+    totalXP,
+    leaderboard,
+    currentUserRank,
+    currentUserElo
+}: LearningJourneyProps) {
     return (
         <motion.aside
             initial="hidden" animate="visible"
@@ -73,6 +84,90 @@ export default function DashboardRightSidebar({ tier, onUpgrade, recentActivity,
             {/* ── Flash Quiz Card ── */}
             <motion.div variants={{ hidden: { opacity: 0, x: 20 }, visible: { opacity: 1, x: 0 } }}>
               <FlashQuizCard />
+            </motion.div>
+
+            {/* ── Leaderboard Card ── */}
+            <motion.div
+                variants={{ hidden: { opacity: 0, x: 20 }, visible: { opacity: 1, x: 0 } }}
+                className="bg-[var(--dash-card)] rounded-2xl border border-[var(--dash-card-border)] p-5 shadow-[0_2px_12px_rgba(0,0,0,0.04)] relative overflow-hidden"
+            >
+                <div className="flex items-center justify-between mb-4">
+                    <h3 className="font-bold text-[var(--dash-text)] text-sm flex items-center gap-2">
+                        <Trophy className="h-4 w-4 text-amber-500 fill-amber-500/20 animate-bounce" />
+                        Classement ELO
+                    </h3>
+                    <span className="text-[10px] font-bold text-blue-600 bg-blue-50 dark:bg-blue-950 px-2 py-0.5 rounded-full uppercase tracking-wider">
+                        Top 5
+                    </span>
+                </div>
+
+                <div className="space-y-3">
+                    {leaderboard.map((entry) => {
+                        const rankColors: Record<number, string> = {
+                            1: 'bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border-yellow-500/20',
+                            2: 'bg-slate-300/20 text-slate-500 dark:text-slate-400 border-slate-300/30',
+                            3: 'bg-amber-600/10 text-amber-700 dark:text-amber-500 border-amber-600/20',
+                        };
+                        const defaultRankColor = 'bg-[var(--dash-surface)] text-[var(--dash-text-muted)] border-[var(--dash-card-border)]';
+                        const badgeStyle = rankColors[entry.rank] || defaultRankColor;
+
+                        return (
+                            <div 
+                                key={entry.id} 
+                                className={`flex items-center justify-between p-2 rounded-xl border transition-all ${entry.isCurrentUser ? 'bg-blue-500/5 border-blue-500/30 shadow-sm' : 'border-transparent'}`}
+                            >
+                                <div className="flex items-center gap-2.5 min-w-0">
+                                    <div className={`h-6 w-6 rounded-lg border text-xs font-bold flex items-center justify-center shrink-0 ${badgeStyle}`}>
+                                        {entry.rank}
+                                    </div>
+                                    
+                                    <div className="h-7 w-7 rounded-full overflow-hidden bg-blue-50 dark:bg-blue-950 border border-[var(--dash-card-border)] shrink-0 flex items-center justify-center font-bold text-xs text-blue-600 dark:text-blue-300">
+                                        {entry.avatarUrl ? (
+                                            <img src={entry.avatarUrl} alt={entry.displayName} className="h-full w-full object-cover" />
+                                        ) : (
+                                            entry.displayName.charAt(0).toUpperCase()
+                                        )}
+                                    </div>
+
+                                    <span className={`text-xs font-semibold truncate ${entry.isCurrentUser ? 'text-blue-600 dark:text-blue-400 font-bold' : 'text-[var(--dash-text)]'}`}>
+                                        {entry.displayName} {entry.isCurrentUser && " (Vous)"}
+                                    </span>
+                                </div>
+
+                                <div className="flex items-center gap-1">
+                                    <span className="text-xs font-bold text-[var(--dash-text)]">{entry.eloRating}</span>
+                                    <span className="text-[9px] font-bold text-[var(--dash-text-muted)]">ELO</span>
+                                </div>
+                            </div>
+                        );
+                    })}
+
+                    {!leaderboard.some(e => e.isCurrentUser) && (
+                        <>
+                            <div className="border-t border-dashed border-[var(--dash-card-border)] my-2" />
+                            <div className="flex items-center justify-between p-2 rounded-xl border bg-blue-500/5 border-blue-500/30 shadow-sm">
+                                <div className="flex items-center gap-2.5 min-w-0">
+                                    <div className="h-6 w-6 rounded-lg border text-xs font-bold flex items-center justify-center shrink-0 bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20">
+                                        {currentUserRank}
+                                    </div>
+
+                                    <div className="h-7 w-7 rounded-full overflow-hidden bg-blue-50 dark:bg-blue-950 border border-[var(--dash-card-border)] shrink-0 flex items-center justify-center font-bold text-xs text-blue-600 dark:text-blue-300">
+                                        <span>V</span>
+                                    </div>
+
+                                    <span className="text-xs font-bold text-blue-600 dark:text-blue-400 truncate">
+                                        Vous
+                                    </span>
+                                </div>
+
+                                <div className="flex items-center gap-1">
+                                    <span className="text-xs font-bold text-[var(--dash-text)]">{currentUserElo}</span>
+                                    <span className="text-[9px] font-bold text-[var(--dash-text-muted)]">ELO</span>
+                                </div>
+                            </div>
+                        </>
+                    )}
+                </div>
             </motion.div>
 
             {/* ── Learning Journey Timeline ── */}

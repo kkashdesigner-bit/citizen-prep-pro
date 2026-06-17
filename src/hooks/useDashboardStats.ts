@@ -46,6 +46,15 @@ export interface ActivityItem {
     detail?: string;
 }
 
+export interface LeaderboardEntry {
+    id: string;
+    displayName: string;
+    avatarUrl: string | null;
+    eloRating: number;
+    rank: number;
+    isCurrentUser: boolean;
+}
+
 export interface DashboardStats {
     // Core
     loading: boolean;
@@ -66,6 +75,9 @@ export interface DashboardStats {
     canTakeExamFree: boolean;
     totalXP: number;
     wrongQuestionsCount: number;
+    leaderboard: LeaderboardEntry[];
+    currentUserRank: number;
+    currentUserElo: number;
 }
 
 /* ──────────────────────────────────────────────
@@ -255,6 +267,9 @@ export function useDashboardStats(): DashboardStats {
     const [examHistory, setExamHistory] = useState<ExamHistoryEntry[]>([]);
     const [allAnswers, setAllAnswers] = useState<UserAnswer[]>([]);
     const [classCompletions, setClassCompletions] = useState<{ class_number: number; title: string; completed_at: string; score: number }[]>([]);
+    const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
+    const [currentUserRank, setCurrentUserRank] = useState(1);
+    const [currentUserElo, setCurrentUserElo] = useState(1200);
 
     useEffect(() => {
         if (authLoading || !user) {
@@ -267,7 +282,7 @@ export function useDashboardStats(): DashboardStats {
             const [profileResult, answersResult] = await Promise.all([
                 supabase
                     .from('profiles')
-                    .select('display_name, email, exam_history, total_questions_seen, avatar_url')
+                    .select('display_name, email, exam_history, total_questions_seen, avatar_url, elo_rating')
                     .eq('id', user.id)
                     .maybeSingle(),
                 supabase
@@ -282,12 +297,40 @@ export function useDashboardStats(): DashboardStats {
             const p = profileResult.data;
             setDisplayName(p?.display_name || p?.email || '');
             setAvatarUrl(p?.avatar_url || null);
+            const userEloVal = p?.elo_rating ?? 1200;
+            setCurrentUserElo(userEloVal);
 
             const history = p?.exam_history;
             setExamHistory(Array.isArray(history) ? (history as unknown as ExamHistoryEntry[]) : []);
 
             // User answers
             setAllAnswers((answersResult.data as UserAnswer[]) || []);
+
+            // Fetch leaderboard top 5
+            const { data: topUsers } = await supabase
+                .from('profiles')
+                .select('id, display_name, email, avatar_url, elo_rating')
+                .order('elo_rating', { ascending: false })
+                .limit(5);
+
+            // Fetch count of users above to determine current user rank
+            const { count: countAbove } = await supabase
+                .from('profiles')
+                .select('*', { count: 'exact', head: true })
+                .gt('elo_rating', userEloVal);
+            
+            const curRank = (countAbove ?? 0) + 1;
+            setCurrentUserRank(curRank);
+
+            const mappedLeaderboard: LeaderboardEntry[] = (topUsers || []).map((u, index) => ({
+                id: u.id,
+                displayName: u.display_name || u.email?.split('@')[0] || 'Apprenant',
+                avatarUrl: u.avatar_url || null,
+                eloRating: u.elo_rating ?? 1200,
+                rank: index + 1,
+                isCurrentUser: u.id === user.id
+            }));
+            setLeaderboard(mappedLeaderboard);
 
             // Fetch parcours class completions for recent activity
             const { data: progressData } = await (supabase as any)
@@ -373,5 +416,8 @@ export function useDashboardStats(): DashboardStats {
         canTakeExamFree: examsToday < 1,
         totalXP,
         wrongQuestionsCount,
+        leaderboard,
+        currentUserRank,
+        currentUserElo,
     };
 }
