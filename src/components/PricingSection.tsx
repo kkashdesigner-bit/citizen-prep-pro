@@ -15,7 +15,7 @@ import { toast } from 'sonner';
 // corresponding Stripe Prices (STRIPE_LIFETIME_PRICE_ID / STRIPE_YEARLY_PRICE_ID).
 const LIFETIME_PRICE = '99';
 const ANNUAL_PRICE = '29';
-const ANNUAL_OLD_PRICE = '131,88';
+const ANNUAL_OLD_PRICE = '83,88';
 
 export default function PricingSection() {
   const { t } = useLanguage();
@@ -41,17 +41,16 @@ export default function PricingSection() {
     { key: 'pricing.feat.translation',  free: false, standard: false, premium: true },
   ];
 
-  // Yearly = all Premium features billed once a year (replaces the old Lifetime offer;
-  // existing lifetime customers stay grandfathered via their profile tier).
+  // Yearly = all Standard features billed once a year.
   const yearlyPerks = [
-    { icon: Crown,     key: 'pricing.yearly.perk1' },
-    { icon: Unlock,    key: 'pricing.lifetime.perk2' },
-    { icon: Globe,     key: 'pricing.lifetime.perk3' },
-    { icon: BarChart2, key: 'pricing.lifetime.perk4' },
-    { icon: BookOpen,  key: 'pricing.lifetime.perk5' },
-    { icon: Zap,       key: 'pricing.lifetime.perk6' },
-    { icon: Star,      key: 'pricing.yearly.perk7' },
-    { icon: Gift,      key: 'pricing.yearly.perk8' },
+    { icon: Crown,        key: 'pricing.yearly.perk1' },
+    { icon: BookOpen,     key: 'pricing.lifetime.perk5' },
+    { icon: Zap,          key: 'pricing.feat.training' },
+    { icon: BarChart2,    key: 'pricing.feat.progress' },
+    { icon: BookOpen,     key: 'pricing.feat.lessons' },
+    { icon: Star,         key: 'pricing.feat.path' },
+    { icon: CalendarDays, key: 'pricing.yearly.perk7' },
+    { icon: Gift,         key: 'pricing.yearly.perk8' },
   ];
 
   const lifetimePerks = [
@@ -176,7 +175,7 @@ export default function PricingSection() {
                   <div className="flex items-baseline gap-2 mb-1">
                     <span className="text-5xl font-black text-white">{ANNUAL_PRICE} €<span className="text-xl font-bold text-white/60">{t('pricing.yearly.perYear')}</span></span>
                     <span className="text-white/50 text-base font-semibold line-through">{ANNUAL_OLD_PRICE} €</span>
-                    <span className="bg-emerald-500 text-white text-xs font-black px-2 py-0.5 rounded-full">−78%</span>
+                    <span className="bg-emerald-500 text-white text-xs font-black px-2 py-0.5 rounded-full">−65%</span>
                   </div>
                   <p className="text-white/60 text-sm mb-5">{t('pricing.yearly.billing')}</p>
 

@@ -8,7 +8,7 @@ import {
 const TRIAL_DAYS = 3;
 const LIFETIME_PRICE_ID = 'price_1TecfyP5T0wCun4w2LA3Tk8g';
 // 'lifetime' kept for backward compatibility (grandfathered offer, no longer sold).
-// 'yearly' = Premium billed annually (maps to premium entitlements via the webhook).
+// 'yearly' = Standard billed annually (maps to standard entitlements via the webhook).
 const ALLOWED_TIERS = new Set(['standard', 'premium', 'yearly', 'lifetime']);
 const DEFAULT_RETURN_URL = 'https://gocivique.fr';
 

@@ -53,8 +53,8 @@ const plans = {
   lifetime: {
     name: 'Accès à Vie',
     icon: <Infinity className="w-4 h-4" />,
-    price: '30',
-    priceLabel: '30 € une fois',
+    price: '99',
+    priceLabel: '99 € une fois',
     period: ' à vie',
     periodLabel: 'Paiement unique · Aucun abonnement',
     color: '#7C3AED',
@@ -233,7 +233,7 @@ const SubscriptionGate = forwardRef<HTMLDivElement, SubscriptionGateProps>(
               ) : selectedPlan === 'lifetime' ? (
                 <>
                   <Infinity className="w-4 h-4 mr-2" />
-                  Accès à Vie — 30 € une fois
+                  Accès à Vie — 99 € une fois
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </>
               ) : (

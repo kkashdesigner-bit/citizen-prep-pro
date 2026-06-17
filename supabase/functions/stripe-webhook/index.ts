@@ -129,7 +129,7 @@ serve(async (req) => {
         // ── Subscription checkout (standard / premium / yearly) ──
         const standardProductId = Deno.env.get('STRIPE_STANDARD_PRODUCT_ID') || 'prod_U5buOHEYCg9BRp';
         const premiumProductId = Deno.env.get('STRIPE_PREMIUM_PRODUCT_ID') || 'prod_U5buC3rswQEzSA';
-        // Yearly plan = Premium entitlements billed annually
+        // Yearly plan = Standard entitlements billed annually
         const yearlyProductId = Deno.env.get('STRIPE_YEARLY_PRODUCT_ID') || '';
 
         let tier = 'standard';
@@ -139,7 +139,7 @@ serve(async (req) => {
             const subscription = await stripe.subscriptions.retrieve(session.subscription as string);
             const productId = subscription.items.data[0]?.price?.product as string;
             if (yearlyProductId && productId === yearlyProductId) {
-              tier = 'premium';
+              tier = 'standard';
             } else if (premiumProductId && productId === premiumProductId) {
               tier = 'premium';
             } else if (standardProductId && productId === standardProductId) {
@@ -219,13 +219,13 @@ serve(async (req) => {
       if (profile) {
         const standardProductId = Deno.env.get('STRIPE_STANDARD_PRODUCT_ID') || 'prod_U5buOHEYCg9BRp';
         const premiumProductId = Deno.env.get('STRIPE_PREMIUM_PRODUCT_ID') || 'prod_U5buC3rswQEzSA';
-        // Yearly plan = Premium entitlements billed annually
+        // Yearly plan = Standard entitlements billed annually
         const yearlyProductId = Deno.env.get('STRIPE_YEARLY_PRODUCT_ID') || '';
         const productId = subscription.items.data[0]?.price?.product as string;
 
         let tier = 'standard';
         if (yearlyProductId && productId === yearlyProductId) {
-          tier = 'premium';
+          tier = 'standard';
         } else if (premiumProductId && productId === premiumProductId) {
           tier = 'premium';
         } else if (standardProductId && productId === standardProductId) {

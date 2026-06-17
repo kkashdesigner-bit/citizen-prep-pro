@@ -152,7 +152,7 @@ serve(async (req) => {
 
     const firstName = escapeHtml(str(data.firstName, 100));
     const tierRaw = str(data.tier, 20);
-    const tierLabel = tierRaw === 'premium' ? 'Premium' : 'Standard';
+    const tierLabel = (tierRaw === 'premium' || tierRaw === 'lifetime') ? 'Premium' : 'Standard';
 
     // ─── Signup welcome ───
     if (type === 'signup_welcome') {
@@ -284,7 +284,7 @@ serve(async (req) => {
 
     // ─── Welcome / subscription confirmation ───
     if (type === 'welcome' || type === 'subscription_activated') {
-      const isTrial = tierRaw === 'standard';
+      const isTrial = tierRaw === 'standard' || tierRaw === 'yearly';
       
       const blocks = [
         isTrial 
