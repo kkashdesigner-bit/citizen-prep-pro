@@ -123,135 +123,297 @@ function buildPaidEmail(firstName: string, tier: string): { subject: string; htm
 
 function buildExam60dFreeEmail(firstName: string, daysLeft: number): { subject: string; html: string } {
   const dLabel = daysLeft === 1 ? '1 jour' : `${daysLeft} jours`;
-  const hello = firstName ? `${firstName}, votre` : 'Votre';
+  const name = firstName || 'Sha';
 
-  // Rooster-led, Duolingo-style teaser. CTA = the 3-day free Standard trial.
   const html = `<!DOCTYPE html>
 <html lang="fr">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
-<body style="margin:0;padding:0;background:#f3f4f6;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif">
-  <div style="display:none;max-height:0;overflow:hidden">J-${daysLeft} avant votre examen civique — le coq GoCivique commence à s'inquiéter… 🐓</div>
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f3f4f6">
-    <tr><td align="center" style="padding:32px 16px">
-      <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#fff;border-radius:16px;overflow:hidden;border:1px solid #e5e7eb">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="x-apple-disable-message-reformatting">
+  <title>GoCivique</title>
+</head>
+<body style="margin:0;padding:0;background-color:#f8fafc;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased;">
+  <div style="display:none;max-height:0;overflow:hidden;mso-hide:all;">J-\${daysLeft} avant votre examen civique — le coq GoCivique commence à s'inquiéter… 🐓</div>
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f8fafc;">
+    <tr>
+      <td align="center" style="padding:32px 16px;">
+        <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background-color:#ffffff;border-radius:16px;overflow:hidden;border:1px solid #e2e8f0;box-shadow:0 4px 20px rgba(0,0,0,0.05);">
+          
+          <!-- Top Tricolore Bar -->
+          <tr>
+            <td style="height:6px;line-height:6px;font-size:0;background:linear-gradient(90deg,#0055A4 0%,#0055A4 33%,#ffffff 33%,#ffffff 66%,#EF4135 66%,#EF4135 100%);">&nbsp;</td>
+          </tr>
 
-        <!-- Header: rooster + brand -->
-        <tr><td style="background:linear-gradient(135deg,${BRAND_PRIMARY},${BRAND_GRADIENT_END});padding:32px 32px 28px;text-align:center">
-          <img src="https://gocivique.fr/gocivique-logo-examen-civique.png" width="84" height="84" alt="Le coq GoCivique" style="display:block;margin:0 auto 12px;border-radius:20px;background:#ffffff;padding:6px" />
-          <h1 style="color:#fff;margin:0;font-size:26px;font-weight:900;letter-spacing:-0.5px">GoCivique</h1>
-          <p style="color:rgba(255,255,255,0.85);margin:6px 0 0;font-size:14px">Cocorico ! Petit message de votre coach 🐓</p>
-        </td></tr>
+          <!-- Header -->
+          <tr>
+            <td style="padding:24px 32px;border-bottom:1px solid #f1f5f9;text-align:center;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td align="center">
+                    <img src="https://gocivique.fr/gocivique-logo-examen-civique.png" width="64" height="64" alt="GoCivique Logo" style="display:inline-block;vertical-align:middle;border-radius:14px;background-color:#ffffff;padding:4px;border:1px solid #e2e8f0;" />
+                    <span style="display:inline-block;vertical-align:middle;margin-left:12px;font-size:24px;font-weight:900;color:#0f172a;letter-spacing:-0.5px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">GoCivique</span>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
 
-        <!-- Countdown chip -->
-        <tr><td style="padding:0;text-align:center">
-          <div style="margin:-18px auto 0;display:inline-block;background:#EF4135;color:#fff;font-weight:900;font-size:22px;padding:10px 28px;border-radius:999px;border:4px solid #fff;box-shadow:0 4px 14px rgba(239,65,53,0.35)">
-            J−${daysLeft}
-          </div>
-        </td></tr>
+          <!-- Hero Image -->
+          <tr>
+            <td style="padding:32px 32px 0;text-align:center;">
+              <img src="https://gocivique.fr/examen-civique-parcours-100-niveaux-desktop.jpg" width="100%" alt="Parcours de préparation civique" style="display:block;width:100%;max-width:536px;height:auto;border-radius:12px;border:1px solid #e2e8f0;box-shadow:0 2px 10px rgba(0,0,0,0.03);" />
+            </td>
+          </tr>
 
-        <tr><td style="padding:28px 32px 8px">
-          <h2 style="color:#1a1a1a;margin:0 0 12px;font-size:22px;line-height:1.3;text-align:center">
-            ${hello} examen civique est dans <span style="color:#EF4135">${dLabel}</span>.
-          </h2>
-          <p style="color:#4b5563;line-height:1.7;font-size:15px;text-align:center;margin:0 0 20px">
-            Le coq de GoCivique s'est levé tôt pour vous le rappeler : il vous faudra <strong>32 bonnes réponses sur 40</strong> le jour J. La bonne nouvelle ? ${dLabel}, c'est encore largement assez — à condition de s'entraîner avec les vraies questions.
-          </p>
+          <!-- Countdown Badge -->
+          <tr>
+            <td style="padding:0;text-align:center;">
+              <div style="margin:-20px auto 0;display:inline-block;background-color:#EF4135;color:#ffffff;font-weight:900;font-size:20px;padding:8px 24px;border-radius:999px;border:4px solid #ffffff;box-shadow:0 4px 12px rgba(239,65,53,0.3);">
+                J−\${daysLeft} avant l'examen
+              </div>
+            </td>
+          </tr>
 
-          <!-- Progress tease -->
-          <div style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:14px;padding:18px 20px;margin-bottom:20px">
-            <p style="margin:0 0 10px;font-size:13px;font-weight:700;color:#1a1a1a">Votre accès actuel à la banque officielle :</p>
-            <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-              <tr><td style="background:#e5e7eb;border-radius:999px;height:14px">
-                <div style="width:3%;min-width:18px;background:linear-gradient(90deg,${BRAND_PRIMARY},#EF4135);height:14px;border-radius:999px"></div>
-              </td></tr>
-            </table>
-            <p style="margin:10px 0 0;font-size:13px;color:#6b7280">
-              <strong style="color:#EF4135">200</strong> questions gratuites sur <strong style="color:${BRAND_PRIMARY}">7 232</strong> questions officielles…
-              le coq trouve que c'est un peu juste. 😬
-            </p>
-          </div>
+          <!-- Body Content -->
+          <tr>
+            <td style="padding:32px;">
+              <h2 style="color:#0f172a;margin:0 0 16px;font-size:22px;font-weight:800;line-height:1.3;text-align:center;">
+                Bonjour \${name}, votre examen approche !
+              </h2>
+              
+              <p style="color:#475569;line-height:1.625;font-size:15px;text-align:center;margin:0 0 24px;">
+                Le coq de GoCivique a sonné l'alarme : il ne reste que <strong>\${dLabel}</strong> avant votre examen civique officiel. Pour réussir, vous devez obtenir au moins <strong>32 bonnes réponses sur 40</strong>. C'est le moment de passer à la vitesse supérieure !
+              </p>
 
-          <!-- What the trial unlocks -->
-          <div style="background:#f0f5ff;border-radius:14px;padding:18px 20px;border-left:4px solid ${BRAND_PRIMARY};margin-bottom:24px">
-            <p style="margin:0 0 10px;font-weight:800;color:${BRAND_PRIMARY};font-size:14px">Avec l'essai gratuit Standard, vous débloquez :</p>
-            <p style="margin:0;color:#374151;font-size:14px;line-height:1.9">
-              🔓 Les <strong>7 232 questions officielles</strong> (CSP, CR, Naturalisation)<br/>
-              🎯 Les <strong>examens blancs illimités</strong> en conditions réelles<br/>
-              🧠 La <strong>révision de vos erreurs</strong> jusqu'à la maîtrise<br/>
-              📈 Votre <strong>score prédit</strong> mis à jour en direct
-            </p>
-          </div>
-        </td></tr>
+              <!-- Progress bar representation -->
+              <div style="background-color:#f8fafc;border:1px solid #e2e8f0;border-radius:14px;padding:20px;margin-bottom:24px;">
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td style="font-size:13px;font-weight:700;color:#1e293b;">Votre progression actuelle :</td>
+                    <td align="right" style="font-size:13px;font-weight:800;color:#ef4444;">Accès gratuit (3%)</td>
+                  </tr>
+                  <tr>
+                    <td colspan="2" style="padding-top:10px;">
+                      <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                        <tr>
+                          <td style="background-color:#e2e8f0;border-radius:999px;height:12px;">
+                            <div style="width:3%;min-width:18px;background:linear-gradient(90deg,#0055A4,#EF4135);height:12px;border-radius:999px;"></div>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+                <p style="margin:10px 0 0;font-size:13px;color:#64748b;line-height:1.5;">
+                  Vous n'avez accès qu'à <strong>200 questions d'entraînement</strong> sur les <strong>7 232 questions officielles</strong> de notre base. Le coq trouve que c'est un peu juste pour aborder l'examen sereinement ! 🐓
+                </p>
+              </div>
 
-        <!-- CTA -->
-        <tr><td style="padding:0 32px;text-align:center">
-          <a href="https://gocivique.fr/#pricing" style="background:${BRAND_PRIMARY};color:#fff;padding:16px 36px;border-radius:14px;text-decoration:none;font-weight:800;font-size:17px;display:inline-block;box-shadow:0 6px 18px rgba(0,85,164,0.35)">
-            🎁 Commencer mes 3 jours gratuits
-          </a>
-          <p style="color:#6b7280;font-size:12px;margin:12px 0 0">
-            Aucun débit pendant l'essai · Résiliation en 1 clic
-          </p>
-        </td></tr>
+              <h3 style="color:#0f172a;font-size:16px;font-weight:700;margin:0 0 16px;text-align:center;">Pourquoi passer au plan Standard aujourd'hui ?</h3>
+              
+              <!-- Value Cards Grid -->
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:28px;">
+                <tr>
+                  <td width="48%" valign="top" style="background-color:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:16px;">
+                    <div style="font-size:20px;margin-bottom:8px;">🔓</div>
+                    <div style="font-weight:800;font-size:14px;color:#0f172a;margin-bottom:4px;">Base Complète</div>
+                    <div style="font-size:12px;color:#475569;line-height:1.5;">Accédez aux <strong>7 232 questions officielles</strong> (Naturalisation, Résident, CSP).</div>
+                  </td>
+                  <td width="4%"></td>
+                  <td width="48%" valign="top" style="background-color:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:16px;">
+                    <div style="font-size:20px;margin-bottom:8px;">🎯</div>
+                    <div style="font-weight:800;font-size:14px;color:#0f172a;margin-bottom:4px;">Examens Blancs</div>
+                    <div style="font-size:12px;color:#475569;line-height:1.5;">Entraînez-vous en conditions réelles avec minuteur de 45 min.</div>
+                  </td>
+                </tr>
+                <tr><td colspan="3" style="height:12px;"></td></tr>
+                <tr>
+                  <td width="48%" valign="top" style="background-color:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:16px;">
+                    <div style="font-size:20px;margin-bottom:8px;">🧠</div>
+                    <div style="font-weight:800;font-size:14px;color:#0f172a;margin-bottom:4px;">Révision d'Erreurs</div>
+                    <div style="font-size:12px;color:#475569;line-height:1.5;">L'algorithme isole vos erreurs et vous fait retravailler vos points faibles.</div>
+                  </td>
+                  <td width="4%"></td>
+                  <td width="48%" valign="top" style="background-color:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:16px;">
+                    <div style="font-size:20px;margin-bottom:8px;">📈</div>
+                    <div style="font-weight:800;font-size:14px;color:#0f172a;margin-bottom:4px;">Score Prédictif</div>
+                    <div style="font-size:12px;color:#475569;line-height:1.5;">Suivez l'évolution de vos chances de réussite calculées en temps réel.</div>
+                  </td>
+                </tr>
+              </table>
 
-        <tr><td style="padding:24px 32px 28px">
-          <p style="color:#4b5563;font-size:14px;line-height:1.7;text-align:center;margin:0">
-            On se retrouve sur la plateforme ?<br/>
-            <strong>Le coq croit en vous. 🇫🇷</strong>
-          </p>
-          <p style="color:#6b7280;font-size:13px;text-align:center;margin:18px 0 0">
-            Une question ? <a href="mailto:support@gocivique.fr" style="color:${BRAND_PRIMARY}">support@gocivique.fr</a>
-          </p>
-        </td></tr>
+              <!-- Call to Action -->
+              <div style="text-align:center;margin-bottom:12px;">
+                <a href="https://gocivique.fr/#pricing" style="background-color:#0055A4;color:#ffffff;padding:16px 36px;border-radius:12px;text-decoration:none;font-weight:800;font-size:16px;display:inline-block;box-shadow:0 4px 12px rgba(0,85,164,0.25);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+                  🎁 Commencer mes 3 jours gratuits
+                </a>
+              </div>
+              <p style="color:#64748b;font-size:12px;text-align:center;margin:0 0 28px;">
+                Aucune carte requise · Annulation en un clic
+              </p>
 
-        <!-- Footer -->
-        <tr><td style="background:#f9fafb;padding:20px 32px;border-top:1px solid #e5e7eb;text-align:center">
-          <p style="color:#9ca3af;font-size:12px;margin:0">
-            GoCivique · Plateforme de préparation à l'examen civique français<br/>
-            <a href="https://gocivique.fr/privacy" style="color:#9ca3af">Politique de confidentialité</a>
-          </p>
-          <p style="color:#9ca3af;font-size:11px;margin:8px 0 0">
-            Vous ne souhaitez plus recevoir ces emails ?
-            <a href="https://gocivique.fr/settings" style="color:#9ca3af;text-decoration:underline">Se désabonner</a>
-          </p>
-        </td></tr>
-      </table>
-    </td></tr>
+              <!-- Closing -->
+              <p style="color:#334155;font-size:14px;line-height:1.6;text-align:center;margin:0;">
+                Mettez toutes les chances de votre côté.<br/>
+                <strong>Le coq croit en vous ! 🐓🇫🇷</strong>
+              </p>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="background-color:#f8fafc;padding:24px 32px;border-top:1px solid #e2e8f0;text-align:center;">
+              <p style="color:#94a3b8;font-size:12px;margin:0;line-height:1.6;">
+                GoCivique · Plateforme n°1 de préparation aux examens civiques français<br/>
+                <a href="https://gocivique.fr/privacy" style="color:#64748b;text-decoration:none;">Politique de confidentialité</a> · <a href="mailto:support@gocivique.fr" style="color:#64748b;text-decoration:none;">Contact Support</a>
+              </p>
+              <p style="color:#94a3b8;font-size:11px;margin:12px 0 0;">
+                Vous souhaitez ne plus recevoir ces rappels ?
+                <a href="https://gocivique.fr/settings" style="color:#94a3b8;text-decoration:underline;">Se désabonner</a>
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
   </table>
 </body>
 </html>`;
 
   return {
-    subject: `🐓 J−${daysLeft} ${firstName ? firstName + ' ' : ''}— le coq a sonné, votre examen approche !`,
+    subject: `🐓 J-\${daysLeft} \${name} — le coq a sonné, votre examen approche !`,
     html,
   };
 }
 
 function buildExam60dPaidEmail(firstName: string, daysLeft: number, tier: string): { subject: string; html: string } {
-  const name = firstName ? `Bonjour ${firstName} !` : 'Bonjour !';
+  const dLabel = daysLeft === 1 ? '1 jour' : `\${daysLeft} jours`;
+  const name = firstName || 'Sha';
   const tierLabel = tier === 'premium' ? 'Premium' : 'Standard';
-  const dLabel = daysLeft === 1 ? '1 jour' : `${daysLeft} jours`;
-  const plural = daysLeft > 1 ? 's' : '';
 
-  return {
-    subject: `Plus que ${daysLeft} jour${plural} — avez-vous exploré les 7 232 questions ?`,
-    html: buildHtml({
-      preheader: `J-${daysLeft} avant votre examen — vérifiez que vous exploitez pleinement GoCivique.`,
-      greeting: name,
-      blocks: [
-        `Votre examen civique approche : il ne reste que <strong>${dLabel}</strong>. En tant que membre <strong>${tierLabel}</strong>, vous avez déjà accès à la totalité des <strong>7 232 questions officielles</strong> — mais les avez-vous vraiment exploitées ?`,
-        `<div style="background:#f0fdf4;border-radius:10px;padding:16px;border-left:4px solid #059669">
-          <strong style="color:#059669">Checklist de préparation finale :</strong><br/><br/>
-          ✅ <strong>Questions Inédites</strong> — avez-vous épuisé les questions que vous n'avez jamais vues ?<br/>
-          ✅ <strong>Révision des Erreurs</strong> — avez-vous rejoué vos erreurs passées jusqu'à les maîtriser ?<br/>
-          ✅ <strong>Mode Difficile</strong> — avez-vous affronté les 500 questions au taux de réussite le plus faible ?<br/>
-          ✅ <strong>Maîtrise par Catégorie</strong> — êtes-vous au-dessus de 85 % dans chaque thème ?
-        </div>`,
-        `Plus vous répondez à de questions, plus vous êtes prêt(e). Chaque session compte.`,
-        `Il vous reste <strong>${dLabel}</strong> — mettez-les à profit.`,
-      ],
-      ctaText: 'Continuer mon entraînement →',
-      ctaUrl: 'https://gocivique.fr/exams',
-    }),
+  const html = `<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="x-apple-disable-message-reformatting">
+  <title>GoCivique</title>
+</head>
+<body style="margin:0;padding:0;background-color:#f8fafc;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased;">
+  <div style="display:none;max-height:0;overflow:hidden;mso-hide:all;">Plus que \${dLabel} avant votre examen — vérifiez votre niveau ! 🐓</div>
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f8fafc;">
+    <tr>
+      <td align="center" style="padding:32px 16px;">
+        <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background-color:#ffffff;border-radius:16px;overflow:hidden;border:1px solid #e2e8f0;box-shadow:0 4px 20px rgba(0,0,0,0.05);">
+          
+          <!-- Top Tricolore Bar -->
+          <tr>
+            <td style="height:6px;line-height:6px;font-size:0;background:linear-gradient(90deg,#0055A4 0%,#0055A4 33%,#ffffff 33%,#ffffff 66%,#EF4135 66%,#EF4135 100%);">&nbsp;</td>
+          </tr>
+
+          <!-- Header -->
+          <tr>
+            <td style="padding:24px 32px;border-bottom:1px solid #f1f5f9;text-align:center;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td align="center">
+                    <img src="https://gocivique.fr/gocivique-logo-examen-civique.png" width="64" height="64" alt="GoCivique Logo" style="display:inline-block;vertical-align:middle;border-radius:14px;background-color:#ffffff;padding:4px;border:1px solid #e2e8f0;" />
+                    <span style="display:inline-block;vertical-align:middle;margin-left:12px;font-size:24px;font-weight:900;color:#0f172a;letter-spacing:-0.5px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">GoCivique</span>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Hero Image -->
+          <tr>
+            <td style="padding:32px 32px 0;text-align:center;">
+              <img src="https://gocivique.fr/examen-civique-parcours-progression-desktop.jpg" width="100%" alt="Votre progression GoCivique" style="display:block;width:100%;max-width:536px;height:auto;border-radius:12px;border:1px solid #e2e8f0;box-shadow:0 2px 10px rgba(0,0,0,0.03);" />
+            </td>
+          </tr>
+
+          <!-- Countdown Badge -->
+          <tr>
+            <td style="padding:0;text-align:center;">
+              <div style="margin:-20px auto 0;display:inline-block;background-color:#059669;color:#ffffff;font-weight:900;font-size:20px;padding:8px 24px;border-radius:999px;border:4px solid #ffffff;box-shadow:0 4px 12px rgba(5,150,105,0.3);">
+                J−\${daysLeft} avant l'examen
+              </div>
+            </td>
+          </tr>
+
+          <!-- Body Content -->
+          <tr>
+            <td style="padding:32px;">
+              <h2 style="color:#0f172a;margin:0 0 16px;font-size:22px;font-weight:800;line-height:1.3;text-align:center;">
+                Bonjour \${name}, vous y êtes presque !
+              </h2>
+              
+              <p style="color:#475569;line-height:1.625;font-size:15px;text-align:center;margin:0 0 24px;">
+                Votre examen civique est dans <strong>\${dLabel}</strong>. En tant que membre \${tierLabel}, vous disposez de tous les outils nécessaires pour réussir du premier coup. Voici votre checklist finale de préparation :
+              </p>
+
+              <!-- Checklist Box -->
+              <div style="background-color:#f0fdf4;border:1px solid #bbf7d0;border-radius:14px;padding:20px;margin-bottom:24px;border-left:4px solid #059669;">
+                <p style="margin:0 0 12px;font-weight:800;color:#0f5132;font-size:15px;">📋 Checklist finale de préparation :</p>
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="color:#1e293b;font-size:14px;line-height:1.8;">
+                  <tr>
+                    <td valign="top" style="padding-bottom:10px;width:24px;">✅</td>
+                    <td style="padding-bottom:10px;"><strong>Questions Inédites :</strong> Avez-vous répondu à toutes les questions de notre base de 7 232 questions ? Ciblez-les pour ne laisser aucun angle mort.</td>
+                  </tr>
+                  <tr>
+                    <td valign="top" style="padding-bottom:10px;width:24px;">✅</td>
+                    <td style="padding-bottom:10px;"><strong>Révision des Erreurs :</strong> Repassez vos réponses fausses. Videz votre boîte d'erreurs pour perfectionner votre score.</td>
+                  </tr>
+                  <tr>
+                    <td valign="top" style="padding-bottom:10px;width:24px;">✅</td>
+                    <td style="padding-bottom:10px;"><strong>Mode Difficile :</strong> Entraînez-vous sur les 500 questions statistiquement les plus redoutées par les candidats.</td>
+                  </tr>
+                  <tr>
+                    <td valign="top" style="width:24px;">✅</td>
+                    <td><strong>Examens Blancs :</strong> Réalisez au moins 3 examens blancs avec un score constant supérieur à 32/40.</td>
+                  </tr>
+                </table>
+              </div>
+
+              <!-- Call to Action -->
+              <div style="text-align:center;margin-bottom:28px;">
+                <a href="https://gocivique.fr/exams" style="background-color:#0055A4;color:#ffffff;padding:16px 36px;border-radius:12px;text-decoration:none;font-weight:800;font-size:16px;display:inline-block;box-shadow:0 4px 12px rgba(0,85,164,0.25);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+                  ⚡ Continuer mon entraînement →
+                </a>
+              </div>
+
+              <!-- Closing -->
+              <p style="color:#334155;font-size:14px;line-height:1.6;text-align:center;margin:0;">
+                Chaque quiz vous rapproche un peu plus de votre réussite.<br/>
+                <strong>Le coq croit en vous ! 🐓🇫🇷</strong>
+              </p>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="background-color:#f8fafc;padding:24px 32px;border-top:1px solid #e2e8f0;text-align:center;">
+              <p style="color:#94a3b8;font-size:12px;margin:0;line-height:1.6;">
+                GoCivique · Plateforme n°1 de préparation aux examens civiques français<br/>
+                <a href="https://gocivique.fr/privacy" style="color:#64748b;text-decoration:none;">Politique de confidentialité</a> · <a href="mailto:support@gocivique.fr" style="color:#64748b;text-decoration:none;">Contact Support</a>
+              </p>
+              <p style="color:#94a3b8;font-size:11px;margin:12px 0 0;">
+                Vous souhaitez ne plus recevoir ces rappels ?
+                <a href="https://gocivique.fr/settings" style="color:#94a3b8;text-decoration:underline;">Se désabonner</a>
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;  return {
+    subject: `🐓 J-\${daysLeft} \${name} — plus que \${dLabel} pour vous préparer !`,
+    html,
   };
 }
 
