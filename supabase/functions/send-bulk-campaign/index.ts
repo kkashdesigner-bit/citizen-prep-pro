@@ -145,24 +145,10 @@ function buildExam60dFreeEmail(firstName: string, daysLeft: number): { subject: 
             <td style="height:6px;line-height:6px;font-size:0;background:linear-gradient(90deg,#0055A4 0%,#0055A4 33%,#ffffff 33%,#ffffff 66%,#EF4135 66%,#EF4135 100%);">&nbsp;</td>
           </tr>
 
-          <!-- Header -->
+          <!-- Hero Image (Full-bleed at top, serving as header and hero) -->
           <tr>
-            <td style="padding:24px 32px;border-bottom:1px solid #f1f5f9;text-align:center;">
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-                <tr>
-                  <td align="center">
-                    <img src="https://gocivique.fr/gocivique-logo-examen-civique.png" width="64" height="64" alt="GoCivique Logo" style="display:inline-block;vertical-align:middle;border-radius:14px;background-color:#ffffff;padding:4px;border:1px solid #e2e8f0;" />
-                    <span style="display:inline-block;vertical-align:middle;margin-left:12px;font-size:24px;font-weight:900;color:#0f172a;letter-spacing:-0.5px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">GoCivique</span>
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-
-          <!-- Hero Image -->
-          <tr>
-            <td style="padding:32px 32px 0;text-align:center;">
-              <img src="https://gocivique.fr/examen-civique-parcours-100-niveaux-desktop.jpg" width="100%" alt="Parcours de préparation civique" style="display:block;width:100%;max-width:536px;height:auto;border-radius:12px;border:1px solid #e2e8f0;box-shadow:0 2px 10px rgba(0,0,0,0.03);" />
+            <td style="padding:0;text-align:center;">
+              <img src="https://gocivique.fr/examen-civique-hero-email.jpg" width="100%" alt="GoCivique" style="display:block;width:100%;max-width:600px;height:auto;" />
             </td>
           </tr>
 
@@ -185,6 +171,13 @@ function buildExam60dFreeEmail(firstName: string, daysLeft: number): { subject: 
               <p style="color:#475569;line-height:1.625;font-size:15px;text-align:center;margin:0 0 24px;">
                 Le coq de GoCivique a sonné l'alarme : il ne reste que <strong>\${dLabel}</strong> avant votre examen civique officiel. Pour réussir, vous devez obtenir au moins <strong>32 bonnes réponses sur 40</strong>. C'est le moment de passer à la vitesse supérieure !
               </p>
+
+              <!-- Testimony Box -->
+              <div style="background-color:#eff6ff;border:1px solid #bfdbfe;border-radius:14px;padding:16px 20px;margin-bottom:24px;text-align:center;">
+                <p style="margin:0;font-size:14px;color:#1e40af;line-height:1.6;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+                  💡 <strong>Le saviez-vous ?</strong> Plus de 95% de nos utilisateurs réussissent l'examen civique officiel du premier coup en révisant seulement <strong>15 à 30 minutes par jour</strong> sur GoCivique !
+                </p>
+              </div>
 
               <!-- Progress bar representation -->
               <div style="background-color:#f8fafc;border:1px solid #e2e8f0;border-radius:14px;padding:20px;margin-bottom:24px;">
@@ -313,24 +306,10 @@ function buildExam60dPaidEmail(firstName: string, daysLeft: number, tier: string
             <td style="height:6px;line-height:6px;font-size:0;background:linear-gradient(90deg,#0055A4 0%,#0055A4 33%,#ffffff 33%,#ffffff 66%,#EF4135 66%,#EF4135 100%);">&nbsp;</td>
           </tr>
 
-          <!-- Header -->
+          <!-- Hero Image (Full-bleed at top, serving as header and hero) -->
           <tr>
-            <td style="padding:24px 32px;border-bottom:1px solid #f1f5f9;text-align:center;">
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-                <tr>
-                  <td align="center">
-                    <img src="https://gocivique.fr/gocivique-logo-examen-civique.png" width="64" height="64" alt="GoCivique Logo" style="display:inline-block;vertical-align:middle;border-radius:14px;background-color:#ffffff;padding:4px;border:1px solid #e2e8f0;" />
-                    <span style="display:inline-block;vertical-align:middle;margin-left:12px;font-size:24px;font-weight:900;color:#0f172a;letter-spacing:-0.5px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">GoCivique</span>
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-
-          <!-- Hero Image -->
-          <tr>
-            <td style="padding:32px 32px 0;text-align:center;">
-              <img src="https://gocivique.fr/examen-civique-parcours-progression-desktop.jpg" width="100%" alt="Votre progression GoCivique" style="display:block;width:100%;max-width:536px;height:auto;border-radius:12px;border:1px solid #e2e8f0;box-shadow:0 2px 10px rgba(0,0,0,0.03);" />
+            <td style="padding:0;text-align:center;">
+              <img src="https://gocivique.fr/examen-civique-hero-email.jpg" width="100%" alt="GoCivique" style="display:block;width:100%;max-width:600px;height:auto;" />
             </td>
           </tr>
 
@@ -353,6 +332,13 @@ function buildExam60dPaidEmail(firstName: string, daysLeft: number, tier: string
               <p style="color:#475569;line-height:1.625;font-size:15px;text-align:center;margin:0 0 24px;">
                 Votre examen civique est dans <strong>\${dLabel}</strong>. En tant que membre \${tierLabel}, vous disposez de tous les outils nécessaires pour réussir du premier coup. Voici votre checklist finale de préparation :
               </p>
+
+              <!-- Testimony Box -->
+              <div style="background-color:#eff6ff;border:1px solid #bfdbfe;border-radius:14px;padding:16px 20px;margin-bottom:24px;text-align:center;">
+                <p style="margin:0;font-size:14px;color:#1e40af;line-height:1.6;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+                  💡 <strong>Le saviez-vous ?</strong> Plus de 95% de nos utilisateurs réussissent l'examen civique officiel du premier coup en révisant seulement <strong>15 à 30 minutes par jour</strong> sur GoCivique !
+                </p>
+              </div>
 
               <!-- Checklist Box -->
               <div style="background-color:#f0fdf4;border:1px solid #bbf7d0;border-radius:14px;padding:20px;margin-bottom:24px;border-left:4px solid #059669;">
