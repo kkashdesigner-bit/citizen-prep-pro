@@ -37,7 +37,7 @@ export default function AppHeader({ pageTitle, pageIcon, backTo = '/learn', back
         navigate('/');
     };
 
-    const finalDisplayName = userProfile?.first_name || displayName || user?.email?.split('@')[0] || '';
+    const finalDisplayName = displayName || userProfile?.first_name || user?.email?.split('@')[0] || '';
     const finalAvatarUrl = userProfile?.avatar_url || avatarUrl;
 
     const initials = finalDisplayName

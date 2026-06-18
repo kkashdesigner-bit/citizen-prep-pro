@@ -142,7 +142,7 @@ export default function DashboardRightSidebar({
 
                                     <div className="flex flex-col min-w-0">
                                         <span className={`text-xs font-semibold truncate ${entry.isCurrentUser ? 'text-blue-600 dark:text-blue-400 font-bold' : 'text-[var(--dash-text)]'}`}>
-                                            {entry.displayName}{entry.isCurrentUser && ` (${t('dashboard.right.you')})`}
+                                            {(entry.displayName || 'Apprenant').split('@')[0].replace(/\.\.\.$/, '').slice(0, 3).toUpperCase()}{entry.isCurrentUser && ` (${t('dashboard.right.you')})`}
                                         </span>
                                         {goalLabelKey(entry.goalType) && (
                                             <span className="flex items-center gap-1 text-[10px] text-[var(--dash-text-muted)] truncate">

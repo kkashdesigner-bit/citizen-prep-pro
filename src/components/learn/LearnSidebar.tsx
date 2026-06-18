@@ -40,7 +40,7 @@ const MOBILE_NAV = [
 export default function LearnSidebar() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, avatarUrl } = useAuth();
+  const { user, displayName: authDisplayName, avatarUrl } = useAuth();
   const { profile } = useUserProfile();
   const { tier } = useSubscription();
   const { language, setLanguage } = useLanguage();
@@ -54,7 +54,7 @@ export default function LearnSidebar() {
 
   const { domainMastery, successRate } = useDashboardStats();
 
-  const displayName = profile?.first_name || user?.email?.split('@')[0] || 'Étudiant';
+  const displayName = authDisplayName || profile?.first_name || user?.email?.split('@')[0] || 'Étudiant';
   const finalAvatarUrl = profile?.avatar_url || avatarUrl;
   const tierLabels: Record<string, string> = { free: 'Gratuit', standard: 'Standard', premium: 'Premium' };
 

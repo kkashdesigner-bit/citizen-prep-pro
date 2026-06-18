@@ -1,64 +1,56 @@
-# GoCivique — Préparation à l'Examen Civique Français
+# GoCivique — Préparation à l'examen civique français
 
-> GoCivique est une plateforme d'entraînement à l'examen civique obligatoire pour les candidats
-> à la naturalisation française, à la carte de séjour pluriannuelle (CSP), et à la carte de résident (CR).
-> Disponible en français, anglais, arabe, espagnol, turc et portugais.
+> GoCivique est une plateforme d'entraînement à l'examen civique français, obligatoire depuis le 1er janvier 2026 pour la naturalisation, la carte de résident (CR) et la carte de séjour pluriannuelle (CSP). Elle propose des quiz par thème, des examens blancs chronométrés, un parcours de 100 leçons et un suivi de progression, en 7 langues (français, anglais, arabe, espagnol, portugais, turc, chinois).
 
-## Fonctionnalités
+L'examen officiel : 40 questions à choix multiples, 45 minutes, seuil de réussite 32/40 (80 %), administré par Le Français des Affaires (CCI Paris Île-de-France). Le résultat est valable sans limite de durée.
 
-- Quiz interactifs : entraînement par thème sur le contenu officiel du programme civique
-- Examens blancs chronométrés : simulation des conditions réelles (40 questions, 45 minutes)
-- Parcours d'apprentissage structuré : 100 classes couvrant les 5 thèmes officiels
-- Suivi de progression : tableau de bord personnalisé avec historique des résultats
-- Multilingue : interface disponible en FR, EN, AR, ES, TR, PT
+Les 5 thèmes officiels et leur pondération : Principes et valeurs de la République (11 questions), Institutions et système politique (6), Droits et devoirs (11), Histoire, géographie et culture (8), Vivre en société (4).
 
-## Format de l'examen officiel (2026)
+Publics concernés : première demande de naturalisation, de carte de résident (CR) et de carte de séjour pluriannuelle (CSP). L'examen n'est pas exigé pour la carte de séjour temporaire d'un an.
 
-- 40 questions à choix multiples (4 options par question)
-- Durée : 45 minutes
-- Seuil de réussite : 32/40 (80%)
-- Administré par : Le Français des Affaires / CCI Paris Île-de-France
-- Résultat valable sans limite de durée
-- Obligatoire depuis le 1er janvier 2026 pour CSP, CR et naturalisation
+Offres : essai gratuit (1 examen démo), abonnement Standard (6,99 €/mois), abonnement Premium (10,99 €/mois), ainsi que des formules annuelle et « Accès à vie » en paiement unique. Les tarifs à jour figurent sur la page d'accueil.
 
-## 5 Thèmes couverts
+## Pages principales
 
-1. Principes et valeurs de la République (11 questions)
-2. Institutions et système politique (6 questions)
-3. Droits et devoirs (11 questions)
-4. Histoire, géographie et culture (8 questions)
-5. Vivre en société (4 questions)
+- [Accueil](https://gocivique.fr/): présentation, tarifs et démarrage gratuit
+- [Quiz d'entraînement](https://gocivique.fr/quiz): QCM par thème sur le programme officiel
+- [Examens blancs](https://gocivique.fr/exams): simulations chronométrées (40 questions, 45 min)
+- [Matériel d'étude](https://gocivique.fr/study-material): fiches et ressources de révision
+- [À propos de l'examen](https://gocivique.fr/about): format, déroulé et conseils de préparation
 
-## Populations concernées
+## Guides
 
-- Naturalisation française (première demande)
-- Carte de séjour pluriannuelle (CSP) — première demande
-- Carte de résident (CR) — première demande
-- Non obligatoire pour la carte de séjour temporaire d'un an
+- [Guide complet de l'examen civique](https://gocivique.fr/guide-examen-civique): l'essentiel pour comprendre et réussir l'examen
+- [Examen civique et naturalisation](https://gocivique.fr/naturalisation-examen-civique): spécificités pour la demande de naturalisation
+- [Test blanc de l'examen civique](https://gocivique.fr/test-blanc-examen-civique): s'entraîner en conditions réelles
+- [Combien de fois peut-on passer l'examen ?](https://gocivique.fr/guides/combien-de-fois): règles de représentation en cas d'échec
+- [Que faire si je rate l'examen ?](https://gocivique.fr/guides/si-je-rate-lexamen): démarches et délais après un échec
+- [En combien de temps reçoit-on les résultats ?](https://gocivique.fr/guides/combien-de-temps-resultats): délais d'obtention des résultats
+- [Comment s'inscrire à l'examen ?](https://gocivique.fr/guides/comment-sinscrire): procédure et pièces nécessaires
 
-## Tarifs
+## Thèmes du programme
 
-- Essai gratuit : 1 examen démo
-- Standard (6,99 €/mois ou 49,99 €/an) : examens illimités, mode entraînement
-- Premium (10,99 €/mois ou 79,99 €/an) : tout inclus + traductions et outils avancés
+- [Principes et valeurs de la République](https://gocivique.fr/themes/valeurs-republique): liberté, égalité, fraternité, laïcité et symboles
+- [Institutions et système politique](https://gocivique.fr/themes/institutions): président, Parlement, justice et organisation de l'État
+- [Droits et devoirs](https://gocivique.fr/themes/droits-devoirs): droits fondamentaux et devoirs du citoyen
+- [Histoire, géographie et culture](https://gocivique.fr/themes/histoire-geographie): repères historiques, géographiques et culturels
 
-## Cours de préparation (Module 1 — Les Valeurs Fondamentales)
+## Cours — Valeurs fondamentales
 
-- Les Symboles de la République : https://gocivique.fr/cours/examen-civique-symboles-republique
-- La Devise Française : https://gocivique.fr/cours/examen-civique-devise-francaise
-- La DDHC de 1789 : https://gocivique.fr/cours/examen-civique-ddhc-1789
-- La Laïcité et la Neutralité : https://gocivique.fr/cours/examen-civique-laicite-neutralite
-- La République Indivisible : https://gocivique.fr/cours/examen-civique-republique-indivisible
-- Démocratie et Souveraineté : https://gocivique.fr/cours/examen-civique-democratie-souverainete
-- L'État de Droit : https://gocivique.fr/cours/examen-civique-etat-de-droit
-- Égalité Femmes-Hommes : https://gocivique.fr/cours/examen-civique-egalite-femmes-hommes
-- Non-Discrimination : https://gocivique.fr/cours/examen-civique-non-discrimination
+- [Les symboles de la République](https://gocivique.fr/cours/examen-civique-symboles-republique): drapeau, Marianne, hymne et fête nationale
+- [La devise française](https://gocivique.fr/cours/examen-civique-devise-francaise): « Liberté, Égalité, Fraternité »
+- [La DDHC de 1789](https://gocivique.fr/cours/examen-civique-ddhc-1789): la Déclaration des droits de l'homme et du citoyen
+- [La laïcité et la neutralité](https://gocivique.fr/cours/examen-civique-laicite-neutralite): principe de laïcité et neutralité de l'État
+- [La République indivisible](https://gocivique.fr/cours/examen-civique-republique-indivisible): unité et indivisibilité de la République
+- [Démocratie et souveraineté](https://gocivique.fr/cours/examen-civique-democratie-souverainete): souveraineté nationale et démocratie
+- [L'État de droit](https://gocivique.fr/cours/examen-civique-etat-de-droit): hiérarchie des normes et séparation des pouvoirs
+- [Égalité femmes-hommes](https://gocivique.fr/cours/examen-civique-egalite-femmes-hommes): un principe fondamental de la République
+- [La non-discrimination](https://gocivique.fr/cours/examen-civique-non-discrimination): principe d'égalité et lutte contre les discriminations
 
-## Liens
+## Optional
 
-- Site : https://gocivique.fr
-- Quiz : https://gocivique.fr/quiz
-- Examens blancs : https://gocivique.fr/exams
-- Matériel d'étude : https://gocivique.fr/study-material
-- À propos de l'examen : https://gocivique.fr/about
-- Contact : https://gocivique.fr/contact
+- [Contact](https://gocivique.fr/contact): support et questions
+- [Conditions générales (CGU/CGV)](https://gocivique.fr/terms): conditions d'utilisation et de vente
+- [Politique de confidentialité](https://gocivique.fr/privacy): traitement des données personnelles (RGPD)
+- [Politique de remboursement](https://gocivique.fr/refunds): conditions de remboursement
+- [Plan du site](https://gocivique.fr/sitemap.xml): sitemap XML complet
