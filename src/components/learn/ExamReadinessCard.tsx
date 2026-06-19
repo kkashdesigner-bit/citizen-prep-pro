@@ -76,43 +76,47 @@ export default function ExamReadinessCard({ successRate, totalExams, themeStats 
         <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-[var(--dash-card)] rounded-2xl border border-[var(--dash-card-border)] p-5 shadow-[0_2px_12px_rgba(0,0,0,0.04)] mb-6 sm:mb-8"
+            className="group bg-[var(--dash-card)] rounded-2xl border border-[var(--dash-card-border)] p-5 shadow-[0_2px_12px_rgba(0,0,0,0.04)] h-full flex flex-col justify-between min-h-[190px] transition-colors hover:border-[#7C3AED]/30 relative overflow-hidden"
         >
-            <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2">
-                    <div className={`p-1.5 rounded-lg bg-opacity-10 ${statusColor.replace('text-', 'bg-')}`}>
-                        <Icon className={`h-5 w-5 ${statusColor}`} />
+            <div aria-hidden className="absolute -top-8 -right-8 w-24 h-24 rounded-full bg-purple-500/5 blur-2xl pointer-events-none group-hover:bg-purple-500/10 transition-colors" />
+            
+            <div className="flex flex-col gap-3">
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                        <div className={`p-1.5 rounded-lg bg-opacity-10 ${statusColor.replace('text-', 'bg-')}`}>
+                            <Icon className={`h-4.5 w-4.5 ${statusColor}`} />
+                        </div>
+                        <h3 className="text-sm font-extrabold text-[var(--dash-text)] uppercase tracking-wide">
+                            Préparation à l'Examen
+                        </h3>
                     </div>
-                    <h3 className="text-base sm:text-lg font-bold text-[var(--dash-text)]">
-                        Préparation à l'Examen
-                    </h3>
+                    <div className="text-right">
+                        <span className={`text-xl font-black ${statusColor}`}>{predictedOutOf40}</span>
+                        <span className="text-[10px] text-[var(--dash-text-muted)] ml-1">/40 prévu</span>
+                    </div>
                 </div>
-                <div className="text-right">
-                    <span className={`text-xl font-bold ${statusColor}`}>{predictedOutOf40}</span>
-                    <span className="text-xs text-[var(--dash-text-muted)] ml-1">/40 prévu</span>
+
+                <div className="relative h-3 w-full bg-[var(--dash-surface)] rounded-full overflow-hidden border border-[var(--dash-card-border)]">
+                    {/* Target marker at 80% (32/40) */}
+                    <div className="absolute top-0 bottom-0 left-[80%] w-0.5 bg-red-400 z-10" title="Seuil de réussite (32/40)" />
+
+                    <motion.div
+                        initial={{ width: 0 }}
+                        animate={{ width: `${Math.min(100, displayScore)}%` }}
+                        transition={{ duration: 1, delay: 0.2, ease: "easeOut" }}
+                        className={`absolute top-0 bottom-0 left-0 bg-gradient-to-r ${bgGradient} rounded-full z-0`}
+                    />
                 </div>
-            </div>
 
-            <div className="relative h-4 w-full bg-[var(--dash-surface)] rounded-full overflow-hidden border border-[var(--dash-card-border)] mb-2">
-                {/* Target marker at 80% (32/40) */}
-                <div className="absolute top-0 bottom-0 left-[80%] w-0.5 bg-red-400 z-10" title="Seuil de r\u00e9ussite (32/40)" />
-
-                <motion.div
-                    initial={{ width: 0 }}
-                    animate={{ width: `${Math.min(100, displayScore)}%` }}
-                    transition={{ duration: 1, delay: 0.2, ease: "easeOut" }}
-                    className={`absolute top-0 bottom-0 left-0 bg-gradient-to-r ${bgGradient} rounded-full z-0`}
-                />
-            </div>
-
-            <div className="flex justify-between items-center text-xs mb-3">
-                <span className="font-semibold text-[var(--dash-text-muted)]">{message}</span>
-                <span className="text-[var(--dash-text-muted)]">Objectif: 32/40</span>
+                <div className="flex justify-between items-center text-[11px] leading-relaxed">
+                    <span className="font-semibold text-[var(--dash-text-muted)]">{message}</span>
+                    <span className="text-[var(--dash-text-muted)] font-medium">Objectif: 32/40</span>
+                </div>
             </div>
 
             {/* Theme breakdown */}
             {readiness && themeStats && (
-                <div className="grid grid-cols-5 gap-1.5 mt-3 pt-3 border-t border-[var(--dash-card-border)]">
+                <div className="grid grid-cols-5 gap-1.5 pt-3 border-t border-[var(--dash-card-border)] mt-2">
                     {Object.entries(EXAM_WEIGHTS).map(([theme, weight]) => {
                         const stats = themeStats[theme];
                         const rate = stats && stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0;
@@ -120,15 +124,15 @@ export default function ExamReadinessCard({ successRate, totalExams, themeStats 
                         return (
                             <div key={theme} className="text-center">
                                 <p 
-                                  className={`text-[10px] font-bold uppercase tracking-wider ${isWeak ? 'text-red-500' : 'text-[var(--dash-text-muted)]'}`}
+                                  className={`text-[9px] font-extrabold uppercase tracking-wider ${isWeak ? 'text-red-500' : 'text-[var(--dash-text-muted)]'}`}
                                   title={THEME_FULL_LABELS[theme] || theme}
                                 >
                                     {THEME_LABELS[theme] || theme}
                                 </p>
-                                <p className={`text-sm font-bold ${isWeak ? 'text-red-500' : 'text-[var(--dash-text)]'}`}>
+                                <p className={`text-xs font-black ${isWeak ? 'text-red-500' : 'text-[var(--dash-text)]'}`}>
                                     {rate}%
                                 </p>
-                                <p className="text-[9px] text-[var(--dash-text-muted)]">{weight}q</p>
+                                <p className="text-[8px] text-[var(--dash-text-muted)]">{weight}q</p>
                             </div>
                         );
                     })}
@@ -136,9 +140,9 @@ export default function ExamReadinessCard({ successRate, totalExams, themeStats 
             )}
 
             {readiness?.confidenceLevel === 'low' && (
-                <p className="text-[11px] text-[var(--dash-text-muted)] mt-2 flex items-center gap-1">
-                    <BookOpen className="h-3 w-3" />
-                    Faites plus de quiz pour améliorer la précision de cette estimation.
+                <p className="text-[10px] text-[var(--dash-text-muted)] mt-2.5 flex items-center gap-1.5 leading-normal">
+                    <BookOpen className="h-3 w-3 text-slate-400 flex-shrink-0" />
+                    <span>Faites plus de quiz pour améliorer la précision.</span>
                 </p>
             )}
         </motion.div>

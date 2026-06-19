@@ -347,8 +347,8 @@ export default function LearningDashboard() {
 
             {/* Stat Cards & Readiness — desktop only (hidden on mobile, merged into profile card above) */}
             <motion.div variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }} className="hidden sm:block">
-              <div className="flex flex-col lg:flex-row gap-4 mb-6 sm:mb-8">
-                <div className="flex-1">
+              <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-6 sm:mb-8 items-stretch">
+                <div className="lg:col-span-3">
                   <StatCards
                     successRate={stats.successRate}
                     streak={stats.streak}
@@ -356,7 +356,7 @@ export default function LearningDashboard() {
                     dailyGoalTarget={stats.dailyGoalTarget}
                   />
                 </div>
-                <div className="w-full lg:w-[320px] flex-shrink-0">
+                <div className="lg:col-span-1">
                   <ExamReadinessCard
                     successRate={stats.successRate}
                     totalExams={stats.examHistory.length}
