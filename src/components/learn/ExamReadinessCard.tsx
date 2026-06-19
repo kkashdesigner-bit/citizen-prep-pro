@@ -1,34 +1,25 @@
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { Target, TrendingUp, AlertTriangle, BookOpen } from 'lucide-react';
 import { calculateReadiness, EXAM_WEIGHTS, type ThemeScore, type ReadinessScore } from '@/lib/exam-prediction';
 
 interface ExamReadinessCardProps {
-    successRate: number; // The overall rolling accuracy score (0-100)
+    successRate: number; // overall rolling accuracy (0-100)
     totalExams: number;
     themeStats?: Record<string, { correct: number; total: number }>;
 }
 
 const THEME_LABELS: Record<string, string> = {
-    histoire: 'Hist.',
-    institutions: 'Inst.',
-    valeurs: 'Val.',
-    symboles: 'Symb.',
-    europe: 'Eur.',
+    histoire: 'Hist.', institutions: 'Inst.', valeurs: 'Val.', symboles: 'Symb.', europe: 'Eur.',
 };
-
 const THEME_FULL_LABELS: Record<string, string> = {
-    histoire: 'Histoire',
-    institutions: 'Institutions',
-    valeurs: 'Valeurs et Principes',
-    symboles: 'Symboles et Rites',
-    europe: 'Europe et Monde',
+    histoire: 'Histoire', institutions: 'Institutions', valeurs: 'Valeurs et Principes', symboles: 'Symboles et Rites', europe: 'Europe et Monde',
 };
 
 export default function ExamReadinessCard({ successRate, totalExams, themeStats }: ExamReadinessCardProps) {
+    const reduced = useReducedMotion();
     const minExamsForReadiness = 5;
     const passThreshold = 80;
 
-    // Build theme scores for weighted prediction if stats are available
     let readiness: ReadinessScore | null = null;
     if (themeStats && Object.keys(themeStats).length > 0) {
         const themeScores: ThemeScore[] = Object.entries(EXAM_WEIGHTS).map(([theme, weight]) => {
@@ -43,104 +34,103 @@ export default function ExamReadinessCard({ successRate, totalExams, themeStats 
         readiness = calculateReadiness(themeScores);
     }
 
-    const displayScore = readiness ? readiness.predictedPct : successRate;
+    const displayScore = Math.max(0, Math.min(100, Math.round(readiness ? readiness.predictedPct : successRate)));
     const predictedOutOf40 = readiness?.predictedScore ?? Math.round((successRate / 100) * 40);
 
-    let statusColor = 'text-[var(--dash-text-muted)]';
-    let bgGradient = 'from-slate-500 to-slate-400';
-    let message = 'Commencez \u00e0 vous entra\u00eener';
+    let gradId = 'gaugeAmber';
+    let stops = ['#F59E0B', '#FBBF24'];
+    let statusColor = 'text-amber-600';
+    let level = 'À évaluer';
+    let message = `Encore ${Math.max(0, minExamsForReadiness - totalExams)} examens pour évaluer votre niveau`;
     let Icon = Target;
 
-    if (totalExams < minExamsForReadiness) {
-        statusColor = 'text-amber-600';
-        bgGradient = 'from-amber-400 to-amber-500';
-        message = `Encore ${minExamsForReadiness - totalExams} examens pour \u00e9valuer votre niveau`;
-    } else if (readiness?.willPass || displayScore >= passThreshold) {
-        statusColor = 'text-emerald-600';
-        bgGradient = 'from-emerald-400 to-emerald-500';
-        message = 'Vous \u00eates pr\u00eat pour la naturalisation !';
-        Icon = TrendingUp;
-    } else if (displayScore >= 60) {
-        statusColor = 'text-blue-600';
-        bgGradient = 'from-blue-400 to-blue-500';
-        message = 'En bonne voie, continuez \u00e0 r\u00e9viser';
-        Icon = TrendingUp;
-    } else {
-        statusColor = 'text-red-500';
-        bgGradient = 'from-red-400 to-red-500';
-        message = 'Des r\u00e9visions suppl\u00e9mentaires sont n\u00e9cessaires';
-        Icon = AlertTriangle;
+    if (totalExams >= minExamsForReadiness) {
+        if (readiness?.willPass || displayScore >= passThreshold) {
+            gradId = 'gaugeGreen'; stops = ['#22C55E', '#10B981']; statusColor = 'text-emerald-600'; level = 'Élevé';
+            message = 'Vous êtes prêt pour la naturalisation !'; Icon = TrendingUp;
+        } else if (displayScore >= 60) {
+            gradId = 'gaugeBlue'; stops = ['#0055A4', '#3B82F6']; statusColor = 'text-blue-600'; level = 'Moyen';
+            message = 'En bonne voie, continuez à réviser'; Icon = TrendingUp;
+        } else {
+            gradId = 'gaugeRed'; stops = ['#EF4444', '#F87171']; statusColor = 'text-red-500'; level = 'Faible';
+            message = 'Des révisions supplémentaires sont nécessaires'; Icon = AlertTriangle;
+        }
     }
+
+    const R = 64;
+    const SEMI = Math.PI * R; // length of the semicircle arc
+    const offset = SEMI * (1 - displayScore / 100);
 
     return (
         <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            className="group bg-[var(--dash-card)] rounded-2xl border border-[var(--dash-card-border)] p-5 shadow-[0_2px_12px_rgba(0,0,0,0.04)] h-full flex flex-col justify-between min-h-[190px] transition-colors hover:border-[#7C3AED]/30 relative overflow-hidden"
+            className="group relative bg-[var(--dash-card)] rounded-2xl border border-[var(--dash-card-border)] p-5 shadow-[0_2px_12px_rgba(0,0,0,0.04)] h-full flex flex-col justify-between min-h-[190px] overflow-hidden transition-colors hover:border-[#7C3AED]/30"
         >
             <div aria-hidden className="absolute -top-8 -right-8 w-24 h-24 rounded-full bg-purple-500/5 blur-2xl pointer-events-none group-hover:bg-purple-500/10 transition-colors" />
-            
-            <div className="flex flex-col gap-3">
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                        <div className={`p-1.5 rounded-lg bg-opacity-10 ${statusColor.replace('text-', 'bg-')}`}>
-                            <Icon className={`h-4.5 w-4.5 ${statusColor}`} />
-                        </div>
-                        <h3 className="text-sm font-extrabold text-[var(--dash-text)] uppercase tracking-wide">
-                            Préparation à l'Examen
-                        </h3>
+
+            <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                    <div className={`p-1.5 rounded-lg ${statusColor.replace('text-', 'bg-')}/10`}>
+                        <Icon className={`h-4 w-4 ${statusColor}`} />
                     </div>
-                    <div className="text-right">
-                        <span className={`text-xl font-black ${statusColor}`}>{predictedOutOf40}</span>
-                        <span className="text-[10px] text-[var(--dash-text-muted)] ml-1">/40 prévu</span>
-                    </div>
+                    <h3 className="text-[13px] font-extrabold text-[var(--dash-text)] uppercase tracking-wide leading-tight">
+                        Préparation à l'examen
+                    </h3>
                 </div>
-
-                <div className="relative h-3 w-full bg-[var(--dash-surface)] rounded-full overflow-hidden border border-[var(--dash-card-border)]">
-                    {/* Target marker at 80% (32/40) */}
-                    <div className="absolute top-0 bottom-0 left-[80%] w-0.5 bg-red-400 z-10" title="Seuil de réussite (32/40)" />
-
-                    <motion.div
-                        initial={{ width: 0 }}
-                        animate={{ width: `${Math.min(100, displayScore)}%` }}
-                        transition={{ duration: 1, delay: 0.2, ease: "easeOut" }}
-                        className={`absolute top-0 bottom-0 left-0 bg-gradient-to-r ${bgGradient} rounded-full z-0`}
-                    />
-                </div>
-
-                <div className="flex justify-between items-center text-[11px] leading-relaxed">
-                    <span className="font-semibold text-[var(--dash-text-muted)]">{message}</span>
-                    <span className="text-[var(--dash-text-muted)] font-medium">Objectif: 32/40</span>
+                <div className="text-right shrink-0">
+                    <span className={`text-lg font-black ${statusColor}`}>{predictedOutOf40}</span>
+                    <span className="text-[10px] text-[var(--dash-text-muted)] ml-1">/40 prévu</span>
                 </div>
             </div>
 
+            {/* Half-circle gauge */}
+            <div className="relative mx-auto mt-1" style={{ width: 160, height: 90 }}>
+                <svg viewBox="0 0 160 92" className="w-full h-full">
+                    <defs>
+                        <linearGradient id={gradId} x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stopColor={stops[0]} />
+                            <stop offset="100%" stopColor={stops[1]} />
+                        </linearGradient>
+                    </defs>
+                    <path d="M 16 80 A 64 64 0 0 1 144 80" fill="none" stroke="var(--dash-surface)" strokeWidth="12" strokeLinecap="round" />
+                    <motion.path
+                        d="M 16 80 A 64 64 0 0 1 144 80"
+                        fill="none" stroke={`url(#${gradId})`} strokeWidth="12" strokeLinecap="round"
+                        strokeDasharray={SEMI}
+                        initial={{ strokeDashoffset: reduced ? offset : SEMI }}
+                        animate={{ strokeDashoffset: offset }}
+                        transition={{ duration: 1.2, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+                    />
+                </svg>
+                <div className="absolute inset-x-0 bottom-0 flex flex-col items-center">
+                    <span className={`text-[11px] font-bold ${statusColor}`}>{level}</span>
+                    <span className="text-2xl font-black text-[var(--dash-text)] tabular-nums leading-none">{displayScore}%</span>
+                </div>
+            </div>
+
+            <p className={`text-[11px] font-semibold text-center ${statusColor} px-2`}>{message}</p>
+
             {/* Theme breakdown */}
-            {readiness && themeStats && (
-                <div className="grid grid-cols-5 gap-1.5 pt-3 border-t border-[var(--dash-card-border)] mt-2">
+            {readiness && themeStats ? (
+                <div className="grid grid-cols-5 gap-1 pt-2.5 border-t border-[var(--dash-card-border)] mt-1">
                     {Object.entries(EXAM_WEIGHTS).map(([theme, weight]) => {
                         const stats = themeStats[theme];
                         const rate = stats && stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0;
                         const isWeak = readiness!.weakestThemes.includes(theme);
                         return (
                             <div key={theme} className="text-center">
-                                <p 
-                                  className={`text-[9px] font-extrabold uppercase tracking-wider ${isWeak ? 'text-red-500' : 'text-[var(--dash-text-muted)]'}`}
-                                  title={THEME_FULL_LABELS[theme] || theme}
-                                >
+                                <p className={`text-[9px] font-extrabold uppercase tracking-wider ${isWeak ? 'text-red-500' : 'text-[var(--dash-text-muted)]'}`} title={THEME_FULL_LABELS[theme] || theme}>
                                     {THEME_LABELS[theme] || theme}
                                 </p>
-                                <p className={`text-xs font-black ${isWeak ? 'text-red-500' : 'text-[var(--dash-text)]'}`}>
-                                    {rate}%
-                                </p>
+                                <p className={`text-xs font-black ${isWeak ? 'text-red-500' : 'text-[var(--dash-text)]'}`}>{rate}%</p>
                                 <p className="text-[8px] text-[var(--dash-text-muted)]">{weight}q</p>
                             </div>
                         );
                     })}
                 </div>
-            )}
-
-            {readiness?.confidenceLevel === 'low' && (
-                <p className="text-[10px] text-[var(--dash-text-muted)] mt-2.5 flex items-center gap-1.5 leading-normal">
+            ) : (
+                <p className="text-[10px] text-[var(--dash-text-muted)] flex items-center justify-center gap-1.5 leading-normal">
                     <BookOpen className="h-3 w-3 text-slate-400 flex-shrink-0" />
                     <span>Faites plus de quiz pour améliorer la précision.</span>
                 </p>
