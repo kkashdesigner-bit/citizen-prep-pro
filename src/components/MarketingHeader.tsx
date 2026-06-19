@@ -112,9 +112,12 @@ export default function MarketingHeader() {
                     {/* Language selector */}
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <button className={`p-2 rounded-lg transition-colors text-sm font-medium ${scrolled ? 'text-slate-500 hover:bg-slate-100' : 'text-slate-600 hover:bg-white/40'
+                            <button
+                                aria-label={t('nav.language')}
+                                className={`p-2 rounded-lg transition-colors text-sm font-medium ${scrolled ? 'text-slate-500 hover:bg-slate-100' : 'text-slate-600 hover:bg-white/40'
                                 }`}>
                                 <Globe className="h-4 w-4" />
+                                <span className="sr-only">{t('nav.language')}</span>
                             </button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="bg-white border shadow-lg rounded-xl">
@@ -154,7 +157,7 @@ export default function MarketingHeader() {
                             {/* Avatar dropdown */}
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
-                                    <button className="ml-1 rounded-full ring-2 ring-slate-200 hover:ring-blue-300 transition-all focus:outline-none">
+                                    <button aria-label={t('nav.account')} className="ml-1 rounded-full ring-2 ring-slate-200 hover:ring-blue-300 transition-all focus:outline-none">
                                         <Avatar className="h-8 w-8">
                                             {avatarUrl && <AvatarImage src={avatarUrl} alt={displayName || ''} />}
                                             <AvatarFallback className="bg-blue-50 text-blue-600 text-xs font-semibold">
@@ -220,7 +223,7 @@ export default function MarketingHeader() {
                     {user && (
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <button className="rounded-full ring-2 ring-slate-200 hover:ring-blue-300 transition-all focus:outline-none">
+                                <button aria-label={t('nav.account')} className="rounded-full ring-2 ring-slate-200 hover:ring-blue-300 transition-all focus:outline-none">
                                     <Avatar className="h-7 w-7">
                                         {avatarUrl && <AvatarImage src={avatarUrl} alt={displayName || ''} />}
                                         <AvatarFallback className="bg-blue-50 text-blue-600 text-[10px] font-semibold">
