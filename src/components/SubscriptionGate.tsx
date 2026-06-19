@@ -67,7 +67,6 @@ const plans = {
     ],
   },
 } as const;
-
 type PlanKey = keyof typeof plans;
 
 const SubscriptionGate = forwardRef<HTMLDivElement, SubscriptionGateProps>(
@@ -75,12 +74,9 @@ const SubscriptionGate = forwardRef<HTMLDivElement, SubscriptionGateProps>(
     const navigate = useNavigate();
     const { user } = useAuth();
     const { isPremium, isStandardOrAbove } = useSubscription();
-    const [selectedPlan, setSelectedPlan] = useState<PlanKey>('lifetime');
-    const [isProcessing, setIsProcessing] = useState(false);
+    const [isProcessingPlan, setIsProcessingPlan] = useState<PlanKey | null>(null);
 
     // Never show a wall to someone who already has what they're reaching for.
-    // Premium/lifetime users have everything; a Standard user only ever hits a
-    // wall on genuinely Premium-only features (requiredTier === 'premium').
     if (isPremium) return null;
     if (requiredTier === 'standard' && isStandardOrAbove) return null;
 
@@ -88,185 +84,184 @@ const SubscriptionGate = forwardRef<HTMLDivElement, SubscriptionGateProps>(
     const availablePlans: PlanKey[] =
       requiredTier === 'premium' ? ['premium', 'lifetime'] : ['standard', 'premium', 'lifetime'];
 
-    const plan = plans[selectedPlan];
-
-    const handleSubscribe = async () => {
+    const handleSubscribePlan = async (planKey: PlanKey) => {
       if (!user) {
-        setPendingCheckout(selectedPlan);
+        setPendingCheckout(planKey);
         onOpenChange(false);
         navigate('/auth?intent=checkout');
         return;
       }
 
-      setIsProcessing(true);
+      setIsProcessingPlan(planKey);
       try {
-        await startCheckout(selectedPlan, { id: user.id, email: user.email });
+        await startCheckout(planKey, { id: user.id, email: user.email });
       } catch (err) {
         toast.error("Erreur lors de l'activation de l'abonnement");
         console.error(err);
-        setIsProcessing(false);
+        setIsProcessingPlan(null);
       }
     };
 
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent ref={ref} className="p-0 sm:max-w-[480px] bg-white border-0 rounded-3xl shadow-2xl overflow-hidden [&>button]:hidden">
+        <DialogContent ref={ref} className="p-0 sm:max-w-[580px] md:max-w-[800px] lg:max-w-[900px] bg-white border-0 rounded-3xl shadow-2xl overflow-hidden [&>button]:hidden">
 
           {/* ─── Top banner ─── */}
-          <div className="relative bg-gradient-to-br from-[#0055A4] via-[#1B6ED6] to-[#7C3AED] px-6 pt-7 pb-5 text-center overflow-hidden">
-            <div className="absolute -top-8 -right-8 w-32 h-32 bg-white/5 rounded-full blur-2xl pointer-events-none" />
-            <div className="absolute bottom-0 left-8 w-20 h-20 bg-purple-500/10 rounded-full blur-xl pointer-events-none" />
+          <div className="relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-950 px-6 py-6 text-center overflow-hidden border-b border-slate-800">
+            {/* French tricolore indicator */}
+            <div className="absolute top-0 left-0 right-0 h-1.5 flex">
+              <div className="w-1/3 bg-[#0055A4]" />
+              <div className="w-1/3 bg-white" />
+              <div className="w-1/3 bg-[#EF4135]" />
+            </div>
 
             <button
               onClick={() => onOpenChange(false)}
-              className="absolute top-3 right-3 z-20 h-7 w-7 rounded-full bg-white/15 hover:bg-white/25 flex items-center justify-center text-white/70 hover:text-white transition-all cursor-pointer"
+              className="absolute top-4 right-4 z-20 h-7 w-7 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white/70 hover:text-white transition-all cursor-pointer"
               aria-label="Fermer"
             >
-              <X className="w-3.5 h-3.5" />
+              <X className="w-4 h-4" />
             </button>
 
-            <div className="mx-auto mb-3 w-14 h-14 rounded-2xl bg-white/15 backdrop-blur-sm flex items-center justify-center border border-white/20">
-              <Lock className="w-7 h-7 text-white" />
+            <div className="mx-auto mb-2 w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center border border-white/10">
+              <Lock className="w-5 h-5 text-white" />
             </div>
 
-            <h2 className="text-lg font-bold text-white mb-1">Débloquez cette fonctionnalité</h2>
-
-            {featureLabel && (
-              <div className="inline-flex items-center gap-1.5 mt-1.5 bg-white/15 backdrop-blur-sm px-3 py-1 rounded-full text-white/90 text-xs font-medium border border-white/10">
+            <h2 className="text-lg font-bold text-white mb-0.5">Débloquez l'accès complet</h2>
+            
+            {featureLabel ? (
+              <div className="inline-flex items-center gap-1.5 mt-1.5 bg-white/10 px-3 py-1 rounded-full text-white/90 text-[11px] font-medium border border-white/5">
                 <Lock className="w-3 h-3" />
                 {featureLabel}
               </div>
+            ) : (
+              <p className="text-xs text-white/60">
+                Choisissez le forfait idéal pour réussir votre examen de naturalisation
+              </p>
             )}
           </div>
 
           {/* ─── Body ─── */}
-          <div className="px-6 pt-5 pb-6">
-
-            {/* Plan toggle */}
-            <div className="flex gap-2 p-1 bg-slate-100 rounded-xl mb-5">
+          <div className="p-5 md:p-6 bg-slate-50">
+            
+            {/* Pricing Cards Row — swipeable on mobile, columns on desktop */}
+            <div className="flex md:grid md:grid-cols-3 gap-4 overflow-x-auto md:overflow-x-visible snap-x snap-mandatory pb-4 md:pb-0 scrollbar-none">
               {availablePlans.map((id) => {
                 const p = plans[id];
-                const isActive = selectedPlan === id;
+                const isPremiumPlan = id === 'premium';
+                const isLifetimePlan = id === 'lifetime';
+
                 return (
-                  <button
+                  <div 
                     key={id}
-                    onClick={() => setSelectedPlan(id)}
                     className={`
-                      relative flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 cursor-pointer
-                      ${isActive ? 'bg-white shadow-md text-slate-900' : 'text-slate-500 hover:text-slate-700'}
+                      snap-center shrink-0 w-[78vw] md:w-auto bg-white rounded-2xl border p-5 flex flex-col justify-between shadow-sm relative transition-all duration-300 hover:shadow-md
+                      ${isPremiumPlan ? 'border-amber-500/60 shadow-amber-500/5 ring-1 ring-amber-500/10' : 'border-slate-200'}
+                      ${isLifetimePlan ? 'border-purple-500/60 shadow-purple-500/5 ring-1 ring-purple-500/10' : ''}
                     `}
                   >
-                    {p.badge && (
-                      <span className="absolute -top-2 -right-1 bg-violet-500 text-white text-[8px] font-black px-1.5 py-0.5 rounded-full uppercase tracking-wide">
-                        {p.badge}
+                    {/* Badge at the top */}
+                    {id === 'lifetime' && (
+                      <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-purple-600 text-white text-[9px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider border border-purple-500">
+                        Meilleur rapport
                       </span>
                     )}
-                    <span className={isActive ? '' : 'opacity-60'}>{p.icon}</span>
-                    {p.name}
-                    <span className="text-xs font-bold" style={{ color: isActive ? p.color : undefined }}>
-                      {p.price}€
-                    </span>
-                  </button>
+                    {id === 'premium' && (
+                      <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-amber-600 text-white text-[9px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider border border-amber-500">
+                        Le plus populaire
+                      </span>
+                    )}
+
+                    <div>
+                      {/* Card Header */}
+                      <div className="flex items-center gap-2 mb-2">
+                        <span 
+                          className="w-7 h-7 rounded-lg flex items-center justify-center font-bold"
+                          style={{ backgroundColor: `${p.color}15`, color: p.color }}
+                        >
+                          {p.icon}
+                        </span>
+                        <h3 className="text-xs font-extrabold text-slate-800 uppercase tracking-wide">{p.name}</h3>
+                      </div>
+
+                      {/* Price display */}
+                      <div className="mb-1 flex items-baseline gap-1">
+                        <span className="text-2xl font-black text-slate-900">{p.price}€</span>
+                        <span className="text-xs text-slate-400 font-semibold">{p.period}</span>
+                      </div>
+                      <p className="text-[10px] text-slate-400 font-semibold mb-4 leading-normal">
+                        {p.periodLabel}
+                      </p>
+
+                      {/* Features List */}
+                      <div className="space-y-2.5 mb-6 border-t border-slate-100 pt-3.5">
+                        {p.features.map((feat, i) => (
+                          <div key={i} className="flex items-start gap-2">
+                            <Check className="w-3.5 h-3.5 text-emerald-500 mt-0.5 flex-shrink-0" />
+                            <span className="text-xs text-slate-600 leading-snug">{feat}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Card Button */}
+                    <Button
+                      disabled={isProcessingPlan !== null}
+                      onClick={() => handleSubscribePlan(id)}
+                      className="w-full text-white rounded-xl font-bold text-xs h-10 shadow-sm transition-all hover:scale-[1.01] active:scale-[0.99] cursor-pointer mt-auto"
+                      style={{
+                        background: isLifetimePlan
+                          ? 'linear-gradient(135deg, #7C3AED, #4F46E5)'
+                          : isPremiumPlan
+                          ? 'linear-gradient(135deg, #D97706, #B45309)'
+                          : `linear-gradient(135deg, ${p.color}, #1B6ED6)`,
+                      }}
+                    >
+                      {isProcessingPlan === id ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <>
+                          {id === 'lifetime' ? 'Activer à vie' : 'Essayer gratuitement'}
+                          <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
+                        </>
+                      )}
+                    </Button>
+                  </div>
                 );
               })}
             </div>
 
-            {/* Period label */}
-            <p className="text-center text-[11px] text-slate-400 font-medium -mt-3 mb-4">
-              {plan.periodLabel}
-            </p>
+            {/* Mobile swipe indicators */}
+            <div className="flex md:hidden items-center justify-center gap-1.5 mt-2">
+              <span className="h-1.5 w-1.5 rounded-full bg-slate-400" />
+              <span className="h-1.5 w-1.5 rounded-full bg-slate-300" />
+              <span className="h-1.5 w-1.5 rounded-full bg-slate-300" />
+            </div>
 
-            {/* Selected plan features */}
-            <div className="space-y-2.5 mb-5">
-              {plan.features.map((feat, i) => (
-                <div key={i} className="flex items-center gap-2.5">
-                  <div
-                    className="flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center"
-                    style={{ backgroundColor: `${plan.color}18` }}
-                  >
-                    <Check className="w-3 h-3" style={{ color: plan.color }} />
-                  </div>
-                  <span className="text-sm text-slate-700">{feat}</span>
+            {/* Current free plan comparison & secure guarantee bar */}
+            <div className="mt-5 rounded-2xl bg-white border border-slate-200/80 px-4 py-3 flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-sm">
+              <div>
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Forfait Gratuit Actuel</p>
+                <div className="flex flex-wrap gap-x-3.5 gap-y-1 mt-1">
+                  {['1 examen/jour', '10 classes', 'Progression séquentielle'].map((f) => (
+                    <span key={f} className="text-[11px] text-slate-500 flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-slate-300" />
+                      {f}
+                    </span>
+                  ))}
                 </div>
-              ))}
-            </div>
-
-            {/* Free tier comparison */}
-            <div className="rounded-xl bg-slate-50 border border-slate-100 px-4 py-3 mb-5">
-              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Forfait Gratuit actuel</p>
-              <div className="flex flex-wrap gap-x-4 gap-y-1">
-                {['1 examen/jour', '10 classes', 'Séquentiel'].map((f) => (
-                  <span key={f} className="text-xs text-slate-400 flex items-center gap-1">
-                    <span className="w-1 h-1 rounded-full bg-slate-300" />
-                    {f}
-                  </span>
-                ))}
+              </div>
+              <div className="text-left md:text-right border-t md:border-t-0 md:border-l border-slate-100 pt-2.5 md:pt-0 md:pl-4 flex-shrink-0 flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                <span className="text-[11px] font-semibold text-slate-500">Paiement Stripe sécurisé 🔒</span>
               </div>
             </div>
 
-            {/* Trust badge */}
-            <div className="flex items-center gap-2.5 rounded-xl bg-emerald-50 border border-emerald-100 px-4 py-3 mb-4">
-              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-              </div>
-              <p className="text-xs text-emerald-800 leading-snug">
-                {selectedPlan === 'lifetime'
-                   ? <><span className="font-bold">Paiement unique, accès éternel.</span> Aucun frais récurrent — jamais.</>
-                   : <><span className="font-bold">3 jours gratuits, sans engagement.</span> Aucun débit pendant l'essai. Annulez quand vous voulez.</>
-                }
-              </p>
-            </div>
-
-            {/* CTA */}
-            <Button
-              disabled={isProcessing}
-              onClick={handleSubscribe}
-              className="w-full text-white rounded-xl font-bold text-sm h-12 shadow-lg transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
-              style={{
-                background: selectedPlan === 'lifetime'
-                  ? 'linear-gradient(135deg, #7C3AED, #4F46E5)'
-                  : `linear-gradient(135deg, ${plan.color}, #3a7cc7)`,
-              }}
-            >
-              {isProcessing ? (
-                <Loader2 className="w-5 h-5 animate-spin" />
-              ) : selectedPlan === 'lifetime' ? (
-                <>
-                  <Infinity className="w-4 h-4 mr-2" />
-                  Accès à Vie — 99 € une fois
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </>
-              ) : (
-                <>
-                  Commencer l'essai gratuit — {plan.price}€{plan.period}
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </>
-              )}
-            </Button>
-
-            <div className="flex items-center justify-center gap-3 mt-3">
-              <span className="flex items-center gap-1 text-[10px] text-slate-400">
-                <CheckCircle2 className="w-3 h-3 text-emerald-400" />
-                {selectedPlan === 'lifetime' ? 'Paiement unique' : 'Sans engagement'}
-              </span>
-              <span className="w-px h-3 bg-slate-200" />
-              <span className="flex items-center gap-1 text-[10px] text-slate-400">
-                <CheckCircle2 className="w-3 h-3 text-emerald-400" />
-                {selectedPlan === 'lifetime' ? 'Accès éternel' : 'Annulation libre'}
-              </span>
-              <span className="w-px h-3 bg-slate-200" />
-              <span className="flex items-center gap-1 text-[10px] text-slate-400">
-                <CheckCircle2 className="w-3 h-3 text-emerald-400" />
-                Stripe sécurisé
-              </span>
-            </div>
           </div>
-
         </DialogContent>
       </Dialog>
     );
   }
 );
-
 SubscriptionGate.displayName = 'SubscriptionGate';
 export default SubscriptionGate;
