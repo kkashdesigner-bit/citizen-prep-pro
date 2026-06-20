@@ -260,24 +260,45 @@ export function useQuiz({
           return;
         }
 
-        // ─── REVISION MODE: SM-2 spaced repetition — fetch questions due for review ───
+        // ─── REVISION MODE: replay the user's actual mistakes ───
+        // Primary source = questions answered incorrectly and never since answered
+        // correctly (this matches the "X questions à corriger" count on the dashboard).
+        // Falls back to SM-2 spaced-repetition due cards only when there are no mistakes.
         if (mode === 'revision' && user) {
-          const now = new Date().toISOString();
-          const { data: dueReviews } = await supabase
-            .from('question_reviews' as any)
-            .select('question_id')
-            .eq('user_id', user.id)
-            .lte('next_review_date', now)
-            .order('next_review_date', { ascending: true })
-            .limit(30);
+          const { data: ansData } = await supabase
+            .from('user_answers' as any)
+            .select('question_id, is_correct')
+            .eq('user_id', user.id);
 
-          const dueIds = (dueReviews || []).map((r: any) => r.question_id).filter(Boolean);
+          const correctIds = new Set(
+            (ansData || []).filter((a: any) => a.is_correct).map((a: any) => a.question_id).filter(Boolean)
+          );
+          let reviseIds: number[] = [...new Set(
+            (ansData || [])
+              .filter((a: any) => !a.is_correct && a.question_id != null && !correctIds.has(a.question_id))
+              .map((a: any) => a.question_id as number)
+          )].filter((id) => id < 9000); // demo/CSV questions (id >= 9000) don't live in the questions table
 
-          if (dueIds.length > 0) {
+          // Fallback: spaced-repetition cards that are due.
+          if (reviseIds.length === 0) {
+            const now = new Date().toISOString();
+            const { data: dueReviews } = await supabase
+              .from('question_reviews' as any)
+              .select('question_id')
+              .eq('user_id', user.id)
+              .lte('next_review_date', now)
+              .order('next_review_date', { ascending: true })
+              .limit(50);
+            reviseIds = [...new Set((dueReviews || []).map((r: any) => r.question_id).filter(Boolean))]
+              .filter((id) => id < 9000);
+          }
+
+          if (reviseIds.length > 0) {
+            const picked = shuffle(reviseIds).slice(0, 30);
             const { data: revQuestions } = await supabase
               .from('questions')
               .select('*')
-              .in('id', dueIds);
+              .in('id', picked);
             setQuestions(shuffle((revQuestions || []) as Question[]));
           } else {
             setQuestions([]);

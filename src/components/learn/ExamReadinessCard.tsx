@@ -14,6 +14,9 @@ const THEME_LABELS: Record<string, string> = {
 const THEME_FULL_LABELS: Record<string, string> = {
     histoire: 'Histoire', institutions: 'Institutions', valeurs: 'Valeurs et Principes', symboles: 'Symboles et Rites', europe: 'Europe et Monde',
 };
+const THEME_DISPLAY_NAMES: Record<string, string> = {
+    histoire: 'Histoire', institutions: 'Institutions', valeurs: 'Valeurs', symboles: 'Symboles', europe: 'Europe',
+};
 
 export default function ExamReadinessCard({ successRate, totalExams, themeStats }: ExamReadinessCardProps) {
     const reduced = useReducedMotion();
@@ -69,7 +72,7 @@ export default function ExamReadinessCard({ successRate, totalExams, themeStats 
         >
             <div aria-hidden className="absolute -top-8 -right-8 w-24 h-24 rounded-full bg-purple-500/5 blur-2xl pointer-events-none group-hover:bg-purple-500/10 transition-colors" />
 
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between w-full">
                 <div className="flex items-center gap-2">
                     <div className={`p-1.5 rounded-lg ${statusColor.replace('text-', 'bg-')}/10`}>
                         <Icon className={`h-4 w-4 ${statusColor}`} />
@@ -78,14 +81,10 @@ export default function ExamReadinessCard({ successRate, totalExams, themeStats 
                         Préparation à l'examen
                     </h3>
                 </div>
-                <div className="text-right shrink-0">
-                    <span className={`text-lg font-black ${statusColor}`}>{predictedOutOf40}</span>
-                    <span className="text-[10px] text-[var(--dash-text-muted)] ml-1">/40 prévu</span>
-                </div>
             </div>
 
             {/* Half-circle gauge */}
-            <div className="relative mx-auto mt-1" style={{ width: 160, height: 90 }}>
+            <div className="relative mx-auto mt-2" style={{ width: 160, height: 90 }}>
                 <svg viewBox="0 0 160 92" className="w-full h-full">
                     <defs>
                         <linearGradient id={gradId} x1="0%" y1="0%" x2="100%" y2="0%">
@@ -104,35 +103,50 @@ export default function ExamReadinessCard({ successRate, totalExams, themeStats 
                     />
                 </svg>
                 <div className="absolute inset-x-0 bottom-0 flex flex-col items-center">
-                    <span className={`text-[11px] font-bold ${statusColor}`}>{level}</span>
-                    <span className="text-2xl font-black text-[var(--dash-text)] tabular-nums leading-none">{displayScore}%</span>
+                    <span className="text-2xl font-black text-[var(--dash-text)] tabular-nums leading-none">
+                        {predictedOutOf40}<span className="text-sm font-bold text-[var(--dash-text-muted)]">/40</span>
+                    </span>
+                    <span className={`text-[10px] font-extrabold ${statusColor} mt-1 uppercase tracking-wider`}>
+                        {level} ({displayScore}%)
+                    </span>
                 </div>
             </div>
 
-            <p className={`text-[11px] font-semibold text-center ${statusColor} px-2`}>{message}</p>
+            <p className={`text-[11px] font-semibold text-center ${statusColor} px-2 mt-1`}>{message}</p>
 
-            {/* Theme breakdown */}
+            {/* Theme breakdown - spacious 2-column grid */}
             {readiness && themeStats ? (
-                <div className="grid grid-cols-5 gap-1 pt-2.5 border-t border-[var(--dash-card-border)] mt-1">
+                <div className="grid grid-cols-2 gap-1.5 pt-3 border-t border-[var(--dash-card-border)] mt-2">
                     {Object.entries(EXAM_WEIGHTS).map(([theme, weight]) => {
                         const stats = themeStats[theme];
                         const rate = stats && stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0;
                         const isWeak = readiness!.weakestThemes.includes(theme);
                         return (
-                            <div key={theme} className="text-center">
-                                <p className={`text-[9px] font-extrabold uppercase tracking-wider ${isWeak ? 'text-red-500' : 'text-[var(--dash-text-muted)]'}`} title={THEME_FULL_LABELS[theme] || theme}>
-                                    {THEME_LABELS[theme] || theme}
-                                </p>
-                                <p className={`text-xs font-black ${isWeak ? 'text-red-500' : 'text-[var(--dash-text)]'}`}>{rate}%</p>
-                                <p className="text-[8px] text-[var(--dash-text-muted)]">{weight}q</p>
+                            <div 
+                                key={theme} 
+                                className={`flex items-center justify-between p-1.5 rounded-xl bg-[var(--dash-surface)] border border-[var(--dash-card-border)] ${
+                                    theme === 'europe' ? 'col-span-2' : ''
+                                }`}
+                            >
+                                <div className="flex flex-col min-w-0">
+                                    <span className={`text-[10px] font-extrabold truncate ${isWeak ? 'text-red-500' : 'text-[var(--dash-text-muted)]'}`} title={THEME_FULL_LABELS[theme]}>
+                                        {THEME_DISPLAY_NAMES[theme]}
+                                    </span>
+                                    <span className="text-[8px] text-[var(--dash-text-muted)] font-medium leading-none mt-0.5">
+                                        {weight}q au test
+                                    </span>
+                                </div>
+                                <span className={`text-[11px] font-black ml-2 tabular-nums ${isWeak ? 'text-red-500' : 'text-[var(--dash-text)]'}`}>
+                                    {rate}%
+                                </span>
                             </div>
                         );
                     })}
                 </div>
             ) : (
-                <p className="text-[10px] text-[var(--dash-text-muted)] flex items-center justify-center gap-1.5 leading-normal">
+                <p className="text-[10px] text-[var(--dash-text-muted)] flex items-center justify-center gap-1.5 leading-normal mt-2">
                     <BookOpen className="h-3 w-3 text-slate-400 flex-shrink-0" />
-                    <span>Faites plus de quiz pour améliorer la précision.</span>
+                    <span>Faites plus de quiz pour évaluer vos thèmes.</span>
                 </p>
             )}
         </motion.div>
