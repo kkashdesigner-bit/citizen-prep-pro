@@ -6,6 +6,7 @@ import { useSubscription } from '@/hooks/useSubscription';
 import { useParcours, type ParcoursClass } from '@/hooks/useParcours';
 import { useClassDetail } from '@/hooks/useClassDetail';
 import { Question, getCorrectAnswerText } from '@/lib/types';
+import { openExamPdf, questionsToExamItems } from '@/lib/examPdf';
 import LearnSidebar from '@/components/learn/LearnSidebar';
 import AppHeader from '@/components/AppHeader';
 import SubscriptionGate from '@/components/SubscriptionGate';
@@ -17,7 +18,7 @@ import {
   BookOpen, Search, Clock, CheckCircle2, Lock, Bookmark, BookmarkCheck,
   ChevronLeft, ChevronRight, ArrowRight, FileText, Layers, BrainCircuit,
   FolderOpen, RotateCcw, Sparkles, GraduationCap, X, TrendingUp,
-  Star, Filter, Play,
+  Star, Filter, Play, Download,
 } from 'lucide-react';
 
 /* ═══════════════════════════════════════════════════════════════
@@ -508,6 +509,51 @@ function Flashcards({ terms }: { terms: { term: string; context: string }[] }) {
 }
 
 /* ═══════════════════════════════════════════════════════════════
+   FICHE DOWNLOAD — export this lesson's questions as a branded PDF
+   (with or without answers). Standard & above; free users get the gate.
+   ═══════════════════════════════════════════════════════════════ */
+
+function FicheDownload({ questions, title, classNumber }: { questions: Question[]; title: string; classNumber: number }) {
+  const { isStandardOrAbove } = useSubscription();
+  const [showGate, setShowGate] = useState(false);
+
+  const download = (withAnswers: boolean) => {
+    if (!isStandardOrAbove) { setShowGate(true); return; }
+    const items = questionsToExamItems(questions);
+    if (items.length === 0) return;
+    const dateStr = new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' });
+    openExamPdf(items, {
+      title,
+      subtitle: `Classe ${classNumber} · ${items.length} questions · ${dateStr}${withAnswers ? ' · réponses en vert ✓' : ''}`,
+      withAnswers,
+    });
+  };
+
+  if (!questions || questions.length === 0) return null;
+
+  return (
+    <div className="mt-8 rounded-2xl border border-[var(--dash-card-border)] bg-slate-50 p-5">
+      <div className="flex items-center gap-2 mb-1">
+        <Download className="h-4 w-4 text-[#0055A4]" />
+        <h3 className="font-bold text-slate-900 text-sm">Télécharger la fiche d'examen (PDF)</h3>
+      </div>
+      <p className="text-xs text-slate-500 mb-4">
+        Révisez hors ligne : téléchargez les {questions.length} questions de cette leçon, avec ou sans les réponses.
+      </p>
+      <div className="grid grid-cols-2 gap-3 max-w-md">
+        <Button onClick={() => download(true)} className="bg-[#0055A4] hover:bg-[#1B6ED6] text-white font-bold rounded-xl">
+          Avec réponses
+        </Button>
+        <Button onClick={() => download(false)} variant="outline" className="rounded-xl font-bold border-slate-300">
+          Sans réponses
+        </Button>
+      </div>
+      {showGate && <SubscriptionGate open={showGate} onOpenChange={setShowGate} requiredTier="standard" />}
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════
    COURSE DETAIL VIEW
    ═══════════════════════════════════════════════════════════════ */
 
@@ -615,8 +661,8 @@ function CourseDetail({ classId, onBack }: { classId: string; onBack: () => void
             {activeTab === 'documents' && (
               <div className="text-center py-16">
                 <FolderOpen className="w-12 h-12 text-slate-300 mx-auto mb-4" />
-                <h3 className="font-bold text-slate-900 mb-2">Documents officiels à venir</h3>
-                <p className="text-sm text-slate-500 max-w-sm mx-auto">Les fiches de révision et documents officiels pour cette leçon seront disponibles prochainement.</p>
+                <h3 className="font-bold text-slate-900 mb-2">Fiche d'examen téléchargeable</h3>
+                <p className="text-sm text-slate-500 max-w-sm mx-auto">Téléchargez les questions de cette leçon en PDF (avec ou sans les réponses) depuis le bouton en bas de page. Les documents officiels arriveront prochainement.</p>
               </div>
             )}
           </div>
@@ -630,6 +676,9 @@ function CourseDetail({ classId, onBack }: { classId: string; onBack: () => void
           Passer au Quiz complet ({data.questions.length} questions) <ArrowRight className="w-5 h-5" />
         </Button>
       </div>
+
+      {/* End-of-lesson: download this lesson's questions as a PDF (with/without answers) */}
+      <FicheDownload questions={data.questions} title={data.title} classNumber={data.class_number} />
     </motion.div>
   );
 }

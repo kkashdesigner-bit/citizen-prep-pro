@@ -8,6 +8,7 @@ import Header from '@/components/Header';
 import { useParcours } from '@/hooks/useParcours';
 import { useAuth } from '@/hooks/useAuth';
 import { useSubscription } from '@/hooks/useSubscription';
+import { openExamPdf, type ExamPdfItem } from '@/lib/examPdf';
 import { ArrowRight, Scale, Landmark, HeartHandshake, LayoutDashboard, RotateCcw, AlertTriangle, Medal, Check, X, ChevronUp, ChevronDown, ChevronRight, Download } from 'lucide-react';
 import { fireConfetti } from '@/lib/confetti';
 
@@ -71,59 +72,27 @@ export default function Results() {
     const currentClass = classId ? classes.find(c => c.id === classId) : null;
     const nextClass = currentClass ? classes.find(c => c.class_number === currentClass.class_number + 1) : null;
 
-    // Build a clean, branded PDF of the whole exam (questions + correct answers) via the
-    // browser's print-to-PDF. Standard & above only; free users get the upgrade gate.
-    const downloadExamPdf = () => {
+    // Download the exam as a branded PDF (print-to-PDF). Standard & above only;
+    // free users get the upgrade gate. `withAnswers=false` produces a blank exam.
+    const downloadExamPdf = (withAnswers: boolean) => {
         if (!isStandardOrAbove) { setGateTier('standard'); setShowGate(true); return; }
 
-        type ExamItem = { questionText: string; options: string[]; selectedAnswer?: string; correctAnswer: string; category: string; explanation?: string };
-        let items: ExamItem[] = [];
+        let items: ExamPdfItem[] = [];
         try {
             const raw = sessionStorage.getItem('quizExam');
             if (raw) items = JSON.parse(raw);
         } catch { /* ignore */ }
-        if (items.length === 0) items = errors as ExamItem[]; // fallback: corrected mistakes only
+        if (items.length === 0) items = errors as ExamPdfItem[]; // fallback: corrected mistakes only
         if (items.length === 0) return;
 
-        const esc = (s: unknown) => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
         const dateStr = new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' });
-
-        const blocks = items.map((it, i) => {
-            const opts = (it.options || []).map((opt, oi) => {
-                const isCorrect = String(opt).trim() === String(it.correctAnswer).trim();
-                const isSel = it.selectedAnswer && String(opt).trim() === String(it.selectedAnswer).trim();
-                const mark = isCorrect ? ' ✓' : (isSel ? ' ✗' : '');
-                const style = isCorrect ? 'color:#067647;font-weight:700' : (isSel ? 'color:#b42318;font-weight:600' : 'color:#475467');
-                return `<li style="${style}">${String.fromCharCode(65 + oi)}. ${esc(opt)}${mark}</li>`;
-            }).join('');
-            return `<div class="q"><p class="cat">${esc(it.category)}</p><p class="qt">${i + 1}. ${esc(it.questionText)}</p><ul>${opts}</ul>${it.explanation ? `<p class="exp">${esc(it.explanation)}</p>` : ''}</div>`;
-        }).join('');
-
-        const html = `<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>Examen civique — GoCivique</title><style>
-            body{font-family:-apple-system,'Segoe UI',Roboto,sans-serif;color:#1a1a1a;max-width:760px;margin:0 auto;padding:32px;line-height:1.5}
-            h1{color:#0055A4;font-size:22px;margin:0 0 4px}
-            .sub{color:#667085;font-size:13px;margin:0 0 20px}
-            .acc{height:4px;background:linear-gradient(90deg,#0055A4 0 33%,#fff 33% 66%,#EF4135 66% 100%);margin:0 0 24px;border-radius:2px}
-            .q{border:1px solid #e5e7eb;border-radius:10px;padding:14px 16px;margin:0 0 12px;page-break-inside:avoid}
-            .cat{font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#0055A4;font-weight:700;margin:0 0 6px}
-            .qt{font-weight:700;margin:0 0 8px;font-size:14px}
-            ul{margin:0;padding-left:18px} li{margin:3px 0;font-size:13px}
-            .exp{background:#eff6ff;border-radius:8px;padding:8px 10px;margin:8px 0 0;font-size:12px;color:#0055A4}
-            .foot{margin-top:24px;color:#98a2b3;font-size:11px;text-align:center}
-            @media print{body{padding:0 12px}}
-        </style></head><body onload="setTimeout(function(){window.print()},250)">
-            <h1>GoCivique — Correction de l'examen</h1>
-            <p class="sub">Score : ${result?.score ?? 0}/${result?.totalQuestions ?? items.length} (${scorePercent}%) · ${dateStr} · La bonne réponse est en vert ✓</p>
-            <div class="acc"></div>
-            ${blocks}
-            <p class="foot">© 2026 GoCivique · gocivique.fr</p>
-        </body></html>`;
-
-        const w = window.open('', '_blank');
-        if (!w) return;
-        w.document.open();
-        w.document.write(html);
-        w.document.close();
+        openExamPdf(items, {
+            title: withAnswers ? "Correction de l'examen" : 'Examen blanc',
+            subtitle: withAnswers
+                ? `Score : ${result?.score ?? 0}/${result?.totalQuestions ?? items.length} (${scorePercent}%) · ${dateStr} · La bonne réponse est en vert ✓`
+                : `${items.length} questions · ${dateStr}`,
+            withAnswers,
+        });
     };
 
     return (
@@ -287,13 +256,26 @@ export default function Results() {
                                 {t('results.retakeExam')}
                             </button>
 
-                            <button
-                                onClick={downloadExamPdf}
-                                className="w-full bg-slate-100 text-slate-700 py-4 px-6 rounded-2xl font-bold flex items-center gap-4 hover:bg-slate-200 transition-all border-b-4 border-slate-300 active:border-b-0 active:translate-y-1"
-                            >
-                                <Download className="text-[#0055A4]" />
-                                Télécharger l'examen (PDF)
-                            </button>
+                            <div className="rounded-2xl bg-slate-100 p-3 space-y-2 border-b-4 border-slate-300">
+                                <p className="text-[11px] font-bold uppercase tracking-widest text-slate-500 px-1 flex items-center gap-2">
+                                    <Download className="h-3.5 w-3.5 text-[#0055A4]" />
+                                    Télécharger l'examen (PDF)
+                                </p>
+                                <div className="grid grid-cols-2 gap-2">
+                                    <button
+                                        onClick={() => downloadExamPdf(true)}
+                                        className="bg-white text-slate-700 py-2.5 px-3 rounded-xl font-bold text-xs hover:bg-slate-50 border border-slate-200 transition-all active:translate-y-0.5"
+                                    >
+                                        Avec réponses
+                                    </button>
+                                    <button
+                                        onClick={() => downloadExamPdf(false)}
+                                        className="bg-white text-slate-700 py-2.5 px-3 rounded-xl font-bold text-xs hover:bg-slate-50 border border-slate-200 transition-all active:translate-y-0.5"
+                                    >
+                                        Sans réponses
+                                    </button>
+                                </div>
+                            </div>
 
                             {errors.length > 0 && (
                                 <button
