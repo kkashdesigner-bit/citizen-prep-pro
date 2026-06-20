@@ -403,3 +403,12 @@
   70% { transform: scale(1.15); }
   100% { transform: scale(1); opacity: 1; }
 }
+
+@keyframes pulse-subtle {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.75; }
+}
+
+.animate-pulse-subtle {
+  animation: pulse-subtle 2s ease-in-out infinite;
+}

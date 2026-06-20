@@ -46,7 +46,7 @@ export default function NextActionCard({ stats }: NextActionCardProps) {
     badgeText = "Correction ciblée";
     ctaText = "Rallier mes erreurs";
     icon = AlertTriangle;
-    actionFn = () => navigate('/quiz?mode=revision');
+    actionFn = () => navigate('/revision');
     cardColorClass = 'from-red-500/10 to-orange-500/5 border-red-500/20 dark:border-red-500/30';
     badgeColorClass = 'bg-red-100 text-red-700';
     ctaColorClass = 'bg-[#EF4135] hover:bg-red-600 text-white';

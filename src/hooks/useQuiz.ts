@@ -265,10 +265,13 @@ export function useQuiz({
         // correctly (this matches the "X questions à corriger" count on the dashboard).
         // Falls back to SM-2 spaced-repetition due cards only when there are no mistakes.
         if (mode === 'revision' && user) {
-          const { data: ansData } = await supabase
+          let ansQuery = supabase
             .from('user_answers' as any)
             .select('question_id, is_correct')
             .eq('user_id', user.id);
+          // Scope to a single theme when revising by category.
+          if (category) ansQuery = ansQuery.eq('category', category);
+          const { data: ansData } = await ansQuery;
 
           const correctIds = new Set(
             (ansData || []).filter((a: any) => a.is_correct).map((a: any) => a.question_id).filter(Boolean)
@@ -279,8 +282,8 @@ export function useQuiz({
               .map((a: any) => a.question_id as number)
           )].filter((id) => id < 9000); // demo/CSV questions (id >= 9000) don't live in the questions table
 
-          // Fallback: spaced-repetition cards that are due.
-          if (reviseIds.length === 0) {
+          // Fallback: spaced-repetition cards that are due (only for all-category revision).
+          if (reviseIds.length === 0 && !category) {
             const now = new Date().toISOString();
             const { data: dueReviews } = await supabase
               .from('question_reviews' as any)

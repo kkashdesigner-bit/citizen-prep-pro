@@ -1,4 +1,4 @@
-import { Check, Flag, CircleDot } from 'lucide-react';
+import { CircleDot } from 'lucide-react';
 
 interface ExamNavigatorProps {
     totalQuestions: number;
@@ -27,19 +27,19 @@ export default function ExamNavigator({
             <div className="grid grid-cols-3 gap-3">
                 <div className="rounded-xl border border-border/60 bg-card p-3 text-center">
                     <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">
-                        Answered
+                        Répondues
                     </p>
                     <p className="text-2xl font-extrabold text-foreground">{String(answeredCount).padStart(2, '0')}</p>
                 </div>
                 <div className="rounded-xl border border-border/60 bg-card p-3 text-center">
                     <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">
-                        Flagged
+                        Marquées
                     </p>
                     <p className="text-2xl font-extrabold text-[#EF4135]">{String(flaggedCount).padStart(2, '0')}</p>
                 </div>
                 <div className="rounded-xl border border-border/60 bg-card p-3 text-center">
                     <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">
-                        Remaining
+                        Restantes
                     </p>
                     <p className="text-2xl font-extrabold text-foreground">{String(remainingCount).padStart(2, '0')}</p>
                 </div>
@@ -49,7 +49,7 @@ export default function ExamNavigator({
             <div>
                 <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
                     <CircleDot className="h-4 w-4 text-primary" />
-                    Exam Navigator
+                    Navigateur d'examen
                 </h3>
                 <div className="grid grid-cols-5 gap-2">
                     {questionIds.map((qId, idx) => {
@@ -86,31 +86,31 @@ export default function ExamNavigator({
             <div className="grid grid-cols-2 gap-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
                 <div className="flex items-center gap-2">
                     <span className="w-3 h-3 rounded-sm bg-primary" />
-                    Current
+                    Actuelle
                 </div>
                 <div className="flex items-center gap-2">
                     <span className="w-3 h-3 rounded-sm border-2 border-primary/40" />
-                    Answered
+                    Répondue
                 </div>
                 <div className="flex items-center gap-2">
                     <span className="w-3 h-3 rounded-sm border-2 border-[#EF4135]/50 relative">
                         <span className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 bg-[#EF4135] rounded-full" />
                     </span>
-                    Flagged
+                    Marquée
                 </div>
                 <div className="flex items-center gap-2">
                     <span className="w-3 h-3 rounded-sm border-2 border-border/60" />
-                    Unvisited
+                    Non vue
                 </div>
             </div>
 
             {/* Study Tip */}
             <div className="rounded-xl bg-blue-50 border border-blue-100 p-4">
                 <p className="text-[10px] font-bold uppercase tracking-widest text-primary mb-2 flex items-center gap-1.5">
-                    💡 Study Tip
+                    💡 Conseil
                 </p>
                 <p className="text-xs text-slate-600 leading-relaxed">
-                    Take deep breaths and read each question carefully. Flag questions you're unsure about and come back to them at the end.
+                    Respirez profondément et lisez chaque question attentivement. Marquez les questions dont vous n'êtes pas sûr(e), puis revenez-y à la fin.
                 </p>
             </div>
         </div>

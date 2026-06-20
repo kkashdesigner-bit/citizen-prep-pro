@@ -7,7 +7,8 @@ import SubscriptionGate from '@/components/SubscriptionGate';
 import Header from '@/components/Header';
 import { useParcours } from '@/hooks/useParcours';
 import { useAuth } from '@/hooks/useAuth';
-import { ArrowRight, Scale, Landmark, HeartHandshake, LayoutDashboard, RotateCcw, AlertTriangle, Medal, Check, X, ChevronUp, ChevronDown, ChevronRight } from 'lucide-react';
+import { useSubscription } from '@/hooks/useSubscription';
+import { ArrowRight, Scale, Landmark, HeartHandshake, LayoutDashboard, RotateCcw, AlertTriangle, Medal, Check, X, ChevronUp, ChevronDown, ChevronRight, Download } from 'lucide-react';
 import { fireConfetti } from '@/lib/confetti';
 
 const passImage = '/examen-civique-resultat-passe.jpg';
@@ -26,10 +27,12 @@ export default function Results() {
     const [searchParams] = useSearchParams();
     const { t, language } = useLanguage();
     const { user } = useAuth();
+    const { isStandardOrAbove } = useSubscription();
     const [result, setResult] = useState<ExamResult | null>(null);
     const [errors, setErrors] = useState<QuizError[]>([]);
     const [showErrors, setShowErrors] = useState(false);
     const [showGate, setShowGate] = useState(false);
+    const [gateTier, setGateTier] = useState<'standard' | 'premium'>('premium');
     const errorsRef = useRef<HTMLDivElement>(null);
     const [classId, setClassId] = useState<string | null>(null);
     const { classes } = useParcours();
@@ -67,6 +70,61 @@ export default function Results() {
     const accentRed = "#ef4444";
     const currentClass = classId ? classes.find(c => c.id === classId) : null;
     const nextClass = currentClass ? classes.find(c => c.class_number === currentClass.class_number + 1) : null;
+
+    // Build a clean, branded PDF of the whole exam (questions + correct answers) via the
+    // browser's print-to-PDF. Standard & above only; free users get the upgrade gate.
+    const downloadExamPdf = () => {
+        if (!isStandardOrAbove) { setGateTier('standard'); setShowGate(true); return; }
+
+        type ExamItem = { questionText: string; options: string[]; selectedAnswer?: string; correctAnswer: string; category: string; explanation?: string };
+        let items: ExamItem[] = [];
+        try {
+            const raw = sessionStorage.getItem('quizExam');
+            if (raw) items = JSON.parse(raw);
+        } catch { /* ignore */ }
+        if (items.length === 0) items = errors as ExamItem[]; // fallback: corrected mistakes only
+        if (items.length === 0) return;
+
+        const esc = (s: unknown) => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        const dateStr = new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' });
+
+        const blocks = items.map((it, i) => {
+            const opts = (it.options || []).map((opt, oi) => {
+                const isCorrect = String(opt).trim() === String(it.correctAnswer).trim();
+                const isSel = it.selectedAnswer && String(opt).trim() === String(it.selectedAnswer).trim();
+                const mark = isCorrect ? ' ✓' : (isSel ? ' ✗' : '');
+                const style = isCorrect ? 'color:#067647;font-weight:700' : (isSel ? 'color:#b42318;font-weight:600' : 'color:#475467');
+                return `<li style="${style}">${String.fromCharCode(65 + oi)}. ${esc(opt)}${mark}</li>`;
+            }).join('');
+            return `<div class="q"><p class="cat">${esc(it.category)}</p><p class="qt">${i + 1}. ${esc(it.questionText)}</p><ul>${opts}</ul>${it.explanation ? `<p class="exp">${esc(it.explanation)}</p>` : ''}</div>`;
+        }).join('');
+
+        const html = `<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>Examen civique — GoCivique</title><style>
+            body{font-family:-apple-system,'Segoe UI',Roboto,sans-serif;color:#1a1a1a;max-width:760px;margin:0 auto;padding:32px;line-height:1.5}
+            h1{color:#0055A4;font-size:22px;margin:0 0 4px}
+            .sub{color:#667085;font-size:13px;margin:0 0 20px}
+            .acc{height:4px;background:linear-gradient(90deg,#0055A4 0 33%,#fff 33% 66%,#EF4135 66% 100%);margin:0 0 24px;border-radius:2px}
+            .q{border:1px solid #e5e7eb;border-radius:10px;padding:14px 16px;margin:0 0 12px;page-break-inside:avoid}
+            .cat{font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#0055A4;font-weight:700;margin:0 0 6px}
+            .qt{font-weight:700;margin:0 0 8px;font-size:14px}
+            ul{margin:0;padding-left:18px} li{margin:3px 0;font-size:13px}
+            .exp{background:#eff6ff;border-radius:8px;padding:8px 10px;margin:8px 0 0;font-size:12px;color:#0055A4}
+            .foot{margin-top:24px;color:#98a2b3;font-size:11px;text-align:center}
+            @media print{body{padding:0 12px}}
+        </style></head><body onload="setTimeout(function(){window.print()},250)">
+            <h1>GoCivique — Correction de l'examen</h1>
+            <p class="sub">Score : ${result?.score ?? 0}/${result?.totalQuestions ?? items.length} (${scorePercent}%) · ${dateStr} · La bonne réponse est en vert ✓</p>
+            <div class="acc"></div>
+            ${blocks}
+            <p class="foot">© 2026 GoCivique · gocivique.fr</p>
+        </body></html>`;
+
+        const w = window.open('', '_blank');
+        if (!w) return;
+        w.document.open();
+        w.document.write(html);
+        w.document.close();
+    };
 
     return (
         <div className="min-h-screen bg-[#f6f6f8] text-slate-900 font-sans flex flex-col overflow-x-hidden">
@@ -229,6 +287,14 @@ export default function Results() {
                                 {t('results.retakeExam')}
                             </button>
 
+                            <button
+                                onClick={downloadExamPdf}
+                                className="w-full bg-slate-100 text-slate-700 py-4 px-6 rounded-2xl font-bold flex items-center gap-4 hover:bg-slate-200 transition-all border-b-4 border-slate-300 active:border-b-0 active:translate-y-1"
+                            >
+                                <Download className="text-[#0055A4]" />
+                                Télécharger l'examen (PDF)
+                            </button>
+
                             {errors.length > 0 && (
                                 <button
                                     onClick={handleToggleErrors}
@@ -246,7 +312,7 @@ export default function Results() {
                                 </div>
                                 <h4 className="text-lg font-black font-display mb-2 italic">Passez au Pass Premium</h4>
                                 <p className="text-slate-400 text-xs mb-6 font-medium">Débloquez 2000+ questions et simulations d'entretiens.</p>
-                                <button onClick={() => setShowGate(true)} className="w-full bg-white text-[#135bec] py-3 rounded-xl font-black text-sm hover:scale-[1.02] transition-transform shadow-xl">
+                                <button onClick={() => { setGateTier('premium'); setShowGate(true); }} className="w-full bg-white text-[#135bec] py-3 rounded-xl font-black text-sm hover:scale-[1.02] transition-transform shadow-xl">
                                     Débloquer maintenant
                                 </button>
                             </div>
@@ -310,7 +376,7 @@ export default function Results() {
                 </div>
             </main>
 
-            {showGate && <SubscriptionGate open={showGate} onOpenChange={setShowGate} requiredTier="premium" />}
+            {showGate && <SubscriptionGate open={showGate} onOpenChange={setShowGate} requiredTier={gateTier} />}
         </div>
     );
 }

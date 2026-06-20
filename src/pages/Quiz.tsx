@@ -137,6 +137,7 @@ export default function Quiz() {
     if (!isRetake) {
       sessionStorage.removeItem('quizResults');
       sessionStorage.removeItem('quizErrors');
+      sessionStorage.removeItem('quizExam');
       sessionStorage.removeItem('quizQuestionIds');
       sessionStorage.removeItem('quizMode');
     }
@@ -339,9 +340,25 @@ export default function Quiz() {
       })
       .filter((e): e is QuizError => e !== null);
 
+    // Full exam (every question, in order, with the user's answer) — powers the downloadable PDF.
+    const answerByQid = new Map(results.map(r => [r.questionId, r]));
+    const quizExam = questions.map(q => {
+      const r = answerByQid.get(q.id);
+      return {
+        questionText: q.question_text,
+        options: [q.option_a, q.option_b, q.option_c, q.option_d],
+        selectedAnswer: r?.selectedAnswer ?? '',
+        correctAnswer: getCorrectAnswerText(q),
+        category: q.category,
+        explanation: q.explanation || '',
+        correct: !!r?.correct,
+      };
+    });
+
     // Also store in sessionStorage as fallback for the /results route
     sessionStorage.setItem('quizResults', JSON.stringify(resultPayload));
     sessionStorage.setItem('quizErrors', JSON.stringify(quizErrors));
+    sessionStorage.setItem('quizExam', JSON.stringify(quizExam));
     // Store question IDs + mode so "Refaire l'examen" can reload the same questions
     sessionStorage.setItem('quizQuestionIds', JSON.stringify(questions.map(q => q.id)));
     sessionStorage.setItem('quizMode', rawMode);

@@ -25,6 +25,9 @@ const NAV_ITEMS = [
   { key: 'path', icon: Route, path: '/parcours', label: 'Parcours 1→100' },
   { key: 'mastery', icon: TrendingUp, path: '/mastery', label: 'Maîtrise' },
   { key: 'courses', icon: GraduationCap, path: '/courses', label: 'Cours' },
+];
+
+const SECONDARY_ITEMS = [
   { key: 'settings', icon: Settings, path: '/settings', label: 'Paramètres' },
   { key: 'help', icon: HelpCircle, path: '/about', label: 'Aide' },
 ];
@@ -137,6 +140,30 @@ export default function LearnSidebar() {
             );
           })}
         </motion.nav>
+
+        {/* Secondary links — sit just above the profile card */}
+        <div className="px-3 pb-1 space-y-1">
+          {SECONDARY_ITEMS.map((item) => {
+            const Icon = item.icon;
+            const active = isActive(item);
+            return (
+              <button
+                key={item.key}
+                onClick={() => navigate(item.path)}
+                className={`group flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition-all relative ${active
+                  ? 'bg-blue-500/10 text-[#0055A4] font-semibold'
+                  : 'text-[var(--dash-text-muted)] hover:bg-[var(--dash-surface)] hover:text-[var(--dash-text)]'
+                  }`}
+              >
+                {active && (
+                  <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-[#0055A4] rounded-r-full" />
+                )}
+                <Icon className={`h-5 w-5 transition-colors ${active ? 'text-[#0055A4]' : 'text-[var(--dash-text-muted)] group-hover:text-[var(--dash-text)]'}`} />
+                <span>{item.label}</span>
+              </button>
+            );
+          })}
+        </div>
 
         {/* User snippet */}
         <motion.div
