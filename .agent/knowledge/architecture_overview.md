@@ -31,10 +31,12 @@ Think of it like **Duolingo, but for French civic knowledge** — gamified learn
 citizen-prep-pro/
 ├── .agent/               # AI agent skills & config
 │   └── skills/examen_civique_francais/
+├── private-data/         # Sensitive seed files (gitignored)
+│   ├── questions_mapped.csv  # Full mapped question bank
+│   └── questions_fr *.xlsx  # Multi-language question translations
 ├── public/               # Static assets
 │   ├── demo_questions.csv    # 20-question offline fallback
-│   ├── questions_V2.csv      # Full question bank (~2MB)
-│   └── questions_mapped.csv  # Mapped/processed questions (~2MB)
+│   └── demo_questions *.tsv  # 20-question translated fallbacks
 ├── scripts/              # Utility scripts
 │   ├── create_migration.js
 │   ├── map_csv.js

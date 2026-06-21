@@ -94,8 +94,8 @@ Every question needs a **pedagogical explanation** that:
 | File | Location | Purpose |
 |------|----------|---------|
 | `demo_questions.csv` | `/public/` | 20 offline demo questions (semicolon-delimited) |
-| `questions_V2.csv` | `/public/` | Full question bank (~2MB) |
-| `questions_mapped.csv` | `/public/` | Processed/mapped version (~2MB) |
+| `questions_V2.csv` | `/private-data/` | Full question bank (~2MB) |
+| `questions_mapped.csv` | `/private-data/` | Processed/mapped version (~2MB) |
 | `seed-lessons.sql` | `/scripts/` | Lesson seeding template |
 | `map_csv.js` | `/scripts/` | CSV processing utility |
 

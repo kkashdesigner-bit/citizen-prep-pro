@@ -9,12 +9,12 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const files = [
-  { file: 'public/questions_fr en-US.xlsx', lang: 'en' },
-  { file: 'public/questions_fr es-ES.xlsx', lang: 'es' },
-  { file: 'public/questions_fr pt-PT.xlsx', lang: 'pt' },
-  { file: 'public/questions_fr zh-Hans.xlsx', lang: 'zh' },
-  { file: 'public/questions_fr ar.xlsx', lang: 'ar' },
-  { file: 'public/questions_fr tr.xlsx', lang: 'tr' }
+  { file: 'private-data/questions_fr en-US.xlsx', lang: 'en' },
+  { file: 'private-data/questions_fr es-ES.xlsx', lang: 'es' },
+  { file: 'private-data/questions_fr pt-PT.xlsx', lang: 'pt' },
+  { file: 'private-data/questions_fr zh-Hans.xlsx', lang: 'zh' },
+  { file: 'private-data/questions_fr ar.xlsx', lang: 'ar' },
+  { file: 'private-data/questions_fr tr.xlsx', lang: 'tr' }
 ];
 
 async function main() {

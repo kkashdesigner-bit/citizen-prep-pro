@@ -38,3 +38,7 @@ dist-ssr
 .ds-sync/
 ds-bundle/
 .design-sync/
+
+# Private seed data
+private-data/
+

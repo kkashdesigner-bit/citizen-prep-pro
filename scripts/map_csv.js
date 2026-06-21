@@ -44,8 +44,8 @@ function mapCategory(categoryText) {
   return TARGET_CATEGORIES[4];
 }
 
-const csvFilePath = path.join(process.cwd(), 'public', 'questions_V2.csv');
-const outFilePath = path.join(process.cwd(), 'public', 'questions_mapped.csv');
+const csvFilePath = path.join(process.cwd(), 'private-data', 'questions_V2.csv');
+const outFilePath = path.join(process.cwd(), 'private-data', 'questions_mapped.csv');
 
 try {
   const content = fs.readFileSync(csvFilePath, 'utf-8');
