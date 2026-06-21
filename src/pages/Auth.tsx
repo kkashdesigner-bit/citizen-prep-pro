@@ -131,14 +131,10 @@ export default function Auth() {
         recordLoginAttempt(email, true).catch(() => {});
         routeAfterAuth(profile?.onboarding_completed ? '/learn' : '/onboarding');
       } else {
-        await signUpWithEmail(email, password);
-        // Save display name to profiles
-        if (displayName.trim()) {
-          const { data: { user } } = await supabase.auth.getUser();
-          if (user) {
-            await supabase.from('profiles').update({ display_name: displayName.trim() }).eq('id', user.id);
-          }
-        }
+        // The name is passed as user metadata so the handle_new_user() DB
+        // trigger persists it as display_name (no post-signup patch needed,
+        // which also worked unreliably when no session exists yet).
+        await signUpWithEmail(email, password, displayName);
         toast({
           title: t('auth.accountCreated'),
           description: t('auth.checkEmailConfirm'),

@@ -94,11 +94,17 @@ export function useAuth() {
     if (error) throw error;
   };
 
-  const signUpWithEmail = async (email: string, password: string) => {
+  const signUpWithEmail = async (email: string, password: string, displayName?: string) => {
+    const name = displayName?.trim();
     const { error } = await supabase.auth.signUp({
       email,
       password,
-      options: { emailRedirectTo: window.location.origin + '/onboarding' },
+      options: {
+        emailRedirectTo: window.location.origin + '/onboarding',
+        // Pass the name as user metadata so the handle_new_user() trigger stores
+        // it as display_name instead of falling back to the email address.
+        ...(name ? { data: { full_name: name } } : {}),
+      },
     });
     if (error) throw error;
   };

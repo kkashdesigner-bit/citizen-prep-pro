@@ -54,7 +54,13 @@ export default function Onboarding() {
   useEffect(() => {
     if (!user) return;
     supabase.from('profiles').select('display_name').eq('id', user.id).maybeSingle().then(({ data: p }) => {
-      if (p?.display_name) setData(d => ({ ...d, first_name: p.display_name }));
+      const name = p?.display_name?.trim();
+      // Never pre-fill the name field with an email address. Accounts created
+      // before the name was captured (or Google sign-ins without a name) have
+      // their email stored as display_name.
+      if (name && name !== user.email && !name.includes('@')) {
+        setData(d => ({ ...d, first_name: name }));
+      }
     });
   }, [user]);
 
