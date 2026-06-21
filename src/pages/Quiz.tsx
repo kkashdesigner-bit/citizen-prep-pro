@@ -73,6 +73,8 @@ export default function Quiz() {
   useEffect(() => {
     if (authLoading || profileLoading) return;
     if (!user) {
+      // Anonymous visitors may take ONE free demo exam before being asked to sign up.
+      if (rawMode === 'demo') return;
       navigate('/auth', { replace: true });
       return;
     }
@@ -402,6 +404,10 @@ export default function Quiz() {
       sessionStorage.removeItem('quizClassId');
     }
 
+    // First-time anonymous demo: remember it's been used so the next attempt asks for sign-up.
+    if (rawMode === 'demo' && !user) {
+      try { localStorage.setItem('gocivique_demo_used', '1'); } catch { /* ignore */ }
+    }
     // Navigate to the results page
     navigate('/results');
   }, [answers, questions, startTime, classIdParam, updateClassProgress, user, rawMode, navigate]);

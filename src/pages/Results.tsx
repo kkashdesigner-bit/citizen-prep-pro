@@ -66,6 +66,8 @@ export default function Results() {
     if (!result) return null;
 
     const scorePercent = result.totalQuestions > 0 ? Math.round((result.score / result.totalQuestions) * 100) : 0;
+    // Anonymous visitor who just finished the free demo exam → show score, gate the review behind sign-up.
+    const isGuestDemo = !user && typeof sessionStorage !== 'undefined' && sessionStorage.getItem('quizMode') === 'demo';
     const entries = result.categoryBreakdown ? Object.entries(result.categoryBreakdown) : [];
     const primaryColor = "#135bec";
     const accentRed = "#ef4444";
@@ -155,6 +157,7 @@ export default function Results() {
                                     <div className="mt-6 sm:mt-8 flex flex-wrap gap-4 justify-center lg:justify-start">
                                         <button
                                             onClick={() => {
+                                                if (isGuestDemo) { navigate('/auth'); return; }
                                                 sessionStorage.removeItem('quizResults');
                                                 sessionStorage.removeItem('quizErrors');
                                                 sessionStorage.removeItem('quizClassId');
@@ -162,7 +165,7 @@ export default function Results() {
                                             }}
                                             className="bg-[#135bec] text-white py-4 px-10 rounded-2xl font-black flex items-center gap-4 hover:scale-105 transition-all shadow-xl"
                                         >
-                                            <span>Retourner au Tableau de Bord</span>
+                                            <span>{isGuestDemo ? 'Créer un compte gratuit' : 'Retourner au Tableau de Bord'}</span>
                                             <LayoutDashboard size={24} />
                                         </button>
                                     </div>
@@ -213,6 +216,16 @@ export default function Results() {
 
                         <div className="lg:col-span-4 space-y-4">
                             <h3 className="text-xl font-black px-1 font-display uppercase tracking-widest text-slate-400">Actions</h3>
+                            {isGuestDemo ? (
+                                <div className="rounded-[2rem] bg-gradient-to-br from-[#0055A4] to-[#1B6ED6] text-white p-6 shadow-xl">
+                                    <h4 className="text-lg font-black font-display mb-1 italic">Voir mes réponses corrigées</h4>
+                                    <p className="text-blue-100 text-xs mb-5 font-medium">Créez un compte gratuit pour débloquer la correction détaillée, les explications, et accéder à plus de 7 000 questions et des examens illimités.</p>
+                                    <button onClick={() => navigate('/auth')} className="w-full bg-white text-[#0055A4] py-3 rounded-xl font-black text-sm hover:scale-[1.02] transition-transform shadow-lg">
+                                        Créer un compte gratuit
+                                    </button>
+                                    <p className="text-[10px] text-blue-100/80 text-center mt-3">Sans carte bancaire · 3 jours d'essai</p>
+                                </div>
+                            ) : (<>
                             {classId && (() => {
                                 const currentClass = classes.find(c => c.id === classId);
                                 const nextClass = currentClass ? classes.find(c => c.class_number === currentClass.class_number + 1) : null;
@@ -298,6 +311,7 @@ export default function Results() {
                                     Débloquer maintenant
                                 </button>
                             </div>
+                            </>)}
                         </div>
                     </div>
 

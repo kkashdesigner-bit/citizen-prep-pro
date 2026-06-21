@@ -159,14 +159,15 @@ serve(async (req) => {
       const html = buildEmailHtml({
         preheader: 'Bienvenue ! Votre préparation à l’examen civique commence.',
         greeting: `Bienvenue${firstName ? `, ${firstName}` : ''} !`,
+        heroImageUrl: 'https://gocivique.fr/examen-civique-auth-hero.jpg',
         blocks: [
           `Vous venez de créer votre compte sur <strong>GoCivique</strong> — la plateforme n°1 pour préparer l’examen civique français.`,
           `Voici ce qui vous attend :<br/>
-          <ul style="color:#4b5563;line-height:2;padding-left:20px">
-            <li>+7 000 questions officielles actualisées</li>
-            <li>Examens blancs en conditions réelles</li>
-            <li>Parcours d’apprentissage personnalisé</li>
-            <li>Suivi de progression en temps réel</li>
+          <ul style="line-height:2;padding-left:20px;margin-top:8px">
+            <li><strong>+7 000 questions</strong> officielles et actualisées</li>
+            <li><strong>Examens blancs</strong> chronométrés en conditions réelles</li>
+            <li><strong>Parcours d’apprentissage</strong> personnalisé pas-à-pas</li>
+            <li><strong>Suivi de progression</strong> intelligent en temps réel</li>
           </ul>`,
           `Commencez par configurer votre profil pour obtenir un parcours adapté à votre objectif.`,
         ],
@@ -187,15 +188,18 @@ serve(async (req) => {
       const html = buildEmailHtml({
         preheader: 'Votre parcours personnalisé est prêt !',
         greeting: `${firstName ? `${firstName}, v` : 'V'}otre parcours est prêt !`,
+        heroImageUrl: 'https://gocivique.fr/examen-civique-parcours-100-niveaux-desktop.jpg',
         blocks: [
           `Votre profil est configuré pour <strong>${goalLabel}</strong>. Nous avons personnalisé votre parcours d’apprentissage en conséquence.`,
-          `<div style="background:#f0f5ff;border-radius:10px;padding:16px;border-left:4px solid #0055A4">
-            <strong style="color:#0055A4">Prochaines étapes recommandées :</strong><br/>
-            <span style="color:#4b5563">1. Répondez à la question du jour<br/>
-            2. Lancez un quiz flash (5 questions)<br/>
-            3. Explorez le parcours citoyen</span>
+          `<div style="background-color:#f0f7ff;border-radius:12px;padding:20px;border-left:4px solid #0055A4;border:1px solid #e0f2fe;">
+            <strong style="color:#0369a1;display:block;margin-bottom:12px;font-size:14px;letter-spacing:0.5px;text-transform:uppercase;">Prochaines étapes recommandées :</strong>
+            <span style="display:block;font-size:14px;line-height:1.6;">
+              <strong>1. Répondez à la question du jour</strong><br/>Un excellent rituel quotidien pour ancrer vos connaissances.<br/><br/>
+              <strong>2. Lancez un quiz flash (5 questions)</strong><br/>Idéal pour les sessions d’entraînement rapides.<br/><br/>
+              <strong>3. Explorez le parcours citoyen</strong><br/>Gravissez les 100 niveaux thématiques pas-à-pas.
+            </span>
           </div>`,
-          `Plus vous pratiquez, plus notre algorithme s’adapte à vos points faibles.`,
+          `Plus vous pratiquez, plus notre algorithme s’adapte à vos points faibles pour vous faire progresser efficacement.`,
         ],
         ctaText: 'Commencer l’entraînement →',
         ctaUrl: 'https://gocivique.fr/learn',
@@ -304,6 +308,9 @@ serve(async (req) => {
           ? `Votre essai gratuit Standard de 3 jours commence maintenant !` 
           : `Votre abonnement ${tierLabel} est actif !`,
         greeting: `Bienvenue${firstName ? `, ${firstName}` : ''} !`,
+        heroImageUrl: isTrial 
+          ? 'https://gocivique.fr/examen-civique-nationalite-standard-gocivique.png' 
+          : 'https://gocivique.fr/examen-civique-nationalite-premium-gocivique.png',
         blocks,
         ctaText: 'Commencer l’entraînement →',
         ctaUrl: 'https://gocivique.fr/learn',

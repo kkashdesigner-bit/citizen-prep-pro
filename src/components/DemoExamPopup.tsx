@@ -44,7 +44,8 @@ export default function DemoExamPopup({ open, onOpenChange }: DemoExamPopupProps
 
   const handleContinueDemo = () => {
     onOpenChange(false);
-    navigate('/auth?redirect=/quiz?mode=demo');
+    // First-time visitors take the free demo exam directly — sign-up is asked for afterwards.
+    navigate('/quiz?mode=demo');
   };
 
   const handleSubscribe = () => {

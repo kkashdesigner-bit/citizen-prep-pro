@@ -1,6 +1,7 @@
 import { lazy, Suspense } from "react";
 import { Outlet, Navigate } from "react-router-dom";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { QuizGuard, ResultsGuard } from "@/components/DemoAccessGuards";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import SingleSessionGuard from "@/components/SingleSessionGuard";
 
@@ -93,8 +94,8 @@ export const routes = [
       { path: "exams", element: <ProtectedRoute><ExamsPage /></ProtectedRoute> },
       { path: "study-material", element: <ProtectedRoute><StudyMaterialPage /></ProtectedRoute> },
       { path: "analytics", element: <ProtectedRoute><AnalyticsPage /></ProtectedRoute> },
-      { path: "quiz", element: <ProtectedRoute><Quiz /></ProtectedRoute> },
-      { path: "results", element: <ProtectedRoute><Results /></ProtectedRoute> },
+      { path: "quiz", element: <QuizGuard><Quiz /></QuizGuard> },
+      { path: "results", element: <ResultsGuard><Results /></ResultsGuard> },
       { path: "success", element: <SubscriptionSuccess /> },
       { path: "dashboard", element: <Navigate to="/learn" replace /> },
       { path: "about", element: <About /> },
