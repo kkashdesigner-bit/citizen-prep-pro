@@ -17,6 +17,10 @@ import {
 } from 'lucide-react';
 import Logo from '@/components/Logo';
 import { useLanguage } from '@/contexts/LanguageContext';
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 const TOTAL_STEPS = 7;
 const AVATARS = Array.from({ length: 8 }, (_, i) => `/examen-civique-avatar-${i + 1}.webp`);
@@ -49,6 +53,7 @@ export default function Onboarding() {
   });
   const [saving, setSaving] = useState(false);
   const [animating, setAnimating] = useState(false);
+  const [showSkipConfirm, setShowSkipConfirm] = useState(false);
 
   // Pre-fill name from profiles
   useEffect(() => {
@@ -76,6 +81,36 @@ export default function Onboarding() {
       setStep(next);
       setAnimating(false);
     }, 220);
+  };
+
+  // Skip personalization: persist whatever was entered, mark onboarding done,
+  // and head to the dashboard. The dashboard's "complete your profile"
+  // checklist nudges users to fill in their goal/level later. Downstream code
+  // (quiz, exams, parcours) already falls back to sensible defaults when these
+  // are null, so a partial profile never breaks the app.
+  const handleSkip = async () => {
+    setSaving(true);
+    await saveProfile({
+      first_name: data.first_name || null,
+      avatar_url: data.avatar_url,
+      goal_type: data.goal_type,
+      level: data.level,
+      timeline: data.timeline,
+      exam_date: data.exam_date,
+      onboarding_completed: true,
+    });
+    // Only sync name/avatar if entered, so skipping never wipes a name that
+    // was already captured at signup.
+    if (user) {
+      const updates: { display_name?: string; avatar_url?: string } = {};
+      if (data.first_name) updates.display_name = data.first_name;
+      if (data.avatar_url) updates.avatar_url = data.avatar_url;
+      if (Object.keys(updates).length) {
+        await supabase.from('profiles').update(updates).eq('id', user.id);
+      }
+    }
+    setSaving(false);
+    navigate('/learn');
   };
 
   const handleComplete = async () => {
@@ -131,7 +166,7 @@ export default function Onboarding() {
               <span className="hidden sm:inline">{t('auth.back')}</span>
             </button>
           )}
-          <div className="flex items-center gap-1.5">
+          <div className="hidden sm:flex items-center gap-1.5">
             {Array.from({ length: TOTAL_STEPS }).map((_, i) => (
               <div
                 key={i}
@@ -141,6 +176,14 @@ export default function Onboarding() {
             ))}
           </div>
           <span className="text-xs text-[#1A1A1A]/40 font-bold tabular-nums">{step}/{TOTAL_STEPS}</span>
+          {step < TOTAL_STEPS && (
+            <button
+              onClick={() => setShowSkipConfirm(true)}
+              className="ml-1 text-sm font-medium text-[#1A1A1A]/50 hover:text-[#0055A4] transition-colors whitespace-nowrap"
+            >
+              {t('onboard.skip')}
+            </button>
+          )}
         </div>
       </div>
 
@@ -209,6 +252,26 @@ export default function Onboarding() {
           100% { opacity: 1; transform: translateY(0); }
         }
       `}</style>
+
+      {/* Gentle confirmation before skipping personalization */}
+      <AlertDialog open={showSkipConfirm} onOpenChange={setShowSkipConfirm}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t('onboard.skipTitle')}</AlertDialogTitle>
+            <AlertDialogDescription>{t('onboard.skipBody')}</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={saving}>{t('onboard.skipStay')}</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={(e) => { e.preventDefault(); handleSkip(); }}
+              disabled={saving}
+              className="bg-[#0055A4] hover:bg-[#1B6ED6]"
+            >
+              {saving ? t('onboard.preparing') : t('onboard.skipConfirm')}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
