@@ -200,14 +200,10 @@ export default function Auth() {
     <div className="min-h-screen flex flex-col lg:flex-row bg-white">
       <SEOHead noindex />
       {/* ─── Left Column: Hero Illustration ─── */}
-      <div className="relative hidden lg:flex lg:w-[48%] bg-gradient-to-br from-[#0055A4] via-[#1B6ED6] to-[#4D94E0] p-12 flex-col justify-between overflow-hidden">
-        {/* Animated background shapes */}
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -top-20 -right-20 w-96 h-96 rounded-full bg-white/5" style={{ animation: 'float 12s ease-in-out infinite' }} />
-          <div className="absolute bottom-20 -left-32 w-80 h-80 rounded-full bg-white/5" style={{ animation: 'float 15s ease-in-out infinite reverse' }} />
-          <div className="absolute top-1/2 right-1/4 w-48 h-48 rounded-full bg-white/3" style={{ animation: 'float 10s ease-in-out infinite' }} />
-        </div>
-
+      <div 
+        className="relative hidden lg:flex lg:w-[48%] p-12 flex-col justify-between overflow-hidden bg-cover bg-center border-r border-[#E6EAF0]" 
+        style={{ backgroundImage: "url('/examen-civique-auth-hero.jpg')" }}
+      >
         {/* Logo */}
         <div className="relative z-10">
           <div className="flex items-center gap-3">
@@ -215,68 +211,36 @@ export default function Auth() {
           </div>
         </div>
 
-        {/* Floating Avatars Grid */}
-        <div className="relative z-10 flex-1 flex items-center justify-center my-12">
-          <div className="relative w-full max-w-md aspect-square">
-            {AVATARS.map((src, i) => {
-              const angle = (i / AVATARS.length) * 2 * Math.PI - Math.PI / 2;
-              const radius = 42;
-              const x = 50 + radius * Math.cos(angle);
-              const y = 50 + radius * Math.sin(angle);
-              const size = i % 3 === 0 ? 'w-16 h-16' : i % 2 === 0 ? 'w-14 h-14' : 'w-12 h-12';
-
-              return (
-                <div
-                  key={i}
-                  className={`absolute ${size} rounded-2xl overflow-hidden border-2 border-white/30 shadow-xl`}
-                  style={{
-                    left: `${x}%`,
-                    top: `${y}%`,
-                    transform: 'translate(-50%, -50%)',
-                    animation: `floatAvatar ${6 + i * 0.8}s ease-in-out infinite`,
-                    animationDelay: `${i * 0.4}s`,
-                  }}
-                >
-                  <img src={src} alt="Avatar utilisateur GoCivique" className="w-full h-full object-cover" loading="lazy" />
-                </div>
-              );
-            })}
-
-            {/* Center badge */}
-            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-28 h-28 rounded-3xl bg-white/10 backdrop-blur-lg border border-white/20 flex flex-col items-center justify-center shadow-2xl">
-              <span className="text-4xl mb-1">🇫🇷</span>
-              <span className="text-white text-xs font-bold tracking-wide">{t('auth.exam2026')}</span>
-            </div>
-          </div>
-        </div>
+        {/* Empty spacer for background illustration (the centered 3D book and pillars) to show through */}
+        <div className="flex-1" />
 
         {/* Value propositions */}
         <div className="relative z-10 space-y-4">
-          <div className="flex items-center gap-3 text-white/90">
-            <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center">
-              <Sparkles className="w-5 h-5" />
+          <div className="flex items-center gap-3 text-slate-800">
+            <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-[#0055A4]/10 flex items-center justify-center">
+              <Sparkles className="w-5 h-5 text-[#0055A4]" />
             </div>
             <div>
-              <p className="font-semibold text-sm">{t('auth.value1Title')}</p>
-              <p className="text-xs text-white/60">{t('auth.value1Desc')}</p>
+              <p className="font-bold text-sm text-slate-900">{t('auth.value1Title')}</p>
+              <p className="text-xs text-slate-500 font-semibold">{t('auth.value1Desc')}</p>
             </div>
           </div>
-          <div className="flex items-center gap-3 text-white/90">
-            <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center">
-              <BarChart3 className="w-5 h-5" />
+          <div className="flex items-center gap-3 text-slate-800">
+            <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-[#0055A4]/10 flex items-center justify-center">
+              <BarChart3 className="w-5 h-5 text-[#0055A4]" />
             </div>
             <div>
-              <p className="font-semibold text-sm">{t('auth.value2Title')}</p>
-              <p className="text-xs text-white/60">{t('auth.value2Desc')}</p>
+              <p className="font-bold text-sm text-slate-900">{t('auth.value2Title')}</p>
+              <p className="text-xs text-slate-500 font-semibold">{t('auth.value2Desc')}</p>
             </div>
           </div>
-          <div className="flex items-center gap-3 text-white/90">
-            <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center">
-              <Shield className="w-5 h-5" />
+          <div className="flex items-center gap-3 text-slate-800">
+            <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-[#0055A4]/10 flex items-center justify-center">
+              <Shield className="w-5 h-5 text-[#0055A4]" />
             </div>
             <div>
-              <p className="font-semibold text-sm">{t('auth.value3Title')}</p>
-              <p className="text-xs text-white/60">{t('auth.value3Desc')}</p>
+              <p className="font-bold text-sm text-slate-900">{t('auth.value3Title')}</p>
+              <p className="text-xs text-slate-500 font-semibold">{t('auth.value3Desc')}</p>
             </div>
           </div>
         </div>
