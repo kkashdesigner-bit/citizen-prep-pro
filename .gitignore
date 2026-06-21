@@ -12,6 +12,9 @@ dist
 dist-ssr
 *.local
 
+# Vite / Vitest temporary build configs
+*.timestamp-*
+
 # Environment secrets
 .env
 .env.*
