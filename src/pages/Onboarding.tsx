@@ -176,7 +176,7 @@ export default function Onboarding() {
             ))}
           </div>
           <span className="text-xs text-[#1A1A1A]/40 font-bold tabular-nums">{step}/{TOTAL_STEPS}</span>
-          {step < TOTAL_STEPS && (
+          {step > 1 && step < TOTAL_STEPS && (
             <button
               onClick={() => setShowSkipConfirm(true)}
               className="ml-1 text-sm font-medium text-[#1A1A1A]/50 hover:text-[#0055A4] transition-colors whitespace-nowrap"
