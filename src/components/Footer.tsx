@@ -46,6 +46,10 @@ const Footer = forwardRef<HTMLElement>(function Footer(_, ref) {
             <h4 className="font-bold text-foreground mb-2 uppercase tracking-wider text-xs">{t('footer.preparation')}</h4>
             <Link to="/exams" className="text-sm text-muted-foreground hover:text-primary transition-colors">{t('footer.exams')}</Link>
             <Link to="/quiz" className="text-sm text-muted-foreground hover:text-primary transition-colors">{t('footer.quiz')}</Link>
+            <Link to="/c-est-quoi-l-examen-civique" className="text-sm text-muted-foreground hover:text-primary transition-colors">C'est quoi l'examen civique ?</Link>
+            <Link to="/guide-examen-civique" className="text-sm text-muted-foreground hover:text-primary transition-colors">Guide de l'examen civique</Link>
+            <Link to="/test-blanc-examen-civique" className="text-sm text-muted-foreground hover:text-primary transition-colors">Test blanc gratuit</Link>
+            <Link to="/naturalisation-examen-civique" className="text-sm text-muted-foreground hover:text-primary transition-colors">Examen civique et naturalisation</Link>
             <Link to="/about" className="text-sm text-muted-foreground hover:text-primary transition-colors">{t('footer.understand')}</Link>
             <a href="/Nationalité.pdf" target="_blank" rel="noopener noreferrer" className="text-sm text-muted-foreground hover:text-primary transition-colors">{t('footer.booklet')}</a>
           </div>

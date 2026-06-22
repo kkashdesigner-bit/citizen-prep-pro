@@ -46,7 +46,7 @@ const breadcrumbSchema = {
       "@type": "ListItem",
       position: 3,
       name: "Naturalisation française et examen civique",
-      item: "https://gocivique.fr/naturalisation",
+      item: "https://gocivique.fr/naturalisation-examen-civique",
     },
   ],
 };
@@ -218,7 +218,7 @@ export default function Naturalisation() {
       <SEOHead
         title="Naturalisation Française et Examen Civique 2026 — Guide Complet | GoCivique"
         description="Guide complet sur la naturalisation française et l'examen civique 2026 : conditions, démarches, inscription, centres d'examen, préparation et FAQ. Préparez votre examen civique pour la carte de séjour ou la naturalisation."
-        path="/naturalisation"
+        path="/naturalisation-examen-civique"
         schema={[breadcrumbSchema, faqSchema]}
       />
 
