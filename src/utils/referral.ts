@@ -10,5 +10,5 @@ export function generateReferralCode(userId: string): string {
  * Builds the full referral URL for sharing.
  */
 export function buildReferralUrl(referralCode: string): string {
-  return `https://gocivique.fr?ref=${referralCode}`;
+  return `https://www.gocivique.fr?ref=${referralCode}`;
 }

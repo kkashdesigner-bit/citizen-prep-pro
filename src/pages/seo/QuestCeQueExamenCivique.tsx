@@ -49,9 +49,9 @@ const breadcrumbSchema = {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   itemListElement: [
-    { "@type": "ListItem", position: 1, name: "Accueil", item: "https://gocivique.fr/" },
-    { "@type": "ListItem", position: 2, name: "Guide de l'examen civique", item: "https://gocivique.fr/guide-examen-civique" },
-    { "@type": "ListItem", position: 3, name: "C'est quoi l'examen civique", item: "https://gocivique.fr/c-est-quoi-l-examen-civique" },
+    { "@type": "ListItem", position: 1, name: "Accueil", item: "https://www.gocivique.fr/" },
+    { "@type": "ListItem", position: 2, name: "Guide de l'examen civique", item: "https://www.gocivique.fr/guide-examen-civique" },
+    { "@type": "ListItem", position: 3, name: "C'est quoi l'examen civique", item: "https://www.gocivique.fr/c-est-quoi-l-examen-civique" },
   ],
 };
 

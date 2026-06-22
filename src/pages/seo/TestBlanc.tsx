@@ -33,19 +33,19 @@ const breadcrumbSchema = {
       "@type": "ListItem",
       position: 1,
       name: "Accueil",
-      item: "https://gocivique.fr/",
+      item: "https://www.gocivique.fr/",
     },
     {
       "@type": "ListItem",
       position: 2,
       name: "Guide de l'examen civique",
-      item: "https://gocivique.fr/guide-examen-civique",
+      item: "https://www.gocivique.fr/guide-examen-civique",
     },
     {
       "@type": "ListItem",
       position: 3,
       name: "Test Blanc Examen Civique",
-      item: "https://gocivique.fr/test-blanc-examen-civique",
+      item: "https://www.gocivique.fr/test-blanc-examen-civique",
     },
   ],
 };

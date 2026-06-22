@@ -96,4 +96,4 @@ Disallow: /results
 Disallow: /success
 Disallow: /lesson/
 
-Sitemap: https://gocivique.fr/sitemap.xml
+Sitemap: https://www.gocivique.fr/sitemap.xml

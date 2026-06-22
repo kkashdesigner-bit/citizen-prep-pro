@@ -18,7 +18,7 @@ interface SEOHeadProps {
 }
 
 const SITE_NAME = 'GoCivique';
-const BASE_URL = 'https://gocivique.fr';
+const BASE_URL = 'https://www.gocivique.fr';
 const DEFAULT_OG_IMAGE = `${BASE_URL}/gocivique-og-image.png`;
 const OG_IMAGE_WIDTH = 1200;
 const OG_IMAGE_HEIGHT = 630;
@@ -77,7 +77,7 @@ export default function SEOHead({
         "inLanguage": ["fr", "en", "ar", "es", "tr", "pt"],
         "foundingDate": "2025-01-01",
         "sameAs": [
-            "https://gocivique.fr"
+            "https://www.gocivique.fr"
         ],
         "contactPoint": {
             "@type": "ContactPoint",
@@ -272,7 +272,7 @@ export default function SEOHead({
                     <meta property="article:published_time" content={publishedTime} />
                     <meta property="article:modified_time" content={modifiedTime} />
                     <meta property="article:section" content="Guide examen civique" />
-                    <meta property="article:publisher" content="https://gocivique.fr" />
+                    <meta property="article:publisher" content="https://www.gocivique.fr" />
                 </>
             )}
 

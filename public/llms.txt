@@ -12,45 +12,45 @@ Offres : essai gratuit (1 examen démo), abonnement Standard (6,99 €/mois), ab
 
 ## Pages principales
 
-- [Accueil](https://gocivique.fr/): présentation, tarifs et démarrage gratuit
-- [Quiz d'entraînement](https://gocivique.fr/quiz): QCM par thème sur le programme officiel
-- [Examens blancs](https://gocivique.fr/exams): simulations chronométrées (40 questions, 45 min)
-- [Matériel d'étude](https://gocivique.fr/study-material): fiches et ressources de révision
-- [À propos de l'examen](https://gocivique.fr/about): format, déroulé et conseils de préparation
+- [Accueil](https://www.gocivique.fr/): présentation, tarifs et démarrage gratuit
+- [Quiz d'entraînement](https://www.gocivique.fr/quiz): QCM par thème sur le programme officiel
+- [Examens blancs](https://www.gocivique.fr/exams): simulations chronométrées (40 questions, 45 min)
+- [Matériel d'étude](https://www.gocivique.fr/study-material): fiches et ressources de révision
+- [À propos de l'examen](https://www.gocivique.fr/about): format, déroulé et conseils de préparation
 
 ## Guides
 
-- [Guide complet de l'examen civique](https://gocivique.fr/guide-examen-civique): l'essentiel pour comprendre et réussir l'examen
-- [Examen civique et naturalisation](https://gocivique.fr/naturalisation-examen-civique): spécificités pour la demande de naturalisation
-- [Test blanc de l'examen civique](https://gocivique.fr/test-blanc-examen-civique): s'entraîner en conditions réelles
-- [Combien de fois peut-on passer l'examen ?](https://gocivique.fr/guides/combien-de-fois): règles de représentation en cas d'échec
-- [Que faire si je rate l'examen ?](https://gocivique.fr/guides/si-je-rate-lexamen): démarches et délais après un échec
-- [En combien de temps reçoit-on les résultats ?](https://gocivique.fr/guides/combien-de-temps-resultats): délais d'obtention des résultats
-- [Comment s'inscrire à l'examen ?](https://gocivique.fr/guides/comment-sinscrire): procédure et pièces nécessaires
+- [Guide complet de l'examen civique](https://www.gocivique.fr/guide-examen-civique): l'essentiel pour comprendre et réussir l'examen
+- [Examen civique et naturalisation](https://www.gocivique.fr/naturalisation-examen-civique): spécificités pour la demande de naturalisation
+- [Test blanc de l'examen civique](https://www.gocivique.fr/test-blanc-examen-civique): s'entraîner en conditions réelles
+- [Combien de fois peut-on passer l'examen ?](https://www.gocivique.fr/guides/combien-de-fois): règles de représentation en cas d'échec
+- [Que faire si je rate l'examen ?](https://www.gocivique.fr/guides/si-je-rate-lexamen): démarches et délais après un échec
+- [En combien de temps reçoit-on les résultats ?](https://www.gocivique.fr/guides/combien-de-temps-resultats): délais d'obtention des résultats
+- [Comment s'inscrire à l'examen ?](https://www.gocivique.fr/guides/comment-sinscrire): procédure et pièces nécessaires
 
 ## Thèmes du programme
 
-- [Principes et valeurs de la République](https://gocivique.fr/themes/valeurs-republique): liberté, égalité, fraternité, laïcité et symboles
-- [Institutions et système politique](https://gocivique.fr/themes/institutions): président, Parlement, justice et organisation de l'État
-- [Droits et devoirs](https://gocivique.fr/themes/droits-devoirs): droits fondamentaux et devoirs du citoyen
-- [Histoire, géographie et culture](https://gocivique.fr/themes/histoire-geographie): repères historiques, géographiques et culturels
+- [Principes et valeurs de la République](https://www.gocivique.fr/themes/valeurs-republique): liberté, égalité, fraternité, laïcité et symboles
+- [Institutions et système politique](https://www.gocivique.fr/themes/institutions): président, Parlement, justice et organisation de l'État
+- [Droits et devoirs](https://www.gocivique.fr/themes/droits-devoirs): droits fondamentaux et devoirs du citoyen
+- [Histoire, géographie et culture](https://www.gocivique.fr/themes/histoire-geographie): repères historiques, géographiques et culturels
 
 ## Cours — Valeurs fondamentales
 
-- [Les symboles de la République](https://gocivique.fr/cours/examen-civique-symboles-republique): drapeau, Marianne, hymne et fête nationale
-- [La devise française](https://gocivique.fr/cours/examen-civique-devise-francaise): « Liberté, Égalité, Fraternité »
-- [La DDHC de 1789](https://gocivique.fr/cours/examen-civique-ddhc-1789): la Déclaration des droits de l'homme et du citoyen
-- [La laïcité et la neutralité](https://gocivique.fr/cours/examen-civique-laicite-neutralite): principe de laïcité et neutralité de l'État
-- [La République indivisible](https://gocivique.fr/cours/examen-civique-republique-indivisible): unité et indivisibilité de la République
-- [Démocratie et souveraineté](https://gocivique.fr/cours/examen-civique-democratie-souverainete): souveraineté nationale et démocratie
-- [L'État de droit](https://gocivique.fr/cours/examen-civique-etat-de-droit): hiérarchie des normes et séparation des pouvoirs
-- [Égalité femmes-hommes](https://gocivique.fr/cours/examen-civique-egalite-femmes-hommes): un principe fondamental de la République
-- [La non-discrimination](https://gocivique.fr/cours/examen-civique-non-discrimination): principe d'égalité et lutte contre les discriminations
+- [Les symboles de la République](https://www.gocivique.fr/cours/examen-civique-symboles-republique): drapeau, Marianne, hymne et fête nationale
+- [La devise française](https://www.gocivique.fr/cours/examen-civique-devise-francaise): « Liberté, Égalité, Fraternité »
+- [La DDHC de 1789](https://www.gocivique.fr/cours/examen-civique-ddhc-1789): la Déclaration des droits de l'homme et du citoyen
+- [La laïcité et la neutralité](https://www.gocivique.fr/cours/examen-civique-laicite-neutralite): principe de laïcité et neutralité de l'État
+- [La République indivisible](https://www.gocivique.fr/cours/examen-civique-republique-indivisible): unité et indivisibilité de la République
+- [Démocratie et souveraineté](https://www.gocivique.fr/cours/examen-civique-democratie-souverainete): souveraineté nationale et démocratie
+- [L'État de droit](https://www.gocivique.fr/cours/examen-civique-etat-de-droit): hiérarchie des normes et séparation des pouvoirs
+- [Égalité femmes-hommes](https://www.gocivique.fr/cours/examen-civique-egalite-femmes-hommes): un principe fondamental de la République
+- [La non-discrimination](https://www.gocivique.fr/cours/examen-civique-non-discrimination): principe d'égalité et lutte contre les discriminations
 
 ## Optional
 
-- [Contact](https://gocivique.fr/contact): support et questions
-- [Conditions générales (CGU/CGV)](https://gocivique.fr/terms): conditions d'utilisation et de vente
-- [Politique de confidentialité](https://gocivique.fr/privacy): traitement des données personnelles (RGPD)
-- [Politique de remboursement](https://gocivique.fr/refunds): conditions de remboursement
-- [Plan du site](https://gocivique.fr/sitemap.xml): sitemap XML complet
+- [Contact](https://www.gocivique.fr/contact): support et questions
+- [Conditions générales (CGU/CGV)](https://www.gocivique.fr/terms): conditions d'utilisation et de vente
+- [Politique de confidentialité](https://www.gocivique.fr/privacy): traitement des données personnelles (RGPD)
+- [Politique de remboursement](https://www.gocivique.fr/refunds): conditions de remboursement
+- [Plan du site](https://www.gocivique.fr/sitemap.xml): sitemap XML complet

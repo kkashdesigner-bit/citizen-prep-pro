@@ -34,19 +34,19 @@ const breadcrumbSchema = {
       "@type": "ListItem",
       position: 1,
       name: "Accueil",
-      item: "https://gocivique.fr/",
+      item: "https://www.gocivique.fr/",
     },
     {
       "@type": "ListItem",
       position: 2,
       name: "Guide de l'examen civique",
-      item: "https://gocivique.fr/guide-examen-civique",
+      item: "https://www.gocivique.fr/guide-examen-civique",
     },
     {
       "@type": "ListItem",
       position: 3,
       name: "Naturalisation française et examen civique",
-      item: "https://gocivique.fr/naturalisation-examen-civique",
+      item: "https://www.gocivique.fr/naturalisation-examen-civique",
     },
   ],
 };

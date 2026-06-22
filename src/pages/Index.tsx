@@ -36,7 +36,7 @@ export default function Index() {
     "@type": "Product",
     "name": "GoCivique — Préparation Examen Civique 2026",
     "description": "Plateforme de préparation à l'examen civique 2026 pour la CSP, la carte de résident et la naturalisation. Questions officielles, mises en situation, examens blancs et 100 cours.",
-    "url": "https://gocivique.fr",
+    "url": "https://www.gocivique.fr",
     "brand": { "@type": "Brand", "name": "GoCivique" },
     "offers": {
       "@type": "Offer",

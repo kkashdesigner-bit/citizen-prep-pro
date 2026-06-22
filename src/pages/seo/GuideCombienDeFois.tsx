@@ -30,9 +30,9 @@ const breadcrumbSchema = {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   "itemListElement": [
-    { "@type": "ListItem", "position": 1, "name": "Accueil", "item": "https://gocivique.fr/" },
-    { "@type": "ListItem", "position": 2, "name": "Guide", "item": "https://gocivique.fr/guide-examen-civique" },
-    { "@type": "ListItem", "position": 3, "name": "Combien de fois", "item": "https://gocivique.fr/guides/combien-de-fois" },
+    { "@type": "ListItem", "position": 1, "name": "Accueil", "item": "https://www.gocivique.fr/" },
+    { "@type": "ListItem", "position": 2, "name": "Guide", "item": "https://www.gocivique.fr/guide-examen-civique" },
+    { "@type": "ListItem", "position": 3, "name": "Combien de fois", "item": "https://www.gocivique.fr/guides/combien-de-fois" },
   ]
 };
 

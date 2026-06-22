@@ -22,6 +22,6 @@ describe('generateReferralCode', () => {
 describe('buildReferralUrl', () => {
   test('produces valid URL with ref param', () => {
     const url = buildReferralUrl('ABCD1234');
-    expect(url).toBe('https://gocivique.fr?ref=ABCD1234');
+    expect(url).toBe('https://www.gocivique.fr?ref=ABCD1234');
   });
 });

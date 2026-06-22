@@ -222,9 +222,9 @@ export default function CoursPreview() {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Accueil", item: "https://gocivique.fr/" },
-      { "@type": "ListItem", position: 2, name: "Cours", item: "https://gocivique.fr/courses" },
-      { "@type": "ListItem", position: 3, name: course.title, item: `https://gocivique.fr/cours/${course.slug}` },
+      { "@type": "ListItem", position: 1, name: "Accueil", item: "https://www.gocivique.fr/" },
+      { "@type": "ListItem", position: 2, name: "Cours", item: "https://www.gocivique.fr/courses" },
+      { "@type": "ListItem", position: 3, name: course.title, item: `https://www.gocivique.fr/cours/${course.slug}` },
     ],
   };
 
@@ -233,10 +233,10 @@ export default function CoursPreview() {
     "@type": "Course",
     name: course.title,
     description: course.metaDescription,
-    provider: { "@type": "Organization", name: "GoCivique", url: "https://gocivique.fr" },
+    provider: { "@type": "Organization", name: "GoCivique", url: "https://www.gocivique.fr" },
     hasCourseInstance: { "@type": "CourseInstance", courseMode: "online", inLanguage: "fr" },
     educationalLevel: course.classNumber <= 3 ? "Beginner" : course.classNumber <= 6 ? "Intermediate" : "Advanced",
-    isPartOf: { "@type": "Course", name: "Préparation à l'examen civique français 2026", url: "https://gocivique.fr/courses" },
+    isPartOf: { "@type": "Course", name: "Préparation à l'examen civique français 2026", url: "https://www.gocivique.fr/courses" },
   };
 
   return (

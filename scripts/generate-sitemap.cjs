@@ -10,7 +10,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const BASE = 'https://gocivique.fr';
+const BASE = 'https://www.gocivique.fr';
 const LANGS = ['fr', 'en', 'ar', 'es', 'pt', 'zh', 'tr'];
 const TODAY = new Date().toISOString().split('T')[0];
 

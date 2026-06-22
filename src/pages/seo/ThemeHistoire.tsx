@@ -5,9 +5,9 @@ const breadcrumbSchema = {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   "itemListElement": [
-    { "@type": "ListItem", "position": 1, "name": "Accueil", "item": "https://gocivique.fr/" },
-    { "@type": "ListItem", "position": 2, "name": "Guide", "item": "https://gocivique.fr/guide-examen-civique" },
-    { "@type": "ListItem", "position": 3, "name": "Histoire et géographie", "item": "https://gocivique.fr/themes/histoire-geographie" },
+    { "@type": "ListItem", "position": 1, "name": "Accueil", "item": "https://www.gocivique.fr/" },
+    { "@type": "ListItem", "position": 2, "name": "Guide", "item": "https://www.gocivique.fr/guide-examen-civique" },
+    { "@type": "ListItem", "position": 3, "name": "Histoire et géographie", "item": "https://www.gocivique.fr/themes/histoire-geographie" },
   ],
 };
 
