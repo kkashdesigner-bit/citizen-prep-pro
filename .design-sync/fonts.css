@@ -1,0 +1,11 @@
+/* Self-hosted Inter (Fontsource variable, latin subset — covers French accents)
+   so every card and every design built with this DS renders in the brand font
+   with no network dependency. Shipped via cfg.extraFonts -> fonts/fonts.css,
+   which styles.css @imports. */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url('./fonts/inter-latin-variable.woff2') format('woff2');
+}
