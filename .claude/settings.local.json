@@ -32,5 +32,9 @@
       "Bash(curl -s -L https://gocivique.fr/exams -o /dev/null -w \"exams status: %{http_code}, url: %{url_effective}\\\\n\")",
       "Bash(xargs grep -l \"t\\\\\\(''about\\\\.\")"
     ]
-  }
+  },
+  "enabledMcpjsonServers": [
+    "supabase",
+    "magic"
+  ]
 }
