@@ -10,6 +10,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useSubscription } from '@/hooks/useSubscription';
 import { ArrowRight, Scale, Landmark, HeartHandshake, LayoutDashboard, RotateCcw, AlertTriangle, Medal, Check, X, ChevronUp, ChevronDown, ChevronRight } from 'lucide-react';
 import { fireConfetti } from '@/lib/confetti';
+import PostQuizNudge from '@/components/PostQuizNudge';
 
 const passImage = '/examen-civique-resultat-passe.jpg';
 const failImage = '/examen-civique-resultat-nonpasse.jpg';
@@ -33,6 +34,7 @@ export default function Results() {
     const [showErrors, setShowErrors] = useState(false);
     const [showGate, setShowGate] = useState(false);
     const [gateTier, setGateTier] = useState<'standard' | 'premium'>('premium');
+    const [showNudge, setShowNudge] = useState(false);
     const errorsRef = useRef<HTMLDivElement>(null);
     const [classId, setClassId] = useState<string | null>(null);
     const { classes } = useParcours();
@@ -49,6 +51,13 @@ export default function Results() {
             // Celebrate a pass with a tricolore confetti burst 🎉
             if (parsed?.passed) {
                 setTimeout(() => fireConfetti(), 400);
+            }
+            // Show upgrade nudge at peak motivation for engaged free users
+            const nudgeDismissed = sessionStorage.getItem('nudgeDismissed');
+            const score = parsed?.totalQuestions > 0
+                ? Math.round((parsed.score / parsed.totalQuestions) * 100) : 0;
+            if (!nudgeDismissed && score >= 65) {
+                setTimeout(() => setShowNudge(true), 2500);
             }
         } else {
             navigate('/');
@@ -328,6 +337,14 @@ export default function Results() {
             </main>
 
             {showGate && <SubscriptionGate open={showGate} onOpenChange={setShowGate} requiredTier={gateTier} />}
+
+            {showNudge && user && !isStandardOrAbove && !isGuestDemo && (
+                <PostQuizNudge
+                    scorePercent={scorePercent}
+                    onUpgrade={() => { setShowNudge(false); setGateTier('standard'); setShowGate(true); }}
+                    onDismiss={() => { setShowNudge(false); sessionStorage.setItem('nudgeDismissed', '1'); }}
+                />
+            )}
         </div>
     );
 }
