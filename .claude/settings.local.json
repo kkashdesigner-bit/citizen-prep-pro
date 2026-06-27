@@ -30,7 +30,14 @@
       "Bash(curl -s -L https://gocivique.fr/dashboard -o /dev/null -w \"dashboard status: %{http_code}, url: %{url_effective}\\\\n\")",
       "Bash(curl -s -L https://gocivique.fr/about -o /dev/null -w \"about status: %{http_code}, url: %{url_effective}\\\\n\")",
       "Bash(curl -s -L https://gocivique.fr/exams -o /dev/null -w \"exams status: %{http_code}, url: %{url_effective}\\\\n\")",
-      "Bash(xargs grep -l \"t\\\\\\(''about\\\\.\")"
+      "Bash(xargs grep -l \"t\\\\\\(''about\\\\.\")",
+      "Read(//c/Bagulia/docs/**)",
+      "Read(//c/Bagulia/brand/**)",
+      "Read(//c/Bagulia/products/**)"
     ]
-  }
+  },
+  "disabledMcpjsonServers": [
+    "supabase",
+    "magic"
+  ]
 }
