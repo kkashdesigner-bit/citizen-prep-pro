@@ -8,8 +8,7 @@ import Header from '@/components/Header';
 import { useParcours } from '@/hooks/useParcours';
 import { useAuth } from '@/hooks/useAuth';
 import { useSubscription } from '@/hooks/useSubscription';
-import { openExamPdf, type ExamPdfItem } from '@/lib/examPdf';
-import { ArrowRight, Scale, Landmark, HeartHandshake, LayoutDashboard, RotateCcw, AlertTriangle, Medal, Check, X, ChevronUp, ChevronDown, ChevronRight, Download } from 'lucide-react';
+import { ArrowRight, Scale, Landmark, HeartHandshake, LayoutDashboard, RotateCcw, AlertTriangle, Medal, Check, X, ChevronUp, ChevronDown, ChevronRight } from 'lucide-react';
 import { fireConfetti } from '@/lib/confetti';
 
 const passImage = '/examen-civique-resultat-passe.jpg';
@@ -73,29 +72,6 @@ export default function Results() {
     const accentRed = "#ef4444";
     const currentClass = classId ? classes.find(c => c.id === classId) : null;
     const nextClass = currentClass ? classes.find(c => c.class_number === currentClass.class_number + 1) : null;
-
-    // Download the exam as a branded PDF (print-to-PDF). Standard & above only;
-    // free users get the upgrade gate. `withAnswers=false` produces a blank exam.
-    const downloadExamPdf = (withAnswers: boolean) => {
-        if (!isStandardOrAbove) { setGateTier('standard'); setShowGate(true); return; }
-
-        let items: ExamPdfItem[] = [];
-        try {
-            const raw = sessionStorage.getItem('quizExam');
-            if (raw) items = JSON.parse(raw);
-        } catch { /* ignore */ }
-        if (items.length === 0) items = errors as ExamPdfItem[]; // fallback: corrected mistakes only
-        if (items.length === 0) return;
-
-        const dateStr = new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' });
-        openExamPdf(items, {
-            title: withAnswers ? "Correction de l'examen" : 'Examen blanc',
-            subtitle: withAnswers
-                ? `Score : ${result?.score ?? 0}/${result?.totalQuestions ?? items.length} (${scorePercent}%) · ${dateStr} · La bonne réponse est en vert ✓`
-                : `${items.length} questions · ${dateStr}`,
-            withAnswers,
-        });
-    };
 
     return (
         <div className="min-h-screen bg-[#f6f6f8] text-slate-900 font-sans flex flex-col overflow-x-hidden">
@@ -268,27 +244,6 @@ export default function Results() {
                                 <RotateCcw className="text-[#ef4444]" />
                                 {t('results.retakeExam')}
                             </button>
-
-                            <div className="rounded-2xl bg-slate-100 p-3 space-y-2 border-b-4 border-slate-300">
-                                <p className="text-[11px] font-bold uppercase tracking-widest text-slate-500 px-1 flex items-center gap-2">
-                                    <Download className="h-3.5 w-3.5 text-[#0055A4]" />
-                                    Télécharger l'examen (PDF)
-                                </p>
-                                <div className="grid grid-cols-2 gap-2">
-                                    <button
-                                        onClick={() => downloadExamPdf(true)}
-                                        className="bg-white text-slate-700 py-2.5 px-3 rounded-xl font-bold text-xs hover:bg-slate-50 border border-slate-200 transition-all active:translate-y-0.5"
-                                    >
-                                        Avec réponses
-                                    </button>
-                                    <button
-                                        onClick={() => downloadExamPdf(false)}
-                                        className="bg-white text-slate-700 py-2.5 px-3 rounded-xl font-bold text-xs hover:bg-slate-50 border border-slate-200 transition-all active:translate-y-0.5"
-                                    >
-                                        Sans réponses
-                                    </button>
-                                </div>
-                            </div>
 
                             {errors.length > 0 && (
                                 <button
