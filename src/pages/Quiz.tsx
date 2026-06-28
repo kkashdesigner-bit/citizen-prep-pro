@@ -446,6 +446,7 @@ export default function Quiz() {
   }
 
   if (questions.length === 0) {
+    const isRevision = effectiveMode === 'revision';
     return (
       <div className="min-h-screen bg-background">
         <div className="sticky top-0 z-50 bg-white border-b border-slate-200 h-14 flex items-center px-4">
@@ -453,11 +454,29 @@ export default function Quiz() {
             <X className="h-4 w-4" /> Quitter
           </button>
         </div>
-        <div className="container flex flex-col items-center justify-center py-20 gap-4">
-          <p className="text-muted-foreground">Aucune question disponible.</p>
-          <Button variant="outline" onClick={() => navigate('/')}>
-            Retour à l'accueil
-          </Button>
+        <div className="container flex flex-col items-center justify-center py-20 gap-4 text-center max-w-md mx-auto">
+          {isRevision ? (
+            <>
+              <div className="h-14 w-14 rounded-full bg-emerald-50 flex items-center justify-center">
+                <CheckCircle className="h-7 w-7 text-emerald-500" />
+              </div>
+              <h2 className="text-xl font-bold text-foreground">Rien à réviser pour le moment 🎉</h2>
+              <p className="text-muted-foreground">
+                Vous n'avez aucune erreur à corriger{categoryParam ? ' dans ce thème' : ''}. Continuez à vous entraîner pour progresser.
+              </p>
+            </>
+          ) : (
+            <>
+              <h2 className="text-xl font-bold text-foreground">Aucune question disponible</h2>
+              <p className="text-muted-foreground">
+                Nous n'avons pas trouvé de questions pour ce mode. Lancez un entraînement ou revenez à votre tableau de bord.
+              </p>
+            </>
+          )}
+          <div className="flex flex-col sm:flex-row gap-3 w-full pt-2">
+            <Button className="flex-1" onClick={() => navigate('/quiz')}>Faire un examen blanc</Button>
+            <Button variant="outline" className="flex-1" onClick={() => navigate('/learn')}>Tableau de bord</Button>
+          </div>
         </div>
       </div>
     );

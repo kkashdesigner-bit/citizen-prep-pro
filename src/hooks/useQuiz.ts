@@ -371,6 +371,17 @@ export function useQuiz({
           }
         }
 
+        // Language safety net: the question bank is almost entirely French. If
+        // the resolved language has too few questions, fall back to 'fr' so the
+        // quiz is never empty just because the user's language isn't translated.
+        if (dbLang !== 'fr') {
+          const { count } = await supabase
+            .from('questions')
+            .select('id', { count: 'exact', head: true })
+            .eq('language', dbLang);
+          if (!count || count < 40) dbLang = 'fr';
+        }
+
         // Resolve the final question limit
         const modeLimit = getQuestionLimit(mode, isMiniQuiz);
         const resolvedLimit =
