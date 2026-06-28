@@ -3,6 +3,7 @@ import { Outlet, Navigate } from "react-router-dom";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import SingleSessionGuard from "@/components/SingleSessionGuard";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 
 import { HelmetProvider } from "react-helmet-async";
 import { Toaster } from "@/components/ui/toaster";
@@ -68,6 +69,7 @@ function Root() {
                 <Sonner />
                 <MaintenanceAlert />
                 <SingleSessionGuard />
+                <SpeedInsights />
                 <Suspense fallback={null}>
                   <Outlet />
                 </Suspense>
