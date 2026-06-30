@@ -18,7 +18,7 @@ interface SEOHeadProps {
 }
 
 const SITE_NAME = 'GoCivique';
-const BASE_URL = 'https://gocivique.fr';
+const BASE_URL = 'https://www.gocivique.fr';
 const DEFAULT_OG_IMAGE = `${BASE_URL}/gocivique-og-image.png`;
 const OG_IMAGE_WIDTH = 1200;
 const OG_IMAGE_HEIGHT = 630;
